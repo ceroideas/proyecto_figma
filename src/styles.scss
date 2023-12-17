@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+
+
+.logo {
+  height: 100px !important;
+  width: 60% !important;
+  margin: auto;
+  max-width: 100px;
+}
+
+
+/* html,
+body {
+  height: 100%;
+} */
+body {
+  background-color: #F5F3FF !important;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+

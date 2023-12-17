@@ -1,0 +1,49 @@
+.nav-buttons {
+    background-color: #EDE9FE;
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+   
+    
+}
+a{
+    text-decoration: none;
+    color: black !important;
+    p{
+        font-size: 14px;
+        font-weight: bold;
+    
+    }
+
+}
+li {
+    max-height: 10% !important;
+}
+.nav-item {
+    margin-top: 10px;
+}
+.input-group {
+    .form-control {
+
+        border-top-right-radius: 25px;
+        border-bottom-right-radius: 25px;
+        border-left: #EDE9FE;
+    }
+    .input-group-text{
+        border-top-left-radius: 25px;
+        border-bottom-left-radius: 25px;
+        background-color: white;
+    }
+}
+
+.search{
+  margin-right: 10%;
+
+    width: 473px;
+}
+
+.form-control:focus {
+  border-color: rgb(211, 209, 209);
+  box-shadow: none;
+}

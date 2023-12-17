@@ -1,0 +1,161 @@
+<body class="hold-transition sidebar-mini layout-fixed">
+    <div class="wrapper">
+    
+
+    
+      <!-- Navbar -->
+      <nav class="main-header navbar navbar-expand">
+        <div class="input-group mb-3 search ms-auto">
+          <span class="input-group-text" id="basic-addon1">
+            <img class="mr-2" src="../../../assets/icons/search.svg" alt=""/>
+          </span>
+          <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+      </nav>
+      
+      
+      
+      <!-- /.navbar -->
+    
+     <!-- Main Sidebar Container -->
+<aside style="position: fixed" class="main-sidebar ">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+        <img
+          style="cursor: pointer"
+          routerLink="dashboard"
+          class="logo"
+          src="../../../assets/img/logo-rucampo.svg"
+          alt=""
+        />
+      </div>
+  
+      <!-- Sidebar Menu -->
+      <nav class="mt-2">
+        <ul
+          class="nav nav-pills nav-sidebar flex-column"
+          data-widget="treeview"
+          role="menu"
+          data-accordion="false"
+        >
+          <!-- Add icons to the links using the .nav-icon class
+                 with font-awesome or any other icon font library -->
+  <div class="nav-buttons">
+    <li class="nav-item ">
+      <a routerLink="inmuebles" class="nav-link">
+        <img
+          class="mr-2"
+          src="../../../assets/icons/home.svg"
+          alt=""
+        />
+        <p>Home</p>
+      </a>
+    </li>
+  </div>
+
+    
+          <li class="nav-item ">
+            <a routerLink="noticias" class="nav-link">
+              <img
+                class="mr-2"
+                src="../../../assets/icons/bar_chart.svg"
+                alt=""
+              />
+              <p>Build</p>
+            </a>
+          </li>
+    
+
+  
+          <li class="nav-item">
+            <a routerLink="encargos" class="nav-link">
+              <img
+                class="mr-2"
+                src="../../../assets/icons/swap_horizontal_circle.svg"
+                alt=""
+              />
+              <p>Inspect</p>
+            </a>
+          </li>
+  
+          <li class="nav-item">
+            <a routerLink="pedidos" class="nav-link">
+              <img
+                class="mr-2"
+                src="../../../assets/icons/videogame_asset.svg"
+                alt=""
+              />
+              <p>Simulate</p>
+            </a>
+          </li>
+  
+       
+  
+          <li class="nav-item">
+            <a routerLink="agenda" class="nav-link">
+              <img
+                class="mr-2"
+                src="../../../assets/icons/supervisor_account.svg"
+                alt=""
+              />
+              <p>Support</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a routerLink="propietarios" class="nav-link">
+              <img
+                class="mr-2"
+                src="../../../assets/icons/settings.svg"
+                alt=""
+              />
+              <p>Settings</p>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+      <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+  </aside>
+  
+
+    
+      <!-- Content Wrapper. Contains page content -->
+      <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+          <div class="container-fluid">
+            <div class="row mb-2">
+              <div class="col-sm-6">
+                <h1 class="m-0">Home</h1>
+              </div><!-- /.col -->
+
+            </div><!-- /.row -->
+          </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+    
+        <!-- Main content -->
+        <section class="content">
+          <div class="container-fluid">
+            <router-outlet></router-outlet>
+
+            
+          </div><!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+      </div>
+      <!-- /.content-wrapper -->
+<!--       <footer class="main-footer">
+        <strong>Copyright &copy; </strong>
+        
+
+      </footer> -->
+    
+    </div>
+
+
+    </body>
