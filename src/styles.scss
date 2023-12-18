@@ -1,24 +1,24 @@
-
-
-.logo {
+/* .logo {
   height: 100px !important;
   width: 60% !important;
   margin: auto;
   max-width: 100px;
-}
-
+} */
 
 /* html,
 body {
   height: 100%;
 } */
 body {
-  background-color: #F5F3FF !important;
+  background-color: #f5f3ff !important;
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  margin-right: 2% !important;
 }
 
-
-
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+:root {
+  /* System tokens */
 
+  --md-switch-icon-color: red;
+}
