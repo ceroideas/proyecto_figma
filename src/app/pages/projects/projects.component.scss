@@ -1,0 +1,44 @@
+.card-title {
+  font-weight: bold;
+}
+.card-text {
+  color: #64748b;
+}
+.user-menu {
+  display: flex;
+  align-items: center;
+}
+
+.user-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.user-info p {
+  margin: 0; /* Establece el margen a 0 para eliminar el espacio entre párrafos */
+}
+.user-name {
+  font-weight: bold;
+}
+.custom-div {
+  background-color: #8c64b1;
+  color: white;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 123px;
+  height: 30px;
+  font-size: small;
+  font-weight: bold;
+  padding: 5px; /* Puedes ajustar este valor según sea necesario */
+  align-items: center;
+  margin-left: 2%;
+}
+
+.icon {
+  margin-right: 10px;
+}
