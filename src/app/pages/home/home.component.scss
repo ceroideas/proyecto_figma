@@ -77,3 +77,10 @@ li {
 .main-header {
   border-bottom: 0px !important;
 }
+.nav-item.active {
+  background-color: #ede9fe;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}

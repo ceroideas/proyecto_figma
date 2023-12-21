@@ -63,20 +63,14 @@
             role="menu"
             data-accordion="false"
           >
-            <div class="nav-buttons">
-              <li class="nav-item">
-                <a routerLink="home" class="nav-link">
-                  <img
-                    class="mr-2"
-                    src="../../../assets/icons/home.svg"
-                    alt=""
-                  />
-                  <p>Home</p>
-                </a>
-              </li>
-            </div>
+            <li class="nav-item" routerLinkActive="active">
+              <a routerLink="projects" class="nav-link">
+                <img class="mr-2" src="../../../assets/icons/home.svg" alt="" />
+                <p>Home</p>
+              </a>
+            </li>
 
-            <li class="nav-item">
+            <li class="nav-item" routerLinkActive="active">
               <a routerLink="noticias" class="nav-link">
                 <img
                   class="mr-2"
@@ -87,8 +81,8 @@
               </a>
             </li>
 
-            <li class="nav-item">
-              <a routerLink="encargos" class="nav-link">
+            <li class="nav-item" routerLinkActive="active">
+              <a routerLink="inspect" class="nav-link">
                 <img
                   class="mr-2"
                   src="../../../assets/icons/swap_horizontal_circle.svg"
@@ -98,7 +92,7 @@
               </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" routerLinkActive="active">
               <a routerLink="pedidos" class="nav-link">
                 <img
                   class="mr-2"
@@ -109,7 +103,7 @@
               </a>
             </li>
 
-            <li class="nav-item">
+            <li class="nav-item" routerLinkActive="active">
               <a routerLink="agenda" class="nav-link">
                 <img
                   class="mr-2"
@@ -119,7 +113,7 @@
                 <p>Support</p>
               </a>
             </li>
-            <li class="nav-item">
+            <li class="nav-item" routerLinkActive="active">
               <a routerLink="propietarios" class="nav-link">
                 <img
                   class="mr-2"
@@ -154,7 +148,7 @@
       <section class="content">
         <div class="container-fluid">
           <router-outlet></router-outlet>
-          <app-edit-variable></app-edit-variable>
+          <!--  <app-edit-variable></app-edit-variable> -->
         </div>
         <!-- /.container-fluid -->
       </section>
