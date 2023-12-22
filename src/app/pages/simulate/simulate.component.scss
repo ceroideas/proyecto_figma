@@ -1,0 +1,54 @@
+.title-page {
+  color: #00061f;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 30px;
+  word-wrap: break-word;
+}
+//card//
+
+.card-container {
+  background: #f6f8fc;
+  border-radius: 10px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 10px;
+  display: inline-flex;
+}
+
+.card-container-active {
+  border: 3px solid #8c64b1;
+  background: #f6f8fc;
+  border-radius: 10px;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 10px;
+  display: inline-flex;
+}
+
+.card-image {
+  width: 190px;
+  height: 70px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.card-content {
+  font-weight: bold;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 10px;
+  display: inline-flex;
+}
+
+.simulation-name {
+  color: #00061f;
+  font-size: 14px;
+  font-weight: 500;
+  word-wrap: break-word;
+}

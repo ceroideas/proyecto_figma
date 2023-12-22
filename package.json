@@ -23,6 +23,7 @@
     "chart.js": "^4.4.1",
     "highcharts": "^11.2.0",
     "highcharts-angular": "^4.0.0",
+    "ng2-charts": "^5.0.4",
     "rollup": "^4.9.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

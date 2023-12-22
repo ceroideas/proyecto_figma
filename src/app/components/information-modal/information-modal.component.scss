@@ -1,5 +1,68 @@
+////modal////
+
+.modal-title {
+  font-weight: bold;
+  font-size: large !important;
+}
+
+.font {
+  font-weight: 500;
+}
+.input-formula {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  background-color: #f6f3f9;
+}
+p {
+  font-weight: bold;
+  color: #00061f;
+}
+.delete-variable-button {
+  border-color: rgb(199, 199, 199) !important;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+}
+.save-variable-button {
+  background-color: #000f55;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+  color: white;
+}
+.asterisk {
+  height: 15px;
+  width: 15px;
+}
+.input-group {
+  .form-control {
+    border-top-right-radius: 25px;
+    border-bottom-right-radius: 25px;
+    border-left: #ede9fe;
+  }
+  .input-group-text {
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    background-color: white;
+    border-right-color: white;
+  }
+}
+
+.form-control:focus {
+  border-color: rgb(211, 209, 209);
+  box-shadow: none;
+}
+
+.search {
+  width: 473px;
+}
+///card///
+
 .inner-container {
   padding: 2%;
+
   border-radius: 15px;
   flex-direction: column;
   background: #f6f3f9;
@@ -86,11 +149,4 @@
 .additional-text {
   font-size: 14px;
   font-weight: 500 !important;
-}
-.save-variable-button {
-  background-color: #000f55;
-  font-weight: bold;
-  border-radius: 25px;
-  font-size: medium;
-  color: white;
 }
