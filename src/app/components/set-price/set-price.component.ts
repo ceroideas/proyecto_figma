@@ -18,6 +18,6 @@ export class SetPriceComponent {
   }
 
   goWaterfall() {
-    this.router.navigate(['/home/inspect/waterfall']);
+    this.router.navigate(['/home/waterfall']);
   }
 }
