@@ -1,3 +1,13 @@
+<app-message
+  [content]="
+    'El escenario que estás utilizando está fijo y no se puede editar.'
+  "
+  [color]="'red'"
+  background="#FFEBEE"
+  icon="../../../assets/icons/fi_x-circle_red.svg"
+  closeIcon="../../../assets/icons/fi_x_red.svg"
+></app-message>
+
 <div class="d-flex flex-wrap justify-content-start">
   <div
     (click)="alert()"
