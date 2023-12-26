@@ -22,3 +22,20 @@ body {
 
   --md-switch-icon-color: red;
 }
+.confirm {
+  background-color: #000f55 !important; /* Cambia el color de fondo según tus preferencias */
+  font-weight: bold;
+  border-radius: 25px !important;
+}
+.cancel {
+  color: #000f55 !important; /* Cambia el color de fondo según tus preferencias */
+
+  border: 1px solid rgb(199, 199, 199) !important;
+  font-weight: bold;
+  border-radius: 25px !important;
+  background-color: white !important;
+
+  padding-right: 2.5em !important;
+
+  padding-left: 2.5em !important;
+}

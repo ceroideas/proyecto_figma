@@ -59,6 +59,11 @@ p {
   width: 473px;
 }
 ///card///
+///
+.size {
+  width: calc(33.33% - 22px);
+  height: 210px !important;
+}
 
 .inner-container {
   padding: 2%;
