@@ -4,6 +4,7 @@ import { ProjectsComponent } from './pages/projects/projects.component';
 import { InspectComponent } from './pages/inspect/inspect.component';
 import { WaterfallChartComponent } from './pages/waterfall-chart/waterfall-chart.component';
 import { SimulateComponent } from './pages/simulate/simulate.component';
+import { BuildComponent } from './pages/build/build.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home/projects', pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
       },
       { path: 'waterfall', component: WaterfallChartComponent },
       { path: 'simulate', component: SimulateComponent },
+      { path: 'build', component: BuildComponent },
     ],
   },
   // Otras rutas aquí...

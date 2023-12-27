@@ -84,3 +84,7 @@ li {
   border-top-right-radius: 25px;
   border-bottom-right-radius: 25px;
 }
+.dropdown-menu {
+  right: 0; /* Ajusta la posición del menú hacia la derecha */
+  left: auto; /* Asegura que no haya un desplazamiento a la izquierda */
+}

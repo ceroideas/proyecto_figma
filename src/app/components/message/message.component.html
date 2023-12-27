@@ -1,4 +1,5 @@
 <div
+  *ngIf="showMessage"
   class="d-flex justify-content-between align-items-center p-3 rounded"
   style="width: 100%; border-radius: 25px !important"
   [style.background]="background"
@@ -31,6 +32,6 @@
         position: absolute;
       "
     ></div>
-    <img [src]="closeIcon" alt="" />
+    <img style="cursor: pointer" (click)="show()" [src]="closeIcon" alt="" />
   </div>
 </div>
