@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { ComponentsModule } from './components/components.module';
 import { RouterModule } from '@angular/router';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { BuildModule } from './pages/build/build.module';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -12,6 +13,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
     RouterOutlet,
     ComponentsModule,
     HighchartsChartModule,
+    BuildModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

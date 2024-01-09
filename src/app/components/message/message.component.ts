@@ -1,10 +1,11 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-message',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DragDropModule],
   templateUrl: './message.component.html',
   styleUrl: './message.component.scss',
 })
@@ -16,6 +17,8 @@ export class MessageComponent {
   @Input() closeIcon: string = '';
   showMessage: boolean = true;
 
+  contenido: string | null = null;
+  @Output() algunEvento: EventEmitter<any> = new EventEmitter<any>();
   show() {
     this.showMessage = false;
   }
