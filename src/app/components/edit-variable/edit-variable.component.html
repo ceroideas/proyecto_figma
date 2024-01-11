@@ -63,10 +63,27 @@
         >
           <p class="mb-0">Nombre de la variable</p>
           <img
+            (click)="editVariableNameClick()"
             class="user-icon"
-            src="../../../assets/icons/fi_edit-3.svg"
+            [src]="
+              editVariableName
+                ? '../../../assets/icons/fi_x2.svg'
+                : '../../../assets/icons/fi_edit-3.svg'
+            "
             alt="User Icon"
           />
+        </div>
+        <div *ngIf="!editVariableName">{{ variableName }}</div>
+        <div class="col-md-11">
+          <div *ngIf="editVariableName" class="input-group">
+            <input
+              [(ngModel)]="variableName"
+              type="text"
+              class="form-control input-formula mb-0 input-margin"
+              placeholder="Nombre"
+              aria-describedby="basic-addon1"
+            />
+          </div>
         </div>
         <div
           class="mt-3 d-flex justify-content-between align-items-start w-100"
@@ -81,17 +98,37 @@
         <div
           class="mt-3 d-flex justify-content-between align-items-start w-100"
         >
-          <p class="mb-0" style="width: 95% !important">
-            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-            sint. Velit officia consequat duis enim velit mollit. Exercitation
-            veniam consequat sunt nostrud amet.
+          <p
+            *ngIf="!editVariableDescription"
+            class="mb-0"
+            style="width: 95% !important"
+          >
+            {{ variableDescription }}
           </p>
+          <div *ngIf="editVariableDescription" class="col-md-11">
+            <div class="input-group">
+              <textarea
+                [(ngModel)]="variableDescription"
+                type="text"
+                class="form-control input-formula mb-0 input-margin"
+                style="height: 120px"
+                placeholder="Descripcion"
+                aria-describedby="basic-addon1"
+              ></textarea>
+            </div>
+          </div>
           <img
+            (click)="editVariableDescriptionClick()"
             class="user-icon"
-            src="../../../assets/icons/fi_edit-3.svg"
+            [src]="
+              editVariableDescription
+                ? '../../../assets/icons/fi_x2.svg'
+                : '../../../assets/icons/fi_edit-3.svg'
+            "
             alt="User Icon"
           />
         </div>
+
         <p class="mt-3">Editar Valores</p>
         <div
           class="d-flex justify-content-between align-items-start w-100 mb-3"
@@ -141,6 +178,7 @@
             </button>
 
             <button
+              (click)="sendData()"
               type="button"
               class="btn btn-lg save-variable-button col-md-5"
             >

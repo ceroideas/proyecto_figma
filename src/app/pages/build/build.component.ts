@@ -107,32 +107,15 @@ export class BuildComponent {
           (cstmbtnElement: HTMLElement) => {
             cstmbtnElement.addEventListener('click', (e) => {
               e.stopPropagation();
-              this.rows.push([
-                {
-                  v: `${this.nextNode} `,
-                  f: `<div  class="rotate" >
-                  
-                         <span>
-                                <div class="floating">   
-                                       <div class="flex-box">   
-                                       <button id="1" class="cstmbtn btn btn-xs btn-info">A</button>
-                                       <button class="cstmbtn btn btn-xs btn-success">B</button>
-                                       <button class="cstmbtn btn btn-xs btn-danger">C</button>
-                                       </div>
-                                       <div class="full-box">
-                                              
-                                       </div>
-                                </div>
-                                Número de plazas 2
-                         </span>
-          
-                  </div>`,
-                },
-                `${this.nodeName}`,
-                '',
-              ]);
-              this.chart.draw(this.data, { allowHtml: true });
-              google.charts.setOnLoadCallback(this.drawChart);
+              const openButton = document.querySelector(
+                '[data-bs-toggle="modal"]'
+              );
+
+              // Verifica si el botón existe antes de intentar cerrar el modal
+              if (openButton) {
+                // Simula un clic en el botón para cerrar el modal
+                (openButton as HTMLElement).click();
+              }
             });
           }
         );
@@ -175,5 +158,32 @@ export class BuildComponent {
     google.charts.setOnLoadCallback(this.drawChart);
   }
 
-  ngAfterViewInit() {}
+  getDataFromModal(data: any) {
+    this.rows.push([
+      {
+        v: `${this.nextNode}`,
+        f: `<div  class="rotate" >
+        
+               <span>
+                      <div class="floating">   
+                             <div class="flex-box">   
+                             <button id="1"  class="cstmbtn btn btn-xs btn-info">A</button>
+                             <button class="cstmbtn btn btn-xs btn-success">B</button>
+                             <button class="cstmbtn btn btn-xs btn-danger">C</button>
+                             </div>
+                             <div class="full-box">
+                                    
+                             </div>
+                      </div>
+                      ${data.name}
+               </span>
+
+        </div>`,
+      },
+      `${this.nodeName}`,
+      `${data.description}`,
+    ]);
+    this.chart.draw(this.data, { allowHtml: true });
+    google.charts.setOnLoadCallback(this.drawChart);
+  }
 }
