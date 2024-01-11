@@ -23,112 +23,70 @@ declare var bootstrap: any;
 })
 export class BuildComponent {
   @ViewChild(AdDirective, { static: true }) adHost!: AdDirective;
-  @ViewChild('arrow', { static: true }) arrow!: ElementRef;
+  rows = [
+    [
+      {
+        v: '1',
+        f: `<div  class="rotate" >
+        
+               <span>
+                      <div class="floating">   
+                             <div class="flex-box">   
+                             <button id="1" class="cstmbtn btn btn-xs btn-info">A</button>
+                             <button class="cstmbtn btn btn-xs btn-success">B</button>
+                             <button class="cstmbtn btn btn-xs btn-danger">C</button>
+                             </div>
+                             <div class="full-box">
+                                    
+                             </div>
+                      </div>
+                      Número de plazas
+               </span>
 
-  @ViewChild('rotate', { static: true }) rotate!: ElementRef;
-
+        </div>`,
+      },
+      '',
+      'The President',
+    ],
+  ];
   isDisabled: boolean = false;
-
+  nextNode!: number;
+  fatherNode!: number;
+  nodeName!: any;
   showContent = true;
+  drawChart!: any;
+  chart!: any;
+  data!: any;
+  interval!: any;
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private cdr: ChangeDetectorRef,
     private renderer: Renderer2
   ) {
     google.charts.load('current', { packages: ['orgchart'] });
-    google.charts.setOnLoadCallback(drawChart);
 
-    function drawChart() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Name');
-      data.addColumn('string', 'Manager');
-      data.addColumn('string', 'ToolTip');
+    this.drawChart = () => {
+      this.data = new google.visualization.DataTable();
+      this.data.addColumn('string', 'Name');
+      this.data.addColumn('string', 'Manager');
+      this.data.addColumn('string', 'ToolTip');
 
       // For each orgchart box, provide the name, manager, and tooltip to show.
-      data.addRows([
-        [
-          { v: '5', f: '<div class="rotate"><span>Nodo 5</span></div>' },
-          '3',
-          '',
-        ],
-        [
-          { v: '4', f: '<div class="rotate"><span>Nodo 4</span></div>' },
-          '3',
-          '',
-        ],
-        [
-          { v: '3', f: '<div class="rotate"><span>Nodo 3</span></div>' },
-          '',
-          '',
-        ],
-        [
-          {
-            v: '2',
-            f: `<div (onclick)="esto()" class="rotate"><span>                           <div class="floating">   
-            <div class="flex-box">   
-            <button class="cstmbtn btn btn-xs btn-info">A</button>
-            <button class="cstmbtn btn btn-xs btn-success">B</button>
-            <button class="cstmbtn btn btn-xs btn-danger">C</button>
-            </div>
-            <div class="full-box">
-                   
-            </div>
-     </div> Número de plazas ocupadas</span></div>`,
-          },
-          '1',
-          'VP',
-        ],
-        [
-          {
-            v: '1',
-            f: `<div  class="rotate" >
-            
-                   <span>
-                          <div class="floating">   
-                                 <div class="flex-box">   
-                                 <button class="cstmbtn btn btn-xs btn-info">A</button>
-                                 <button class="cstmbtn btn btn-xs btn-success">B</button>
-                                 <button class="cstmbtn btn btn-xs btn-danger">C</button>
-                                 </div>
-                                 <div class="full-box">
-                                        
-                                 </div>
-                          </div>
-                          Número de plazas
-                   </span>
-
-            </div>`,
-          },
-          '',
-          'The President',
-        ],
-      ]);
+      this.data.addRows(this.rows);
 
       // Create the chart.
-      var chart = new google.visualization.OrgChart(
+      this.chart = new google.visualization.OrgChart(
         document.getElementById('chart_div')
       );
-      // Draw the chart, setting the allowHtml option to true for the tooltips.
-      chart.draw(data, { allowHtml: true });
-    }
-  }
-  esto() {
-    console.log('click bb');
-  }
-  ngAfterViewInit() {
-    var interval = setInterval(function () {
-      var orgChartTables = document.querySelectorAll(
-        '.google-visualization-orgchart-table'
-      );
 
-      if (orgChartTables.length > 0) {
-        clearInterval(interval);
-
+      google.visualization.events.addListener(this.chart, 'select', () => {
+        var selection = this.chart.getSelection();
         var rotateElements = document.querySelectorAll('.rotate');
         Array.prototype.forEach.call(
           rotateElements,
           function (rotateElement: HTMLElement) {
             rotateElement.addEventListener('click', function () {
+              console.log(this, 'ass');
               var floatingElement = this.querySelector(
                 '.floating'
               ) as HTMLElement;
@@ -143,32 +101,79 @@ export class BuildComponent {
             });
           }
         );
-
         var cstmbtnElements = document.querySelectorAll('.cstmbtn');
         Array.prototype.forEach.call(
           cstmbtnElements,
-          function (cstmbtnElement: HTMLElement) {
-            cstmbtnElement.addEventListener('click', function (e) {
+          (cstmbtnElement: HTMLElement) => {
+            cstmbtnElement.addEventListener('click', (e) => {
               e.stopPropagation();
+              this.rows.push([
+                {
+                  v: `${this.nextNode} `,
+                  f: `<div  class="rotate" >
+                  
+                         <span>
+                                <div class="floating">   
+                                       <div class="flex-box">   
+                                       <button id="1" class="cstmbtn btn btn-xs btn-info">A</button>
+                                       <button class="cstmbtn btn btn-xs btn-success">B</button>
+                                       <button class="cstmbtn btn btn-xs btn-danger">C</button>
+                                       </div>
+                                       <div class="full-box">
+                                              
+                                       </div>
+                                </div>
+                                Número de plazas 2
+                         </span>
+          
+                  </div>`,
+                },
+                `${this.nodeName}`,
+                '',
+              ]);
+              this.chart.draw(this.data, { allowHtml: true });
+              google.charts.setOnLoadCallback(this.drawChart);
             });
           }
         );
-      }
-    }, 1000);
-  }
-  toggleFloating() {
-    let el = this.rotate.nativeElement.querySelector('.floating');
-    let displayStyle = el.style.display;
+        // Verifica si se ha seleccionado algún elemento
+        if (selection.length > 0) {
+          // Obtén el índice de la fila seleccionada
+          var rowIndex = selection[0].row;
 
-    if (displayStyle === 'none' || displayStyle === '') {
-      this.renderer.setStyle(el, 'display', 'block');
-    } else {
-      this.renderer.setStyle(el, 'display', 'none');
-    }
+          // Obtén el valor de la columna 'Name' (v)
+          this.nodeName = this.data.getValue(rowIndex, 0);
+
+          // Obtén el valor de la columna 'Manager' (en este caso, el nodo padre)
+          this.fatherNode = this.data.getValue(rowIndex, 1);
+
+          var maxNumber = 0;
+          for (var i = 0; i < this.data.getNumberOfRows(); i++) {
+            var nodeValue = this.data.getValue(i, 0);
+
+            // Verifica que el valor exista y sea un número
+            if (
+              nodeValue !== null &&
+              nodeValue !== undefined &&
+              !isNaN(nodeValue)
+            ) {
+              maxNumber = Math.max(maxNumber, nodeValue);
+            }
+          }
+
+          // Incrementa el valor máximo en uno para obtener el próximo valor
+          this.nextNode = maxNumber + 1;
+
+          console.log('Próximo número:', this.nextNode);
+          console.log('nodo name:', this.nodeName);
+          console.log('Nodo padre:', this.fatherNode);
+        }
+      });
+
+      this.chart.draw(this.data, { allowHtml: true });
+    };
+    google.charts.setOnLoadCallback(this.drawChart);
   }
 
-  toggleContent() {
-    console.log('click');
-    this.showContent = !this.showContent;
-  }
+  ngAfterViewInit() {}
 }
