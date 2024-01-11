@@ -12,6 +12,9 @@ import {
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MessageComponent } from 'src/app/components/message/message.component';
 import { AdDirective } from './ad.directive';
+
+declare var google: any;
+declare var bootstrap: any;
 @Component({
   selector: 'app-build',
 
@@ -21,102 +24,151 @@ import { AdDirective } from './ad.directive';
 export class BuildComponent {
   @ViewChild(AdDirective, { static: true }) adHost!: AdDirective;
   @ViewChild('arrow', { static: true }) arrow!: ElementRef;
-  @ViewChild('arrow2', { static: true }) arrow2!: ElementRef;
+
+  @ViewChild('rotate', { static: true }) rotate!: ElementRef;
 
   isDisabled: boolean = false;
-  private isDragging = false;
-  private initialMouseX!: number;
-  private initialMouseY!: number;
-  private initialArrowRotation!: number;
-  private initialArrowX!: number;
-  private initialArrowY!: number;
+
+  showContent = true;
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private cdr: ChangeDetectorRef,
     private renderer: Renderer2
-  ) {}
+  ) {
+    google.charts.load('current', { packages: ['orgchart'] });
+    google.charts.setOnLoadCallback(drawChart);
 
-  public createComponent(): void {
-    const componentFactory =
-      this.componentFactoryResolver.resolveComponentFactory(MessageComponent);
-    const componentRef =
-      this.adHost.viewContainerRef.createComponent(componentFactory);
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Name');
+      data.addColumn('string', 'Manager');
+      data.addColumn('string', 'ToolTip');
 
-    // Puedes realizar acciones adicionales en el componente recién creado si es necesario.
-    // Por ejemplo, puedes acceder a las propiedades o métodos del componente.
-    // componentRef.instance.someProperty = 'some value';
-    // componentRef.instance.someMethod();
+      // For each orgchart box, provide the name, manager, and tooltip to show.
+      data.addRows([
+        [
+          { v: '5', f: '<div class="rotate"><span>Nodo 5</span></div>' },
+          '3',
+          '',
+        ],
+        [
+          { v: '4', f: '<div class="rotate"><span>Nodo 4</span></div>' },
+          '3',
+          '',
+        ],
+        [
+          { v: '3', f: '<div class="rotate"><span>Nodo 3</span></div>' },
+          '',
+          '',
+        ],
+        [
+          {
+            v: '2',
+            f: `<div (onclick)="esto()" class="rotate"><span>                           <div class="floating">   
+            <div class="flex-box">   
+            <button class="cstmbtn btn btn-xs btn-info">A</button>
+            <button class="cstmbtn btn btn-xs btn-success">B</button>
+            <button class="cstmbtn btn btn-xs btn-danger">C</button>
+            </div>
+            <div class="full-box">
+                   
+            </div>
+     </div> Número de plazas ocupadas</span></div>`,
+          },
+          '1',
+          'VP',
+        ],
+        [
+          {
+            v: '1',
+            f: `<div  class="rotate" >
+            
+                   <span>
+                          <div class="floating">   
+                                 <div class="flex-box">   
+                                 <button class="cstmbtn btn btn-xs btn-info">A</button>
+                                 <button class="cstmbtn btn btn-xs btn-success">B</button>
+                                 <button class="cstmbtn btn btn-xs btn-danger">C</button>
+                                 </div>
+                                 <div class="full-box">
+                                        
+                                 </div>
+                          </div>
+                          Número de plazas
+                   </span>
 
-    // También puedes escuchar eventos del componente si es necesario.
-    // componentRef.instance.someEvent.subscribe((data) => {
-    //   // Manejar el evento
-    // });
+            </div>`,
+          },
+          '',
+          'The President',
+        ],
+      ]);
 
-    // Asegúrate de destruir la instancia del componente después de su uso si no lo necesitas más.
-    componentRef.onDestroy(() => {
-      // Puedes realizar acciones adicionales cuando se destruye la instancia del componente.
-    });
-    this.cdr.detectChanges();
+      // Create the chart.
+      var chart = new google.visualization.OrgChart(
+        document.getElementById('chart_div')
+      );
+      // Draw the chart, setting the allowHtml option to true for the tooltips.
+      chart.draw(data, { allowHtml: true });
+    }
   }
-
-  onMouseDown(event: MouseEvent) {
-    this.obtenerValorTransform();
-    this.isDisabled = true;
-    this.isDragging = true;
-    this.initialMouseX = event.clientX;
-    this.initialMouseY = event.clientY;
-    console.log(this.initialMouseX);
-    this.initialArrowRotation = this.getCurrentArrowRotation();
-    this.renderer.setStyle(this.arrow.nativeElement, 'cursor', 'grabbing');
-    this.renderer.listen('document', 'mousemove', (e: MouseEvent) =>
-      this.onMouseMove(e)
-    );
-    this.renderer.listen('document', 'mouseup', () => this.onMouseUp());
+  esto() {
+    console.log('click bb');
   }
+  ngAfterViewInit() {
+    var interval = setInterval(function () {
+      var orgChartTables = document.querySelectorAll(
+        '.google-visualization-orgchart-table'
+      );
 
-  onMouseMove(event: MouseEvent) {
-    if (this.isDragging) {
-      const deltaX = event.clientX - this.initialMouseX;
-      const deltaY = event.clientY - this.initialMouseY;
-      const sensitivity = 0.5; // Ajusta este valor para cambiar la sensibilidad de la rotación
+      if (orgChartTables.length > 0) {
+        clearInterval(interval);
 
-      const newRotation = this.initialArrowRotation - deltaX * sensitivity;
-      this.rotateArrow(newRotation);
+        var rotateElements = document.querySelectorAll('.rotate');
+        Array.prototype.forEach.call(
+          rotateElements,
+          function (rotateElement: HTMLElement) {
+            rotateElement.addEventListener('click', function () {
+              var floatingElement = this.querySelector(
+                '.floating'
+              ) as HTMLElement;
+              if (
+                floatingElement.style.display === 'none' ||
+                floatingElement.style.display === ''
+              ) {
+                floatingElement.style.display = 'block';
+              } else {
+                floatingElement.style.display = 'none';
+              }
+            });
+          }
+        );
+
+        var cstmbtnElements = document.querySelectorAll('.cstmbtn');
+        Array.prototype.forEach.call(
+          cstmbtnElements,
+          function (cstmbtnElement: HTMLElement) {
+            cstmbtnElement.addEventListener('click', function (e) {
+              e.stopPropagation();
+            });
+          }
+        );
+      }
+    }, 1000);
+  }
+  toggleFloating() {
+    let el = this.rotate.nativeElement.querySelector('.floating');
+    let displayStyle = el.style.display;
+
+    if (displayStyle === 'none' || displayStyle === '') {
+      this.renderer.setStyle(el, 'display', 'block');
+    } else {
+      this.renderer.setStyle(el, 'display', 'none');
     }
   }
 
-  onMouseUp() {
-    this.isDragging = false;
-    this.renderer.setStyle(this.arrow.nativeElement, 'cursor', 'grab');
-    this.isDisabled = false;
-  }
-
-  getCurrentArrowRotation(): number {
-    const transform = window
-      .getComputedStyle(this.arrow.nativeElement)
-      .getPropertyValue('transform');
-    const matrix = new DOMMatrix(transform);
-    return Math.atan2(matrix.b, matrix.a) * (180 / Math.PI);
-  }
-
-  rotateArrow(rotation: number) {
-    console.log(this.initialArrowX, 'estoe s la inicial?');
-    this.renderer.setStyle(
-      this.arrow.nativeElement,
-      'transform',
-      ` rotate(${rotation}deg) translate(${this.initialArrowX}px, ${this.initialArrowY}px) `
-    );
-  }
-
-  obtenerValorTransform() {
-    const transformValue = window
-      .getComputedStyle(this.arrow.nativeElement)
-      .getPropertyValue('transform');
-    console.log('Valor de transform:', transformValue);
-
-    // Puedes analizar el valor de transform para obtener las partes específicas que necesitas
-    const matrix = new DOMMatrix(transformValue);
-    this.initialArrowX = matrix.m41;
-    this.initialArrowY = matrix.m42;
+  toggleContent() {
+    console.log('click');
+    this.showContent = !this.showContent;
   }
 }
