@@ -1348,5 +1348,9 @@
   </div>
 </div> -->
 <app-edit-variable
+  [variableId]="nodeName"
+  [variableFather]="fatherNode"
+  [editVariable]="editVariable"
   (sendDataEvent)="getDataFromModal($event)"
+  (editDataEvent)="editDataFromModal($event)"
 ></app-edit-variable>

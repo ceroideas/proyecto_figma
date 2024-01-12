@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import * as Highcharts from 'highcharts';
 import { Chart, registerables } from 'node_modules/chart.js';
@@ -12,12 +12,20 @@ Chart.register(...registerables);
   styleUrl: './edit-variable.component.scss',
 })
 export class EditVariableComponent implements OnInit {
+  @Input() variableId: any;
+  @Input() variableFather: any;
+  @Input() editVariable: boolean = false;
   editVariableName: boolean = false;
   editVariableDescription: boolean = false;
-  variableName: string = 'Nombre variable ';
-  variableDescription: string =
+  variableName: any = 'Nombre variable ';
+  variableDescription: any =
     'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitationveniam consequat sunt nostrud amet.';
+  tempObject = [
+    {},
+    { name: this.variableName, description: this.variableDescription },
+  ];
   @Output() sendDataEvent = new EventEmitter<any>();
+  @Output() editDataEvent = new EventEmitter<any>();
   ngOnInit(): void {
     new Chart('myChart', {
       type: 'bar',
@@ -41,6 +49,11 @@ export class EditVariableComponent implements OnInit {
         },
       },
     });
+    if (this.editVariable) {
+      let variable = this.tempObject[this.variableId];
+      this.variableName = variable?.name;
+      this.variableDescription = variable?.description;
+    }
   }
 
   editVariableNameClick() {
@@ -57,6 +70,23 @@ export class EditVariableComponent implements OnInit {
       description: this.variableDescription,
     });
     this.cerrarModal();
+    this.tempObject.push({
+      name: this.variableName,
+      description: this.variableDescription,
+    });
+  }
+  editData() {
+    this.editDataEvent.emit({
+      name: this.variableName,
+      description: this.variableDescription,
+      fatherNode: this.variableFather,
+      nameNode: this.variableId,
+    });
+    this.cerrarModal();
+    this.tempObject[this.variableId] = {
+      name: this.variableName,
+      description: this.variableDescription,
+    };
   }
   cerrarModal() {
     // Obtén el botón que tiene el atributo data-bs-dismiss dentro del modal
@@ -66,6 +96,14 @@ export class EditVariableComponent implements OnInit {
     if (closeButton) {
       // Simula un clic en el botón para cerrar el modal
       (closeButton as HTMLElement).click();
+    }
+  }
+
+  submit() {
+    if (this.editVariable) {
+      this.editData();
+    } else {
+      this.sendData();
     }
   }
 }

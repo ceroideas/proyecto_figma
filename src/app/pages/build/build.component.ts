@@ -32,8 +32,8 @@ export class BuildComponent {
                <span>
                       <div class="floating">   
                              <div class="flex-box">   
-                             <button id="1" class="cstmbtn btn btn-xs btn-info">A</button>
-                             <button class="cstmbtn btn btn-xs btn-success">B</button>
+                             <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
+                             <button class="cstmbtn  btn btn-xs btn-edit btn-success">B</button>
                              <button class="cstmbtn btn btn-xs btn-danger">C</button>
                              </div>
                              <div class="full-box">
@@ -58,6 +58,8 @@ export class BuildComponent {
   chart!: any;
   data!: any;
   interval!: any;
+  editVariable: boolean = false;
+
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private cdr: ChangeDetectorRef,
@@ -86,7 +88,6 @@ export class BuildComponent {
           rotateElements,
           function (rotateElement: HTMLElement) {
             rotateElement.addEventListener('click', function () {
-              console.log(this, 'ass');
               var floatingElement = this.querySelector(
                 '.floating'
               ) as HTMLElement;
@@ -101,11 +102,34 @@ export class BuildComponent {
             });
           }
         );
-        var cstmbtnElements = document.querySelectorAll('.cstmbtn');
+        var cstmbtnElements = document.querySelectorAll('.btn-add');
+
         Array.prototype.forEach.call(
           cstmbtnElements,
           (cstmbtnElement: HTMLElement) => {
             cstmbtnElement.addEventListener('click', (e) => {
+              this.editVariable = false;
+              e.stopPropagation();
+              const openButton = document.querySelector(
+                '[data-bs-toggle="modal"]'
+              );
+
+              // Verifica si el botón existe antes de intentar cerrar el modal
+              if (openButton) {
+                // Simula un clic en el botón para cerrar el modal
+                (openButton as HTMLElement).click();
+              }
+            });
+          }
+        );
+
+        var editElements = document.querySelectorAll('.btn-edit');
+
+        Array.prototype.forEach.call(
+          editElements,
+          (editElements: HTMLElement) => {
+            editElements.addEventListener('click', (e) => {
+              this.editVariable = true;
               e.stopPropagation();
               const openButton = document.querySelector(
                 '[data-bs-toggle="modal"]'
@@ -167,8 +191,8 @@ export class BuildComponent {
                <span>
                       <div class="floating">   
                              <div class="flex-box">   
-                             <button id="1"  class="cstmbtn btn btn-xs btn-info">A</button>
-                             <button class="cstmbtn btn btn-xs btn-success">B</button>
+                             <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
+                             <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
                              <button class="cstmbtn btn btn-xs btn-danger">C</button>
                              </div>
                              <div class="full-box">
@@ -183,6 +207,37 @@ export class BuildComponent {
       `${this.nodeName}`,
       `${data.description}`,
     ]);
+    this.chart.draw(this.data, { allowHtml: true });
+    google.charts.setOnLoadCallback(this.drawChart);
+  }
+
+  editDataFromModal(data: any) {
+    let position = +data.nameNode - 1;
+    console.log(data);
+    this.rows[position] = [
+      {
+        v: `${data.nameNode}`,
+        f: `<div  class="rotate" >
+        
+               <span>
+                      <div class="floating">   
+                             <div class="flex-box">   
+                             <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
+                             <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
+                             <button class="cstmbtn btn btn-xs btn-danger">C</button>
+                             </div>
+                             <div class="full-box">
+                                    
+                             </div>
+                      </div>
+                      ${data.name}
+               </span>
+
+        </div>`,
+      },
+      `${data.fatherNode}`,
+      `${data.description}`,
+    ];
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
   }
