@@ -23,32 +23,7 @@ declare var bootstrap: any;
 })
 export class BuildComponent {
   @ViewChild(AdDirective, { static: true }) adHost!: AdDirective;
-  rows = [
-    [
-      {
-        v: '1',
-        f: `<div  class="rotate" >
-        
-               <span>
-                      <div class="floating">   
-                             <div class="flex-box">   
-                             <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
-                             <button class="cstmbtn  btn btn-xs btn-edit btn-success">B</button>
-                             <button class="cstmbtn btn btn-xs btn-danger">C</button>
-                             </div>
-                             <div class="full-box">
-                                    
-                             </div>
-                      </div>
-                      Número de plazas
-               </span>
-
-        </div>`,
-      },
-      '',
-      'The President',
-    ],
-  ];
+  rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
   fatherNode!: number;
@@ -59,6 +34,36 @@ export class BuildComponent {
   data!: any;
   interval!: any;
   editVariable: boolean = false;
+  aux: any = [
+    {
+      data: [
+        {
+          v: '1',
+          f: `<div  class="rotate" >
+        
+        <span>
+               <div class="floating">   
+                      <div class="flex-box">   
+                      <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
+                      <button class="cstmbtn  btn btn-xs btn-edit btn-success">B</button>
+                      <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>
+                      </div>
+                      <div class="full-box">
+                             
+                      </div>
+               </div>
+               Número de plazas 2
+        </span>
+
+ </div>`,
+        },
+        '',
+        '',
+      ],
+      hidden: 0,
+      unidad: 200,
+    },
+  ];
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -73,7 +78,7 @@ export class BuildComponent {
       this.data.addColumn('string', 'Manager');
       this.data.addColumn('string', 'ToolTip');
 
-      // For each orgchart box, provide the name, manager, and tooltip to show.
+      this.addRow();
       this.data.addRows(this.rows);
 
       // Create the chart.
@@ -82,6 +87,13 @@ export class BuildComponent {
       );
 
       google.visualization.events.addListener(this.chart, 'select', () => {
+        let objetoConSegundoParametro4 = this.aux.find(
+          (item: any) => item.data[1] === '4'
+        );
+        if (objetoConSegundoParametro4) {
+          objetoConSegundoParametro4.hidden = 0;
+        }
+
         var selection = this.chart.getSelection();
         var rotateElements = document.querySelectorAll('.rotate');
         Array.prototype.forEach.call(
@@ -143,6 +155,17 @@ export class BuildComponent {
             });
           }
         );
+
+        var hiddenElements = document.querySelectorAll('.btn-hidden');
+        Array.prototype.forEach.call(
+          hiddenElements,
+          (hiddenElements: HTMLElement) => {
+            hiddenElements.addEventListener('click', (e) => {
+              e.stopPropagation();
+              this.findAndHideFatherNode();
+            });
+          }
+        );
         // Verifica si se ha seleccionado algún elemento
         if (selection.length > 0) {
           // Obtén el índice de la fila seleccionada
@@ -169,8 +192,8 @@ export class BuildComponent {
           }
 
           // Incrementa el valor máximo en uno para obtener el próximo valor
-          this.nextNode = maxNumber + 1;
-
+          this.nextNode = this.aux.length + 1;
+          console.log('ROW', this.rows);
           console.log('Próximo número:', this.nextNode);
           console.log('nodo name:', this.nodeName);
           console.log('Nodo padre:', this.fatherNode);
@@ -183,61 +206,91 @@ export class BuildComponent {
   }
 
   getDataFromModal(data: any) {
-    this.rows.push([
-      {
-        v: `${this.nextNode}`,
-        f: `<div  class="rotate" >
-        
-               <span>
-                      <div class="floating">   
-                             <div class="flex-box">   
-                             <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
-                             <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
-                             <button class="cstmbtn btn btn-xs btn-danger">C</button>
-                             </div>
-                             <div class="full-box">
-                                    
-                             </div>
-                      </div>
-                      ${data.name}
-               </span>
-
-        </div>`,
-      },
-      `${this.nodeName}`,
-      `${data.description}`,
-    ]);
+    this.aux.push({
+      data: [
+        {
+          v: `${this.nextNode}`,
+          f: `<div  class="rotate" >
+            
+                   <span>
+                          <div class="floating">   
+                                 <div class="flex-box">   
+                                 <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
+                                 <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
+                                 <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>
+                                 </div>
+                                 <div class="full-box">
+                                        
+                                 </div>
+                          </div>
+                          ${data.name} otro
+                   </span>
+    
+            </div>`,
+        },
+        `${this.nodeName}`,
+        `${data.description}`,
+      ],
+      hidden: 0,
+      unidad: data.unidad,
+    });
+    this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
   }
 
   editDataFromModal(data: any) {
     let position = +data.nameNode - 1;
-    console.log(data);
-    this.rows[position] = [
-      {
-        v: `${data.nameNode}`,
-        f: `<div  class="rotate" >
-        
-               <span>
-                      <div class="floating">   
-                             <div class="flex-box">   
-                             <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
-                             <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
-                             <button class="cstmbtn btn btn-xs btn-danger">C</button>
-                             </div>
-                             <div class="full-box">
-                                    
-                             </div>
-                      </div>
-                      ${data.name}
-               </span>
 
-        </div>`,
-      },
-      `${data.fatherNode}`,
-      `${data.description}`,
-    ];
+    this.aux[position] = {
+      data: [
+        {
+          v: `${data.nameNode}`,
+          f: `<div  class="rotate" >
+          
+                 <span>
+                        <div class="floating">   
+                               <div class="flex-box">   
+                               <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
+                               <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
+                               <button class="cstmbtn btn btn-xs btn-danger">C</button>
+                               </div>
+                               <div class="full-box">
+                                      
+                               </div>
+                        </div>
+                        ${data.name}
+                 </span>
+  
+          </div>`,
+        },
+        `${data.fatherNode}`,
+        `${data.description}`,
+      ],
+      hidden: 0,
+      unidad: data.unidad,
+    };
+    this.addRow();
+    console.log(this.aux, 'AUX');
+    this.chart.draw(this.data, { allowHtml: true });
+    google.charts.setOnLoadCallback(this.drawChart);
+  }
+
+  addRow() {
+    this.rows = [];
+    for (let i = 0; i < this.aux.length; i++) {
+      const element = this.aux[i];
+      if (element.hidden === 0) {
+        this.rows.push(element?.data);
+      }
+    }
+  }
+  findAndHideFatherNode() {
+    const node = this.aux.find((item: any) =>
+      item.data.some((subItem: any) => subItem.v === this.nodeName)
+    );
+    node.hidden = 1;
+
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
   }
