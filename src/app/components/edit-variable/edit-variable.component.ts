@@ -47,6 +47,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       unidad: 200,
       variableSelect1: this.variableSelect1,
       variableSelect2: this.variableSelect2,
+      operation: false,
     },
   ];
   @Output() sendDataEvent = new EventEmitter<any>();
@@ -79,7 +80,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         },
       },
     });
-    console.log(this.editVariable);
+
     if (this.editVariable) {
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;
@@ -87,6 +88,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.variableUnidad = variable.unidad;
       this.variableSelect1 = variable?.variableSelect1;
       this.variableSelect2 = variable?.variableSelect2;
+      this.isOperation = variable?.operation || false;
+    } else {
     }
   }
   ngAfterViewInit() {
@@ -99,7 +102,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     modal._element.addEventListener('hidden.bs.modal', () => {
       console.log('Modal cerrado');
-      // Agrega aquí cualquier lógica que desees ejecutar cuando se cierra el modal
+      this.variableName = '';
+      this.variableSelect1 = '';
+      this.variableSelect2 = '';
+      this.variableDescription = '';
+      this.variableUnidad = 0;
     });
   }
   editVariableNameClick() {
@@ -114,32 +121,81 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (this.variableSelect1 && this.variableSelect2) {
       this.isOperation = true;
     }
-    console.log(
-      this.operation(this.variableSelect1, this.variableSelect2),
-      'OPERATION'
-    );
+    let unidad = this.variableUnidad;
     this.sendDataEvent.emit({
       name: this.variableName,
       description: this.variableDescription,
       unidad: this.isOperation
-        ? this.operation(this.variableSelect1, this.variableSelect2)
+        ? (() => {
+            const unidad1 = this.tempObject?.[this.variableSelect1 + 1]?.unidad;
+            const unidad2 =
+              this.tempObject?.[+this.variableSelect2 + 1]?.unidad;
+
+            // Verificar si las propiedades existen antes de intentar acceder a ellas
+            if (unidad1 !== undefined && unidad2 !== undefined) {
+              return +unidad1 + +unidad2;
+            } else {
+              // Manejar el caso en que alguna de las propiedades es 'undefined'
+              return 0;
+            }
+          })()
         : this.variableUnidad,
       variableSelect1: this.variableSelect1,
       variableSelect2: this.variableSelect2,
     });
     this.cerrarModal();
+    /*     this.tempObject.push({
+      name: this.variableName,
+      description: this.variableDescription,
+      variableSelect1: this.variableSelect1,
+      variableSelect2: this.variableSelect2,
+      get unidad():any {
+        
+        const unidad1 = tempObject?.[this.variableSelect1 + 1]?.unidad;
+        const unidad2 =
+          this.tempObject?.[+this.variableSelect2 + 1]?.unidad;
+
+        // Verificar si las propiedades existen antes de intentar acceder a ellas
+        if (unidad1 !== undefined && unidad2 !== undefined) {
+          return +unidad1 + +unidad2;
+        } else {
+          // Manejar el caso en que alguna de las propiedades es 'undefined'
+          return 0;
+        }
+      },
+
+    }); */
+    let temp = this.tempObject;
+
     this.tempObject.push({
       name: this.variableName,
       description: this.variableDescription,
-      unidad: this.isOperation
-        ? this.operation(this.variableSelect1, this.variableSelect2)
-        : this.variableUnidad,
       variableSelect1: this.variableSelect1,
       variableSelect2: this.variableSelect2,
+      operation: this.isOperation,
+      get unidad(): any {
+        const unidad1 = temp?.[+this.variableSelect1 + 1]?.unidad;
+        const unidad2 = temp?.[+this.variableSelect2 + 1]?.unidad;
+        console.log(unidad1, unidad2, this.operation, 'dsjhjduhd');
+        // Verificar si las propiedades existen antes de intentar acceder a ellas
+        if (
+          unidad1 !== undefined &&
+          unidad2 !== undefined &&
+          this.operation === true
+        ) {
+          return +unidad1 + +unidad2;
+        } else {
+          // Manejar el caso en que alguna de las propiedades es 'undefined'
+          return unidad;
+        }
+      },
     });
-    console.log(this.variableSelect1, this.variableSelect2);
   }
   editData() {
+    if (this.variableSelect1 && this.variableSelect2) {
+      this.isOperation = true;
+    }
+    let unidad = this.variableUnidad;
     this.editDataEvent.emit({
       name: this.variableName,
       description: this.variableDescription,
@@ -150,16 +206,30 @@ export class EditVariableComponent implements OnInit, OnChanges {
       nameNode: this.variableId,
     });
     this.cerrarModal();
+    let temp = this.tempObject;
     this.tempObject[this.variableId] = {
       name: this.variableName,
       description: this.variableDescription,
-      unidad: this.isOperation
-        ? this.operation(this.variableSelect1, this.variableSelect2)
-        : this.variableUnidad,
       variableSelect1: this.variableSelect1,
       variableSelect2: this.variableSelect2,
+      operation: this.isOperation,
+      get unidad(): any {
+        const unidad1 = temp?.[+this.variableSelect1 + 1]?.unidad;
+        const unidad2 = temp?.[+this.variableSelect2 + 1]?.unidad;
+        console.log(unidad1, unidad2, this.operation);
+        // Verificar si las propiedades existen antes de intentar acceder a ellas
+        if (
+          unidad1 !== undefined &&
+          unidad2 !== undefined &&
+          this.operation === true
+        ) {
+          return +unidad1 + +unidad2;
+        } else {
+          // Manejar el caso en que alguna de las propiedades es 'undefined'
+          return unidad;
+        }
+      },
     };
-    console.log(this.tempObject);
   }
   cerrarModal() {
     // Obtén el botón que tiene el atributo data-bs-dismiss dentro del modal
@@ -184,12 +254,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   operation(id1: any, id2: any) {
-    const unidad1 = this.tempObject[id1 + 1]?.unidad;
-    const unidad2 = this.tempObject[id2 + 1]?.unidad;
+    const unidad1 = this.tempObject[+id1 + 1]?.unidad;
+    const unidad2 = this.tempObject[+id2 + 1]?.unidad;
 
     // Verificar si las propiedades existen antes de intentar acceder a ellas
     if (unidad1 !== undefined && unidad2 !== undefined) {
-      console.log(+unidad1 + +unidad2, 'unidad');
       return +unidad1 + +unidad2;
     } else {
       // Manejar el caso en que alguna de las propiedades es 'undefined'
@@ -197,7 +266,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
   }
   updateVariables(): void {
-    console.log(this.editVariable);
     if (this.editVariable) {
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;

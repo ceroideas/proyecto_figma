@@ -12,7 +12,32 @@ import {
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MessageComponent } from 'src/app/components/message/message.component';
 import { AdDirective } from './ad.directive';
-
+[
+  [
+    {
+      v: '1',
+      f: '<div  class="rotate" >\n        \n        <span>\n               <div class="floating">   \n                      <div class="flex-box">   \n                      <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>\n                      <button class="cstmbtn  btn btn-xs btn-edit btn-success">B</button>\n                      <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>\n                      </div>\n                      <div class="full-box">\n                             \n                      </div>\n               </div>\n               Número de plazas 2\n        </span>\n\n </div>',
+    },
+    '',
+    '',
+  ],
+  [
+    {
+      v: '2',
+      f: '<div  class="rotate" >\n            \n                   <span>\n                          <div class="floating">   \n                                 <div class="flex-box">   \n                                 <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>\n                                 <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>\n                                 <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>\n                                 </div>\n                                 <div class="full-box">\n                                        \n                                 </div>\n                          </div>\n                          Nombre variable  otro\n                   </span>\n    \n            </div>',
+    },
+    '1',
+    'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitationveniam consequat sunt nostrud amet.',
+  ],
+  [
+    {
+      v: '3',
+      f: '<div  class="rotate" >\n            \n                   <span>\n                          <div class="floating">   \n                                 <div class="flex-box">   \n                                 <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>\n                                 <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>\n                                 <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>\n                                 </div>\n                                 <div class="full-box">\n                                        \n                                 </div>\n                          </div>\n                           otro\n                   </span>\n    \n            </div>',
+    },
+    '2',
+    '',
+  ],
+];
 declare var google: any;
 declare var bootstrap: any;
 @Component({
@@ -289,8 +314,27 @@ export class BuildComponent {
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
-    node.hidden = 1;
 
+    const sonNode = this.aux.filter(
+      (item: any) => item.data[1] === this.nodeName
+    );
+
+    node.hidden = 1;
+    sonNode.forEach((node: any) => {
+      node.hidden = 1;
+    });
+
+    this.chart.draw(this.data, { allowHtml: true });
+    google.charts.setOnLoadCallback(this.drawChart);
+  }
+  seeAll() {
+    for (let i = 0; i < this.aux.length; i++) {
+      // Verificar si el valor de 'hidden' es 1
+      if (this.aux[i].hidden === 1) {
+        // Cambiar el valor de 'hidden' a 0
+        this.aux[i].hidden = 0;
+      }
+    }
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
   }
