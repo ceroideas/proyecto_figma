@@ -12,32 +12,7 @@ import {
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MessageComponent } from 'src/app/components/message/message.component';
 import { AdDirective } from './ad.directive';
-[
-  [
-    {
-      v: '1',
-      f: '<div  class="rotate" >\n        \n        <span>\n               <div class="floating">   \n                      <div class="flex-box">   \n                      <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>\n                      <button class="cstmbtn  btn btn-xs btn-edit btn-success">B</button>\n                      <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>\n                      </div>\n                      <div class="full-box">\n                             \n                      </div>\n               </div>\n               Número de plazas 2\n        </span>\n\n </div>',
-    },
-    '',
-    '',
-  ],
-  [
-    {
-      v: '2',
-      f: '<div  class="rotate" >\n            \n                   <span>\n                          <div class="floating">   \n                                 <div class="flex-box">   \n                                 <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>\n                                 <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>\n                                 <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>\n                                 </div>\n                                 <div class="full-box">\n                                        \n                                 </div>\n                          </div>\n                          Nombre variable  otro\n                   </span>\n    \n            </div>',
-    },
-    '1',
-    'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitationveniam consequat sunt nostrud amet.',
-  ],
-  [
-    {
-      v: '3',
-      f: '<div  class="rotate" >\n            \n                   <span>\n                          <div class="floating">   \n                                 <div class="flex-box">   \n                                 <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>\n                                 <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>\n                                 <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>\n                                 </div>\n                                 <div class="full-box">\n                                        \n                                 </div>\n                          </div>\n                           otro\n                   </span>\n    \n            </div>',
-    },
-    '2',
-    '',
-  ],
-];
+
 declare var google: any;
 declare var bootstrap: any;
 @Component({
@@ -112,13 +87,6 @@ export class BuildComponent {
       );
 
       google.visualization.events.addListener(this.chart, 'select', () => {
-        let objetoConSegundoParametro4 = this.aux.find(
-          (item: any) => item.data[1] === '4'
-        );
-        if (objetoConSegundoParametro4) {
-          objetoConSegundoParametro4.hidden = 0;
-        }
-
         var selection = this.chart.getSelection();
         var rotateElements = document.querySelectorAll('.rotate');
         Array.prototype.forEach.call(

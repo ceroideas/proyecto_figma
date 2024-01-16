@@ -65,9 +65,13 @@ body {
 
 .rotate span {
   position: absolute;
-  width: 200px;
+  width: 180px;
   left: -90px;
-  top: -7px;
+  top: -11px;
+  color: #00061f;
+  font-size: 14px;
+
+  font-weight: 400;
 }
 
 .floating {
@@ -95,4 +99,26 @@ body {
 .full-box {
   width: 100%;
   height: 20px;
+}
+.google-visualization-orgchart-node {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+
+  position: relative !important;
+  background: white !important;
+
+  /*   border-radius: 15px !important;
+  border: 1px #cbd4e1 solid !important; */
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+.google-visualization-orgchart-table * {
+  margin: 0;
+  padding: none !important;
+}
+table {
+  border-collapse: none !important;
 }
