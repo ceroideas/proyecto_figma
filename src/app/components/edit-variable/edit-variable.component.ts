@@ -107,6 +107,10 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.variableSelect2 = '';
       this.variableDescription = '';
       this.variableUnidad = 0;
+      this.editVariableName = false;
+      this.editVariableDescription = false;
+      this.editVariableUnidad = false;
+      this.isOperation = false;
     });
   }
   editVariableNameClick() {

@@ -21,7 +21,9 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <p class="modal-title" id="exampleModalLabel">Editar variable</p>
+        <p class="modal-title" id="exampleModalLabel">
+          {{ editVariable ? "Editar variable " : "Crear variable" }}
+        </p>
         <button
           type="button"
           class="btn-close"
