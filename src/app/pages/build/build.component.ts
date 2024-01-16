@@ -200,7 +200,9 @@ export class BuildComponent {
         if (orgChartTables.length > 0) {
           clearInterval(interval);
 
-          var rotateElements = document.querySelectorAll('.rotate');
+          var rotateElements = document.querySelectorAll(
+            '.google-visualization-orgchart-node'
+          );
           Array.prototype.forEach.call(
             rotateElements,
             function (rotateElement: HTMLElement) {
@@ -245,7 +247,7 @@ export class BuildComponent {
                                         
                                  </div>
                           </div>
-                          ${data.name} otro
+                          ${data.name} 
                    </span>
     
             </div>`,
