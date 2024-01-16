@@ -88,7 +88,7 @@ export class BuildComponent {
 
       google.visualization.events.addListener(this.chart, 'select', () => {
         var selection = this.chart.getSelection();
-        var rotateElements = document.querySelectorAll('.rotate');
+        /*        var rotateElements = document.querySelectorAll('.rotate');
         Array.prototype.forEach.call(
           rotateElements,
           function (rotateElement: HTMLElement) {
@@ -106,7 +106,7 @@ export class BuildComponent {
               }
             });
           }
-        );
+        ); */
         var cstmbtnElements = document.querySelectorAll('.btn-add');
 
         Array.prototype.forEach.call(
@@ -190,6 +190,35 @@ export class BuildComponent {
           console.log('Próximo número:', this.nextNode);
           console.log('nodo name:', this.nodeName);
           console.log('Nodo padre:', this.fatherNode);
+        }
+      });
+
+      const interval = setInterval(() => {
+        var orgChartTables = document.querySelectorAll(
+          '.google-visualization-orgchart-table'
+        );
+        if (orgChartTables.length > 0) {
+          clearInterval(interval);
+
+          var rotateElements = document.querySelectorAll('.rotate');
+          Array.prototype.forEach.call(
+            rotateElements,
+            function (rotateElement: HTMLElement) {
+              rotateElement.addEventListener('click', function () {
+                var floatingElement = this.querySelector(
+                  '.floating'
+                ) as HTMLElement;
+                if (
+                  floatingElement.style.display === 'none' ||
+                  floatingElement.style.display === ''
+                ) {
+                  floatingElement.style.display = 'block';
+                } else {
+                  floatingElement.style.display = 'none';
+                }
+              });
+            }
+          );
         }
       });
 
