@@ -34,6 +34,7 @@ export class BuildComponent {
   data!: any;
   interval!: any;
   editVariable: boolean = false;
+  hidden: boolean = false;
   aux: any = [
     {
       data: [
@@ -42,7 +43,7 @@ export class BuildComponent {
           f: `<div  class="rotate" >
         
         <span>
-               <div class="floating">   
+               <div class="floating" style="display: none;">   
                       <div class="flex-box">   
                       <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
                       <button class="cstmbtn  btn btn-xs btn-edit btn-success">B</button>
@@ -87,6 +88,7 @@ export class BuildComponent {
       );
 
       google.visualization.events.addListener(this.chart, 'select', () => {
+        this.hidden = false;
         var selection = this.chart.getSelection();
         /*        var rotateElements = document.querySelectorAll('.rotate');
         Array.prototype.forEach.call(
@@ -155,7 +157,8 @@ export class BuildComponent {
           (hiddenElements: HTMLElement) => {
             hiddenElements.addEventListener('click', (e) => {
               e.stopPropagation();
-              this.findAndHideFatherNode();
+              this.hidden = true;
+              /* this.findAndHideFatherNode(); */
             });
           }
         );
@@ -193,7 +196,9 @@ export class BuildComponent {
         }
       });
 
+      this.chart.draw(this.data, { allowHtml: true });
       const interval = setInterval(() => {
+        console.log('SET');
         var orgChartTables = document.querySelectorAll(
           '.google-visualization-orgchart-table'
         );
@@ -206,25 +211,22 @@ export class BuildComponent {
           Array.prototype.forEach.call(
             rotateElements,
             function (rotateElement: HTMLElement) {
-              rotateElement.addEventListener('click', function () {
+              rotateElement.addEventListener('click', function (e) {
+                e.stopPropagation();
                 var floatingElement = this.querySelector(
                   '.floating'
                 ) as HTMLElement;
-                if (
-                  floatingElement.style.display === 'none' ||
-                  floatingElement.style.display === ''
-                ) {
-                  floatingElement.style.display = 'block';
-                } else {
+
+                if (floatingElement.style.display === 'block') {
                   floatingElement.style.display = 'none';
+                } else {
+                  floatingElement.style.display = 'block';
                 }
               });
             }
           );
         }
       });
-
-      this.chart.draw(this.data, { allowHtml: true });
     };
     google.charts.setOnLoadCallback(this.drawChart);
   }
@@ -237,7 +239,7 @@ export class BuildComponent {
           f: `<div  class="rotate" >
             
                    <span>
-                          <div class="floating">   
+                          <div class="floating" style="display: none;">   
                                  <div class="flex-box">   
                                  <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
                                  <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
@@ -273,7 +275,7 @@ export class BuildComponent {
           f: `<div  class="rotate" >
           
                  <span>
-                        <div class="floating">   
+                        <div class="floating" style="display: none;">   
                                <div class="flex-box">   
                                <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
                                <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
@@ -310,6 +312,8 @@ export class BuildComponent {
     }
   }
   findAndHideFatherNode() {
+    var floatingElement = document.querySelector('.floating') as HTMLElement;
+    floatingElement.style.display = 'block';
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
@@ -322,7 +326,7 @@ export class BuildComponent {
     sonNode.forEach((node: any) => {
       node.hidden = 1;
     });
-
+    this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
   }

@@ -1357,5 +1357,7 @@
   [editVariable]="editVariable"
   (sendDataEvent)="getDataFromModal($event)"
   (editDataEvent)="editDataFromModal($event)"
+  (hiddenDataEvent)="findAndHideFatherNode()"
+  [isHidden]="hidden"
   [aux]="aux"
 ></app-edit-variable>

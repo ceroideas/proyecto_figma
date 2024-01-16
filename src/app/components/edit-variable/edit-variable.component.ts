@@ -37,6 +37,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   variableUnidad!: any;
   isOperation: boolean = false;
   variableName: any = 'Nombre variable ';
+  @Input() isHidden: boolean = false;
   variableDescription: any =
     'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitationveniam consequat sunt nostrud amet.';
   tempObject = [
@@ -52,11 +53,20 @@ export class EditVariableComponent implements OnInit, OnChanges {
   ];
   @Output() sendDataEvent = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
+  @Output() hiddenDataEvent = new EventEmitter<any>();
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
       this.updateVariables();
     }
+    if (changes.hasOwnProperty('isHidden')) {
+      const hidden = changes['isHidden'].currentValue;
+      if (hidden) {
+        this.hiddenData();
+      }
+      this.isHidden = false;
+    }
   }
+
   ngOnInit(): void {
     new Chart('myChart', {
       type: 'bar',
@@ -278,5 +288,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.variableSelect1 = variable?.variableSelect1;
       this.variableSelect2 = variable?.variableSelect2;
     }
+  }
+  hiddenData() {
+    this.hiddenDataEvent.emit();
   }
 }
