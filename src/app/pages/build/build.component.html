@@ -3,8 +3,6 @@
 </button>
  -->
 <div
-  data-bs-toggle="modal"
-  data-bs-target="#hide-show"
   style="
     width: 80%;
     height: 50%;
@@ -18,7 +16,11 @@
     display: flex;
   "
 >
-  <div class="custom-container">
+  <div
+    data-bs-toggle="modal"
+    data-bs-target="#hide-show"
+    class="custom-container"
+  >
     <div class="icon-container">
       <img
         class="icon-img"
@@ -84,26 +86,19 @@
                 style="position: absolute"
                 src="../../../assets/icons/u_eye-slash2.svg"
                 alt=""
+                [src]="
+                  tier.hidden === 0
+                    ? '../../../assets/icons/u_eye.svg'
+                    : '../../../assets/icons/u_eye-slash2.svg'
+                "
               />
             </div>
-            <div style="color: #64748b" class="branch-name">
+            <div
+              [style]="tier.hidden === 0 ? 'color: #00061f' : 'color: #64748b'"
+              class="branch-name"
+            >
               {{ tier.name }}
             </div>
-          </div>
-          <div class="brach-level-container">
-            <div class="brach-level">L0</div>
-          </div>
-        </div>
-        <div class="branch">
-          <div class="branch-content">
-            <div style="width: 24px; height: 24px; position: relative">
-              <img
-                style="position: absolute"
-                src="../../../assets/icons/u_eye.svg"
-                alt=""
-              />
-            </div>
-            <div style="color: #00061f" class="branch-name">Be healthy</div>
           </div>
           <div class="brach-level-container">
             <div class="brach-level">L0</div>
