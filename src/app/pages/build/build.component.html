@@ -1,8 +1,10 @@
 <!-- <button (click)="seeAll()" type="button" class="btn btn-primary">
   Ver todo
-</button> -->
-
+</button>
+ -->
 <div
+  data-bs-toggle="modal"
+  data-bs-target="#hide-show"
   style="
     width: 80%;
     height: 50%;
@@ -16,8 +18,118 @@
     display: flex;
   "
 >
+  <div class="custom-container">
+    <div class="icon-container">
+      <img
+        class="icon-img"
+        src="../../../assets/icons/u_eye-slash.svg"
+        alt=""
+      />
+    </div>
+    <div class="text-container">7 Hidden branches</div>
+  </div>
+
   <div id="chart_container">
     <div id="chart_div"></div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade modal-dialog modal-dialog-scrollable modal-sm"
+  id="hide-show"
+  tabindex="-1"
+  aria-labelledby="hide-showLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="modal-title" id="hide-showLabel">Branches</p>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="view-all">
+          <div
+            style="
+              flex: 1 1 0;
+              color: #111827;
+              font-size: 14px;
+
+              font-weight: 400;
+              word-wrap: break-word;
+            "
+          >
+            View all
+          </div>
+          <div style="width: 20px; height: 20px; position: relative">
+            <img
+              style="position: absolute"
+              src="../../../assets/icons/Chevron down.svg"
+              alt=""
+            />
+          </div>
+        </div>
+        <hr />
+
+        <div class="branch" *ngFor="let tier of aux; index as i">
+          <div (click)="modalHideAndShowBranch(tier, i)" class="branch-content">
+            <div style="width: 24px; height: 24px; position: relative">
+              <img
+                style="position: absolute"
+                src="../../../assets/icons/u_eye-slash2.svg"
+                alt=""
+              />
+            </div>
+            <div style="color: #64748b" class="branch-name">
+              {{ tier.name }}
+            </div>
+          </div>
+          <div class="brach-level-container">
+            <div class="brach-level">L0</div>
+          </div>
+        </div>
+        <div class="branch">
+          <div class="branch-content">
+            <div style="width: 24px; height: 24px; position: relative">
+              <img
+                style="position: absolute"
+                src="../../../assets/icons/u_eye.svg"
+                alt=""
+              />
+            </div>
+            <div style="color: #00061f" class="branch-name">Be healthy</div>
+          </div>
+          <div class="brach-level-container">
+            <div class="brach-level">L0</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div
+          class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
+        >
+          <button
+            type="button"
+            class="btn btn-sm delete-variable-button col-md-5 mb-0"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-sm save-variable-button col-md-5"
+          >
+            save changes
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

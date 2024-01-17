@@ -158,27 +158,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       variableSelect2: this.variableSelect2,
     });
     this.cerrarModal();
-    /*     this.tempObject.push({
-      name: this.variableName,
-      description: this.variableDescription,
-      variableSelect1: this.variableSelect1,
-      variableSelect2: this.variableSelect2,
-      get unidad():any {
-        
-        const unidad1 = tempObject?.[this.variableSelect1 + 1]?.unidad;
-        const unidad2 =
-          this.tempObject?.[+this.variableSelect2 + 1]?.unidad;
 
-        // Verificar si las propiedades existen antes de intentar acceder a ellas
-        if (unidad1 !== undefined && unidad2 !== undefined) {
-          return +unidad1 + +unidad2;
-        } else {
-          // Manejar el caso en que alguna de las propiedades es 'undefined'
-          return 0;
-        }
-      },
-
-    }); */
     let temp = this.tempObject;
 
     this.tempObject.push({

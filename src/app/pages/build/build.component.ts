@@ -53,7 +53,7 @@ export class BuildComponent {
                              
                       </div>
                </div>
-               Número de plazas 2
+               Número de variable
         </span>
 
  </div>`,
@@ -63,6 +63,7 @@ export class BuildComponent {
       ],
       hidden: 0,
       unidad: 200,
+      name: 'Número de variable',
     },
   ];
 
@@ -117,9 +118,7 @@ export class BuildComponent {
             cstmbtnElement.addEventListener('click', (e) => {
               this.editVariable = false;
               e.stopPropagation();
-              const openButton = document.querySelector(
-                '[data-bs-toggle="modal"]'
-              );
+              const openButton = document.querySelector('#exampleModalButton');
 
               // Verifica si el botón existe antes de intentar cerrar el modal
               if (openButton) {
@@ -138,9 +137,7 @@ export class BuildComponent {
             editElements.addEventListener('click', (e) => {
               this.editVariable = true;
               e.stopPropagation();
-              const openButton = document.querySelector(
-                '[data-bs-toggle="modal"]'
-              );
+              const openButton = document.querySelector('#exampleModalButton');
 
               // Verifica si el botón existe antes de intentar cerrar el modal
               if (openButton) {
@@ -259,6 +256,7 @@ export class BuildComponent {
       ],
       hidden: 0,
       unidad: data.unidad,
+      name: data.name,
     });
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
@@ -295,6 +293,7 @@ export class BuildComponent {
       ],
       hidden: 0,
       unidad: data.unidad,
+      name: data.name,
     };
     this.addRow();
     console.log(this.aux, 'AUX');
@@ -312,8 +311,8 @@ export class BuildComponent {
     }
   }
   findAndHideFatherNode() {
-    var floatingElement = document.querySelector('.floating') as HTMLElement;
-    floatingElement.style.display = 'block';
+    /*     var floatingElement = document.querySelector('.floating') as HTMLElement;
+    floatingElement.style.display = 'block'; */
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
@@ -326,6 +325,20 @@ export class BuildComponent {
     sonNode.forEach((node: any) => {
       node.hidden = 1;
     });
+    this.addRow();
+    this.chart.draw(this.data, { allowHtml: true });
+    google.charts.setOnLoadCallback(this.drawChart);
+  }
+  modalHideAndShowBranch(tier: any, i: number) {
+    tier.hidden === 0 ? (tier.hidden = 1) : (tier.hidden = 0);
+
+    const sonNode = this.aux.filter(
+      (item: any) => item.data[1] === tier.data[0].v
+    );
+    sonNode.forEach((node: any) => {
+      node.hidden = 1;
+    });
+    this.aux[i] = tier;
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
