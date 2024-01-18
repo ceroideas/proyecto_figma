@@ -22,7 +22,7 @@ declare var bootstrap: any;
   styleUrl: './build.component.scss',
 })
 export class BuildComponent {
-  @ViewChild(AdDirective, { static: true }) adHost!: AdDirective;
+  @ViewChild('hideShow') hideShowModal!: ElementRef;
   rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
@@ -32,6 +32,7 @@ export class BuildComponent {
   drawChart!: any;
   chart!: any;
   data!: any;
+  countHidden!: number;
   interval!: any;
   editVariable: boolean = false;
   hidden: boolean = false;
@@ -70,7 +71,8 @@ export class BuildComponent {
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
     private cdr: ChangeDetectorRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private el: ElementRef
   ) {
     google.charts.load('current', { packages: ['orgchart'] });
 
@@ -226,6 +228,7 @@ export class BuildComponent {
       });
     };
     google.charts.setOnLoadCallback(this.drawChart);
+    this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
   }
 
   getDataFromModal(data: any) {
@@ -328,6 +331,7 @@ export class BuildComponent {
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
+    this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
   }
   modalHideAndShowBranch(tier: any, i: number) {
     tier.hidden === 0 ? (tier.hidden = 1) : (tier.hidden = 0);
@@ -342,6 +346,7 @@ export class BuildComponent {
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
+    this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
   }
   seeAll() {
     for (let i = 0; i < this.aux.length; i++) {
@@ -353,5 +358,11 @@ export class BuildComponent {
     }
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
+  }
+
+  openModal() {
+    const modal = new bootstrap.Modal(this.hideShowModal.nativeElement);
+    modal.show();
+    console.log('isuu');
   }
 }

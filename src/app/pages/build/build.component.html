@@ -28,7 +28,7 @@
         alt=""
       />
     </div>
-    <div class="text-container">7 Hidden branches</div>
+    <div class="text-container">{{ countHidden }} Hidden branches</div>
   </div>
 
   <div id="chart_container">
@@ -120,7 +120,7 @@
             type="button"
             class="btn btn-sm save-variable-button col-md-5"
           >
-            save changes
+            Save
           </button>
         </div>
       </div>
@@ -230,25 +230,48 @@
       >
         <table style="width: 100%" class="table">
           <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
+            <tr class="table-light">
+              <th style="width: 10%" scope="col">LAVEL</th>
+              <th style="width: 70%" scope="col">NAME</th>
+              <th style="width: 200%" scope="col">KPIS</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>Otto</td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>Otto</td>
+            <tr *ngFor="let tier of aux; index as i">
+              <td
+                [ngClass]="
+                  tier.hidden === 0 ? 'branch-active' : 'branch-noactive'
+                "
+              >
+                L0
+              </td>
+              <td
+                [ngClass]="
+                  tier.hidden === 0
+                    ? 'branch-active-name'
+                    : 'branch-noactive-name'
+                "
+              >
+                <img
+                  style="margin-right: 15px"
+                  [src]="
+                    tier.hidden === 0
+                      ? '../../../assets/icons/u_eye.svg'
+                      : '../../../assets/icons/u_eye-slash2.svg'
+                  "
+                  alt=""
+                />
+                Nombre de la variable
+              </td>
+              <td
+                [ngClass]="
+                  tier.hidden === 0
+                    ? 'branch-active-name'
+                    : 'branch-noactive-name'
+                "
+              >
+                653654
+              </td>
             </tr>
           </tbody>
         </table>

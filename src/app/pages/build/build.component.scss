@@ -117,4 +117,33 @@
 
 .modal {
   margin-left: 80% !important;
+  margin-top: 10% !important;
+}
+.table-light,
+.table-light > td,
+.table-light > th {
+  background-color: #f9fafb !important;
+  color: #6b7280 !important;
+}
+.table {
+}
+.branch-active {
+  color: #000f55;
+  font-weight: bold;
+  line-height: 20px;
+}
+.branch-noactive {
+  color: #64748b;
+  font-weight: bold;
+  line-height: 20px;
+}
+.branch-active-name {
+  color: #000f55;
+
+  line-height: 20px;
+}
+.branch-noactive-name {
+  color: #64748b;
+
+  line-height: 20px;
 }
