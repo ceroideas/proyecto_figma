@@ -46,13 +46,25 @@ export class BuildComponent {
         <span>
                <div class="floating" style="display: none;">   
                       <div class="flex-box">   
-                      <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
-                      <button class="cstmbtn  btn btn-xs btn-edit btn-success">B</button>
-                      <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>
+                      <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                       class="tier-icon " 
+                      src="../../../assets/icons/u_plus.svg"
+                      alt=""
+                    /></button>
+                      <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                      class="tier-icon " 
+                     src="../../../assets/icons/pencil.svg"
+                     alt=""
+                   /></button>
+                      <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                      class="tier-icon " 
+                     src="../../../assets/icons/u_eye-slash-icon.svg"
+                     alt=""
+                   /> </button>
                       </div>
                       <div class="full-box">
                              
-                      </div>
+                      </div> 
                </div>
                Número de variable
         </span>
@@ -241,9 +253,13 @@ export class BuildComponent {
                    <span>
                           <div class="floating" style="display: none;">   
                                  <div class="flex-box">   
-                                 <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
-                                 <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
-                                 <button class="cstmbtn btn btn-xs btn-hidden btn-danger">C</button>
+                                 <button id="1"  class="cstmbtn btn-add btn btn-xs">      <img
+       
+                                 src="../../../assets/icons/u_plus.svg"
+                                 alt=""
+                               /></button>
+                                 <button class="cstmbtn btn btn-edit btn-xs ">B</button>
+                                 <button class="cstmbtn btn btn-xs btn-hidden ">C</button>
                                  </div>
                                  <div class="full-box">
                                         
@@ -278,9 +294,9 @@ export class BuildComponent {
                  <span>
                         <div class="floating" style="display: none;">   
                                <div class="flex-box">   
-                               <button id="1"  class="cstmbtn btn-add btn btn-xs btn-info">A</button>
-                               <button class="cstmbtn btn btn-edit btn-xs btn-success">B</button>
-                               <button class="cstmbtn btn btn-xs btn-danger">C</button>
+                               <button id="1"  class="cstmbtn btn-add btn btn-xs ">A</button>
+                               <button class="cstmbtn btn btn-edit btn-xs ">B</button>
+                               <button class="cstmbtn btn btn-xs ">C</button>
                                </div>
                                <div class="full-box">
                                       

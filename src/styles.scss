@@ -86,6 +86,9 @@ body {
   position: relative;
   z-index: 1;
 }
+.btn-add {
+  background-color: #000f55 !important;
+}
 
 .rotate span {
   position: absolute;
@@ -144,4 +147,15 @@ body {
 }
 table {
   border-collapse: none !important;
+}
+.tier-icon {
+  position: relative;
+  top: -35%;
+  right: 35%;
+}
+.btn-hidden {
+  background-color: #000f55 !important;
+}
+.btn-edit {
+  background-color: #000f55 !important;
 }
