@@ -77,6 +77,7 @@ export class BuildComponent {
       hidden: 0,
       unidad: 200,
       name: 'Número de variable',
+      tier: 0,
     },
   ];
 
@@ -251,20 +252,28 @@ export class BuildComponent {
           f: `<div  class="rotate" >
             
                    <span>
-                          <div class="floating" style="display: none;">   
-                                 <div class="flex-box">   
-                                 <button id="1"  class="cstmbtn btn-add btn btn-xs">      <img
-       
-                                 src="../../../assets/icons/u_plus.svg"
-                                 alt=""
-                               /></button>
-                                 <button class="cstmbtn btn btn-edit btn-xs ">B</button>
-                                 <button class="cstmbtn btn btn-xs btn-hidden ">C</button>
-                                 </div>
-                                 <div class="full-box">
-                                        
-                                 </div>
-                          </div>
+                   <div class="floating" style="display: none;">   
+                   <div class="flex-box">   
+                   <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                    class="tier-icon " 
+                   src="../../../assets/icons/u_plus.svg"
+                   alt=""
+                 /></button>
+                   <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                   class="tier-icon " 
+                  src="../../../assets/icons/pencil.svg"
+                  alt=""
+                /></button>
+                   <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                   class="tier-icon " 
+                  src="../../../assets/icons/u_eye-slash-icon.svg"
+                  alt=""
+                /> </button>
+                   </div>
+                   <div class="full-box">
+                          
+                   </div> 
+            </div>
                           ${data.name} 
                    </span>
     
@@ -292,16 +301,28 @@ export class BuildComponent {
           f: `<div  class="rotate" >
           
                  <span>
-                        <div class="floating" style="display: none;">   
-                               <div class="flex-box">   
-                               <button id="1"  class="cstmbtn btn-add btn btn-xs ">A</button>
-                               <button class="cstmbtn btn btn-edit btn-xs ">B</button>
-                               <button class="cstmbtn btn btn-xs ">C</button>
-                               </div>
-                               <div class="full-box">
-                                      
-                               </div>
-                        </div>
+                 <div class="floating" style="display: none;">   
+                 <div class="flex-box">   
+                 <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                  class="tier-icon " 
+                 src="../../../assets/icons/u_plus.svg"
+                 alt=""
+               /></button>
+                 <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                 class="tier-icon " 
+                src="../../../assets/icons/pencil.svg"
+                alt=""
+              /></button>
+                 <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                 class="tier-icon " 
+                src="../../../assets/icons/u_eye-slash-icon.svg"
+                alt=""
+              /> </button>
+                 </div>
+                 <div class="full-box">
+                        
+                 </div> 
+          </div>
                         ${data.name}
                  </span>
   
@@ -322,8 +343,18 @@ export class BuildComponent {
 
   addRow() {
     this.rows = [];
+    let tierCount = 0;
     for (let i = 0; i < this.aux.length; i++) {
       const element = this.aux[i];
+
+      if (this.aux[i - 1] !== undefined) {
+        this.aux[i - 1].data[1] !== element.data[1]
+          ? (tierCount = tierCount + 1)
+          : '';
+
+        console.log('ahhh');
+      }
+      element.tier = tierCount;
       if (element.hidden === 0) {
         this.rows.push(element?.data);
       }
