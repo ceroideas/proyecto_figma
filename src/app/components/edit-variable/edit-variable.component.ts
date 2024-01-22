@@ -27,30 +27,34 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Input() variableFather: any;
   @Input() editVariable: boolean = false;
   @Input() aux: any;
+  @Input() tier: any;
   @ViewChild('exampleModal') miModal!: ElementRef;
   editVariableName: boolean = false;
   editVariableDescription: boolean = false;
   editVariableUnidad: boolean = false;
   variableOperation: any;
-  variableSelect1!: any;
-  variableSelect2!: any;
+  variableSelect1: any = '#';
+  variableSelect2: any = '#';
   variableUnidad!: any;
   isOperation: boolean = false;
-  variableName: any = 'Nombre variable ';
+  constante: boolean = true;
+  variableName!: any;
   @Input() isHidden: boolean = false;
-  variableDescription: any =
-    'Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit. Exercitationveniam consequat sunt nostrud amet.';
+  variableDescription!: any;
+  operationType: any = '+';
   tempObject = [
     {},
     {
       name: this.variableName,
       description: this.variableDescription,
-      unidad: 200,
+      unidad: this.variableUnidad,
       variableSelect1: this.variableSelect1,
       variableSelect2: this.variableSelect2,
       operation: false,
     },
   ];
+  disableSend: boolean = true;
+  onlyConst: any = [];
   @Output() sendDataEvent = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
@@ -68,29 +72,30 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    new Chart('myChart', {
-      type: 'bar',
+    setTimeout(() => {
+      new Chart('myChart', {
+        type: 'bar',
 
-      data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [
-          {
-            backgroundColor: '#8C64B1',
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
+        data: {
+          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+          datasets: [
+            {
+              backgroundColor: '#8C64B1',
+              label: '# of Votes',
+              data: [12, 19, 3, 5, 2, 3],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
           },
         },
-      },
-    });
-
+      });
+    }, 1000);
     if (this.editVariable) {
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;
@@ -121,6 +126,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.editVariableDescription = false;
       this.editVariableUnidad = false;
       this.isOperation = false;
+      this.constante = false;
     });
   }
   editVariableNameClick() {
@@ -135,6 +141,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (this.variableSelect1 && this.variableSelect2) {
       this.isOperation = true;
     }
+    let operationType = this.operationType;
     let unidad = this.variableUnidad;
     this.sendDataEvent.emit({
       name: this.variableName,
@@ -147,7 +154,23 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
             // Verificar si las propiedades existen antes de intentar acceder a ellas
             if (unidad1 !== undefined && unidad2 !== undefined) {
-              return +unidad1 + +unidad2;
+              console.log(this.operationType);
+              switch (this.operationType) {
+                case '+':
+                  return +unidad1 + +unidad2;
+
+                case '-':
+                  return +unidad1 - +unidad2;
+                case '*':
+                  return +unidad1 * +unidad2;
+                case '/':
+                  return +unidad1 / +unidad2;
+                default:
+                  console.error(
+                    "Operación no válida. Selecciona '+', '-', '*' o '/' como operationType."
+                  );
+                  return; // Salir de la función si la operación no es válida
+              }
             } else {
               // Manejar el caso en que alguna de las propiedades es 'undefined'
               return 0;
@@ -166,7 +189,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       description: this.variableDescription,
       variableSelect1: this.variableSelect1,
       variableSelect2: this.variableSelect2,
-      operation: this.isOperation,
+      operation: !this.constante,
       get unidad(): any {
         const unidad1 = temp?.[+this.variableSelect1 + 1]?.unidad;
         const unidad2 = temp?.[+this.variableSelect2 + 1]?.unidad;
@@ -177,7 +200,22 @@ export class EditVariableComponent implements OnInit, OnChanges {
           unidad2 !== undefined &&
           this.operation === true
         ) {
-          return +unidad1 + +unidad2;
+          switch (operationType) {
+            case '+':
+              return +unidad1 + +unidad2;
+
+            case '-':
+              return +unidad1 - +unidad2;
+            case '*':
+              return +unidad1 * +unidad2;
+            case '/':
+              return +unidad1 / +unidad2;
+            default:
+              console.error(
+                "Operación no válida. Selecciona '+', '-', '*' o '/' como operationType."
+              );
+              return; // Salir de la función si la operación no es válida
+          }
         } else {
           // Manejar el caso en que alguna de las propiedades es 'undefined'
           return unidad;
@@ -206,7 +244,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       description: this.variableDescription,
       variableSelect1: this.variableSelect1,
       variableSelect2: this.variableSelect2,
-      operation: this.isOperation,
+      operation: !this.constante,
       get unidad(): any {
         const unidad1 = temp?.[+this.variableSelect1 + 1]?.unidad;
         const unidad2 = temp?.[+this.variableSelect2 + 1]?.unidad;
@@ -271,5 +309,17 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
   hiddenData() {
     this.hiddenDataEvent.emit();
+  }
+  disable() {
+    if (this.variableName && this.variableDescription) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  arrayFilter(): Array<any> {
+    this.onlyConst = this.tempObject.filter((obj) => obj.operation === false);
+    return this.tempObject.filter((obj) => obj.operation === false);
   }
 }

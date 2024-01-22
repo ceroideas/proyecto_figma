@@ -34,3 +34,20 @@ p {
   height: 15px;
   width: 15px;
 }
+.type {
+  justify-content: space-around;
+  width: 50% !important;
+  align-self: center;
+}
+.form-check-input:checked {
+  background-color: #8c64b1 !important;
+  border-color: #8c64b1 !important;
+}
+.hide {
+  display: none;
+}
+.option-type {
+  height: 15px;
+  width: 15px;
+  color: #000f55;
+}
