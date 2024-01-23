@@ -126,7 +126,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.editVariableDescription = false;
       this.editVariableUnidad = false;
       this.isOperation = false;
-      this.constante = false;
+      this.constante = true;
     });
   }
   editVariableNameClick() {
@@ -148,13 +148,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
       description: this.variableDescription,
       unidad: this.isOperation
         ? (() => {
-            const unidad1 = this.tempObject?.[this.variableSelect1 + 1]?.unidad;
-            const unidad2 =
-              this.tempObject?.[+this.variableSelect2 + 1]?.unidad;
+            const unidad1 = this.onlyConst?.[this.variableSelect1]?.unidad;
+            const unidad2 = this.onlyConst?.[+this.variableSelect2]?.unidad;
 
             // Verificar si las propiedades existen antes de intentar acceder a ellas
             if (unidad1 !== undefined && unidad2 !== undefined) {
-              console.log(this.operationType);
               switch (this.operationType) {
                 case '+':
                   return +unidad1 + +unidad2;
@@ -182,7 +180,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     });
     this.cerrarModal();
 
-    let temp = this.tempObject;
+    let temp = this.onlyConst;
 
     this.tempObject.push({
       name: this.variableName,
@@ -191,8 +189,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       variableSelect2: this.variableSelect2,
       operation: !this.constante,
       get unidad(): any {
-        const unidad1 = temp?.[+this.variableSelect1 + 1]?.unidad;
-        const unidad2 = temp?.[+this.variableSelect2 + 1]?.unidad;
+        const unidad1 = temp?.[+this.variableSelect1]?.unidad;
+        const unidad2 = temp?.[+this.variableSelect2]?.unidad;
         console.log(unidad1, unidad2, this.operation, 'dsjhjduhd');
         // Verificar si las propiedades existen antes de intentar acceder a ellas
         if (
@@ -227,6 +225,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (this.variableSelect1 && this.variableSelect2) {
       this.isOperation = true;
     }
+    let operationType = this.operationType;
     let unidad = this.variableUnidad;
     this.editDataEvent.emit({
       name: this.variableName,
@@ -255,7 +254,22 @@ export class EditVariableComponent implements OnInit, OnChanges {
           unidad2 !== undefined &&
           this.operation === true
         ) {
-          return +unidad1 + +unidad2;
+          switch (operationType) {
+            case '+':
+              return +unidad1 + +unidad2;
+
+            case '-':
+              return +unidad1 - +unidad2;
+            case '*':
+              return +unidad1 * +unidad2;
+            case '/':
+              return +unidad1 / +unidad2;
+            default:
+              console.error(
+                "Operación no válida. Selecciona '+', '-', '*' o '/' como operationType."
+              );
+              return; // Salir de la función si la operación no es válida
+          }
         } else {
           // Manejar el caso en que alguna de las propiedades es 'undefined'
           return unidad;
@@ -286,8 +300,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   operation(id1: any, id2: any) {
-    const unidad1 = this.tempObject[+id1 + 1]?.unidad;
-    const unidad2 = this.tempObject[+id2 + 1]?.unidad;
+    const unidad1 = this.onlyConst[+id1]?.unidad;
+    const unidad2 = this.onlyConst[+id2]?.unidad;
 
     // Verificar si las propiedades existen antes de intentar acceder a ellas
     if (unidad1 !== undefined && unidad2 !== undefined) {

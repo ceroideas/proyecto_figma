@@ -26,7 +26,7 @@ export class BuildComponent {
   rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
-  fatherNode!: number;
+  fatherNode: number = 0;
   nodeName!: any;
   showContent = true;
   drawChart!: any;
@@ -201,16 +201,13 @@ export class BuildComponent {
 
           // Incrementa el valor máximo en uno para obtener el próximo valor
           this.nextNode = this.aux.length + 1;
-          console.log('ROW', this.rows);
-          console.log('Próximo número:', this.nextNode);
-          console.log('nodo name:', this.nodeName);
+
           console.log('Nodo padre:', this.fatherNode);
         }
       });
 
       this.chart.draw(this.data, { allowHtml: true });
       const interval = setInterval(() => {
-        console.log('SET');
         var orgChartTables = document.querySelectorAll(
           '.google-visualization-orgchart-table'
         );
@@ -285,6 +282,7 @@ export class BuildComponent {
       hidden: 0,
       unidad: data.unidad,
       name: data.name,
+      tier: this.fatherNode !== 0 ? +this.fatherNode + 1 : 0,
     });
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
@@ -336,7 +334,7 @@ export class BuildComponent {
       name: data.name,
     };
     this.addRow();
-    console.log(this.aux, 'AUX');
+
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
   }
@@ -347,14 +345,12 @@ export class BuildComponent {
     for (let i = 0; i < this.aux.length; i++) {
       const element = this.aux[i];
 
-      if (this.aux[i - 1] !== undefined) {
+      /*       if (this.aux[i - 1] !== undefined) {
         this.aux[i - 1].data[1] !== element.data[1]
           ? (tierCount = tierCount + 1)
           : '';
-
-        console.log('ahhh');
       }
-      element.tier = tierCount;
+      element.tier = tierCount; */
       if (element.hidden === 0) {
         this.rows.push(element?.data);
       }
@@ -410,6 +406,5 @@ export class BuildComponent {
   openModal() {
     const modal = new bootstrap.Modal(this.hideShowModal.nativeElement);
     modal.show();
-    console.log('isuu');
   }
 }

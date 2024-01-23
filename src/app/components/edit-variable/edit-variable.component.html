@@ -80,7 +80,7 @@
                   *ngFor="let opcion of arrayFilter(); let i = index"
                   [value]="i"
                 >
-                  {{ tempObject[i + 1].name }}
+                  {{ opcion.name }}
                 </option>
               </select>
             </div>
@@ -114,7 +114,7 @@
                   *ngFor="let opcion of arrayFilter(); let i = index"
                   [value]="i"
                 >
-                  {{ tempObject[i + 1].name }}
+                  {{ opcion.name }}
                 </option>
               </select>
             </div>
