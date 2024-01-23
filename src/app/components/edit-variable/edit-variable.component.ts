@@ -336,4 +336,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.onlyConst = this.tempObject.filter((obj) => obj.operation === false);
     return this.tempObject.filter((obj) => obj.operation === false);
   }
+  openUniteModal() {
+    console.log('open ');
+  }
 }
