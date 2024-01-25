@@ -1,5 +1,6 @@
 <!-- Modal -->
 <div
+  #uniteModal
   class="modal fade"
   id="uniteModal"
   tabindex="-1"
@@ -21,14 +22,24 @@
           </div>
           <div class="col md-3">
             Escenarios
-            <input
-              type="text"
-              class="form-control input-formula"
-              placeholder="(Name of scenario)"
-              aria-describedby="basic-addon1"
-            />
+            <select class="form-select input-formula">
+              <option selected value="#"></option>
+              <option
+                *ngFor="let escenary of escenarys; let i = index"
+                value="#"
+              >
+                {{ escenary.name }}
+              </option>
+
+              <!--                 <input
+                  type="text"
+                  class="form-control input-formula"
+                  placeholder="(Name of scenario)"
+                  aria-describedby="basic-addon1"
+                /> -->
+            </select>
           </div>
-          <div class="col md-1">
+          <div class="col md-3">
             <button
               style="margin-top: 22px; margin-right: 10px"
               class="unite-button"
@@ -39,7 +50,22 @@
               Export to Excel
             </button>
           </div>
-          <div class="col-md-3"></div>
+          <div class="col-md-1">
+            <button
+              (click)="addEscenary()"
+              style="margin-top: 20px"
+              class="unite-button"
+            >
+              <img
+                [src]="
+                  showForm
+                    ? '../../../assets/icons/minus.svg'
+                    : '../../../assets/icons/fi_plus.svg'
+                "
+                alt=""
+              />
+            </button>
+          </div>
         </div>
 
         <button
@@ -57,7 +83,63 @@
           color="#147D8F"
           background="#EFFBFD"
         ></app-message>
-        <div
+        <div *ngIf="showForm" style="margin-left: 5%">
+          <form
+            #escenaryForm="ngForm"
+            (ngSubmit)="submitEscenario(escenaryForm)"
+          >
+            <div class="mb-4 mt-3" style="height: 40%; width: 40%">
+              <label for="name" class="form-label color-theme">Nombre</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                [(ngModel)]="model.name"
+                class="form-control input-formula"
+                aria-describedby="passwordHelpBlock"
+              />
+            </div>
+            <div class="d-flex flex-wrap">
+              <div
+                *ngFor="let year of years[0] | keyvalue"
+                class="row align-items-center mb-2 mr-2"
+              >
+                <div class="">
+                  <label [for]="year.key" class="col-form-label color-theme"
+                    >{{ year.key }}
+                  </label>
+                </div>
+                <div class="">
+                  <input
+                    [name]="year.key"
+                    type="text"
+                    [id]="year.key"
+                    [(ngModel)]="model.years[0][year.key]"
+                    class="form-control input-formula"
+                  />
+                </div>
+              </div>
+              <!--               <div class="row g-3 align-items-center mb-3 mr-2">
+                <div class="col-auto">
+                  <label for="2021" class="col-form-label color-theme"
+                    >2021</label
+                  >
+                </div>
+                <div class="col-auto">
+                  <input
+                    type="password"
+                    id="2021"
+                    class="form-control input-formula"
+                    aria-describedby="passwordHelpInline"
+                  />
+                </div>
+              </div> -->
+            </div>
+            <button type="submit" class="unite-button-calculate mt-5">
+              Crear
+            </button>
+
+            <!--         <div
           style="
             height: 529px;
 
@@ -1117,18 +1199,23 @@
               "
             ></div>
           </div>
+        </div> -->
+          </form>
         </div>
-      </div>
-      <div class="modal-footer">
-        <p class="smoth">Smoth</p>
-        <input
-          style="width: 15% !important"
-          type="text"
-          class="form-control input-formula"
-          placeholder="smoth"
-          aria-describedby="basic-addon1"
-        />
-        <button type="button" class="unite-button-calculate">Calculate</button>
+        <canvas id="chartJSContainer" style="height: 90%; width: 90%"></canvas>
+        <div class="modal-footer">
+          <p class="smoth">Smoth</p>
+          <input
+            style="width: 15% !important"
+            type="text"
+            class="form-control input-formula"
+            placeholder="smoth"
+            aria-describedby="basic-addon1"
+          />
+          <button type="button" class="unite-button-calculate">
+            Calculate
+          </button>
+        </div>
       </div>
     </div>
   </div>
