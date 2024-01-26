@@ -22,11 +22,15 @@
           </div>
           <div class="col md-3">
             Escenarios
-            <select class="form-select input-formula">
+            <select
+              [(ngModel)]="selectedEscenary"
+              class="form-select input-formula"
+              (change)="onSelectChange()"
+            >
               <option selected value="#"></option>
               <option
                 *ngFor="let escenary of escenarys; let i = index"
-                value="#"
+                [value]="i"
               >
                 {{ escenary.name }}
               </option>

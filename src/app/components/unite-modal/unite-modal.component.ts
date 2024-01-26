@@ -1,12 +1,12 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, SimpleChanges, ViewChild } from '@angular/core';
 import { MessageComponent } from '../message/message.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-import { Chart, registerables } from 'node_modules/chart.js';
-
+import 'chartjs-plugin-dragdata';
+/* import { Chart, registerables } from 'node_modules/chart.js';
+Chart.register(...registerables); */
 declare var bootstrap: any;
-
+declare var Chart: any;
 interface Escenario {
   name: string;
   years: { [year: string]: string }[];
@@ -27,39 +27,15 @@ export class UniteModalComponent {
   ];
   model: Escenario = { name: '', years: [] };
   showForm: boolean = false;
-
+  selectedEscenary: any = '#';
+  renderChartVariable!: any;
+  createEscenaryChartVariable!: any;
   constructor() {
     this.years = this.escenarys[0].years;
     this.createModel();
   }
+
   ngAfterViewInit() {
-    const plugins: any = {
-      dragData: {
-        round: 1,
-        showTooltip: true,
-        onDragStart: function (
-          e: any,
-          datasetIndex: any,
-          index: any,
-          value: any
-        ) {
-          // console.log(e)
-        },
-        onDrag: function (e: any, datasetIndex: any, index: any, value: any) {
-          e.target.style.cursor = 'grabbing';
-          // console.log(e, datasetIndex, index, value)
-        },
-        onDragEnd: function (
-          e: any,
-          datasetIndex: any,
-          index: any,
-          value: any
-        ) {
-          e.target.style.cursor = 'default';
-          // console.log(datasetIndex, index, value)
-        },
-      },
-    };
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
     modal._element.addEventListener('shown.bs.modal', () => {
@@ -75,24 +51,74 @@ export class UniteModalComponent {
         (openButton as HTMLElement).click();
       }
     });
+  }
+  submitEscenario(escenarioForm: any) {
+    const newEscenary = {
+      name: this.model.name,
+      years: JSON.parse(JSON.stringify(this.model.years)),
+    };
 
-    new Chart('chartJSContainer', {
+    this.escenarys.push(newEscenary);
+    this.showForm = false;
+
+    console.log(this.escenarys);
+    this.createEscenaryChartVariable.destroy();
+  }
+  addEscenary() {
+    this.showForm = !this.showForm;
+    this.createEscenaryChart();
+  }
+
+  createModel() {
+    const keys = Object.keys(this.escenarys[0].years[0]);
+
+    const years: any = {};
+    keys.forEach((clave: string) => {
+      years[clave] = '';
+    });
+    this.model['years'] = [years];
+    console.log(this.model);
+  }
+
+  renderChart() {
+    const years = Object.keys(this.escenarys[0].years[0]);
+    const values = years.map((key) => this.escenarys[0].years[0][key]);
+    const plugins: any = {
+      dragData: {
+        round: 1,
+        showTooltip: true,
+        onDragStart: function (
+          e: any,
+          datasetIndex: any,
+          index: any,
+          value: any
+        ) {
+          /* console.log(e); */
+        },
+        onDrag: function (e: any, datasetIndex: any, index: any, value: any) {
+          e.target.style.cursor = 'grabbing';
+          /* console.log(value); */
+        },
+        onDragEnd: function (
+          e: any,
+          datasetIndex: any,
+          index: any,
+          value: any
+        ) {
+          e.target.style.cursor = 'default';
+          console.log(value, datasetIndex, index);
+        },
+      },
+    };
+
+    const option: any = {
       type: 'line',
-      plugins: [plugins],
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: years,
         datasets: [
           {
             label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            fill: true,
-            tension: 0.4,
-            borderWidth: 1,
-            pointHitRadius: 25,
-          },
-          {
-            label: '# of Points',
-            data: [7, 11, 5, 8, 3, 7],
+            data: values,
             fill: true,
             tension: 0.4,
             borderWidth: 1,
@@ -119,31 +145,82 @@ export class UniteModalComponent {
         },
         plugins: plugins,
       },
-    });
-  }
-  submitEscenario(escenarioForm: any) {
-    const newEscenary = {
-      name: this.model.name,
-      years: JSON.parse(JSON.stringify(this.model.years)),
     };
 
-    this.escenarys.push(newEscenary);
-    this.showForm = false;
-
-    console.log(this.escenarys);
+    new Chart('chartJSContainer', option);
   }
-  addEscenary() {
-    this.showForm = !this.showForm;
+  onSelectChange() {
+    console.log('selectedEscenary cambió a:', this.selectedEscenary);
+
+    if (this.selectedEscenary !== '#') {
+      this.renderChart();
+    }
   }
 
-  createModel() {
-    const keys = Object.keys(this.escenarys[0].years[0]);
+  createEscenaryChart() {
+    const years = Object.keys(this.escenarys[0].years[0]);
+    const values = years.map((key) => 0);
+    const plugins: any = {
+      dragData: {
+        round: 1,
+        showTooltip: true,
+        onDragStart: function (
+          e: any,
+          datasetIndex: any,
+          index: any,
+          value: any
+        ) {
+          /* console.log(e); */
+        },
+        onDrag: function (e: any, datasetIndex: any, index: any, value: any) {
+          e.target.style.cursor = 'grabbing';
+          /* console.log(value); */
+        },
+        onDragEnd: (e: any, datasetIndex: any, index: any, value: any) => {
+          e.target.style.cursor = 'default';
+          this.model.years[0][years[index]] = value;
+          console.log(this.model);
+          console.log(value, datasetIndex, index);
+        },
+      },
+    };
 
-    const years: any = {};
-    keys.forEach((clave: string) => {
-      years[clave] = '';
-    });
-    this.model['years'] = [years];
-    console.log(this.model);
+    const option: any = {
+      type: 'line',
+      data: {
+        labels: years,
+        datasets: [
+          {
+            label: '# of Votes',
+            data: values,
+            fill: true,
+            tension: 0.4,
+            borderWidth: 1,
+            pointHitRadius: 25,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            min: 0,
+            max: 20,
+          },
+        },
+        onHover: function (e: any) {
+          const point = e.chart.getElementsAtEventForMode(
+            e,
+            'nearest',
+            { intersect: true },
+            false
+          );
+          if (point.length) e.native.target.style.cursor = 'grab';
+          else e.native.target.style.cursor = 'default';
+        },
+        plugins: plugins,
+      },
+    };
+
+    this.createEscenaryChartVariable = new Chart('chartJSContainer', option);
   }
 }
