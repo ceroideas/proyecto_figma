@@ -30,6 +30,8 @@ export class UniteModalComponent {
   selectedEscenary: any = '#';
   renderChartVariable!: any;
   createEscenaryChartVariable!: any;
+  yMax: number = 1000;
+  values!: any;
   constructor() {
     this.years = this.escenarys[0].years;
     this.createModel();
@@ -65,6 +67,7 @@ export class UniteModalComponent {
     this.createEscenaryChartVariable.destroy();
   }
   addEscenary() {
+    if (this.renderChartVariable) this.renderChartVariable.destroy();
     this.showForm = !this.showForm;
     this.createEscenaryChart();
   }
@@ -82,7 +85,9 @@ export class UniteModalComponent {
 
   renderChart() {
     const years = Object.keys(this.escenarys[0].years[0]);
-    const values = years.map((key) => this.escenarys[0].years[0][key]);
+    const values = years.map(
+      (key) => this.escenarys[this.selectedEscenary].years[0][key]
+    );
     const plugins: any = {
       dragData: {
         round: 1,
@@ -130,7 +135,7 @@ export class UniteModalComponent {
         scales: {
           y: {
             min: 0,
-            max: 20,
+            max: 1000,
           },
         },
         onHover: function (e: any) {
@@ -147,19 +152,25 @@ export class UniteModalComponent {
       },
     };
 
-    new Chart('chartJSContainer', option);
+    this.renderChartVariable = new Chart('chartJSContainer', option);
   }
   onSelectChange() {
     console.log('selectedEscenary cambió a:', this.selectedEscenary);
 
     if (this.selectedEscenary !== '#') {
+      if (this.createEscenaryChartVariable)
+        this.createEscenaryChartVariable.destroy();
+      if (this.renderChartVariable) {
+        this.renderChartVariable.destroy();
+      }
       this.renderChart();
     }
   }
 
   createEscenaryChart() {
     const years = Object.keys(this.escenarys[0].years[0]);
-    const values = years.map((key) => 0);
+    if (!this.values) this.values = years.map((key) => 0);
+
     const plugins: any = {
       dragData: {
         round: 1,
@@ -192,7 +203,7 @@ export class UniteModalComponent {
         datasets: [
           {
             label: '# of Votes',
-            data: values,
+            data: this.values,
             fill: true,
             tension: 0.4,
             borderWidth: 1,
@@ -204,7 +215,7 @@ export class UniteModalComponent {
         scales: {
           y: {
             min: 0,
-            max: 20,
+            max: 1000,
           },
         },
         onHover: function (e: any) {
@@ -222,5 +233,10 @@ export class UniteModalComponent {
     };
 
     this.createEscenaryChartVariable = new Chart('chartJSContainer', option);
+  }
+  changeValue(i: number, value: any) {
+    this.values[i] = +value;
+    this.createEscenaryChartVariable.destroy();
+    this.createEscenaryChart();
   }
 }
