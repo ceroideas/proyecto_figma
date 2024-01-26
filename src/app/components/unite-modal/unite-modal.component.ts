@@ -2,9 +2,11 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { MessageComponent } from '../message/message.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+
 import { Chart, registerables } from 'node_modules/chart.js';
-Chart.register(...registerables);
+
 declare var bootstrap: any;
+
 interface Escenario {
   name: string;
   years: { [year: string]: string }[];
@@ -29,8 +31,54 @@ export class UniteModalComponent {
   constructor() {
     this.years = this.escenarys[0].years;
     this.createModel();
-    var options = {
+  }
+  ngAfterViewInit() {
+    const plugins: any = {
+      dragData: {
+        round: 1,
+        showTooltip: true,
+        onDragStart: function (
+          e: any,
+          datasetIndex: any,
+          index: any,
+          value: any
+        ) {
+          // console.log(e)
+        },
+        onDrag: function (e: any, datasetIndex: any, index: any, value: any) {
+          e.target.style.cursor = 'grabbing';
+          // console.log(e, datasetIndex, index, value)
+        },
+        onDragEnd: function (
+          e: any,
+          datasetIndex: any,
+          index: any,
+          value: any
+        ) {
+          e.target.style.cursor = 'default';
+          // console.log(datasetIndex, index, value)
+        },
+      },
+    };
+    const modal = new bootstrap.Modal(this.miModal.nativeElement);
+
+    modal._element.addEventListener('shown.bs.modal', () => {
+      console.log('Modal abierto');
+    });
+
+    modal._element.addEventListener('hidden.bs.modal', () => {
+      const openButton = document.querySelector('#exampleModalButton');
+
+      // Verifica si el botón existe antes de intentar cerrar el modal
+      if (openButton) {
+        // Simula un clic en el botón para cerrar el modal
+        (openButton as HTMLElement).click();
+      }
+    });
+
+    new Chart('chartJSContainer', {
       type: 'line',
+      plugins: [plugins],
       data: {
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         datasets: [
@@ -69,58 +117,8 @@ export class UniteModalComponent {
           if (point.length) e.native.target.style.cursor = 'grab';
           else e.native.target.style.cursor = 'default';
         },
-        plugins: {
-          dragData: {
-            round: 1,
-            showTooltip: true,
-            onDragStart: function (
-              e: any,
-              datasetIndex: any,
-              index: any,
-              value: any
-            ) {
-              // console.log(e)
-            },
-            onDrag: function (
-              e: any,
-              datasetIndex: any,
-              index: any,
-              value: any
-            ) {
-              e.target.style.cursor = 'grabbing';
-              // console.log(e, datasetIndex, index, value)
-            },
-            onDragEnd: function (
-              e: any,
-              datasetIndex: any,
-              index: any,
-              value: any
-            ) {
-              e.target.style.cursor = 'default';
-              // console.log(datasetIndex, index, value)
-            },
-          },
-        },
+        plugins: plugins,
       },
-    };
-
-    /* new Chart('ctx', options); */
-  }
-  ngAfterViewInit() {
-    const modal = new bootstrap.Modal(this.miModal.nativeElement);
-
-    modal._element.addEventListener('shown.bs.modal', () => {
-      console.log('Modal abierto');
-    });
-
-    modal._element.addEventListener('hidden.bs.modal', () => {
-      const openButton = document.querySelector('#exampleModalButton');
-
-      // Verifica si el botón existe antes de intentar cerrar el modal
-      if (openButton) {
-        // Simula un clic en el botón para cerrar el modal
-        (openButton as HTMLElement).click();
-      }
     });
   }
   submitEscenario(escenarioForm: any) {

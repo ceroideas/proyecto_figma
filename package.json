@@ -22,6 +22,7 @@
     "@material/web": "^1.1.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "chart.js": "^4.4.1",
+    "chartjs-plugin-dragdata": "^2.2.5",
     "highcharts": "^11.2.0",
     "highcharts-angular": "^4.0.0",
     "ng2-charts": "^5.0.4",
