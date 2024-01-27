@@ -1,0 +1,92 @@
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn mb-5 create-button"
+  data-bs-toggle="modal"
+  data-bs-target="#createProjectModal"
+>
+  + Crear proyecto
+</button>
+
+<!-- Modal -->
+<div
+  #createProjectModal
+  class="modal fade modal-font-color"
+  id="createProjectModal"
+  tabindex="-1"
+  aria-labelledby="createProjectModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p class="modal-title" id="createProjectModalLabel">Crear proyecto</p>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="mb-4 mt-3 ml-2">
+          <label for="name" class="form-label color-theme"
+            >Nombre del proyecto</label
+          >
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-control input-formula"
+            aria-describedby="passwordHelpBlock"
+          />
+        </div>
+        <div class="mb-4 col-md-12 row d-flex">
+          <select
+            [(ngModel)]="yearFrom"
+            (change)="onFromSelected(yearFrom)"
+            class="form-select input-formula col-md-5 ml-4"
+          >
+            <option selected value="#">Desde</option>
+            <option *ngFor="let year of years" [value]="year">
+              {{ year }}
+            </option>
+          </select>
+          <div class="col-md-1">
+            <img src="../../../assets/icons/minus.svg" alt="" />
+          </div>
+          <select
+            [(ngModel)]="yearTo"
+            class="form-select input-formula col-md-5"
+          >
+            <option selected value="#">Hasta</option>
+            <option *ngFor="let year of yearsTo" [value]="year">
+              {{ year }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div
+          class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
+        >
+          <button
+            type="button"
+            class="btn btn-lg delete-variable-button col-md-5 mb-0"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-lg save-variable-button col-md-5"
+          >
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

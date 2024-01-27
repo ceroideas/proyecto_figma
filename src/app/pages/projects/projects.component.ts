@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
+import { CreateProjectComponent } from 'src/app/components/create-project/create-project.component';
 import { MessageComponent } from 'src/app/components/message/message.component';
 import Swal from 'sweetalert2';
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [MessageComponent],
+  imports: [MessageComponent, CreateProjectComponent],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
 })

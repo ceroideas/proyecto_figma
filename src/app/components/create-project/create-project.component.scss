@@ -1,0 +1,60 @@
+.modal-title {
+  font-weight: bold;
+  font-size: large !important;
+}
+
+.font {
+  font-weight: 500;
+}
+.input-formula {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  background-color: #f6f3f9;
+}
+p {
+  font-weight: bold;
+  color: #00061f;
+}
+.delete-variable-button {
+  border-color: rgb(199, 199, 199) !important;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+}
+.save-variable-button {
+  background-color: #000f55;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+  color: white;
+}
+.asterisk {
+  height: 15px;
+  width: 15px;
+}
+.type {
+  justify-content: space-around;
+  width: 50% !important;
+  align-self: center;
+}
+.form-check-input:checked {
+  background-color: #8c64b1 !important;
+  border-color: #8c64b1 !important;
+}
+.hide {
+  display: none;
+}
+.option-type {
+  height: 15px;
+  width: 15px;
+  color: #000f55;
+}
+.create-button {
+  background-color: #8c64b1 !important;
+  color: white !important;
+  border-radius: 20px !important;
+  height: 60px !important;
+  font-weight: bold !important;
+}
