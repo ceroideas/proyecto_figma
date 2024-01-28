@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-project',
@@ -14,10 +15,28 @@ export class CreateProjectComponent {
   yearFrom: any = '#';
   yearTo: any = '#';
   yearsTo: number[] = [];
-
-  constructor() {
+  inputCount: number = 0;
+  inputs: string[] = [];
+  inputValues: { [key: string]: string } = {};
+  nameProject!: any;
+  constructor(private router: Router) {
     this.getYears();
     console.log(this.years);
+  }
+
+  addInput() {
+    this.inputCount++;
+    const inputKey = `scenary-${this.inputCount}`;
+    this.inputs.push(inputKey);
+    this.inputValues[inputKey] = ''; // Inicializa el valor del nuevo input
+  }
+
+  removeInput() {
+    if (this.inputCount > 0) {
+      const removedInputKey = this.inputs.pop() || 0;
+      delete this.inputValues[removedInputKey];
+      this.inputCount--;
+    }
   }
 
   getYears() {
@@ -32,5 +51,27 @@ export class CreateProjectComponent {
 
   onFromSelected(from: number) {
     this.yearsTo = this.years.filter((year) => year > from);
+  }
+
+  createProject() {
+    const project = {
+      name: this.nameProject,
+      yearFrom: this.yearFrom,
+      yearTo: this.yearTo,
+      scenery: this.inputValues,
+    };
+
+    this.closeModal();
+    this.router.navigate(['home/build'], {
+      state: { project },
+    });
+  }
+
+  closeModal() {
+    const closeButton = document.querySelector('#close-modal');
+
+    if (closeButton) {
+      (closeButton as HTMLElement).click();
+    }
   }
 }

@@ -4,6 +4,7 @@ import {
   ComponentFactoryResolver,
   ComponentRef,
   ElementRef,
+  OnInit,
   Renderer2,
   Type,
   ViewChild,
@@ -12,6 +13,7 @@ import {
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MessageComponent } from 'src/app/components/message/message.component';
 import { AdDirective } from './ad.directive';
+import { ActivatedRoute, Router } from '@angular/router';
 
 declare var google: any;
 declare var bootstrap: any;
@@ -21,7 +23,7 @@ declare var bootstrap: any;
   templateUrl: './build.component.html',
   styleUrl: './build.component.scss',
 })
-export class BuildComponent {
+export class BuildComponent implements OnInit {
   @ViewChild('hideShow') hideShowModal!: ElementRef;
   rows: any = [];
   isDisabled: boolean = false;
@@ -30,6 +32,7 @@ export class BuildComponent {
   nodeName!: any;
   showContent = true;
   drawChart!: any;
+  project: any;
   chart!: any;
   data!: any;
   countHidden!: number;
@@ -81,12 +84,7 @@ export class BuildComponent {
     },
   ];
 
-  constructor(
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private cdr: ChangeDetectorRef,
-    private renderer: Renderer2,
-    private el: ElementRef
-  ) {
+  constructor(private route: ActivatedRoute, private router: Router) {
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
@@ -239,6 +237,15 @@ export class BuildComponent {
     };
     google.charts.setOnLoadCallback(this.drawChart);
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
+  }
+
+  ngOnInit() {
+    console.log(this.router.getCurrentNavigation());
+    if (this.router.getCurrentNavigation()?.extras.state) {
+      this.project =
+        this.router.getCurrentNavigation()?.extras?.state?.['project'];
+      console.log(this.project, 'en build');
+    }
   }
 
   getDataFromModal(data: any) {
