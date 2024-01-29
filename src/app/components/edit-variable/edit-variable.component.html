@@ -125,7 +125,7 @@
           class="mt-4 d-flex justify-content-between align-items-start w-100"
         >
           <p class="mb-0">Nombre de la variable</p>
-          <img
+          <!--           <img
             (click)="editVariableNameClick()"
             class="user-icon"
             [src]="
@@ -134,11 +134,11 @@
                 : '../../../assets/icons/fi_edit-3.svg'
             "
             alt="User Icon"
-          />
+          /> -->
         </div>
-        <div *ngIf="!editVariableName">{{ variableName }}</div>
+
         <div class="col-md-11">
-          <div *ngIf="editVariableName" class="input-group">
+          <div class="input-group">
             <input
               [(ngModel)]="variableName"
               type="text"
@@ -148,6 +148,25 @@
             />
           </div>
         </div>
+        <div [class]="constante ? 'hide' : ''">
+          <div
+            class="mt-4 d-flex justify-content-between align-items-start w-100"
+          >
+            <p class="mb-0">Agregar variable</p>
+          </div>
+
+          <div class="variable-box d-flex flex-wrap">
+            <div class="mr-4">
+              <img
+                class="user-icon"
+                src="../../../assets/icons/fi_edit-3.svg"
+                alt="User Icon"
+              />
+              variable 1
+            </div>
+          </div>
+        </div>
+
         <div
           class="mt-3 d-flex justify-content-between align-items-start w-100"
         >

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -17,6 +17,7 @@ export class CreateProjectComponent {
   yearsTo: number[] = [];
   inputCount: number = 0;
   inputs: string[] = [];
+
   inputValues: { [key: string]: string } = {};
   nameProject!: any;
   constructor(private router: Router) {
@@ -62,9 +63,8 @@ export class CreateProjectComponent {
     };
 
     this.closeModal();
-    this.router.navigate(['home/build'], {
-      state: { project },
-    });
+    console.log(project);
+    this.router.navigate(['home/build'], { queryParams: project });
   }
 
   closeModal() {

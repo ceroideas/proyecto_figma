@@ -11,7 +11,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div class="col-md-12 d-flex">
-          <div class="col md-2">
+          <!--           <div class="col md-2">
             Segmento
             <input
               type="text"
@@ -19,7 +19,7 @@
               placeholder="Segmento"
               aria-describedby="basic-addon1"
             />
-          </div>
+          </div> -->
           <div class="col md-3">
             Escenarios
             <select
@@ -81,12 +81,14 @@
       </div>
       <div class="modal-body">
         <app-message
+          *ngIf="model.locked || lockedScenary"
           icon="../../../assets/icons/u_info-circle.svg"
           closeIcon="../../../assets/icons/fi_x.svg"
           content="The scenario you are using is fixed and cannot be edited."
           color="#147D8F"
           background="#EFFBFD"
         ></app-message>
+
         <div *ngIf="showForm" style="margin-left: 5%">
           <form
             #escenaryForm="ngForm"
@@ -95,6 +97,7 @@
             <div class="mb-4 mt-3" style="height: 40%; width: 40%">
               <label for="name" class="form-label color-theme">Nombre</label>
               <input
+                [disabled]="model.locked"
                 type="text"
                 id="name"
                 name="name"
@@ -117,6 +120,7 @@
                   <input
                     (ngModelChange)="changeValue(i, $event)"
                     [name]="year.key"
+                    [disabled]="model.locked"
                     type="text"
                     [id]="year.key"
                     [(ngModel)]="model.years[0][year.key]"
@@ -140,6 +144,18 @@
                 </div>
               </div> -->
             </div>
+            <div class="form-check mt-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                [(ngModel)]="model.locked"
+                name="locked"
+                (change)="changeLocked()"
+                id="locked"
+              />
+              <label class="form-check-label" for="locked"> Bloquear </label>
+            </div>
+
             <button type="submit" class="unite-button-calculate mt-5">
               Crear
             </button>
@@ -1207,7 +1223,26 @@
         </div> -->
           </form>
         </div>
-        <div>
+        <div
+          *ngIf="selectedEscenary !== '#' && !showForm"
+          class="form-check mt-2"
+        >
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [(ngModel)]="lockedScenary"
+            name="lockedScenary"
+            (change)="lockedScenarys()"
+            id="lockedScenary"
+          />
+          <label class="form-check-label" for="lockedScenary"> Bloquear </label>
+        </div>
+        <div
+          [style]="{
+            display:
+              selectedEscenary === '#' && showForm === false ? 'none' : 'block'
+          }"
+        >
           <canvas id="chartJSContainer"></canvas>
         </div>
 

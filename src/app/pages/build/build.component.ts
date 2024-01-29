@@ -240,12 +240,14 @@ export class BuildComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.router.getCurrentNavigation());
-    if (this.router.getCurrentNavigation()?.extras.state) {
-      this.project =
-        this.router.getCurrentNavigation()?.extras?.state?.['project'];
-      console.log(this.project, 'en build');
-    }
+    this.route.queryParams.subscribe((params: any) => {
+      const project = {
+        name: params.name,
+        yearFrom: params.yearFrom,
+        yearTo: params.yearTo,
+        scenery: JSON.stringify(params.scenery),
+      };
+    });
   }
 
   getDataFromModal(data: any) {

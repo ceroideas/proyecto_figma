@@ -1,4 +1,11 @@
-import { Component, ElementRef, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { MessageComponent } from '../message/message.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -10,6 +17,7 @@ declare var Chart: any;
 interface Escenario {
   name: string;
   years: { [year: string]: string }[];
+  locked: boolean;
 }
 @Component({
   selector: 'app-unite-modal',
@@ -18,31 +26,51 @@ interface Escenario {
   templateUrl: './unite-modal.component.html',
   styleUrl: './unite-modal.component.scss',
 })
-export class UniteModalComponent {
+export class UniteModalComponent implements OnInit {
   @ViewChild('uniteModal') miModal!: ElementRef;
   years: string[] = [];
-  escenarys: any[] = [
-    { name: 'Escenario 1', years: [{ 2020: '1', 2021: '1' }] },
-    { name: 'Escenario 2', years: [{ 2020: '2', 2021: '2' }] },
+  @Input() edit: boolean = false;
+  escenarysFromDb: any[] = [
+    { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
+    { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
   ];
-  model: Escenario = { name: '', years: [] };
+  escenarys: any[] = [];
+  model: Escenario = { name: '', years: [], locked: false };
   showForm: boolean = false;
   selectedEscenary: any = '#';
   renderChartVariable!: any;
   createEscenaryChartVariable!: any;
   yMax: number = 1000;
+  escenario: any = [
+    { name: 'Escenario 1', yearFrom: 2020, yearTo: 2024 },
+    { name: 'Escenario 2', yearFrom: 2020, yearTo: 2024 },
+  ];
   values!: any;
-  constructor() {
-    this.years = this.escenarys[0].years;
-    this.createModel();
+  yearsToSee: any[] = [];
+  lockedScenary: boolean = false;
+  constructor() {}
+  ngOnInit(): void {}
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['edit']) {
+      console.log('change');
+      if (!this.edit) {
+        this.emptyScenarys();
+      }
+      if (this.edit) {
+        this.editScenarys();
+      }
+      this.createModel();
+    }
+
+    if (changes['this.model.locked']) {
+      console.log('changeeee');
+    }
   }
 
   ngAfterViewInit() {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
-    modal._element.addEventListener('shown.bs.modal', () => {
-      console.log('Modal abierto');
-    });
+    modal._element.addEventListener('shown.bs.modal', () => {});
 
     modal._element.addEventListener('hidden.bs.modal', () => {
       const openButton = document.querySelector('#exampleModalButton');
@@ -88,33 +116,41 @@ export class UniteModalComponent {
     const values = years.map(
       (key) => this.escenarys[this.selectedEscenary].years[0][key]
     );
-    const plugins: any = {
-      dragData: {
-        round: 1,
-        showTooltip: true,
-        onDragStart: function (
-          e: any,
-          datasetIndex: any,
-          index: any,
-          value: any
-        ) {
-          /* console.log(e); */
-        },
-        onDrag: function (e: any, datasetIndex: any, index: any, value: any) {
-          e.target.style.cursor = 'grabbing';
-          /* console.log(value); */
-        },
-        onDragEnd: function (
-          e: any,
-          datasetIndex: any,
-          index: any,
-          value: any
-        ) {
-          e.target.style.cursor = 'default';
-          console.log(value, datasetIndex, index);
-        },
-      },
-    };
+    const plugins: any =
+      this.lockedScenary === false
+        ? {
+            dragData: {
+              round: 1,
+              showTooltip: true,
+              onDragStart: function (
+                e: any,
+                datasetIndex: any,
+                index: any,
+                value: any
+              ) {
+                /* console.log(e); */
+              },
+              onDrag: function (
+                e: any,
+                datasetIndex: any,
+                index: any,
+                value: any
+              ) {
+                e.target.style.cursor = 'grabbing';
+                /* console.log(value); */
+              },
+              onDragEnd: function (
+                e: any,
+                datasetIndex: any,
+                index: any,
+                value: any
+              ) {
+                e.target.style.cursor = 'default';
+                console.log(value, datasetIndex, index);
+              },
+            },
+          }
+        : {};
 
     const option: any = {
       type: 'line',
@@ -169,33 +205,47 @@ export class UniteModalComponent {
 
   createEscenaryChart() {
     const years = Object.keys(this.escenarys[0].years[0]);
+
     if (!this.values) this.values = years.map((key) => 0);
 
-    const plugins: any = {
-      dragData: {
-        round: 1,
-        showTooltip: true,
-        onDragStart: function (
-          e: any,
-          datasetIndex: any,
-          index: any,
-          value: any
-        ) {
-          /* console.log(e); */
-        },
-        onDrag: function (e: any, datasetIndex: any, index: any, value: any) {
-          e.target.style.cursor = 'grabbing';
-          /* console.log(value); */
-        },
-        onDragEnd: (e: any, datasetIndex: any, index: any, value: any) => {
-          e.target.style.cursor = 'default';
-          this.model.years[0][years[index]] = value;
-          console.log(this.model);
-          console.log(value, datasetIndex, index);
-        },
-      },
-    };
-
+    const plugins: any =
+      this.model.locked === false
+        ? {
+            dragData: {
+              round: 1,
+              showTooltip: true,
+              onDragStart: function (
+                e: any,
+                datasetIndex: any,
+                index: any,
+                value: any
+              ) {
+                /* console.log(e); */
+              },
+              onDrag: function (
+                e: any,
+                datasetIndex: any,
+                index: any,
+                value: any
+              ) {
+                e.target.style.cursor = 'grabbing';
+                /* console.log(value); */
+              },
+              onDragEnd: (
+                e: any,
+                datasetIndex: any,
+                index: any,
+                value: any
+              ) => {
+                e.target.style.cursor = 'default';
+                this.model.years[0][years[index]] = value;
+                console.log(this.model);
+                console.log(value, datasetIndex, index);
+              },
+            },
+          }
+        : {};
+    console.log(plugins);
     const option: any = {
       type: 'line',
       data: {
@@ -238,5 +288,47 @@ export class UniteModalComponent {
     this.values[i] = +value;
     this.createEscenaryChartVariable.destroy();
     this.createEscenaryChart();
+  }
+  yearKey(year: any): string {
+    return Object.keys(year)[0];
+  }
+
+  emptyScenarys() {
+    const escenario = this.escenario[0];
+    const obj: any = {};
+    for (let year = escenario.yearFrom; year <= escenario.yearTo; year++) {
+      obj[+year] = '0';
+    }
+    this.yearsToSee.push(obj);
+    for (let i = 0; i < this.escenario.length; i++) {
+      const element = this.escenario[i];
+      this.escenarys.push({ name: element.name, years: this.yearsToSee });
+    }
+    this.years = this.escenarys[0].years;
+  }
+
+  editScenarys() {
+    /*     const escenario = this.escenario[0];
+    const obj: any = {};
+    for (let year = escenario.yearFrom; year <= escenario.yearTo; year++) {
+      obj[+year] = '0';
+    }
+    this.yearsToSee.push(obj);
+    for (let i = 0; i < this.escenario.length; i++) {
+      const element = this.escenario[i];
+      this.escenarys.push({ name: element.name, years: this.yearsToSee });
+    } */
+
+    this.escenarys = this.escenarysFromDb;
+    this.years = this.escenarys[0].years;
+  }
+  changeLocked() {
+    this.createEscenaryChartVariable.destroy();
+    this.createEscenaryChart();
+  }
+
+  lockedScenarys() {
+    this.renderChartVariable.destroy();
+    this.renderChart();
   }
 }
