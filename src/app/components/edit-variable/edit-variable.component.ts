@@ -113,8 +113,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       }
       this.isHidden = false;
     }
-
-    this.addCalculo();
   }
 
   ngOnInit(): void {
@@ -390,8 +388,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos.push({ name: variable.name });
     this.operations.push(variable.scenarys);
     console.log(this.operations);
+    this.operationResult();
   }
-  addCalculo() {
+  operationResult() {
     type YearValue = {
       [key: number]: string;
     };
@@ -401,7 +400,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       years: YearValue[];
     };
 
-    const escenarios: Scenario[][] = [
+    /*     const escenarios: Scenario[][] = [
       [
         { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
         { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
@@ -414,16 +413,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
         { name: 'Escenario 1', years: [{ 2020: '700', 2021: '200' }] },
         { name: 'Escenario 2', years: [{ 2020: '400', 2021: '100' }] },
       ],
-    ];
-    let newEscenario: any = [];
+    ]; */
 
-    const allYears: number[] = Array.from(
-      new Set(
-        escenarios
-          .flat()
-          .flatMap((escenario) => Object.keys(escenario.years[0]).map(Number))
-      )
-    );
+    const newEscenario: any = [];
+    const escenarios = JSON.parse(JSON.stringify(this.operations));
+
     for (let i = 0; i < escenarios.length; i++) {
       const element = escenarios[i];
       for (let i = 0; i < element.length; i++) {
@@ -439,14 +433,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
           );
           objetoConNombre.years.forEach((year: any) => {
             Object.entries(year).forEach(([clave, valor]) => {
-              /* year[clave] = parseInt(valor as string) + element2.years[0][year]; */
               objetoConNombre.years[0][clave] =
                 parseInt(valor as string) + +element2.years[0][clave as any];
-              console.log(
-                parseInt(valor as string),
-                +element2.years[0][clave as any],
-                'a suma2'
-              );
             });
           });
         }
@@ -454,25 +442,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
 
     console.log(newEscenario);
+  }
 
-    /*     const nuevosEscenarios: Scenario[] = escenarios[0].map(({ name }) => {
-      const nuevoYears: YearValue[] = allYears.map((anio) => {
-        const suma = escenarios.reduce((total, escenario) => {
-          const escenarioActual = escenario.find((s) => s.name === name);
-          if (escenarioActual) {
-            const valor = parseInt(
-              escenarioActual.years.find(
-                (y) => parseInt(Object.keys(y)[0]) === anio
-              )?.[anio] || '0'
-            );
-            return total + valor;
-          }
-          return total;
-        }, 0);
-        return { [anio]: suma.toString() };
+  addCalculo(operation: string) {
+    if (this.operations.length > 0) {
+      this.calculos.push({ name: operation });
+      this.operations[this.operations.length - 1].forEach((e: any) => {
+        e.operation = operation;
       });
 
-      return { name, years: nuevoYears };
-    }); */
+      console.log(this.operations);
+    }
   }
 }

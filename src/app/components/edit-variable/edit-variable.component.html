@@ -194,6 +194,7 @@
             <div
               *ngFor="let operator of operators"
               style="cursor: pointer; padding: 20px"
+              (click)="addCalculo(operator)"
             >
               <img
                 class="user-icon"
