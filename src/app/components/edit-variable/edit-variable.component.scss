@@ -58,6 +58,17 @@ p {
   border: 2px solid rgb(199, 199, 199); /* Color y grosor del borde */
   padding: 20px; /* Espaciado interno del contenido con respecto al borde */
   overflow: auto; /* Agrega una barra de desplazamiento si el contenido es demasiado grande */
-  height: 200px; /* Altura inicial */
+  height: 100px; /* Altura inicial */
   min-height: 150px; /* Altura mínima */
+}
+.calculo-box {
+  width: 100%; /* Puedes ajustar el tamaño según tus necesidades */
+  /* max-height: auto; */
+  border-radius: 10px; /* Establece el redondeo de las esquinas */
+  border: 2px solid rgb(199, 199, 199); /* Color y grosor del borde */
+  padding: 20px; /* Espaciado interno del contenido con respecto al borde */
+  overflow: auto; /* Agrega una barra de desplazamiento si el contenido es demasiado grande */
+
+  min-height: 40px; /* Altura mínima */
+  align-items: center;
 }

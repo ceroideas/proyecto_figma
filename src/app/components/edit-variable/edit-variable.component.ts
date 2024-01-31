@@ -53,8 +53,52 @@ export class EditVariableComponent implements OnInit, OnChanges {
       operation: false,
     },
   ];
+  operators: any = [
+    '+',
+    '-',
+    '*',
+    '/',
+    '=',
+    '(',
+    ')',
+    '?',
+    ':',
+    '==',
+    '!=',
+    '>',
+    '>=',
+    '<',
+    '<=',
+    '&',
+    '|',
+  ];
+  calculos: any[] = [];
   disableSend: boolean = true;
   onlyConst: any = [];
+  variables: any[] = [
+    {
+      name: 'variable1',
+      scenarys: [
+        { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
+        { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
+      ],
+    },
+    {
+      name: 'variable2',
+      scenarys: [
+        { name: 'Escenario 1', years: [{ 2020: '500', 2021: '400' }] },
+        { name: 'Escenario 2', years: [{ 2020: '200', 2021: '300' }] },
+      ],
+    },
+    {
+      name: 'variable3',
+      scenarys: [
+        { name: 'Escenario 1', years: [{ 2020: '700', 2021: '200' }] },
+        { name: 'Escenario 2', years: [{ 2020: '400', 2021: '100' }] },
+      ],
+    },
+  ];
+  operations: any[] = [];
   @Output() sendDataEvent = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
@@ -69,6 +113,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       }
       this.isHidden = false;
     }
+
+    this.addCalculo();
   }
 
   ngOnInit(): void {
@@ -338,5 +384,95 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
   openUniteModal() {
     console.log('open ');
+  }
+
+  addVariable(variable: any) {
+    this.calculos.push({ name: variable.name });
+    this.operations.push(variable.scenarys);
+    console.log(this.operations);
+  }
+  addCalculo() {
+    type YearValue = {
+      [key: number]: string;
+    };
+
+    type Scenario = {
+      name: string;
+      years: YearValue[];
+    };
+
+    const escenarios: Scenario[][] = [
+      [
+        { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
+        { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
+      ],
+      [
+        { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
+        { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
+      ],
+      [
+        { name: 'Escenario 1', years: [{ 2020: '700', 2021: '200' }] },
+        { name: 'Escenario 2', years: [{ 2020: '400', 2021: '100' }] },
+      ],
+    ];
+    let newEscenario: any = [];
+
+    const allYears: number[] = Array.from(
+      new Set(
+        escenarios
+          .flat()
+          .flatMap((escenario) => Object.keys(escenario.years[0]).map(Number))
+      )
+    );
+    for (let i = 0; i < escenarios.length; i++) {
+      const element = escenarios[i];
+      for (let i = 0; i < element.length; i++) {
+        const element2 = element[i];
+        const escenarioExiste = newEscenario.some(
+          (objeto: any) => objeto.name === element2.name
+        );
+        if (!escenarioExiste) {
+          newEscenario.push({ name: element2.name, years: element2.years });
+        } else {
+          const objetoConNombre = newEscenario.find(
+            (obj: any) => obj.name === element2.name
+          );
+          objetoConNombre.years.forEach((year: any) => {
+            Object.entries(year).forEach(([clave, valor]) => {
+              /* year[clave] = parseInt(valor as string) + element2.years[0][year]; */
+              objetoConNombre.years[0][clave] =
+                parseInt(valor as string) + +element2.years[0][clave as any];
+              console.log(
+                parseInt(valor as string),
+                +element2.years[0][clave as any],
+                'a suma2'
+              );
+            });
+          });
+        }
+      }
+    }
+
+    console.log(newEscenario);
+
+    /*     const nuevosEscenarios: Scenario[] = escenarios[0].map(({ name }) => {
+      const nuevoYears: YearValue[] = allYears.map((anio) => {
+        const suma = escenarios.reduce((total, escenario) => {
+          const escenarioActual = escenario.find((s) => s.name === name);
+          if (escenarioActual) {
+            const valor = parseInt(
+              escenarioActual.years.find(
+                (y) => parseInt(Object.keys(y)[0]) === anio
+              )?.[anio] || '0'
+            );
+            return total + valor;
+          }
+          return total;
+        }, 0);
+        return { [anio]: suma.toString() };
+      });
+
+      return { name, years: nuevoYears };
+    }); */
   }
 }
