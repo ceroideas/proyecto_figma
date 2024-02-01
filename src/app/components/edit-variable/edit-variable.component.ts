@@ -98,6 +98,21 @@ export class EditVariableComponent implements OnInit, OnChanges {
       ],
     },
   ];
+  simbols: any[] = [
+    '=',
+    '(',
+    ')',
+    '?',
+    ':',
+    '==',
+    '!=',
+    '>',
+    '>=',
+    '<',
+    '<=',
+    '&',
+    '|',
+  ];
   operations: any[] = [];
   @Output() sendDataEvent = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
@@ -385,9 +400,19 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   addVariable(variable: any) {
+    if (
+      this.operators.includes(this.calculos[this.calculos.length - 1]?.name)
+    ) {
+      variable.scenarys.forEach((e: any) => {
+        e.operation = this.calculos[this.calculos.length - 1]?.name;
+      });
+    }
     this.calculos.push({ name: variable.name });
     this.operations.push(variable.scenarys);
+    console.log(variable.scenarys, 'CALCULOOOO');
     console.log(this.operations);
+    this.calculos[this.calculos.length - 1];
+
     this.operationResult();
   }
   operationResult() {
@@ -417,6 +442,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     const newEscenario: any = [];
     const escenarios = JSON.parse(JSON.stringify(this.operations));
+    let stop = false;
+    let simbol: string;
 
     for (let i = 0; i < escenarios.length; i++) {
       const element = escenarios[i];
@@ -425,33 +452,100 @@ export class EditVariableComponent implements OnInit, OnChanges {
         const escenarioExiste = newEscenario.some(
           (objeto: any) => objeto.name === element2.name
         );
-        if (!escenarioExiste) {
+        if (this.operators.includes(element2.name)) {
+          newEscenario.forEach((e: any) => {
+            e.years.forEach((year: any) => {
+              Object.entries(year).forEach(([clave, valor]) => {
+                e.years[0][clave] = `${(valor as string) + element2.name}`;
+                simbol = element2.name;
+              });
+            });
+          });
+        }
+
+        if (!escenarioExiste && !this.operators.includes(element2.name)) {
           newEscenario.push({ name: element2.name, years: element2.years });
-        } else {
+        } else if (!this.operators.includes(element2.name)) {
           const objetoConNombre = newEscenario.find(
             (obj: any) => obj.name === element2.name
           );
           objetoConNombre.years.forEach((year: any) => {
             Object.entries(year).forEach(([clave, valor]) => {
-              objetoConNombre.years[0][clave] =
-                parseInt(valor as string) + +element2.years[0][clave as any];
+              console.log(`${valor as string}`, 'de nuevo');
+
+              if (
+                (valor as string).charAt((valor as string).length - 1) === '('
+              ) {
+                stop = true;
+              }
+
+              if (stop) {
+                objetoConNombre.years[0][clave] = `${
+                  (valor as string) + element2.years[0][clave as any]
+                }`;
+                console.log('aqui en stop');
+              } else if (stop && simbol === ')') {
+                console.log('aqui en else if');
+                stop = false;
+                objetoConNombre.years[0][clave] = eval(
+                  `${(valor as string) + element2.years[0][clave as any]}`
+                );
+              } else {
+                console.log('aqui en else');
+                objetoConNombre.years[0][clave] = eval(
+                  `${(valor as string) + element2.years[0][clave as any]}`
+                );
+              }
+
+              /*             if (element2.operation) {
+                switch (element2.operation) {
+                  case '+':
+                    objetoConNombre.years[0][clave] =
+                      parseInt(valor as string) +
+                      +element2.years[0][clave as any];
+                    break;
+
+                  case '-':
+                    objetoConNombre.years[0][clave] =
+                      parseInt(valor as string) -
+                      +element2.years[0][clave as any];
+                    break;
+
+                  case '*':
+                    objetoConNombre.years[0][clave] =
+                      parseInt(valor as string) *
+                      +element2.years[0][clave as any];
+                    break;
+
+                  case '/':
+                    objetoConNombre.years[0][clave] =
+                      parseInt(valor as string) /
+                      +element2.years[0][clave as any];
+                    break;
+
+                  default:
+                    break;
+                }
+              } */
             });
           });
         }
       }
     }
 
-    console.log(newEscenario);
+    console.log(newEscenario, 'escenario');
   }
 
   addCalculo(operation: string) {
     if (this.operations.length > 0) {
       this.calculos.push({ name: operation });
-      this.operations[this.operations.length - 1].forEach((e: any) => {
+      this.operations.push([{ name: operation }]);
+      /*       this.operations[this.operations.length - 1].forEach((e: any) => {
         e.operation = operation;
-      });
+      }); */
 
       console.log(this.operations);
     }
+    this.operationResult();
   }
 }
