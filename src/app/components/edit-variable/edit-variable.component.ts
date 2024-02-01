@@ -75,6 +75,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   calculos: any[] = [];
   disableSend: boolean = true;
   onlyConst: any = [];
+
   variables: any[] = [
     {
       name: 'variable1',
@@ -113,6 +114,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     '&',
     '|',
   ];
+  showNewEscenario: any[] = [];
   operations: any[] = [];
   @Output() sendDataEvent = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
@@ -409,7 +411,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
     this.calculos.push({ name: variable.name });
     this.operations.push(variable.scenarys);
-    console.log(variable.scenarys, 'CALCULOOOO');
+
     console.log(this.operations);
     this.calculos[this.calculos.length - 1];
 
@@ -442,8 +444,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     const newEscenario: any = [];
     const escenarios = JSON.parse(JSON.stringify(this.operations));
-    let stop = false;
-    let simbol: string;
 
     for (let i = 0; i < escenarios.length; i++) {
       const element = escenarios[i];
@@ -457,7 +457,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
             e.years.forEach((year: any) => {
               Object.entries(year).forEach(([clave, valor]) => {
                 e.years[0][clave] = `${(valor as string) + element2.name}`;
-                simbol = element2.name;
+                try {
+                  e.years[0][clave] = eval(e.years[0][clave]);
+                } catch (error) {}
               });
             });
           });
@@ -471,30 +473,14 @@ export class EditVariableComponent implements OnInit, OnChanges {
           );
           objetoConNombre.years.forEach((year: any) => {
             Object.entries(year).forEach(([clave, valor]) => {
-              console.log(`${valor as string}`, 'de nuevo');
-
-              if (
-                (valor as string).charAt((valor as string).length - 1) === '('
-              ) {
-                stop = true;
-              }
-
-              if (stop) {
+              try {
+                objetoConNombre.years[0][clave] = eval(
+                  `${(valor as string) + element2.years[0][clave as any]}`
+                );
+              } catch (error) {
                 objetoConNombre.years[0][clave] = `${
                   (valor as string) + element2.years[0][clave as any]
                 }`;
-                console.log('aqui en stop');
-              } else if (stop && simbol === ')') {
-                console.log('aqui en else if');
-                stop = false;
-                objetoConNombre.years[0][clave] = eval(
-                  `${(valor as string) + element2.years[0][clave as any]}`
-                );
-              } else {
-                console.log('aqui en else');
-                objetoConNombre.years[0][clave] = eval(
-                  `${(valor as string) + element2.years[0][clave as any]}`
-                );
               }
 
               /*             if (element2.operation) {
@@ -534,6 +520,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
 
     console.log(newEscenario, 'escenario');
+    this.showNewEscenario = newEscenario;
   }
 
   addCalculo(operation: string) {
