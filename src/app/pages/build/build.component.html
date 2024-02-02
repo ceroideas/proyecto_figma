@@ -1,7 +1,12 @@
-<!-- <button (click)="seeAll()" type="button" class="btn btn-primary">
-  Ver todo
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#exampleModal"
+  (click)="newTree()"
+>
+  Launch demo modal
 </button>
- -->
 <div
   style="
     width: 80%;
@@ -261,7 +266,7 @@
                   "
                   alt=""
                 />
-                Nombre de la variable
+                {{ tier.name }}
               </td>
               <td
                 [ngClass]="
@@ -288,5 +293,6 @@
   (hiddenDataEvent)="findAndHideFatherNode()"
   [isHidden]="hidden"
   [aux]="aux"
+  [isNewTree]="isNewTree"
 ></app-edit-variable>
 <app-unite-modal [edit]="editVariable"></app-unite-modal>

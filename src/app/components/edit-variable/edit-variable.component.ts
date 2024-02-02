@@ -72,6 +72,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     '&',
     '|',
   ];
+  @Input() isNewTree: boolean = false;
   calculos: any[] = [];
   disableSend: boolean = true;
   onlyConst: any = [];
@@ -172,12 +173,10 @@ export class EditVariableComponent implements OnInit, OnChanges {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
     modal._element.addEventListener('shown.bs.modal', () => {
-      console.log('Modal abierto');
       this.updateVariables();
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      console.log('Modal cerrado');
       this.variableName = '';
       this.variableSelect1 = '';
       this.variableSelect2 = '';
@@ -252,7 +251,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       get unidad(): any {
         const unidad1 = temp?.[+this.variableSelect1]?.unidad;
         const unidad2 = temp?.[+this.variableSelect2]?.unidad;
-        console.log(unidad1, unidad2, this.operation, 'dsjhjduhd');
+
         // Verificar si las propiedades existen antes de intentar acceder a ellas
         if (
           unidad1 !== undefined &&
@@ -308,7 +307,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       get unidad(): any {
         const unidad1 = temp?.[+this.variableSelect1 + 1]?.unidad;
         const unidad2 = temp?.[+this.variableSelect2 + 1]?.unidad;
-        console.log(unidad1, unidad2, this.operation);
+
         // Verificar si las propiedades existen antes de intentar acceder a ellas
         if (
           unidad1 !== undefined &&
@@ -397,9 +396,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.onlyConst = this.tempObject.filter((obj) => obj.operation === false);
     return this.tempObject.filter((obj) => obj.operation === false);
   }
-  openUniteModal() {
-    console.log('open ');
-  }
 
   addVariable(variable: any) {
     if (
@@ -412,7 +408,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos.push({ name: variable.name });
     this.operations.push(variable.scenarys);
 
-    console.log(this.operations);
     this.calculos[this.calculos.length - 1];
 
     this.operationResult();
@@ -530,8 +525,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       /*       this.operations[this.operations.length - 1].forEach((e: any) => {
         e.operation = operation;
       }); */
-
-      console.log(this.operations);
     }
     this.operationResult();
   }

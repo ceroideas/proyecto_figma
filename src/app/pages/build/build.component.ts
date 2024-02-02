@@ -1,18 +1,5 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  ComponentFactoryResolver,
-  ComponentRef,
-  ElementRef,
-  OnInit,
-  Renderer2,
-  Type,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
-import { DragDropModule } from '@angular/cdk/drag-drop';
-import { MessageComponent } from 'src/app/components/message/message.component';
-import { AdDirective } from './ad.directive';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+
 import { ActivatedRoute, Router } from '@angular/router';
 
 declare var google: any;
@@ -37,8 +24,10 @@ export class BuildComponent implements OnInit {
   data!: any;
   countHidden!: number;
   interval!: any;
+  a = undefined;
   editVariable: boolean = false;
   hidden: boolean = false;
+  isNewTree: boolean = false;
   aux: any = [
     {
       data: [
@@ -78,7 +67,7 @@ export class BuildComponent implements OnInit {
         '',
       ],
       hidden: 0,
-      unidad: 200,
+
       name: 'Número de variable',
       tier: 0,
     },
@@ -176,7 +165,8 @@ export class BuildComponent implements OnInit {
         if (selection.length > 0) {
           // Obtén el índice de la fila seleccionada
           var rowIndex = selection[0].row;
-
+          console.log(this.data.getValue(rowIndex, 0), 'DATA');
+          console.log(this.aux, 'AUXX');
           // Obtén el valor de la columna 'Name' (v)
           this.nodeName = this.data.getValue(rowIndex, 0);
 
@@ -251,51 +241,107 @@ export class BuildComponent implements OnInit {
   }
 
   getDataFromModal(data: any) {
-    this.aux.push({
-      data: [
-        {
-          v: `${this.nextNode}`,
-          f: `<div  class="rotate" >
-            
-                   <span>
-                   <div class="floating" style="display: none;">   
-                   <div class="flex-box">   
-                   <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                    class="tier-icon " 
-                   src="../../../assets/icons/u_plus.svg"
-                   alt=""
-                 /></button>
-                   <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                   class="tier-icon " 
-                  src="../../../assets/icons/pencil.svg"
-                  alt=""
-                /></button>
-                   <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                   class="tier-icon " 
-                  src="../../../assets/icons/u_eye-slash-icon.svg"
-                  alt=""
-                /> </button>
-                   </div>
-                   <div class="full-box">
-                          
-                   </div> 
-            </div>
-                          ${data.name} 
-                   </span>
-    
-            </div>`,
-        },
-        `${this.nodeName}`,
-        `${data.description}`,
-      ],
-      hidden: 0,
-      unidad: data.unidad,
-      name: data.name,
-      tier: this.fatherNode !== 0 ? +this.fatherNode + 1 : 0,
-    });
-    this.addRow();
-    this.chart.draw(this.data, { allowHtml: true });
-    google.charts.setOnLoadCallback(this.drawChart);
+    if ((this.fatherNode as unknown as string) === 'undefined') {
+      this.fatherNode = 1;
+    }
+
+    if (!this.isNewTree) {
+      this.aux.push({
+        data: [
+          {
+            v: `${this.nextNode}`,
+            f: `<div  class="rotate" >
+              
+                     <span>
+                     <div class="floating" style="display: none;">   
+                     <div class="flex-box">   
+                     <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                      class="tier-icon " 
+                     src="../../../assets/icons/u_plus.svg"
+                     alt=""
+                   /></button>
+                     <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                     class="tier-icon " 
+                    src="../../../assets/icons/pencil.svg"
+                    alt=""
+                  /></button>
+                     <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                     class="tier-icon " 
+                    src="../../../assets/icons/u_eye-slash-icon.svg"
+                    alt=""
+                  /> </button>
+                     </div>
+                     <div class="full-box">
+                            
+                     </div> 
+              </div>
+                            ${data.name} 
+                     </span>
+      
+              </div>`,
+          },
+          `${this.nodeName}`,
+          `${data.description}`,
+        ],
+        hidden: 0,
+
+        name: data.name,
+        tier: this.fatherNode !== 0 ? +this.fatherNode + 1 : 0,
+      });
+      this.addRow();
+      this.chart.draw(this.data, { allowHtml: true });
+      google.charts.setOnLoadCallback(this.drawChart);
+      console.log(this.aux, 'AUX');
+    } else {
+      console.log('else');
+      this.aux.push({
+        data: [
+          {
+            v: `${this.a}`,
+            f: `<div  class="rotate" >
+              
+                     <span>
+                     <div class="floating" style="display: none;">   
+                     <div class="flex-box">   
+                     <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                      class="tier-icon " 
+                     src="../../../assets/icons/u_plus.svg"
+                     alt=""
+                   /></button>
+                     <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                     class="tier-icon " 
+                    src="../../../assets/icons/pencil.svg"
+                    alt=""
+                  /></button>
+                     <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                     class="tier-icon " 
+                    src="../../../assets/icons/u_eye-slash-icon.svg"
+                    alt=""
+                  /> </button>
+                     </div>
+                     <div class="full-box">
+                            
+                     </div> 
+              </div>
+                            ${data.name} 
+                     </span>
+      
+              </div>`,
+          },
+          ``,
+          `${data.description}`,
+        ],
+        hidden: 0,
+
+        name: data.name,
+        tier: 0,
+      });
+      this.addRow();
+      this.chart.draw(this.data, { allowHtml: true });
+      google.charts.setOnLoadCallback(this.drawChart);
+      console.log(this.aux, 'AUX');
+      this.isNewTree = false;
+    }
   }
 
   editDataFromModal(data: any) {
@@ -339,7 +385,7 @@ export class BuildComponent implements OnInit {
         `${data.description}`,
       ],
       hidden: 0,
-      unidad: data.unidad,
+
       name: data.name,
     };
     this.addRow();
@@ -415,5 +461,9 @@ export class BuildComponent implements OnInit {
   openModal() {
     const modal = new bootstrap.Modal(this.hideShowModal.nativeElement);
     modal.show();
+  }
+
+  newTree() {
+    this.isNewTree = true;
   }
 }
