@@ -242,6 +242,9 @@ export class BuildComponent implements OnInit {
 
   getDataFromModal(data: any) {
     if ((this.fatherNode as unknown as string) === 'undefined') {
+    }
+
+    if (typeof this.fatherNode === 'string' && this.fatherNode !== '') {
       this.fatherNode = 1;
     }
 
@@ -293,11 +296,10 @@ export class BuildComponent implements OnInit {
       google.charts.setOnLoadCallback(this.drawChart);
       console.log(this.aux, 'AUX');
     } else {
-      console.log('else');
       this.aux.push({
         data: [
           {
-            v: `${this.a}`,
+            v: `${this.generarCadenaAleatoria()}`,
             f: `<div  class="rotate" >
               
                      <span>
@@ -465,5 +467,18 @@ export class BuildComponent implements OnInit {
 
   newTree() {
     this.isNewTree = true;
+  }
+
+  generarCadenaAleatoria() {
+    const caracteres =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let cadenaAleatoria = '';
+
+    for (let i = 0; i < 5; i++) {
+      const indiceAleatorio = Math.floor(Math.random() * caracteres.length);
+      cadenaAleatoria += caracteres.charAt(indiceAleatorio);
+    }
+
+    return cadenaAleatoria;
   }
 }
