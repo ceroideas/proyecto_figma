@@ -441,6 +441,13 @@ export class BuildComponent implements OnInit {
     );
     sonNode.forEach((node: any) => {
       node.hidden = 1;
+      console.log('fintreol', node);
+      const sonNode = this.aux.filter(
+        (item: any) => item.data[1] === node.data[0].v
+      );
+      sonNode.forEach((node: any) => {
+        node.hidden = 1;
+      });
     });
     this.aux[i] = tier;
     this.addRow();
