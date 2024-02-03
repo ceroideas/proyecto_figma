@@ -348,8 +348,9 @@ export class BuildComponent implements OnInit {
 
   editDataFromModal(data: any) {
     let position = +data.nameNode - 1;
-
+    console.log(this.aux[position], 'se modifica');
     this.aux[position] = {
+      ...this.aux[position],
       data: [
         {
           v: `${data.nameNode}`,
@@ -390,6 +391,7 @@ export class BuildComponent implements OnInit {
 
       name: data.name,
     };
+
     this.addRow();
 
     this.chart.draw(this.data, { allowHtml: true });
