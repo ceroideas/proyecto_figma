@@ -277,6 +277,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;
       this.variableDescription = variable?.description;
+      this.constante = variable?.constante || false;
     }
   }
   hiddenData() {
