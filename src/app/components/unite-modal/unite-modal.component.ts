@@ -96,6 +96,9 @@ export class UniteModalComponent implements OnInit {
   }
   addEscenary() {
     if (this.renderChartVariable) this.renderChartVariable.destroy();
+    this.selectedEscenary = '#';
+    this.model.name = '';
+    this.createModel();
     this.showForm = !this.showForm;
     this.createEscenaryChart();
   }
@@ -108,14 +111,24 @@ export class UniteModalComponent implements OnInit {
       years[clave] = '';
     });
     this.model['years'] = [years];
-    console.log(this.model);
   }
 
   renderChart() {
-    const years = Object.keys(this.escenarys[0].years[0]);
-    const values = years.map(
-      (key) => this.escenarys[this.selectedEscenary].years[0][key]
+    const years = Object.keys(
+      JSON.parse(JSON.stringify(this.escenarys[0].years[0]))
     );
+
+    /*     const values = years.map(
+      (key) => +this.escenarys[this.selectedEscenary].years[0][key]
+    ); */
+    const values = Object.values(
+      this.escenarys[this.selectedEscenary].years[0]
+    );
+    console.log(this.escenarys[this.selectedEscenary], 'values');
+    if (!this.values) {
+      this.values = values;
+    }
+
     const plugins: any =
       this.lockedScenary === false
         ? {
@@ -159,7 +172,7 @@ export class UniteModalComponent implements OnInit {
         datasets: [
           {
             label: '# of Votes',
-            data: values,
+            data: this.values,
             fill: true,
             tension: 0.4,
             borderWidth: 1,
@@ -187,7 +200,16 @@ export class UniteModalComponent implements OnInit {
         plugins: plugins,
       },
     };
+    const escenary = JSON.parse(
+      JSON.stringify(this.escenarys[this.selectedEscenary])
+    );
+    years.forEach((clave, index) => {
+      escenary.years[0][clave] = this.values[index].toString();
+    });
 
+    this.escenarys[+this.selectedEscenary] = escenary;
+
+    console.log(this.escenarys[+this.selectedEscenary], escenary, 'sl,dlm');
     this.renderChartVariable = new Chart('chartJSContainer', option);
   }
   onSelectChange() {
@@ -199,6 +221,12 @@ export class UniteModalComponent implements OnInit {
       if (this.renderChartVariable) {
         this.renderChartVariable.destroy();
       }
+      this.model.name = this.escenarys[+this.selectedEscenary].name;
+      this.model.years = JSON.parse(
+        JSON.stringify(this.escenarys[this.selectedEscenary].years)
+      );
+      this.values = undefined;
+      /* this.createModel(); */
       this.renderChart();
     }
   }
@@ -245,7 +273,7 @@ export class UniteModalComponent implements OnInit {
             },
           }
         : {};
-    console.log(plugins);
+
     const option: any = {
       type: 'line',
       data: {
@@ -286,8 +314,14 @@ export class UniteModalComponent implements OnInit {
   }
   changeValue(i: number, value: any) {
     this.values[i] = +value;
+    console.log(this.values, 'value');
     this.createEscenaryChartVariable.destroy();
     this.createEscenaryChart();
+  }
+  changeValue2(i: number, value: any) {
+    this.values[i] = +value;
+    this.renderChartVariable.destroy();
+    this.renderChart();
   }
   yearKey(year: any): string {
     return Object.keys(year)[0];
