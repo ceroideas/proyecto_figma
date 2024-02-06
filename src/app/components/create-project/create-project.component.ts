@@ -1,12 +1,15 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { ProjectService } from 'src/app/services/project.service';
 
 @Component({
   selector: 'app-create-project',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
+
   templateUrl: './create-project.component.html',
   styleUrl: './create-project.component.scss',
 })
@@ -20,7 +23,7 @@ export class CreateProjectComponent {
 
   inputValues: { [key: string]: string } = {};
   nameProject!: any;
-  constructor(private router: Router) {
+  constructor(private router: Router, private projectSvc: ProjectService) {
     this.getYears();
     console.log(this.years);
   }
@@ -57,14 +60,16 @@ export class CreateProjectComponent {
   createProject() {
     const project = {
       name: this.nameProject,
-      yearFrom: this.yearFrom,
-      yearTo: this.yearTo,
-      scenery: this.inputValues,
+      year_from: this.yearFrom,
+      year_to: this.yearTo,
+      sceneries: Object.values(this.inputValues),
     };
 
     this.closeModal();
-    console.log(project);
-    this.router.navigate(['home/build'], { queryParams: project });
+    /*     this.projectSvc.saveProject(project).subscribe((res) => {
+      console.log(res);
+    }); */
+    /* this.router.navigate(['home/build'], { queryParams: project }); */
   }
 
   closeModal() {
