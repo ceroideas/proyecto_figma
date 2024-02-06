@@ -115,6 +115,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   ];
   showNewEscenario: any[] = [];
   operations: any[] = [];
+  sendOperations: any[] = [];
+  selectedCalculo: any;
   @Output() sendDataEvent = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
@@ -162,7 +164,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.variableDescription = variable?.description;
 
       this.constante = variable?.constante || false;
-      console.log((this.constante = variable?.constante || false), 'AHHHHHH');
     } else {
     }
   }
@@ -207,13 +208,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       name: this.variableName,
       description: this.variableDescription,
 
-      operation: !this.constante,
-      constante: this.constante,
-    });
-
-    console.log({
-      name: this.variableName,
-      description: this.variableDescription,
       operation: !this.constante,
       constante: this.constante,
     });
@@ -296,7 +290,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     return this.tempObject.filter((obj) => obj.operation === false);
   }
 
-  addVariable(variable: any) {
+  addVariable(variable: any, id: any) {
     if (
       this.operators.includes(this.calculos[this.calculos.length - 1]?.name)
     ) {
@@ -310,6 +304,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos[this.calculos.length - 1];
 
     this.operationResult();
+    this.sendOperations.push(id);
+    console.log(this.sendOperations);
   }
   operationResult() {
     type YearValue = {
@@ -320,21 +316,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       name: string;
       years: YearValue[];
     };
-
-    /*     const escenarios: Scenario[][] = [
-      [
-        { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
-        { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
-      ],
-      [
-        { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
-        { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
-      ],
-      [
-        { name: 'Escenario 1', years: [{ 2020: '700', 2021: '200' }] },
-        { name: 'Escenario 2', years: [{ 2020: '400', 2021: '100' }] },
-      ],
-    ]; */
 
     const newEscenario: any = [];
     const escenarios = JSON.parse(JSON.stringify(this.operations));
@@ -376,37 +357,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
                   (valor as string) + element2.years[0][clave as any]
                 }`;
               }
-
-              /*             if (element2.operation) {
-                switch (element2.operation) {
-                  case '+':
-                    objetoConNombre.years[0][clave] =
-                      parseInt(valor as string) +
-                      +element2.years[0][clave as any];
-                    break;
-
-                  case '-':
-                    objetoConNombre.years[0][clave] =
-                      parseInt(valor as string) -
-                      +element2.years[0][clave as any];
-                    break;
-
-                  case '*':
-                    objetoConNombre.years[0][clave] =
-                      parseInt(valor as string) *
-                      +element2.years[0][clave as any];
-                    break;
-
-                  case '/':
-                    objetoConNombre.years[0][clave] =
-                      parseInt(valor as string) /
-                      +element2.years[0][clave as any];
-                    break;
-
-                  default:
-                    break;
-                }
-              } */
             });
           });
         }
@@ -424,7 +374,23 @@ export class EditVariableComponent implements OnInit, OnChanges {
       /*       this.operations[this.operations.length - 1].forEach((e: any) => {
         e.operation = operation;
       }); */
+      this.sendOperations.push(operation);
+      console.log(this.sendOperations);
     }
     this.operationResult();
+  }
+
+  seleccionarCalculo(calculo: any): void {
+    this.selectedCalculo = calculo;
+  }
+
+  deseleccionarCalculo(): void {
+    this.selectedCalculo = null;
+  }
+  eliminatedOperation(i: any) {
+    this.calculos.splice(i, 1);
+    this.operations.splice(i, 1);
+    this.sendOperations.splice(i, 1);
+    console.log(this.sendOperations);
   }
 }

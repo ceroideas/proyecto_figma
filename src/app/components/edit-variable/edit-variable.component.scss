@@ -72,3 +72,19 @@ p {
   min-height: 40px; /* Altura mínima */
   align-items: center;
 }
+.operation-varible {
+  border: 1px solid #000f55;
+  border-radius: 17px;
+  position: relative;
+}
+.close-icon {
+  position: absolute;
+  top: -12px; /* Ajusta este valor según sea necesario */
+  right: -10px; /* Ajusta este valor según sea necesario */
+  cursor: pointer;
+  padding: 5px;
+  background-color: #000f55; /* Ajusta el color de fondo según tu diseño */
+  z-index: 1; /* Asegurar que esté arriba del div */
+  color: white;
+  border-radius: 30px;
+}
