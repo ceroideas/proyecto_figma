@@ -9,7 +9,7 @@ import { ProjectService } from 'src/app/services/project.service';
   selector: 'app-create-project',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
-
+  providers: [ProjectService],
   templateUrl: './create-project.component.html',
   styleUrl: './create-project.component.scss',
 })
@@ -66,9 +66,9 @@ export class CreateProjectComponent {
     };
 
     this.closeModal();
-    /*     this.projectSvc.saveProject(project).subscribe((res) => {
+    this.projectSvc.saveProject(project).subscribe((res) => {
       console.log(res);
-    }); */
+    });
     /* this.router.navigate(['home/build'], { queryParams: project }); */
   }
 

@@ -11,4 +11,7 @@ export class ProjectService {
   saveProject(project: any) {
     return this.http.post(`${this.url}/saveProject`, project);
   }
+  getProjects() {
+    return this.http.get(`${this.url}/getProjects`);
+  }
 }
