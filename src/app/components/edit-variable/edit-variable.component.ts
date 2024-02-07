@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -13,12 +14,14 @@ import {
 import { FormsModule } from '@angular/forms';
 import * as Highcharts from 'highcharts';
 import { Chart, registerables } from 'node_modules/chart.js';
+import { ProjectService } from 'src/app/services/project.service';
 Chart.register(...registerables);
 declare var bootstrap: any;
 @Component({
   selector: 'app-edit-variable',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
+  providers: [ProjectService],
   templateUrl: './edit-variable.component.html',
   styleUrl: './edit-variable.component.scss',
 })
@@ -74,7 +77,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   calculos: any[] = [];
   disableSend: boolean = true;
   onlyConst: any = [];
-
+  @Input() nodeId!: any;
   variables: any[] = [
     {
       name: 'variable1',
@@ -120,6 +123,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Output() sendDataEvent = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
+  constructor(private projectSvc: ProjectService) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
       this.updateVariables();
@@ -162,8 +166,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;
       this.variableDescription = variable?.description;
-
-      this.constante = variable?.constante || false;
     } else {
     }
   }
@@ -268,6 +270,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
   updateVariables(): void {
     if (this.editVariable) {
+      this.projectSvc.getNode(this.nodeId).subscribe((res) => {
+        console.log(res);
+      });
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;
       this.variableDescription = variable?.description;

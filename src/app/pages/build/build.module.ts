@@ -7,6 +7,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AdDirective } from './ad.directive';
 import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
 import { UniteModalComponent } from 'src/app/components/unite-modal/unite-modal.component';
+import { ProjectService } from 'src/app/services/project.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [BuildComponent, AdDirective], // Incluye BuildComponent aquí
@@ -16,7 +18,9 @@ import { UniteModalComponent } from 'src/app/components/unite-modal/unite-modal.
     CommonModule,
     EditVariableComponent,
     UniteModalComponent,
-  ], // Debes incluir módulos, no componentes
+    HttpClientModule,
+  ],
+
   exports: [BuildComponent],
 })
 export class BuildModule {}

@@ -14,4 +14,17 @@ export class ProjectService {
   getProjects() {
     return this.http.get(`${this.url}/getProjects`);
   }
+
+  getProject(id: any) {
+    return this.http.get(`${this.url}/getProject/${id}`);
+  }
+  saveNode(node: any) {
+    return this.http.post(`${this.url}/saveNode`, node);
+  }
+  getScenery(id: any) {
+    return this.http.get(`${this.url}/getScenery/${id}`);
+  }
+  getNode(id: any) {
+    return this.http.get(`${this.url}/getNode/${id}`);
+  }
 }

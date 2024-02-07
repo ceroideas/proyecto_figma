@@ -19,7 +19,7 @@ export const routes: Routes = [
       },
       { path: 'waterfall', component: WaterfallChartComponent },
       { path: 'simulate', component: SimulateComponent },
-      { path: 'build', component: BuildComponent },
+      { path: 'build/:id', component: BuildComponent },
     ],
   },
   // Otras rutas aquí...

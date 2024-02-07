@@ -1,12 +1,15 @@
+import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { ProjectService } from 'src/app/services/project.service';
 
 declare var google: any;
 declare var bootstrap: any;
 @Component({
   selector: 'app-build',
-
+  providers: [ProjectService],
   templateUrl: './build.component.html',
   styleUrl: './build.component.scss',
 })
@@ -28,8 +31,9 @@ export class BuildComponent implements OnInit {
   editVariable: boolean = false;
   hidden: boolean = false;
   isNewTree: boolean = false;
+  id!: any;
   aux: any = [
-    {
+    /*   {
       data: [
         {
           v: '1',
@@ -70,10 +74,66 @@ export class BuildComponent implements OnInit {
 
       name: 'Número de variable',
       tier: 0,
-    },
+    }, */
   ];
 
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    private projectSvc: ProjectService
+  ) {
+    this.id = this.route.snapshot.params['id'];
+
+    this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      console.log(res);
+      if (res.nodes?.length > 0) {
+        res.nodes.forEach((element: any) => {
+          const data = {
+            data: [
+              {
+                v: `${element.id}`,
+                f: `<div  class="rotate" >
+          
+          <span>
+                 <div class="floating" style="display: none;">   
+                        <div class="flex-box">   
+                        <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                         class="tier-icon " 
+                        src="../../../assets/icons/u_plus.svg"
+                        alt=""
+                      /></button>
+                        <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                        class="tier-icon " 
+                       src="../../../assets/icons/pencil.svg"
+                       alt=""
+                     /></button>
+                        <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                        class="tier-icon " 
+                       src="../../../assets/icons/u_eye-slash-icon.svg"
+                       alt=""
+                     /> </button>
+                        </div>
+                        <div class="full-box">
+                               
+                        </div> 
+                 </div>
+                 ${element.name}
+          </span>
+  
+   </div>`,
+              },
+              `${element.node_id ? element.node_id : ''}`,
+              `${element.description}`,
+            ],
+            hidden: 0,
+
+            name: element.name,
+            tier: element.tier,
+          };
+          this.aux.push(data);
+        });
+      }
+    });
+
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
@@ -138,6 +198,7 @@ export class BuildComponent implements OnInit {
           (editElements: HTMLElement) => {
             editElements.addEventListener('click', (e) => {
               this.editVariable = true;
+              console.log(this.nodeName);
               e.stopPropagation();
               const openButton = document.querySelector('#exampleModalButton');
 
@@ -165,8 +226,7 @@ export class BuildComponent implements OnInit {
         if (selection.length > 0) {
           // Obtén el índice de la fila seleccionada
           var rowIndex = selection[0].row;
-          console.log(this.data.getValue(rowIndex, 0), 'DATA');
-          console.log(this.aux, 'AUXX');
+
           // Obtén el valor de la columna 'Name' (v)
           this.nodeName = this.data.getValue(rowIndex, 0);
 
@@ -189,8 +249,6 @@ export class BuildComponent implements OnInit {
 
           // Incrementa el valor máximo en uno para obtener el próximo valor
           this.nextNode = this.aux.length + 1;
-
-          console.log('Nodo padre:', this.fatherNode);
         }
       });
 
@@ -247,8 +305,17 @@ export class BuildComponent implements OnInit {
     if (typeof this.fatherNode === 'string' && this.fatherNode !== '') {
       this.fatherNode = 1;
     }
+    const dataToSave = {
+      ...data,
+      project_id: this.id,
+      type: data.operation ? 2 : 1,
+      distribution_shape: 1,
+      node_id: this.isNewTree ? null : this.nodeName,
+      tier: this.fatherNode !== 0 ? +this.fatherNode + 1 : 0,
+    };
+    console.log(dataToSave, this.fatherNode, this.nodeName);
 
-    if (!this.isNewTree) {
+    /*     if (!this.isNewTree) {
       this.aux.push({
         data: [
           {
@@ -294,7 +361,6 @@ export class BuildComponent implements OnInit {
       this.addRow();
       this.chart.draw(this.data, { allowHtml: true });
       google.charts.setOnLoadCallback(this.drawChart);
-      console.log(this.aux, 'AUX');
     } else {
       this.aux.push({
         data: [
@@ -341,14 +407,72 @@ export class BuildComponent implements OnInit {
       this.addRow();
       this.chart.draw(this.data, { allowHtml: true });
       google.charts.setOnLoadCallback(this.drawChart);
-      console.log(this.aux, 'AUX');
+
       this.isNewTree = false;
-    }
+    } */
+
+    this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
+      console.log(res, 'res');
+      this.projectSvc.getProject(this.id).subscribe((res: any) => {
+        this.aux = [];
+        if (res.nodes?.length > 0) {
+          res.nodes.forEach((element: any) => {
+            const data = {
+              data: [
+                {
+                  v: `${element.id}`,
+                  f: `<div  class="rotate" >
+            
+            <span>
+                   <div class="floating" style="display: none;">   
+                          <div class="flex-box">   
+                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                           class="tier-icon " 
+                          src="../../../assets/icons/u_plus.svg"
+                          alt=""
+                        /></button>
+                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/pencil.svg"
+                         alt=""
+                       /></button>
+                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                          </div>
+                          <div class="full-box">
+                                 
+                          </div> 
+                   </div>
+                   ${element.name}
+            </span>
+    
+     </div>`,
+                },
+                `${element.node_id ? element.node_id : ''}`,
+                `${element.description}`,
+              ],
+              hidden: 0,
+
+              name: element.name,
+              tier: element.tier,
+            };
+            this.aux.push(data);
+          });
+          this.addRow();
+          this.chart.draw(this.data, { allowHtml: true });
+          google.charts.setOnLoadCallback(this.drawChart);
+        }
+      });
+    });
+    this.isNewTree = false;
   }
 
   editDataFromModal(data: any) {
     let position = +data.nameNode - 1;
-    console.log(this.aux[position], 'se modifica');
+
     this.aux[position] = {
       ...this.aux[position],
       data: [
@@ -443,7 +567,7 @@ export class BuildComponent implements OnInit {
     );
     sonNode.forEach((node: any) => {
       node.hidden = 1;
-      console.log('fintreol', node);
+
       const sonNode = this.aux.filter(
         (item: any) => item.data[1] === node.data[0].v
       );

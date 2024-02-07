@@ -10,6 +10,8 @@ import { MessageComponent } from '../message/message.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import 'chartjs-plugin-dragdata';
+import { HttpClientModule } from '@angular/common/http';
+import { ProjectService } from 'src/app/services/project.service';
 /* import { Chart, registerables } from 'node_modules/chart.js';
 Chart.register(...registerables); */
 declare var bootstrap: any;
@@ -22,7 +24,8 @@ interface Escenario {
 @Component({
   selector: 'app-unite-modal',
   standalone: true,
-  imports: [MessageComponent, FormsModule, CommonModule],
+  imports: [MessageComponent, FormsModule, CommonModule, HttpClientModule],
+  providers: [ProjectService],
   templateUrl: './unite-modal.component.html',
   styleUrl: './unite-modal.component.scss',
 })
@@ -48,7 +51,8 @@ export class UniteModalComponent implements OnInit {
   values!: any;
   yearsToSee: any[] = [];
   lockedScenary: boolean = false;
-  constructor() {}
+  @Input() nodeId!: any;
+  constructor(private projectSvc: ProjectService) {}
   ngOnInit(): void {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['edit']) {
@@ -70,9 +74,14 @@ export class UniteModalComponent implements OnInit {
   ngAfterViewInit() {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
-    modal._element.addEventListener('shown.bs.modal', () => {});
+    modal._element.addEventListener('shown.bs.modal', () => {
+      this.projectSvc.getScenery(this.nodeId).subscribe((res) => {
+        console.log(res);
+      });
+    });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
+      this.nodeId = undefined;
       const openButton = document.querySelector('#exampleModalButton');
 
       // Verifica si el botón existe antes de intentar cerrar el modal
