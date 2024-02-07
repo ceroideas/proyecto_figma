@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CreateProjectComponent } from 'src/app/components/create-project/create-project.component';
 import { MessageComponent } from 'src/app/components/message/message.component';
 import { ProjectService } from 'src/app/services/project.service';
@@ -14,7 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class ProjectsComponent {
   projects: any[] = [];
-  constructor(private projectSvc: ProjectService) {
+  constructor(private projectSvc: ProjectService, private router: Router) {
     this.projectSvc.getProjects().subscribe((res: any) => {
       this.projects = res;
       console.log(this.projects);
@@ -43,6 +44,11 @@ export class ProjectsComponent {
       }
     });
   }
+
+  redirect(id: any) {
+    this.router.navigate([`home/build/${id}`]);
+  }
+
   convertDateFormat(originalDate: string): string {
     const date = new Date(originalDate);
 

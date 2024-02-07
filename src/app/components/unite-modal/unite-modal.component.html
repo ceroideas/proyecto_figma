@@ -173,18 +173,20 @@
                 class="row align-items-center mb-2 mr-2"
               >
                 <div class="">
-                  <label [for]="year.key" class="col-form-label color-theme"
-                    >{{ year.key }}
+                  <label
+                    [for]="year.key.toString()"
+                    class="col-form-label color-theme"
+                    >{{ year.key.toString() }}
                   </label>
                 </div>
                 <div class="">
                   <input
                     (ngModelChange)="changeValue2(i, $event)"
-                    [name]="year.key"
+                    [name]="year.key.toString()"
                     [disabled]="model.locked"
                     type="text"
-                    [id]="year.key"
-                    [(ngModel)]="model.years[0][year.key]"
+                    [id]="year.key.toString()"
+                    [(ngModel)]="model.years[0][year.key.toString()]"
                     class="form-control input-formula"
                   />
                 </div>

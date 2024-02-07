@@ -27,4 +27,8 @@ export class ProjectService {
   getNode(id: any) {
     return this.http.get(`${this.url}/getNode/${id}`);
   }
+
+  updateScenery(id: any, body: any) {
+    return this.http.put(`${this.url}/updateScenery/${id}`, body);
+  }
 }

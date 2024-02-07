@@ -270,13 +270,13 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
   updateVariables(): void {
     if (this.editVariable) {
-      this.projectSvc.getNode(this.nodeId).subscribe((res) => {
+      this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         console.log(res);
+        this.constante = res.type === 1 ? true : false;
       });
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;
       this.variableDescription = variable?.description;
-      this.constante = variable?.constante || false;
     }
   }
   hiddenData() {
