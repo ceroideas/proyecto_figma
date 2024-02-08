@@ -152,6 +152,7 @@ export class BuildComponent implements OnInit {
 
       google.visualization.events.addListener(this.chart, 'select', () => {
         this.hidden = false;
+        this.editVariable = false;
         var selection = this.chart.getSelection();
         /*        var rotateElements = document.querySelectorAll('.rotate');
         Array.prototype.forEach.call(
@@ -198,7 +199,7 @@ export class BuildComponent implements OnInit {
           (editElements: HTMLElement) => {
             editElements.addEventListener('click', (e) => {
               this.editVariable = true;
-              console.log(this.nodeName);
+              console.log(this.nodeName, 'V');
               e.stopPropagation();
               const openButton = document.querySelector('#exampleModalButton');
 
