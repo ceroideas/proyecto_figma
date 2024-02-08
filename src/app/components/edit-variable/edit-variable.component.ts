@@ -163,7 +163,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     modal._element.addEventListener('shown.bs.modal', async () => {
       this.updateVariables();
       this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
-        console.log(res.nodes, 'RES');
         this.variables = res.nodes;
       });
     });
@@ -179,6 +178,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.editVariableUnidad = false;
       this.isOperation = false;
       this.constante = true;
+      this.calculos = [];
+
+      this.showNewEscenario = [];
     });
   }
   editVariableNameClick() {
@@ -212,6 +214,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       id: this.nodeId,
       name: this.variableName,
       description: this.variableDescription,
+      formula: this.sendOperations ? this.sendOperations : null,
     });
     this.cerrarModal();
 
@@ -264,6 +267,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.constante = res.type === 1 ? true : false;
         this.variableName = res.name;
         this.variableDescription = res.description;
+        this.calculos = res.new_formula ? res.new_formula : [];
+        this.sendOperations = res.formula ? res.formula : [];
+        this.showNewEscenario = res.calculated ? res.calculated : [];
       });
     }
   }
@@ -297,8 +303,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
         });
       }
     }
-    console.log('VARIABLE', variable);
-    this.calculos.push({ name: variable.name });
+
+    this.calculos.push(variable.name);
     const variableTo =
       variable.type === 2 ? variable.calculated : variable.sceneries;
     this.operations.push(variableTo);
@@ -307,7 +313,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.operationResult();
     this.sendOperations.push(id);
-    console.log(this.sendOperations);
+    console.log(this.sendOperations, 'smkdnm');
   }
   operationResult() {
     type YearValue = {
@@ -371,14 +377,13 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   addCalculo(operation: string) {
     if (this.operations.length > 0) {
-      this.calculos.push({ name: operation });
+      this.calculos.push(operation);
       this.operations.push([{ name: operation }]);
-      /*       this.operations[this.operations.length - 1].forEach((e: any) => {
-        e.operation = operation;
-      }); */
+
       this.sendOperations.push(operation);
-      console.log(this.sendOperations);
+      console.log(this.operations);
     }
+    console.log(this.sendOperations, 'kdjodjn');
     this.operationResult();
   }
 
@@ -399,8 +404,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     const editVariable = {
       name: this.variableName,
       description: this.variableDescription,
+      formula: this.sendOperations,
     };
-
+    console.log(editVariable, 'edit');
     this.projectSvc
       .updateNode(this.nodeId, editVariable)
       .subscribe((res: any) => {});
