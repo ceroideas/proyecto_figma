@@ -37,4 +37,8 @@ export class ProjectService {
   updateNode(id: any, body: any) {
     return this.http.put(`${this.url}/updateNode/${id}`, body);
   }
+
+  deleteNode(id: any) {
+    return this.http.delete(`${this.url}/deleteNode/${id}`);
+  }
 }

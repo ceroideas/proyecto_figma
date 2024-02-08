@@ -613,4 +613,8 @@ export class BuildComponent implements OnInit {
       }
     });
   }
+
+  deleteNode() {
+    this.getContentToChart();
+  }
 }

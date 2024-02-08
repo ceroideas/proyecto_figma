@@ -12,9 +12,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import * as Highcharts from 'highcharts';
+
 import { Chart, registerables } from 'node_modules/chart.js';
 import { ProjectService } from 'src/app/services/project.service';
+import Swal from 'sweetalert2';
 Chart.register(...registerables);
 declare var bootstrap: any;
 @Component({
@@ -100,6 +101,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   sendOperations: any[] = [];
   selectedCalculo: any;
   @Output() sendDataEvent = new EventEmitter<any>();
+  @Output() deleteNode = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
   constructor(private projectSvc: ProjectService) {}
@@ -285,13 +287,21 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (
       this.operators.includes(this.calculos[this.calculos.length - 1]?.name)
     ) {
-      [variable.sceneries].forEach((e: any) => {
-        e.operation = this.calculos[this.calculos.length - 1]?.name;
-      });
+      if (variable.type === 2) {
+        [variable.calculated].forEach((e: any) => {
+          e.operation = this.calculos[this.calculos.length - 1]?.name;
+        });
+      } else {
+        [variable.sceneries].forEach((e: any) => {
+          e.operation = this.calculos[this.calculos.length - 1]?.name;
+        });
+      }
     }
     console.log('VARIABLE', variable);
     this.calculos.push({ name: variable.name });
-    this.operations.push(variable.sceneries);
+    const variableTo =
+      variable.type === 2 ? variable.calculated : variable.sceneries;
+    this.operations.push(variableTo);
 
     this.calculos[this.calculos.length - 1];
 
@@ -394,5 +404,31 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.projectSvc
       .updateNode(this.nodeId, editVariable)
       .subscribe((res: any) => {});
+  }
+
+  elimateNode() {
+    Swal.fire({
+      title: 'Estas seguro?',
+      text: 'No podras revertir esta accion',
+      icon: 'question',
+      iconColor: '#BC5800',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      customClass: {
+        confirmButton: 'confirm',
+        cancelButton: 'cancel',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.projectSvc.deleteNode(this.nodeId).subscribe((res: any) => {
+          this.deleteNode.emit();
+          Swal.fire({
+            title: 'Borrado!',
+            text: 'El nodo fue borrado con exito!',
+            icon: 'success',
+          });
+        });
+      }
+    });
   }
 }
