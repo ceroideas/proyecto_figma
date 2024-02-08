@@ -78,29 +78,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   disableSend: boolean = true;
   onlyConst: any = [];
   @Input() nodeId!: any;
-  variables: any[] = [
-    {
-      name: 'variable1',
-      scenarys: [
-        { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
-        { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
-      ],
-    },
-    {
-      name: 'variable2',
-      scenarys: [
-        { name: 'Escenario 1', years: [{ 2020: '500', 2021: '400' }] },
-        { name: 'Escenario 2', years: [{ 2020: '200', 2021: '300' }] },
-      ],
-    },
-    {
-      name: 'variable3',
-      scenarys: [
-        { name: 'Escenario 1', years: [{ 2020: '700', 2021: '200' }] },
-        { name: 'Escenario 2', years: [{ 2020: '400', 2021: '100' }] },
-      ],
-    },
-  ];
+  @Input() projectId!: any;
+  variables: any[] = [];
   simbols: any[] = [
     '=',
     '(',
@@ -162,6 +141,12 @@ export class EditVariableComponent implements OnInit, OnChanges {
         },
       });
     }, 1000);
+
+    this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
+      console.log(res.nodes, 'RES');
+      this.variables = res.node;
+    });
+
     if (this.editVariable) {
       let variable = this.tempObject[this.variableId];
       this.variableName = variable?.name;
@@ -169,11 +154,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
     } else {
     }
   }
-  ngAfterViewInit() {
+
+  async ngAfterViewInit() {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
-    modal._element.addEventListener('shown.bs.modal', () => {
+    modal._element.addEventListener('shown.bs.modal', async () => {
       this.updateVariables();
+      this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
+        console.log(res.nodes, 'RES');
+        this.variables = res.nodes;
+      });
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
@@ -203,9 +193,10 @@ export class EditVariableComponent implements OnInit, OnChanges {
       description: this.variableDescription,
       operation: !this.constante,
       constante: this.constante,
+      formula: this.sendOperations,
     });
     this.cerrarModal();
-
+    this.sendOperations = [];
     this.tempObject.push({
       name: this.variableName,
       description: this.variableDescription,
@@ -216,13 +207,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
   editData() {
     this.editDataEvent.emit({
+      id: this.nodeId,
       name: this.variableName,
       description: this.variableDescription,
-      unidad: this.isOperation
-        ? this.operation(this.variableSelect1, this.variableSelect2)
-        : this.variableUnidad,
-      fatherNode: this.variableFather,
-      nameNode: this.variableId,
     });
     this.cerrarModal();
 
@@ -273,10 +260,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         console.log(res);
         this.constante = res.type === 1 ? true : false;
+        this.variableName = res.name;
+        this.variableDescription = res.description;
       });
-      let variable = this.tempObject[this.variableId];
-      this.variableName = variable?.name;
-      this.variableDescription = variable?.description;
     }
   }
   hiddenData() {
@@ -299,12 +285,13 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (
       this.operators.includes(this.calculos[this.calculos.length - 1]?.name)
     ) {
-      variable.scenarys.forEach((e: any) => {
+      [variable.sceneries].forEach((e: any) => {
         e.operation = this.calculos[this.calculos.length - 1]?.name;
       });
     }
+    console.log('VARIABLE', variable);
     this.calculos.push({ name: variable.name });
-    this.operations.push(variable.scenarys);
+    this.operations.push(variable.sceneries);
 
     this.calculos[this.calculos.length - 1];
 
@@ -334,11 +321,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
         );
         if (this.operators.includes(element2.name)) {
           newEscenario.forEach((e: any) => {
-            e.years.forEach((year: any) => {
+            [e.years].forEach((year: any) => {
               Object.entries(year).forEach(([clave, valor]) => {
-                e.years[0][clave] = `${(valor as string) + element2.name}`;
+                [e.years][0][clave] = `${(valor as string) + element2.name}`;
                 try {
-                  e.years[0][clave] = eval(e.years[0][clave]);
+                  [e.years][0][clave] = eval([e.years][0][clave]);
                 } catch (error) {}
               });
             });
@@ -351,15 +338,15 @@ export class EditVariableComponent implements OnInit, OnChanges {
           const objetoConNombre = newEscenario.find(
             (obj: any) => obj.name === element2.name
           );
-          objetoConNombre.years.forEach((year: any) => {
+          [objetoConNombre.years].forEach((year: any) => {
             Object.entries(year).forEach(([clave, valor]) => {
               try {
-                objetoConNombre.years[0][clave] = eval(
-                  `${(valor as string) + element2.years[0][clave as any]}`
+                [objetoConNombre.years][0][clave] = eval(
+                  `${(valor as string) + element2.years[clave as any]}`
                 );
               } catch (error) {
-                objetoConNombre.years[0][clave] = `${
-                  (valor as string) + element2.years[0][clave as any]
+                [objetoConNombre.years][0][clave] = `${
+                  (valor as string) + element2.years[clave as any]
                 }`;
               }
             });
@@ -397,5 +384,15 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.operations.splice(i, 1);
     this.sendOperations.splice(i, 1);
     console.log(this.sendOperations);
+  }
+  submitEdit() {
+    const editVariable = {
+      name: this.variableName,
+      description: this.variableDescription,
+    };
+
+    this.projectSvc
+      .updateNode(this.nodeId, editVariable)
+      .subscribe((res: any) => {});
   }
 }

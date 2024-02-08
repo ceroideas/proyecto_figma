@@ -414,59 +414,7 @@ export class BuildComponent implements OnInit {
 
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
       console.log(res, 'res');
-      this.projectSvc.getProject(this.id).subscribe((res: any) => {
-        this.aux = [];
-        if (res.nodes?.length > 0) {
-          res.nodes.forEach((element: any) => {
-            const data = {
-              data: [
-                {
-                  v: `${element.id}`,
-                  f: `<div  class="rotate" >
-            
-            <span>
-                   <div class="floating" style="display: none;">   
-                          <div class="flex-box">   
-                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                           class="tier-icon " 
-                          src="../../../assets/icons/u_plus.svg"
-                          alt=""
-                        /></button>
-                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                          class="tier-icon " 
-                         src="../../../assets/icons/pencil.svg"
-                         alt=""
-                       /></button>
-                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                          class="tier-icon " 
-                         src="../../../assets/icons/u_eye-slash-icon.svg"
-                         alt=""
-                       /> </button>
-                          </div>
-                          <div class="full-box">
-                                 
-                          </div> 
-                   </div>
-                   ${element.name}
-            </span>
-    
-     </div>`,
-                },
-                `${element.node_id ? element.node_id : ''}`,
-                `${element.description}`,
-              ],
-              hidden: 0,
-
-              name: element.name,
-              tier: element.tier,
-            };
-            this.aux.push(data);
-          });
-          this.addRow();
-          this.chart.draw(this.data, { allowHtml: true });
-          google.charts.setOnLoadCallback(this.drawChart);
-        }
-      });
+      this.getContentToChart();
     });
     this.isNewTree = false;
   }
@@ -474,7 +422,7 @@ export class BuildComponent implements OnInit {
   editDataFromModal(data: any) {
     let position = +data.nameNode - 1;
 
-    this.aux[position] = {
+    /*   this.aux[position] = {
       ...this.aux[position],
       data: [
         {
@@ -516,25 +464,20 @@ export class BuildComponent implements OnInit {
 
       name: data.name,
     };
+ */
 
-    this.addRow();
-
-    this.chart.draw(this.data, { allowHtml: true });
-    google.charts.setOnLoadCallback(this.drawChart);
+    this.projectSvc.updateNode(data.id, data).subscribe((res: any) => {
+      console.log(res);
+      this.getContentToChart();
+    });
   }
 
   addRow() {
     this.rows = [];
-    let tierCount = 0;
+
     for (let i = 0; i < this.aux.length; i++) {
       const element = this.aux[i];
 
-      /*       if (this.aux[i - 1] !== undefined) {
-        this.aux[i - 1].data[1] !== element.data[1]
-          ? (tierCount = tierCount + 1)
-          : '';
-      }
-      element.tier = tierCount; */
       if (element.hidden === 0) {
         this.rows.push(element?.data);
       }
@@ -614,5 +557,60 @@ export class BuildComponent implements OnInit {
     }
 
     return cadenaAleatoria;
+  }
+  getContentToChart() {
+    this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      this.aux = [];
+      if (res.nodes?.length > 0) {
+        res.nodes.forEach((element: any) => {
+          const data = {
+            data: [
+              {
+                v: `${element.id}`,
+                f: `<div  class="rotate" >
+          
+          <span>
+                 <div class="floating" style="display: none;">   
+                        <div class="flex-box">   
+                        <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                         class="tier-icon " 
+                        src="../../../assets/icons/u_plus.svg"
+                        alt=""
+                      /></button>
+                        <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                        class="tier-icon " 
+                       src="../../../assets/icons/pencil.svg"
+                       alt=""
+                     /></button>
+                        <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                        class="tier-icon " 
+                       src="../../../assets/icons/u_eye-slash-icon.svg"
+                       alt=""
+                     /> </button>
+                        </div>
+                        <div class="full-box">
+                               
+                        </div> 
+                 </div>
+                 ${element.name}
+          </span>
+  
+   </div>`,
+              },
+              `${element.node_id ? element.node_id : ''}`,
+              `${element.description}`,
+            ],
+            hidden: 0,
+
+            name: element.name,
+            tier: element.tier,
+          };
+          this.aux.push(data);
+        });
+        this.addRow();
+        this.chart.draw(this.data, { allowHtml: true });
+        google.charts.setOnLoadCallback(this.drawChart);
+      }
+    });
   }
 }
