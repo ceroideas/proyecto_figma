@@ -34,10 +34,7 @@ export class UniteModalComponent implements OnInit {
   @ViewChild('uniteModal') miModal!: ElementRef;
   years: string[] = [];
   @Input() edit: boolean = false;
-  escenarysFromDb: any[] = [
-    { name: 'Escenario 1', years: [{ 2020: '800', 2021: '500' }] },
-    { name: 'Escenario 2', years: [{ 2020: '700', 2021: '400' }] },
-  ];
+  escenarysFromDb: any[] = [];
   escenarys: any[] = [];
   model: Escenario = { id: '', name: '', years: [], locked: false };
   showForm: boolean = false;
