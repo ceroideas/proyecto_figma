@@ -1,5 +1,3 @@
-import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { ActivatedRoute, Router } from '@angular/router';
@@ -80,10 +78,12 @@ export class BuildComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.id = this.route.snapshot.params['id'];
 
-    this.projectSvc.getProject(this.id).subscribe((res: any) => {
+    /*     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       console.log(res);
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
@@ -133,7 +133,7 @@ export class BuildComponent implements OnInit {
         });
       }
     });
-
+ */
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
@@ -286,17 +286,7 @@ export class BuildComponent implements OnInit {
     };
     google.charts.setOnLoadCallback(this.drawChart);
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
-  }
-
-  ngOnInit() {
-    this.route.queryParams.subscribe((params: any) => {
-      const project = {
-        name: params.name,
-        yearFrom: params.yearFrom,
-        yearTo: params.yearTo,
-        scenery: JSON.stringify(params.scenery),
-      };
-    });
+    this.getContentToChart();
   }
 
   getDataFromModal(data: any) {

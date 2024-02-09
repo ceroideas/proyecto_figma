@@ -47,3 +47,10 @@
 .color-theme {
   color: #000f55;
 }
+.modal-dialog {
+  overflow-y: initial !important;
+}
+.modal-body {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
