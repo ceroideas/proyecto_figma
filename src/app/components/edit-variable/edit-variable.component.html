@@ -230,19 +230,23 @@
                 />
               </div>
             </div>
-
-            <img
-              (click)="editVariableUnidadClick()"
-              [src]="
-                editVariableUnidad
-                  ? '../../../assets/icons/fi_x2.svg'
-                  : '../../../assets/icons/fi_edit-3.svg'
-              "
-              alt="User Icon"
-              class="user-icon"
-            />
           </div>
-
+          <div
+            class="d-flex justify-content-between align-items-start w-100 mb-3"
+          >
+            <div class="col-md-11">
+              <div class="input-group">
+                <input
+                  data-bs-toggle="modal"
+                  data-bs-target="#shapeModal"
+                  type="text"
+                  class="form-control input-formula mb-0 input-margin"
+                  placeholder="Distribution shape"
+                  aria-describedby="basic-addon1"
+                />
+              </div>
+            </div>
+          </div>
           <div>
             <canvas id="myChart"></canvas>
           </div>
