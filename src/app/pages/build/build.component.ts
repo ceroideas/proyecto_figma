@@ -74,6 +74,9 @@ export class BuildComponent implements OnInit {
       tier: 0,
     }, */
   ];
+  sceneriesNodes: any[] = [];
+  showSceneries: any[] = [];
+  sceneries: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -84,7 +87,7 @@ export class BuildComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
 
     /*     this.projectSvc.getProject(this.id).subscribe((res: any) => {
-      console.log(res);
+   
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
           const data = {
@@ -304,7 +307,6 @@ export class BuildComponent implements OnInit {
       node_id: this.isNewTree ? null : this.nodeName,
       tier: this.fatherNode !== 0 ? +this.fatherNode + 1 : 0,
     };
-    console.log(dataToSave, this.fatherNode, this.nodeName);
 
     /*     if (!this.isNewTree) {
       this.aux.push({
@@ -551,6 +553,9 @@ export class BuildComponent implements OnInit {
   getContentToChart() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.aux = [];
+      this.sceneries = res.sceneries;
+
+      this.sceneriesNodes = [];
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
           const data = {
@@ -596,6 +601,10 @@ export class BuildComponent implements OnInit {
             tier: element.tier,
           };
           this.aux.push(data);
+
+          this.sceneriesNodes.push(
+            element.type === 2 ? element.calculated : element.sceneries
+          );
         });
         this.addRow();
         this.chart.draw(this.data, { allowHtml: true });
@@ -606,5 +615,13 @@ export class BuildComponent implements OnInit {
 
   deleteNode() {
     this.getContentToChart();
+  }
+
+  getSceneries(id: number) {
+    this.showSceneries = [];
+    this.sceneriesNodes.forEach((element: any) => {
+      this.showSceneries.push(element[id].years);
+    });
+    console.log(this.showSceneries, 'escenaries nodes');
   }
 }

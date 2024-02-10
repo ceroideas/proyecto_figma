@@ -177,16 +177,16 @@
           padding-bottom: 9px;
           background: #f6f3f9;
           box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
-          border-radius: 15px;
+
           overflow: hidden;
-          border: 1px solid;
+
           justify-content: flex-start;
           align-items: center;
           gap: 4px;
           display: flex;
         "
       >
-        <div
+        <!--         <div
           style="
             flex: 1 1 0;
             color: #111827;
@@ -197,8 +197,8 @@
           "
         >
           Choose a scenario
-        </div>
-        <div style="width: 20px; height: 20px; position: relative">
+        </div> -->
+        <!--         <div style="width: 20px; height: 20px; position: relative">
           <div
             style="
               width: 10px;
@@ -209,7 +209,21 @@
               background: #6b7280;
             "
           ></div>
-        </div>
+        </div> -->
+        <select
+          style="border-radius: 15px"
+          class="form-select"
+          aria-label="Default select example"
+        >
+          <option selected>Open this select menu</option>
+          <option
+            *ngFor="let scenerie of sceneries; let i = index"
+            value="1"
+            (click)="getSceneries(i)"
+          >
+            {{ scenerie }}
+          </option>
+        </select>
       </div>
     </div>
     <div
@@ -276,7 +290,12 @@
                     : 'branch-noactive-name'
                 "
               >
-                653654
+                <div
+                  class="d-flex"
+                  *ngFor="let showScenerie of showSceneries[i] | keyvalue"
+                >
+                  {{ showScenerie.key }}: {{ showScenerie.value }}
+                </div>
               </td>
             </tr>
           </tbody>
