@@ -9,6 +9,7 @@ import { EditVariableComponent } from 'src/app/components/edit-variable/edit-var
 import { UniteModalComponent } from 'src/app/components/unite-modal/unite-modal.component';
 import { ProjectService } from 'src/app/services/project.service';
 import { HttpClientModule } from '@angular/common/http';
+import { ShapeModalComponent } from 'src/app/components/shape-modal/shape-modal.component';
 
 @NgModule({
   declarations: [BuildComponent, AdDirective], // Incluye BuildComponent aquí
@@ -18,6 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
     CommonModule,
     EditVariableComponent,
     UniteModalComponent,
+    ShapeModalComponent,
     HttpClientModule,
   ],
 
