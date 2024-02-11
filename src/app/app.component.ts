@@ -1,5 +1,9 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {
+  CommonModule,
+  HashLocationStrategy,
+  LocationStrategy,
+} from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ComponentsModule } from './components/components.module';
 
@@ -16,7 +20,7 @@ import { BuildModule } from './pages/build/build.module';
     HighchartsChartModule,
     BuildModule,
   ],
-
+  providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
