@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
@@ -77,7 +78,7 @@ export class BuildComponent implements OnInit {
   sceneriesNodes: any[] = [];
   showSceneries: any[] = [];
   sceneries: any[] = [];
-
+  selectedScenery = '#';
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService
@@ -617,11 +618,17 @@ export class BuildComponent implements OnInit {
     this.getContentToChart();
   }
 
-  getSceneries(id: number) {
+  onSceneryChange() {
+    if (this.selectedScenery !== undefined) {
+      this.getSceneries(this.selectedScenery);
+    }
+  }
+
+  getSceneries(id: any) {
     this.showSceneries = [];
     this.sceneriesNodes.forEach((element: any) => {
       this.showSceneries.push(element[id].years);
     });
-    console.log(this.showSceneries, 'escenaries nodes');
+    console.log(id);
   }
 }

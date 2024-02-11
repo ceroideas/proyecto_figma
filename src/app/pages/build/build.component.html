@@ -215,11 +215,13 @@
           style="border-radius: 15px"
           class="form-select"
           aria-label="Default select example"
+          [(ngModel)]="selectedScenery"
+          (change)="onSceneryChange()"
         >
-          <option selected>Open this select menu</option>
+          <option value="#">Open this select menu</option>
           <option
             *ngFor="let scenerie of sceneries; let i = index"
-            value="1"
+            [value]="i"
             (click)="getSceneries(i)"
           >
             {{ scenerie }}

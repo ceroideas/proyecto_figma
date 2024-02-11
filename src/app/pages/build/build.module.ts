@@ -10,6 +10,7 @@ import { UniteModalComponent } from 'src/app/components/unite-modal/unite-modal.
 import { ProjectService } from 'src/app/services/project.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ShapeModalComponent } from 'src/app/components/shape-modal/shape-modal.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [BuildComponent, AdDirective], // Incluye BuildComponent aquí
@@ -21,6 +22,7 @@ import { ShapeModalComponent } from 'src/app/components/shape-modal/shape-modal.
     UniteModalComponent,
     ShapeModalComponent,
     HttpClientModule,
+    FormsModule,
   ],
 
   exports: [BuildComponent],
