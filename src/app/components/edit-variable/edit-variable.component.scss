@@ -89,3 +89,26 @@ p {
   color: white;
   border-radius: 30px;
 }
+.chart-inputs {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  /*   border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px; */
+}
+
+.chart-span {
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  color: #000f55;
+  font-weight: bold !important;
+  background-color: white !important;
+}
+input-group-sm > .btn,
+.input-group-sm > .form-control,
+.input-group-sm > .form-select,
+.input-group-sm > .input-group-text {
+  padding: 0.2rem 0.3rem;
+  font-size: 0.875rem;
+}
+.input-group-text {
+}
