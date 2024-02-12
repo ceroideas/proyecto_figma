@@ -223,7 +223,7 @@ export class BuildComponent implements OnInit {
             hiddenElements.addEventListener('click', (e) => {
               e.stopPropagation();
               this.hidden = true;
-              /* this.findAndHideFatherNode(); */
+              this.findAndHideFatherNode();
             });
           }
         );
@@ -490,6 +490,13 @@ export class BuildComponent implements OnInit {
     node.hidden = 1;
     sonNode.forEach((node: any) => {
       node.hidden = 1;
+      const sonNode = this.aux.filter(
+        (item: any) => item.data[1] === node.data[0].v
+      );
+
+      sonNode.forEach((node: any) => {
+        node.hidden = 1;
+      });
     });
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
