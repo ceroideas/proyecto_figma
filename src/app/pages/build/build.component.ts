@@ -537,6 +537,7 @@ export class BuildComponent implements OnInit {
 
   newTree() {
     this.isNewTree = true;
+    this.editVariable = false;
   }
 
   generarCadenaAleatoria() {

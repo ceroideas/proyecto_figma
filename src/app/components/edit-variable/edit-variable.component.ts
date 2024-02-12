@@ -168,19 +168,34 @@ export class EditVariableComponent implements OnInit, OnChanges {
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      this.variableName = '';
-      this.variableSelect1 = '';
-      this.variableSelect2 = '';
-      this.variableDescription = '';
-      this.variableUnidad = 0;
-      this.editVariableName = false;
-      this.editVariableDescription = false;
-      this.editVariableUnidad = false;
-      this.isOperation = false;
-      this.constante = true;
-      this.calculos = [];
+      if (!this.editVariable) {
+        this.variableSelect1 = '';
+        this.variableSelect2 = '';
 
-      this.showNewEscenario = [];
+        this.variableUnidad = 0;
+        this.editVariableName = false;
+        this.editVariableDescription = false;
+        this.editVariableUnidad = false;
+        this.isOperation = false;
+        this.constante = true;
+        this.calculos = [];
+
+        this.showNewEscenario = [];
+      } else {
+        this.variableName = '';
+        this.variableSelect1 = '';
+        this.variableSelect2 = '';
+        this.variableDescription = '';
+        this.variableUnidad = 0;
+        this.editVariableName = false;
+        this.editVariableDescription = false;
+        this.editVariableUnidad = false;
+        this.isOperation = false;
+        this.constante = true;
+        this.calculos = [];
+
+        this.showNewEscenario = [];
+      }
     });
   }
   editVariableNameClick() {
@@ -189,6 +204,10 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   editVariableDescriptionClick() {
     this.editVariableDescription = !this.editVariableDescription;
+  }
+
+  editVariableAll() {
+    this.editVariableDescription = true;
   }
 
   sendData() {
@@ -239,9 +258,55 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   submit() {
     if (this.editVariable) {
-      this.editData();
+      if (this.disable()) {
+        Swal.fire({
+          title: 'Error',
+          text: 'El nombre y la descripción son necesarios.',
+          icon: 'error',
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+            cancelButton: 'cancel',
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const openButton = document.querySelector('#exampleModalButton');
+
+            // Verifica si el botón existe antes de intentar cerrar el modal
+            if (openButton) {
+              // Simula un clic en el botón para cerrar el modal
+              (openButton as HTMLElement).click();
+            }
+          }
+        });
+      } else {
+        this.editData();
+      }
     } else {
-      this.sendData();
+      if (this.disable()) {
+        Swal.fire({
+          title: 'Error',
+          text: 'El nombre y la descripcion son necesarios.',
+          icon: 'error',
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+            cancelButton: 'cancel',
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            const openButton = document.querySelector('#exampleModalButton');
+
+            // Verifica si el botón existe antes de intentar cerrar el modal
+            if (openButton) {
+              // Simula un clic en el botón para cerrar el modal
+              (openButton as HTMLElement).click();
+            }
+          }
+        });
+      } else {
+        this.sendData();
+      }
     }
   }
   editVariableUnidadClick() {
