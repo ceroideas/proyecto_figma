@@ -502,12 +502,33 @@ export class BuildComponent implements OnInit {
     const sonNode = this.aux.filter(
       (item: any) => item.data[1] === tier.data[0].v
     );
+    const fatherNode = this.aux.filter(
+      (item: any) => item.data[0].v === tier.data[1]
+    );
+
+    fatherNode.forEach((node: any) => {
+      if (tier.hidden == 0) {
+        node.hidden = 0;
+      }
+
+      const fatherNode = this.aux.filter(
+        (item: any) => item.data[0].v === node.data[1]
+      );
+
+      fatherNode.forEach((node: any) => {
+        if (tier.hidden == 0) {
+          node.hidden = 0;
+        }
+      });
+    });
+
     sonNode.forEach((node: any) => {
       node.hidden = 1;
 
       const sonNode = this.aux.filter(
         (item: any) => item.data[1] === node.data[0].v
       );
+
       sonNode.forEach((node: any) => {
         node.hidden = 1;
       });
