@@ -79,6 +79,7 @@ export class UniteModalComponent implements OnInit {
       this.nodeId = undefined;
       this.edit = false;
       this.selectedEscenary = '#';
+      this.escenarys = [];
 
       const openButton = document.querySelector('#exampleModalButton');
 

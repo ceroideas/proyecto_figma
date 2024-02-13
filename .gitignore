@@ -5,13 +5,13 @@
 /tmp
 /out-tsc
 /bazel-out
-/src/environments
+
 
 # Node
 /node_modules
 /src/assets/plugins
 /src/assets/dist
-/src/environments
+
 npm-debug.log
 yarn-error.log
 
