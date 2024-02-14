@@ -14,6 +14,7 @@ declare var bootstrap: any;
 })
 export class BuildComponent implements OnInit {
   @ViewChild('hideShow') hideShowModal!: ElementRef;
+  @ViewChild('exampleModal') miModal!: ElementRef;
   rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
@@ -31,6 +32,8 @@ export class BuildComponent implements OnInit {
   hidden: boolean = false;
   isNewTree: boolean = false;
   id!: any;
+  cleanSceneries: any[] = [];
+  esceneries: any[] = [];
   aux: any = [
     /*   {
       data: [
@@ -406,10 +409,18 @@ export class BuildComponent implements OnInit {
     } */
 
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
-      console.log(res, 'res');
       this.getContentToChart();
+
+      if (this.esceneries.length > 0) {
+        res.sceneries.forEach((element: any, i: any) => {
+          this.projectSvc
+            .updateScenery(element.id, this.esceneries[i])
+            .subscribe();
+        });
+      }
     });
     this.isNewTree = false;
+    this.esceneries = [];
   }
 
   editDataFromModal(data: any) {
@@ -582,6 +593,8 @@ export class BuildComponent implements OnInit {
   }
   getContentToChart() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      console.log(res, 'ahuh');
+      this.cleanSceneries = res.clean_sceneries;
       this.aux = [];
       this.sceneries = res.sceneries;
 
@@ -659,5 +672,11 @@ export class BuildComponent implements OnInit {
       this.showSceneries.push(element[id].years);
     });
     console.log(id);
+  }
+  getSceneries2(esceneries: any) {
+    /*     this.esceneries.push(esceneries);
+    console.log(this.esceneries, 'es'); */
+    this.esceneries = esceneries;
+    console.log(this.esceneries);
   }
 }

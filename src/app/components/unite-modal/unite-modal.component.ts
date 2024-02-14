@@ -1,8 +1,10 @@
 import {
   Component,
   ElementRef,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -12,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import 'chartjs-plugin-dragdata';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectService } from 'src/app/services/project.service';
+import { DataService } from 'src/app/services/data-service.service';
 /* import { Chart, registerables } from 'node_modules/chart.js';
 Chart.register(...registerables); */
 declare var bootstrap: any;
@@ -26,12 +29,13 @@ interface Escenario {
   selector: 'app-unite-modal',
   standalone: true,
   imports: [MessageComponent, FormsModule, CommonModule, HttpClientModule],
-  providers: [ProjectService],
+  providers: [ProjectService, DataService],
   templateUrl: './unite-modal.component.html',
   styleUrl: './unite-modal.component.scss',
 })
 export class UniteModalComponent implements OnInit {
   @ViewChild('uniteModal') miModal!: ElementRef;
+  @ViewChild('exampleModal') miModalEdit!: ElementRef;
   years: string[] = [];
   @Input() edit: boolean = false;
   escenarysFromDb: any[] = [];
@@ -46,17 +50,29 @@ export class UniteModalComponent implements OnInit {
     { name: 'Escenario 1', yearFrom: 2020, yearTo: 2024 },
     { name: 'Escenario 2', yearFrom: 2020, yearTo: 2024 },
   ];
+  @Output() sendEsceneriesEvent = new EventEmitter<any>();
   values!: any;
+  @Input() cleanEsceneries: any[] = [];
   yearsToSee: any[] = [];
-  lockedScenary: boolean = false;
+  @Input() lockedScenary: boolean = false;
   @Input() nodeId!: any;
-  constructor(private projectSvc: ProjectService) {}
-  ngOnInit(): void {}
+  deleteEsceneries: boolean = false;
+  constructor(
+    private projectSvc: ProjectService,
+    private dataService: DataService
+  ) {}
+  ngOnInit(): void {
+    this.dataService.data$.subscribe((data) => {
+      this.deleteEsceneries = data;
+      console.log(data);
+    });
+  }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['edit']) {
       console.log('change');
       if (!this.edit) {
-        this.emptyScenarys();
+        /* this.emptyScenarys(); */
+        this.editScenarys();
       }
       if (this.edit) {
         this.editScenarys();
@@ -73,13 +89,23 @@ export class UniteModalComponent implements OnInit {
   ngAfterViewInit() {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
-    modal._element.addEventListener('shown.bs.modal', () => {});
+    modal._element.addEventListener('shown.bs.modal', () => {
+      if (!this.edit) {
+        this.escenarys = this.cleanEsceneries;
+        this.years = [this.escenarys[0].years];
+        console.log(this.years, this.escenarys[0], 'yearsssssss');
+      }
+    });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      this.nodeId = undefined;
-      this.edit = false;
-      this.selectedEscenary = '#';
-      this.escenarys = [];
+      if (!this.edit) {
+        this.sendEsceneries();
+      } else {
+        this.nodeId = undefined;
+        this.edit = false;
+        this.selectedEscenary = '#';
+        this.escenarys = [];
+      }
 
       const openButton = document.querySelector('#exampleModalButton');
 
@@ -182,20 +208,25 @@ export class UniteModalComponent implements OnInit {
               ) => {
                 e.target.style.cursor = 'default';
                 this.model.years[0][years[index]] = value;
+                this.escenarys[this.selectedEscenary].years =
+                  this.model.years[0];
                 console.log({
-                  years: this.model.years[0],
+                  years: this.model.years,
                 });
-                this.projectSvc
-                  .updateScenery(this.escenarys[+this.selectedEscenary].id, {
-                    years: this.model.years[0],
-                  })
-                  .subscribe((res: any) => {
-                    this.projectSvc
-                      .getNode(this.nodeId)
-                      .subscribe((res: any) => {
-                        this.escenarys = res.sceneries;
-                      });
-                  });
+
+                if (this.edit) {
+                  this.projectSvc
+                    .updateScenery(this.escenarys[+this.selectedEscenary].id, {
+                      years: this.model.years[0],
+                    })
+                    .subscribe((res: any) => {
+                      this.projectSvc
+                        .getNode(this.nodeId)
+                        .subscribe((res: any) => {
+                          this.escenarys = res.sceneries;
+                        });
+                    });
+                }
               },
             },
           }
@@ -246,19 +277,22 @@ export class UniteModalComponent implements OnInit {
     this.escenarys[+this.selectedEscenary] = escenary;
 
     console.log(this.escenarys[+this.selectedEscenary].years, 'sl,dlm');
-    this.projectSvc
-      .updateScenery(this.escenarys[+this.selectedEscenary].id, {
-        years: this.escenarys[+this.selectedEscenary].years,
-      })
-      .subscribe((res: any) => {
-        this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-          this.escenarys = res.sceneries;
+
+    if (this.edit) {
+      this.projectSvc
+        .updateScenery(this.escenarys[+this.selectedEscenary].id, {
+          years: this.escenarys[+this.selectedEscenary].years,
+        })
+        .subscribe((res: any) => {
+          this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+            this.escenarys = res.sceneries;
+          });
         });
-      });
+    }
+
     this.renderChartVariable = new Chart('chartJSContainer', option);
   }
   onSelectChange() {
-    console.log(this.years);
     if (this.selectedEscenary !== '#') {
       if (this.createEscenaryChartVariable)
         this.createEscenaryChartVariable.destroy();
@@ -270,7 +304,7 @@ export class UniteModalComponent implements OnInit {
         JSON.stringify([this.escenarys[this.selectedEscenary].years])
       );
       this.values = undefined;
-
+      console.log(this.escenarys, 'ese');
       this.createModel();
       this.renderChart();
     }
@@ -389,6 +423,47 @@ export class UniteModalComponent implements OnInit {
   }
 
   editScenarys() {
+    [
+      {
+        id: 84,
+        node_id: 38,
+        name: 'inicio',
+        years: {
+          '2022': 565.7,
+          '2023': 0,
+          '2024': 0,
+        },
+        status: 1,
+        created_at: '2024-02-12T16:12:40.000000Z',
+        updated_at: '2024-02-13T21:52:45.000000Z',
+      },
+      {
+        id: 85,
+        node_id: 38,
+        name: 'fin',
+        years: {
+          '2022': '718.4',
+          '2023': '0',
+          '2024': '0',
+        },
+        status: 1,
+        created_at: '2024-02-12T16:12:40.000000Z',
+        updated_at: '2024-02-13T20:31:30.000000Z',
+      },
+      {
+        id: 86,
+        node_id: 38,
+        name: 'transcurso',
+        years: {
+          '2022': 0,
+          '2023': 0,
+          '2024': 0,
+        },
+        status: 1,
+        created_at: '2024-02-12T16:12:40.000000Z',
+        updated_at: '2024-02-12T16:12:40.000000Z',
+      },
+    ];
     /*     const escenario = this.escenario[0];
     const obj: any = {};
     for (let year = escenario.yearFrom; year <= escenario.yearTo; year++) {
@@ -399,11 +474,19 @@ export class UniteModalComponent implements OnInit {
       const element = this.escenario[i];
       this.escenarys.push({ name: element.name, years: this.yearsToSee });
     } */
-    this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-      this.escenarys = res.sceneries;
+
+    if (this.edit) {
+      this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+        this.escenarys = res.sceneries;
+        this.years = [this.escenarys[0].years];
+        console.log(this.years, this.escenarys[0], 'yearsssssss');
+      });
+    } else {
+      console.log('aqui');
+      this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0].years];
       console.log(this.years, this.escenarys[0], 'yearsssssss');
-    });
+    }
   }
   changeLocked() {
     this.createEscenaryChartVariable.destroy();
@@ -413,5 +496,9 @@ export class UniteModalComponent implements OnInit {
   lockedScenarys() {
     this.renderChartVariable.destroy();
     this.renderChart();
+  }
+
+  sendEsceneries() {
+    this.sendEsceneriesEvent.emit(this.escenarys);
   }
 }

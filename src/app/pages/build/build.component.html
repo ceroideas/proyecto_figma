@@ -321,4 +321,9 @@
   [nodeId]="nodeName"
   [projectId]="id"
 ></app-edit-variable>
-<app-unite-modal [nodeId]="nodeName" [edit]="editVariable"></app-unite-modal>
+<app-unite-modal
+  (sendEsceneriesEvent)="getSceneries2($event)"
+  [nodeId]="nodeName"
+  [edit]="editVariable"
+  [cleanEsceneries]="cleanSceneries"
+></app-unite-modal>

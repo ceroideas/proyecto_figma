@@ -12,8 +12,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { NgZone } from '@angular/core';
 import { Chart, registerables } from 'node_modules/chart.js';
+import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
 import Swal from 'sweetalert2';
 Chart.register(...registerables);
@@ -22,7 +23,7 @@ declare var bootstrap: any;
   selector: 'app-edit-variable',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
-  providers: [ProjectService],
+  providers: [ProjectService, DataService],
   templateUrl: './edit-variable.component.html',
   styleUrl: './edit-variable.component.scss',
 })
@@ -101,10 +102,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
   sendOperations: any[] = [];
   selectedCalculo: any;
   @Output() sendDataEvent = new EventEmitter<any>();
+
+  @Output() deleteDataEvent = new EventEmitter<any>();
   @Output() deleteNode = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
-  constructor(private projectSvc: ProjectService) {}
+  constructor(
+    private projectSvc: ProjectService,
+    private dataService: DataService,
+    private ngZone: NgZone
+  ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
       this.updateVariables();
@@ -157,8 +164,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
   }
 
-  async ngAfterViewInit() {
-    const modal = new bootstrap.Modal(this.miModal.nativeElement);
+  ngAfterViewInit() {
+    const modal = new bootstrap.Modal('exampleModal');
 
     modal._element.addEventListener('shown.bs.modal', async () => {
       this.updateVariables();
