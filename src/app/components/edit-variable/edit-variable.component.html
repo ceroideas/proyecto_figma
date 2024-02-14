@@ -32,7 +32,7 @@
           aria-label="Close"
         ></button>
       </div>
-      <div *ngIf="!editVariable" class="d-flex type">
+      <div (click)="verifyType()" class="d-flex type">
         <div>
           <input
             class="form-check-input"

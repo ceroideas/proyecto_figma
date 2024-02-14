@@ -14,7 +14,7 @@ declare var bootstrap: any;
 })
 export class BuildComponent implements OnInit {
   @ViewChild('hideShow') hideShowModal!: ElementRef;
-  @ViewChild('exampleModal') miModal!: ElementRef;
+
   rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
@@ -90,57 +90,6 @@ export class BuildComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
 
-    /*     this.projectSvc.getProject(this.id).subscribe((res: any) => {
-   
-      if (res.nodes?.length > 0) {
-        res.nodes.forEach((element: any) => {
-          const data = {
-            data: [
-              {
-                v: `${element.id}`,
-                f: `<div  class="rotate" >
-          
-          <span>
-                 <div class="floating" style="display: none;">   
-                        <div class="flex-box">   
-                        <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                         class="tier-icon " 
-                        src="../../../assets/icons/u_plus.svg"
-                        alt=""
-                      /></button>
-                        <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                        class="tier-icon " 
-                       src="../../../assets/icons/pencil.svg"
-                       alt=""
-                     /></button>
-                        <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                        class="tier-icon " 
-                       src="../../../assets/icons/u_eye-slash-icon.svg"
-                       alt=""
-                     /> </button>
-                        </div>
-                        <div class="full-box">
-                               
-                        </div> 
-                 </div>
-                 ${element.name}
-          </span>
-  
-   </div>`,
-              },
-              `${element.node_id ? element.node_id : ''}`,
-              `${element.description}`,
-            ],
-            hidden: 0,
-
-            name: element.name,
-            tier: element.tier,
-          };
-          this.aux.push(data);
-        });
-      }
-    });
- */
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
@@ -161,25 +110,7 @@ export class BuildComponent implements OnInit {
         this.hidden = false;
         this.editVariable = false;
         var selection = this.chart.getSelection();
-        /*        var rotateElements = document.querySelectorAll('.rotate');
-        Array.prototype.forEach.call(
-          rotateElements,
-          function (rotateElement: HTMLElement) {
-            rotateElement.addEventListener('click', function () {
-              var floatingElement = this.querySelector(
-                '.floating'
-              ) as HTMLElement;
-              if (
-                floatingElement.style.display === 'none' ||
-                floatingElement.style.display === ''
-              ) {
-                floatingElement.style.display = 'block';
-              } else {
-                floatingElement.style.display = 'none';
-              }
-            });
-          }
-        ); */
+
         var cstmbtnElements = document.querySelectorAll('.btn-add');
 
         Array.prototype.forEach.call(
@@ -262,6 +193,11 @@ export class BuildComponent implements OnInit {
 
       this.chart.draw(this.data, { allowHtml: true });
       const interval = setInterval(() => {
+        var floatingElement = document.body.querySelectorAll(
+          '.floating'
+        ) as unknown as HTMLElement;
+
+        console.log(floatingElement);
         var orgChartTables = document.querySelectorAll(
           '.google-visualization-orgchart-table'
         );
@@ -276,6 +212,13 @@ export class BuildComponent implements OnInit {
             function (rotateElement: HTMLElement) {
               rotateElement.addEventListener('click', function (e) {
                 e.stopPropagation();
+                var floatingElement2 =
+                  document.body.querySelectorAll('.floating');
+
+                floatingElement2.forEach(function (element: any) {
+                  element.style.display = 'none';
+                });
+
                 var floatingElement = this.querySelector(
                   '.floating'
                 ) as HTMLElement;

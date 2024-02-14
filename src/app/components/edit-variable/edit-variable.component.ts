@@ -12,7 +12,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgZone } from '@angular/core';
+
 import { Chart, registerables } from 'node_modules/chart.js';
 import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
@@ -23,7 +23,7 @@ declare var bootstrap: any;
   selector: 'app-edit-variable',
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule],
-  providers: [ProjectService, DataService],
+  providers: [ProjectService],
   templateUrl: './edit-variable.component.html',
   styleUrl: './edit-variable.component.scss',
 })
@@ -101,6 +101,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   operations: any[] = [];
   sendOperations: any[] = [];
   selectedCalculo: any;
+  oldType!: boolean;
   @Output() sendDataEvent = new EventEmitter<any>();
 
   @Output() deleteDataEvent = new EventEmitter<any>();
@@ -109,8 +110,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Output() hiddenDataEvent = new EventEmitter<any>();
   constructor(
     private projectSvc: ProjectService,
-    private dataService: DataService,
-    private ngZone: NgZone
+    private dataService: DataService
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
@@ -165,7 +165,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   ngAfterViewInit() {
-    const modal = new bootstrap.Modal('exampleModal');
+    const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
     modal._element.addEventListener('shown.bs.modal', async () => {
       this.updateVariables();
@@ -186,7 +186,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.isOperation = false;
         this.constante = true;
         this.calculos = [];
-
+        this.sendOperations = [];
         this.showNewEscenario = [];
       } else {
         this.variableName = '';
@@ -200,7 +200,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.isOperation = false;
         this.constante = true;
         this.calculos = [];
-
+        this.sendOperations = [];
         this.showNewEscenario = [];
       }
     });
@@ -241,6 +241,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       name: this.variableName,
       description: this.variableDescription,
       formula: this.sendOperations ? this.sendOperations : null,
+      constante: this.constante,
     });
     this.cerrarModal();
 
@@ -337,6 +338,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         console.log(res);
         this.constante = res.type === 1 ? true : false;
+        this.oldType = res.type === 1 ? true : false;
         this.variableName = res.name;
         this.variableDescription = res.description;
         this.calculos = res.new_formula ? res.new_formula : [];
@@ -491,7 +493,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       icon: 'question',
       iconColor: '#BC5800',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
+      confirmButtonText: 'Si, borrar',
       customClass: {
         confirmButton: 'confirm',
         cancelButton: 'cancel',
@@ -508,5 +510,26 @@ export class EditVariableComponent implements OnInit, OnChanges {
         });
       }
     });
+  }
+
+  verifyType() {
+    if (this.editVariable) {
+      setTimeout(() => {
+        if (this.oldType !== this.constante) {
+          Swal.fire({
+            title: 'Estas seguro?',
+            text: 'Si cambias el tipo los datos asociados se perderan',
+            icon: 'question',
+            iconColor: '#BC5800',
+
+            confirmButtonText: 'ok',
+            customClass: {
+              confirmButton: 'confirm',
+              cancelButton: 'cancel',
+            },
+          });
+        }
+      }, 100);
+    }
   }
 }

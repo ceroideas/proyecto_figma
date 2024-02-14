@@ -29,13 +29,13 @@ interface Escenario {
   selector: 'app-unite-modal',
   standalone: true,
   imports: [MessageComponent, FormsModule, CommonModule, HttpClientModule],
-  providers: [ProjectService, DataService],
+  providers: [ProjectService],
   templateUrl: './unite-modal.component.html',
   styleUrl: './unite-modal.component.scss',
 })
 export class UniteModalComponent implements OnInit {
   @ViewChild('uniteModal') miModal!: ElementRef;
-  @ViewChild('exampleModal') miModalEdit!: ElementRef;
+
   years: string[] = [];
   @Input() edit: boolean = false;
   escenarysFromDb: any[] = [];
@@ -125,9 +125,12 @@ export class UniteModalComponent implements OnInit {
 
     this.projectSvc.saveScenery(newEscenary).subscribe((res: any) => {
       console.log(res);
-      this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-        this.escenarys = res.sceneries;
-      });
+
+      if (this.edit) {
+        this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+          this.escenarys = res.sceneries;
+        });
+      }
     });
 
     this.escenarys.push(newEscenary);
@@ -423,47 +426,6 @@ export class UniteModalComponent implements OnInit {
   }
 
   editScenarys() {
-    [
-      {
-        id: 84,
-        node_id: 38,
-        name: 'inicio',
-        years: {
-          '2022': 565.7,
-          '2023': 0,
-          '2024': 0,
-        },
-        status: 1,
-        created_at: '2024-02-12T16:12:40.000000Z',
-        updated_at: '2024-02-13T21:52:45.000000Z',
-      },
-      {
-        id: 85,
-        node_id: 38,
-        name: 'fin',
-        years: {
-          '2022': '718.4',
-          '2023': '0',
-          '2024': '0',
-        },
-        status: 1,
-        created_at: '2024-02-12T16:12:40.000000Z',
-        updated_at: '2024-02-13T20:31:30.000000Z',
-      },
-      {
-        id: 86,
-        node_id: 38,
-        name: 'transcurso',
-        years: {
-          '2022': 0,
-          '2023': 0,
-          '2024': 0,
-        },
-        status: 1,
-        created_at: '2024-02-12T16:12:40.000000Z',
-        updated_at: '2024-02-12T16:12:40.000000Z',
-      },
-    ];
     /*     const escenario = this.escenario[0];
     const obj: any = {};
     for (let year = escenario.yearFrom; year <= escenario.yearTo; year++) {

@@ -44,7 +44,7 @@
                 /> -->
             </select>
           </div>
-          <div class="col md-3">
+          <div style="display: none" class="col md-3">
             <button
               style="margin-top: 22px; margin-right: 10px"
               class="unite-button"
@@ -55,7 +55,7 @@
               Export to Excel
             </button>
           </div>
-          <div class="col-md-1">
+          <div *ngIf="edit" class="col-md-1">
             <button
               (click)="addEscenary()"
               style="margin-top: 20px"
