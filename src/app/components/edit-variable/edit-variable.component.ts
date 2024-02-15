@@ -241,6 +241,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       name: this.variableName,
       description: this.variableDescription,
       formula: this.sendOperations ? this.sendOperations : null,
+      operation: !this.constante,
       constante: this.constante,
     });
     this.cerrarModal();

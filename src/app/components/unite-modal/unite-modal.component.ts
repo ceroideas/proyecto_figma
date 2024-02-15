@@ -100,8 +100,8 @@ export class UniteModalComponent implements OnInit {
     modal._element.addEventListener('hidden.bs.modal', () => {
       if (!this.edit) {
         this.sendEsceneries();
+        this.selectedEscenary = '#';
       } else {
-        this.nodeId = undefined;
         this.edit = false;
         this.selectedEscenary = '#';
         this.escenarys = [];
@@ -279,7 +279,7 @@ export class UniteModalComponent implements OnInit {
 
     this.escenarys[+this.selectedEscenary] = escenary;
 
-    console.log(this.escenarys[+this.selectedEscenary].years, 'sl,dlm');
+    console.log(this.escenarys[+this.selectedEscenary].id, 'sl,dlm');
 
     if (this.edit) {
       this.projectSvc

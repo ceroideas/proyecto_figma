@@ -353,21 +353,26 @@ export class BuildComponent implements OnInit {
 
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
       this.getContentToChart();
-
+      console.log(this.esceneries, 'estoye n el for');
       if (this.esceneries.length > 0) {
         res.sceneries.forEach((element: any, i: any) => {
           this.projectSvc
             .updateScenery(element.id, this.esceneries[i])
             .subscribe();
         });
+        this.esceneries = [];
       }
     });
     this.isNewTree = false;
-    this.esceneries = [];
   }
 
   editDataFromModal(data: any) {
     let position = +data.nameNode - 1;
+    const dataToSave = {
+      ...data,
+
+      type: data.operation ? 2 : 1,
+    };
 
     /*   this.aux[position] = {
       ...this.aux[position],
@@ -413,7 +418,7 @@ export class BuildComponent implements OnInit {
     };
  */
 
-    this.projectSvc.updateNode(data.id, data).subscribe((res: any) => {
+    this.projectSvc.updateNode(data.id, dataToSave).subscribe((res: any) => {
       console.log(res);
       this.getContentToChart();
     });
@@ -620,6 +625,6 @@ export class BuildComponent implements OnInit {
     /*     this.esceneries.push(esceneries);
     console.log(this.esceneries, 'es'); */
     this.esceneries = esceneries;
-    console.log(this.esceneries);
+    console.log(this.esceneries, 'esenarios en event');
   }
 }
