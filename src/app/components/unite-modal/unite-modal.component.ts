@@ -126,7 +126,7 @@ export class UniteModalComponent implements OnInit {
 
     this.projectSvc.saveScenery(newEscenary).subscribe((res: any) => {
       console.log(res);
-
+      this.printAllEvent.emit();
       if (this.edit) {
         this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
           this.escenarys = res.sceneries;

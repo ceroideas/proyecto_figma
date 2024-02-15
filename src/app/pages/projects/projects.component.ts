@@ -16,10 +16,7 @@ import Swal from 'sweetalert2';
 export class ProjectsComponent {
   projects: any[] = [];
   constructor(private projectSvc: ProjectService, private router: Router) {
-    this.projectSvc.getProjects().subscribe((res: any) => {
-      this.projects = res;
-      console.log(this.projects);
-    });
+    this.getProjects();
   }
 
   alert() {
@@ -66,5 +63,11 @@ export class ProjectsComponent {
     const formattedMonth = month < 10 ? `0${month}` : month.toString();
 
     return `${formattedDay}/${formattedMonth}/${year}`;
+  }
+
+  getProjects() {
+    this.projectSvc.getProjects().subscribe((res: any) => {
+      this.projects = res;
+    });
   }
 }

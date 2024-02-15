@@ -252,7 +252,7 @@ export class BuildComponent implements OnInit {
       type: data.operation ? 2 : 1,
       distribution_shape: 1,
       node_id: this.isNewTree ? null : this.nodeName,
-      tier: this.fatherNode !== 0 ? +this.fatherNode + 1 : 0,
+      tier: this.isNewTree === false ? +this.fatherNode + 1 : 0,
     };
 
     /*     if (!this.isNewTree) {

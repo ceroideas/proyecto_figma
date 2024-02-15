@@ -179,7 +179,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       if (!this.editVariable) {
         this.variableSelect1 = '';
         this.variableSelect2 = '';
-
+        this.variableName = '';
+        this.variableDescription = '';
         this.variableUnidad = 0;
         this.editVariableName = false;
         this.editVariableDescription = false;
@@ -190,7 +191,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.sendOperations = [];
         this.showNewEscenario = [];
       } else {
-        this.variableName = '';
         this.variableSelect1 = '';
         this.variableSelect2 = '';
         this.variableDescription = '';

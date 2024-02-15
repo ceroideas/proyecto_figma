@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-create-project',
   standalone: true,
@@ -20,12 +20,11 @@ export class CreateProjectComponent {
   yearsTo: number[] = [];
   inputCount: number = 0;
   inputs: string[] = [];
-
+  @Output() createProjectEvent = new EventEmitter<any>();
   inputValues: { [key: string]: string } = {};
   nameProject!: any;
   constructor(private router: Router, private projectSvc: ProjectService) {
     this.getYears();
-    console.log(this.years);
   }
 
   addInput() {
@@ -64,11 +63,61 @@ export class CreateProjectComponent {
       year_to: this.yearTo,
       sceneries: Object.values(this.inputValues),
     };
+    console.log(project);
 
-    this.closeModal();
-    this.projectSvc.saveProject(project).subscribe((res) => {
-      console.log(res);
-    });
+    if (
+      this.nameProject === '' ||
+      this.yearFrom === '#' ||
+      this.yearTo === '#'
+    ) {
+      Swal.fire({
+        title: 'Error',
+        text: 'El nombre y los años son necesarios.',
+        icon: 'error',
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+          cancelButton: 'cancel',
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const openButton = document.querySelector('#createProjectModal');
+
+          // Verifica si el botón existe antes de intentar cerrar el modal
+          if (openButton) {
+            // Simula un clic en el botón para cerrar el modal
+            (openButton as HTMLElement).click();
+          }
+        }
+      });
+    } else if (project.sceneries.length <= 0) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Debe crear almenos 1 escenario.',
+        icon: 'error',
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+          cancelButton: 'cancel',
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const openButton = document.querySelector('#createProjectModal');
+
+          // Verifica si el botón existe antes de intentar cerrar el modal
+          if (openButton) {
+            // Simula un clic en el botón para cerrar el modal
+            (openButton as HTMLElement).click();
+          }
+        }
+      });
+    } else {
+      this.closeModal();
+      this.projectSvc.saveProject(project).subscribe((res) => {
+        this.createProjectEvent.emit();
+      });
+    }
+
     /* this.router.navigate(['home/build'], { queryParams: project }); */
   }
 
