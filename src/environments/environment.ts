@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  /* url: 'https://andreapardini.art/figma/public/api', */
-  url: 'http://127.0.0.1:8000/api',
+  url: 'https://andreapardini.art/figma/public/api',
+  /*  url: 'http://127.0.0.1:8000/api', */
 };
 
 /*

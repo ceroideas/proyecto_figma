@@ -194,14 +194,14 @@
             </div>
           </div>
 
-          <div *ngIf="calculos.length > 0" class="d-flex">
+          <!--           <div *ngIf="calculos.length > 0" class="d-flex">
             <div class="mr-5" *ngFor="let escenario of showNewEscenario">
               {{ escenario.name }}
               <div *ngFor="let year of escenario.years | keyvalue">
                 {{ year.key }}: {{ year.value }}
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
 
         <div [class]="constante ? '' : 'hide'">

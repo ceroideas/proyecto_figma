@@ -51,6 +51,7 @@ export class UniteModalComponent implements OnInit {
     { name: 'Escenario 2', yearFrom: 2020, yearTo: 2024 },
   ];
   @Output() sendEsceneriesEvent = new EventEmitter<any>();
+  @Output() printAllEvent = new EventEmitter<any>();
   values!: any;
   @Input() cleanEsceneries: any[] = [];
   yearsToSee: any[] = [];
@@ -228,6 +229,8 @@ export class UniteModalComponent implements OnInit {
                         .subscribe((res: any) => {
                           this.escenarys = res.sceneries;
                         });
+
+                      this.printAllEvent.emit();
                     });
                 }
               },
@@ -290,6 +293,7 @@ export class UniteModalComponent implements OnInit {
           this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
             this.escenarys = res.sceneries;
           });
+          this.printAllEvent.emit();
         });
     }
 

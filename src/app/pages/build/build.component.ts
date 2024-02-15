@@ -627,4 +627,10 @@ export class BuildComponent implements OnInit {
     this.esceneries = esceneries;
     console.log(this.esceneries, 'esenarios en event');
   }
+  printAll() {
+    this.getContentToChart();
+    setTimeout(() => {
+      this.getSceneries(this.selectedScenery);
+    }, 1000);
+  }
 }

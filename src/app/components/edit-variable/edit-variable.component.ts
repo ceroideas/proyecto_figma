@@ -175,6 +175,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
+      this.calculos = [];
       if (!this.editVariable) {
         this.variableSelect1 = '';
         this.variableSelect2 = '';
