@@ -81,7 +81,9 @@ export class BuildComponent implements OnInit {
   sceneriesNodes: any[] = [];
   showSceneries: any[] = [];
   sceneries: any[] = [];
-  selectedScenery = '#';
+  selectedScenery: any = '#';
+  years: any[] = [];
+  currentYearIndex: number = 0;
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService
@@ -236,7 +238,8 @@ export class BuildComponent implements OnInit {
     };
     google.charts.setOnLoadCallback(this.drawChart);
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
-    this.getContentToChart();
+    /* this.getContentToChart(); */
+    this.printAll();
   }
 
   getDataFromModal(data: any) {
@@ -539,13 +542,15 @@ export class BuildComponent implements OnInit {
 
     return cadenaAleatoria;
   }
-  getContentToChart() {
-    this.projectSvc.getProject(this.id).subscribe((res: any) => {
-      console.log(res, 'ahuh');
+  async getContentToChart() {
+    await this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.cleanSceneries = res.clean_sceneries;
+      this.years = res.years;
       this.aux = [];
       this.sceneries = res.sceneries;
+      if (this.selectedScenery === '#') this.selectedScenery = '0';
 
+      console.log(res, 'ahuh');
       this.sceneriesNodes = [];
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
@@ -554,34 +559,34 @@ export class BuildComponent implements OnInit {
               {
                 v: `${element.id}`,
                 f: `<div  class="rotate" >
-          
-          <span>
-                 <div class="floating" style="display: none;">   
-                        <div class="flex-box">   
-                        <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                         class="tier-icon " 
-                        src="../../../assets/icons/u_plus.svg"
-                        alt=""
-                      /></button>
-                        <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                        class="tier-icon " 
-                       src="../../../assets/icons/pencil.svg"
-                       alt=""
-                     /></button>
-                        <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                        class="tier-icon " 
-                       src="../../../assets/icons/u_eye-slash-icon.svg"
-                       alt=""
-                     /> </button>
-                        </div>
-                        <div class="full-box">
-                               
-                        </div> 
-                 </div>
-                 ${element.name}
-          </span>
-  
-   </div>`,
+            
+            <span>
+                   <div class="floating" style="display: none;">   
+                          <div class="flex-box">   
+                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                           class="tier-icon " 
+                          src="../../../assets/icons/u_plus.svg"
+                          alt=""
+                        /></button>
+                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/pencil.svg"
+                         alt=""
+                       /></button>
+                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                          </div>
+                          <div class="full-box">
+                                 
+                          </div> 
+                   </div>
+                   ${element.name}
+            </span>
+    
+     </div>`,
               },
               `${element.node_id ? element.node_id : ''}`,
               `${element.description}`,
@@ -617,9 +622,12 @@ export class BuildComponent implements OnInit {
   getSceneries(id: any) {
     this.showSceneries = [];
     this.sceneriesNodes.forEach((element: any) => {
-      this.showSceneries.push(element[id].years);
+      const desiredYear = this.years[this.currentYearIndex]; // Puedes cambiar el año que deseas filtrar
+      const filteredObject: any = {};
+      filteredObject[desiredYear] = element[id].years[desiredYear];
+      this.showSceneries.push(filteredObject);
     });
-    console.log(id);
+    console.log(this.showSceneries);
   }
   getSceneries2(esceneries: any) {
     /*     this.esceneries.push(esceneries);
@@ -627,10 +635,25 @@ export class BuildComponent implements OnInit {
     this.esceneries = esceneries;
     console.log(this.esceneries, 'esenarios en event');
   }
-  printAll() {
-    this.getContentToChart();
+  async printAll() {
+    await this.getContentToChart();
+
     setTimeout(() => {
       this.getSceneries(this.selectedScenery);
-    }, 1000);
+    }, 2000);
+  }
+
+  nextYear() {
+    if (this.currentYearIndex < this.years.length - 1) {
+      this.currentYearIndex++;
+      this.getSceneries(this.selectedScenery);
+    }
+  }
+
+  prevYear() {
+    if (this.currentYearIndex > 0) {
+      this.currentYearIndex--;
+      this.getSceneries(this.selectedScenery);
+    }
   }
 }

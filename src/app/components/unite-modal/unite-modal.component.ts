@@ -22,7 +22,7 @@ declare var Chart: any;
 interface Escenario {
   id: any;
   name: string;
-  years: { [year: string]: any }[];
+  years: { [year: string]: string }[];
   locked: boolean;
 }
 @Component({
@@ -405,11 +405,12 @@ export class UniteModalComponent implements OnInit {
     this.createEscenaryChart();
     console.log(this.escenarys[+this.selectedEscenary].years[0], 'value');
   }
-  changeValue2(i: number, value: any) {
+  changeValue2(i: number, value: any, inputId: any) {
     this.values[i] = +value;
 
     this.renderChartVariable.destroy();
     this.renderChart();
+    this.forceFocus(inputId);
   }
   yearKey(year: any): string {
     return Object.keys(year)[0];
@@ -445,13 +446,12 @@ export class UniteModalComponent implements OnInit {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         this.escenarys = res.sceneries;
         this.years = [this.escenarys[0].years];
-        console.log(this.years, this.escenarys[0], 'yearsssssss');
+        console.log(this.escenarys[0].years, 'yearsssssss');
       });
     } else {
       console.log('aqui');
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0].years];
-      console.log(this.years, this.escenarys[0], 'yearsssssss');
     }
   }
   changeLocked() {
@@ -466,5 +466,21 @@ export class UniteModalComponent implements OnInit {
 
   sendEsceneries() {
     this.sendEsceneriesEvent.emit(this.escenarys);
+  }
+  onInputFocus(event: any) {
+    // Puedes realizar acciones cuando el input obtiene el foco, si es necesario
+  }
+
+  onInputBlur(event: any) {
+    // Puedes realizar acciones cuando el input pierde el foco
+    // Además, puedes volver a enfocar el input si es necesario
+    event.target.focus();
+  }
+  forceFocus(id: string) {
+    document.getElementById(id)?.focus();
+    console.log('dsfknsdfo');
+  }
+  trackByFn(index: any, item: any) {
+    return index;
   }
 }

@@ -121,7 +121,6 @@
                     (ngModelChange)="changeValue(i, $event)"
                     [name]="year.key"
                     [disabled]="model.locked"
-                    type="text"
                     [id]="year.key"
                     [(ngModel)]="model.years[0][year.key]"
                     class="form-control input-formula"
@@ -168,7 +167,11 @@
             </div>
             <div class="d-flex flex-wrap">
               <div
-                *ngFor="let year of years[0] | keyvalue; let i = index"
+                *ngFor="
+                  let year of years[0] | keyvalue;
+                  let i = index;
+                  trackBy: trackByFn
+                "
                 class="row align-items-center mb-2 mr-2"
               >
                 <div class="">
@@ -180,12 +183,11 @@
                 </div>
                 <div class="">
                   <input
-                    (ngModelChange)="changeValue2(i, $event)"
+                    (ngModelChange)="changeValue2(i, $event, year.key)"
                     [name]="year.key.toString()"
                     [disabled]="model.locked"
-                    type="number"
                     [id]="year.key.toString()"
-                    [(ngModel)]="model.years[0][year.key.toString()]"
+                    [(ngModel)]="model.years[0][year.key]"
                     class="form-control input-formula"
                   />
                 </div>

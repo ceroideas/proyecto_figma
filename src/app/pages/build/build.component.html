@@ -8,6 +8,7 @@
 >
   Crear nodo
 </button>
+
 <app-shape-modal></app-shape-modal>
 <div
   style="
@@ -220,7 +221,6 @@
           [(ngModel)]="selectedScenery"
           (change)="onSceneryChange()"
         >
-          <option value="#">escenarios</option>
           <option
             *ngFor="let scenerie of sceneries; let i = index"
             [value]="i"
@@ -258,7 +258,13 @@
             <tr class="table-light">
               <th style="width: 10%" scope="col">LAVEL</th>
               <th style="width: 70%" scope="col">NAME</th>
-              <th style="width: 200%" scope="col">KPIS</th>
+              <th style="width: 200%" scope="col">
+                <div class="carousel">
+                  <button (click)="prevYear()">&#9664;</button>
+                  <span>{{ years[currentYearIndex] }}</span>
+                  <button (click)="nextYear()">&#9654;</button>
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
