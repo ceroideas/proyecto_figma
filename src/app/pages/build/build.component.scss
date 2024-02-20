@@ -151,3 +151,10 @@
   border: none;
   color: #000f55;
 }
+.modal-dialog2 {
+  overflow-y: initial !important;
+}
+.modal-body2 {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
