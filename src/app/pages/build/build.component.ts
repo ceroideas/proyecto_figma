@@ -84,6 +84,9 @@ export class BuildComponent implements OnInit {
   selectedScenery: any = '#';
   years: any[] = [];
   currentYearIndex: number = 0;
+  pointNode: any =
+    '<div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>';
+
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService
@@ -109,6 +112,7 @@ export class BuildComponent implements OnInit {
       );
 
       google.visualization.events.addListener(this.chart, 'select', () => {
+        console.log(this.aux, 'AUX');
         this.hidden = false;
         this.editVariable = false;
         var selection = this.chart.getSelection();
@@ -238,6 +242,7 @@ export class BuildComponent implements OnInit {
     };
     google.charts.setOnLoadCallback(this.drawChart);
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
+
     /* this.getContentToChart(); */
     this.printAll();
   }
@@ -432,7 +437,11 @@ export class BuildComponent implements OnInit {
 
     for (let i = 0; i < this.aux.length; i++) {
       const element = this.aux[i];
-
+      if (element.hiddenNodeSon) {
+        element.data[0].f = element.f_alternative;
+      } else {
+        element.data[0].f = element.f_original;
+      }
       if (element.hidden === 0) {
         this.rows.push(element?.data);
       }
@@ -444,11 +453,21 @@ export class BuildComponent implements OnInit {
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
+    const fatherNode = this.aux.filter(
+      (item: any) => item.data[0].v === node.data[1]
+    );
 
     const sonNode = this.aux.filter(
       (item: any) => item.data[1] === this.nodeName
     );
 
+    if (fatherNode.length > 0) {
+      const takeSonNode = this.aux.filter(
+        (item: any) => item.data[1] === fatherNode[0].data[0].v
+      );
+      const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
+      fatherNode[0].hiddenNodeSon = haveHidden;
+    }
     node.hidden = 1;
     sonNode.forEach((node: any) => {
       node.hidden = 1;
@@ -468,12 +487,30 @@ export class BuildComponent implements OnInit {
   modalHideAndShowBranch(tier: any, i: number) {
     tier.hidden === 0 ? (tier.hidden = 1) : (tier.hidden = 0);
 
+    console.log(tier, 'tier');
+
     const sonNode = this.aux.filter(
       (item: any) => item.data[1] === tier.data[0].v
     );
+
     const fatherNode = this.aux.filter(
       (item: any) => item.data[0].v === tier.data[1]
     );
+
+    if (fatherNode.length > 0) {
+      const takeSonNode = this.aux.filter(
+        (item: any) => item.data[1] === fatherNode[0].data[0].v
+      );
+      const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
+
+      fatherNode[0].hiddenNodeSon = haveHidden;
+    } else {
+      const takeSonNode = this.aux.filter(
+        (item: any) => item.data[1] === tier.data[0].v
+      );
+      const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
+      tier.hiddenNodeSon = haveHidden;
+    }
 
     fatherNode.forEach((node: any) => {
       if (tier.hidden == 0) {
@@ -583,7 +620,8 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                   ${element.name}
+                  ${element.name}
+                   
             </span>
     
      </div>`,
@@ -592,9 +630,69 @@ export class BuildComponent implements OnInit {
               `${element.description}`,
             ],
             hidden: 0,
-
+            hiddenNodeSon: false,
             name: element.name,
             tier: element.tier,
+            f_original: `<div  class="rotate" >
+            
+            <span>
+                   <div class="floating" style="display: none;">   
+                          <div class="flex-box">   
+                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                           class="tier-icon " 
+                          src="../../../assets/icons/u_plus.svg"
+                          alt=""
+                        /></button>
+                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/pencil.svg"
+                         alt=""
+                       /></button>
+                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                          </div>
+                          <div class="full-box">
+                                 
+                          </div> 
+                   </div>
+                  ${element.name}
+                   
+            </span>
+    
+     </div>`,
+            f_alternative: `<div  class="rotate" >
+            
+            <span>
+                   <div class="floating" style="display: none;">   
+                          <div class="flex-box">   
+                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                           class="tier-icon " 
+                          src="../../../assets/icons/u_plus.svg"
+                          alt=""
+                        /></button>
+                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/pencil.svg"
+                         alt=""
+                       /></button>
+                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                          </div>
+                          <div class="full-box">
+                                 
+                          </div> 
+                   </div>
+                 ${this.pointNode}${element.name}
+                   
+            </span>
+    
+     </div>`,
           };
           this.aux.push(data);
 

@@ -42,7 +42,7 @@ body {
 .google-visualization-orgchart-node {
   height: 200px;
   position: relative;
-  border-radius: 30px !important;
+  border-radius: 15px !important;
   border: none !important;
   box-shadow: inset 0 0 5px #b5d9ea !important;
   background-color: #edf7ff !important;
@@ -53,6 +53,17 @@ body {
     from(#edf7ff),
     to(#cde7ee)
   ) !important;
+}
+
+.google-visualization-orgchart-lineleft {
+  border-left: 1px solid #8c64b1 !important;
+}
+
+.google-visualization-orgchart-lineright {
+  border-right: 1px solid #8c64b1 !important;
+}
+.google-visualization-orgchart-linebottom {
+  border-bottom: 1px solid #8c64b1 !important;
 }
 
 .google-visualization-orgchart-table {
@@ -85,6 +96,7 @@ body {
   transform: rotate(90deg);
   position: relative;
   z-index: 1;
+  background-color: white;
 }
 .btn-add {
   background-color: #000f55 !important;
@@ -96,9 +108,18 @@ body {
   left: -90px;
   top: -11px;
   color: #00061f;
-  font-size: 14px;
 
+  justify-content: center;
+  align-items: center;
+  display: inline-flex;
+  gap: 10px;
+  font-size: 14px;
   font-weight: 400;
+  word-wrap: break-word;
+}
+.google-visualization-orgchart-node {
+  background: none !important;
+  box-shadow: 0 0 0 2px #cbd4e1 inset !important;
 }
 
 .floating {
