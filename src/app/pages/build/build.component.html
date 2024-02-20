@@ -260,9 +260,13 @@
               <th style="width: 70%" scope="col">NAME</th>
               <th style="width: 200%" scope="col">
                 <div class="carousel">
-                  <button (click)="prevYear()">&#9664;</button>
+                  <button class="button-year" (click)="prevYear()">
+                    &#9664;
+                  </button>
                   <span>{{ years[currentYearIndex] }}</span>
-                  <button (click)="nextYear()">&#9654;</button>
+                  <button class="button-year" (click)="nextYear()">
+                    &#9654;
+                  </button>
                 </div>
               </th>
             </tr>

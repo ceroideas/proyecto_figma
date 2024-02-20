@@ -605,6 +605,7 @@ export class BuildComponent implements OnInit {
         this.addRow();
         this.chart.draw(this.data, { allowHtml: true });
         google.charts.setOnLoadCallback(this.drawChart);
+        this.getSceneries(this.selectedScenery);
       }
     });
   }
