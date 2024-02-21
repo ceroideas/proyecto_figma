@@ -512,6 +512,19 @@ export class BuildComponent implements OnInit {
       tier.hiddenNodeSon = haveHidden;
     }
 
+    this.aux.forEach((element: any) => {
+      const takeSonNode = this.aux.filter(
+        (item: any) => item.data[1] === element.data[0].v
+      );
+      if (takeSonNode.length > 0) {
+        const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
+
+        element.hiddenNodeSon = haveHidden;
+      } else {
+        console.log('mo es padre');
+      }
+    });
+
     fatherNode.forEach((node: any) => {
       if (tier.hidden == 0) {
         node.hidden = 0;
