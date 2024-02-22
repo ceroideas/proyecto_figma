@@ -195,14 +195,11 @@ export class UniteModalComponent implements OnInit {
               ) {
                 /* console.log(e); */
               },
-              onDrag: function (
-                e: any,
-                datasetIndex: any,
-                index: any,
-                value: any
-              ) {
+              onDrag: (e: any, datasetIndex: any, index: any, value: any) => {
                 e.target.style.cursor = 'grabbing';
                 /* console.log(value); */
+                /*                this.calcularMontoConIncremento();
+                this.renderChartVariable.options.scales.y.max = this.yMax; */
               },
               onDragEnd: (
                 e: any,
@@ -257,7 +254,7 @@ export class UniteModalComponent implements OnInit {
         scales: {
           y: {
             min: 0,
-            max: 1000,
+            max: this.yMax,
           },
         },
         onHover: function (e: any) {
@@ -478,9 +475,40 @@ export class UniteModalComponent implements OnInit {
   }
   forceFocus(id: string) {
     document.getElementById(id)?.focus();
-    console.log('dsfknsdfo');
   }
   trackByFn(index: any, item: any) {
     return index;
+  }
+
+  calcularMontoConIncremento() {
+    // Filtrar solo las cantidades que son números
+
+    if (this.values) {
+      // Filtrar y convertir a números
+      const cantidadesNumeros: number[] = this.values.map((cantidad: any) =>
+        typeof cantidad === 'string'
+          ? parseFloat(cantidad)
+          : (cantidad as number)
+      );
+
+      // Encontrar la cantidad más alta
+      const cantidadMaxima: number | undefined = Math.max(...cantidadesNumeros);
+
+      if (cantidadMaxima !== undefined) {
+        // Calcular el 20% de la cantidad más alta
+        const incremento: number = cantidadMaxima * 0.2;
+
+        // Sumar el 20% a la cantidad más alta
+        const resultado: number = cantidadMaxima + incremento;
+        this.yMax = resultado;
+        console.log(resultado, this.values, 'resultado');
+        return resultado;
+      } else {
+        // Manejar el caso en que no haya cantidades válidas
+        throw new Error('No hay cantidades válidas para calcular.');
+      }
+    } else {
+      return 0;
+    }
   }
 }
