@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ActivatedRoute, Router } from '@angular/router';
+import { of, switchMap } from 'rxjs';
 import { ProjectService } from 'src/app/services/project.service';
 
 declare var google: any;
@@ -592,11 +593,16 @@ export class BuildComponent implements OnInit {
 
     return cadenaAleatoria;
   }
-  async getContentToChart() {
-    await this.projectSvc.getProject(this.id).subscribe((res: any) => {
+  /*   getContentToChart() {
+    this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
+      const currentYear = new Date().getFullYear();
+      const position = this.years.indexOf(currentYear);
+      console.log(position, 'position');
       this.aux = [];
+      this.currentYearIndex = position !== -1 ? position : 0;
+
       this.sceneries = res.sceneries;
       if (this.selectedScenery === '#') this.selectedScenery = '0';
 
@@ -718,7 +724,153 @@ export class BuildComponent implements OnInit {
         google.charts.setOnLoadCallback(this.drawChart);
         this.getSceneries(this.selectedScenery);
       }
+      this.getSceneries(this.selectedScenery);
     });
+  } */
+
+  getContentToChart() {
+    this.projectSvc
+      .getProject(this.id)
+      .pipe(
+        switchMap((res: any) => {
+          this.cleanSceneries = res.clean_sceneries;
+          this.years = res.years;
+          const currentYear = new Date().getFullYear();
+          const position = this.years.indexOf(currentYear);
+          console.log(position, 'position');
+          this.aux = [];
+          this.currentYearIndex = position !== -1 ? position : 0;
+
+          this.sceneries = res.sceneries;
+          if (this.selectedScenery === '#') this.selectedScenery = '0';
+
+          console.log(res, 'ahuh');
+          this.sceneriesNodes = [];
+          if (res.nodes?.length > 0) {
+            res.nodes.forEach((element: any) => {
+              const data = {
+                data: [
+                  {
+                    v: `${element.id}`,
+                    f: `<div  class="rotate" >
+              
+              <span>
+                     <div class="floating" style="display: none;">   
+                            <div class="flex-box">   
+                            <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                             class="tier-icon " 
+                            src="../../../assets/icons/u_plus.svg"
+                            alt=""
+                          /></button>
+                            <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                            class="tier-icon " 
+                           src="../../../assets/icons/pencil.svg"
+                           alt=""
+                         /></button>
+                            <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                            class="tier-icon " 
+                           src="../../../assets/icons/u_eye-slash-icon.svg"
+                           alt=""
+                         /> </button>
+                            </div>
+                            <div class="full-box">
+                                   
+                            </div> 
+                     </div>
+                    ${element.name}
+                     
+              </span>
+      
+       </div>`,
+                  },
+                  `${element.node_id ? element.node_id : ''}`,
+                  `${element.description}`,
+                ],
+                hidden: 0,
+                hiddenNodeSon: false,
+                name: element.name,
+                tier: element.tier,
+                f_original: `<div  class="rotate" >
+              
+              <span>
+                     <div class="floating" style="display: none;">   
+                            <div class="flex-box">   
+                            <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                             class="tier-icon " 
+                            src="../../../assets/icons/u_plus.svg"
+                            alt=""
+                          /></button>
+                            <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                            class="tier-icon " 
+                           src="../../../assets/icons/pencil.svg"
+                           alt=""
+                         /></button>
+                            <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                            class="tier-icon " 
+                           src="../../../assets/icons/u_eye-slash-icon.svg"
+                           alt=""
+                         /> </button>
+                            </div>
+                            <div class="full-box">
+                                   
+                            </div> 
+                     </div>
+                     
+                    ${element.name}
+                     
+              </span>
+      
+       </div>`,
+                f_alternative: `<div  class="rotate" >
+              
+       <span>
+              <div class="floating" style="display: none;">   
+                     <div class="flex-box">   
+                     <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                      class="tier-icon " 
+                     src="../../../assets/icons/u_plus.svg"
+                     alt=""
+                   /></button>
+                     <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                     class="tier-icon " 
+                    src="../../../assets/icons/pencil.svg"
+                    alt=""
+                  /></button>
+                     <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                     class="tier-icon " 
+                    src="../../../assets/icons/u_eye-slash-icon.svg"
+                    alt=""
+                  /> </button>
+                     </div>
+                     <div class="full-box">
+                            
+                     </div> 
+              </div>
+              <div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>
+             ${element.name}
+              
+       </span>
+
+</div>`,
+              };
+              this.aux.push(data);
+
+              this.sceneriesNodes.push(
+                element.type === 2 ? element.calculated : element.sceneries
+              );
+            });
+            this.addRow();
+            this.chart.draw(this.data, { allowHtml: true });
+            google.charts.setOnLoadCallback(this.drawChart);
+          }
+          this.getSceneries(this.selectedScenery);
+          return of(res); // Devuelve un observable de 'res' para encadenar con switchMap
+        })
+      )
+      .subscribe(() => {
+        console.log('termino');
+        this.getSceneries(this.selectedScenery);
+      });
   }
 
   deleteNode() {
@@ -747,8 +899,8 @@ export class BuildComponent implements OnInit {
     this.esceneries = esceneries;
     console.log(this.esceneries, 'esenarios en event');
   }
-  async printAll() {
-    await this.getContentToChart();
+  printAll() {
+    this.getContentToChart();
 
     setTimeout(() => {
       this.getSceneries(this.selectedScenery);
