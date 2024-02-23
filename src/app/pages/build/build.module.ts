@@ -11,6 +11,7 @@ import { ProjectService } from 'src/app/services/project.service';
 import { HttpClientModule } from '@angular/common/http';
 import { ShapeModalComponent } from 'src/app/components/shape-modal/shape-modal.component';
 import { FormsModule } from '@angular/forms';
+import { SimulationShapeModalComponent } from 'src/app/components/simulation-shape-modal/simulation-shape-modal.component';
 
 @NgModule({
   declarations: [BuildComponent, AdDirective], // Incluye BuildComponent aquí
@@ -21,6 +22,7 @@ import { FormsModule } from '@angular/forms';
     EditVariableComponent,
     UniteModalComponent,
     ShapeModalComponent,
+    SimulationShapeModalComponent,
     HttpClientModule,
     FormsModule,
   ],

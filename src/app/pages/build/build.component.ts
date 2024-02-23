@@ -360,10 +360,12 @@ export class BuildComponent implements OnInit {
       this.isNewTree = false;
     } */
 
+    console.log(dataToSave, 'data tio savew');
+    console.log(this.esceneries, 'esce');
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
       this.getContentToChart();
       console.log(this.esceneries, 'estoye n el for');
-      if (this.esceneries.length > 0) {
+      if (this.esceneries.length > 0 && dataToSave.unite === undefined) {
         res.sceneries.forEach((element: any, i: any) => {
           this.projectSvc
             .updateScenery(element.id, this.esceneries[i])

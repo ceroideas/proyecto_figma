@@ -10,8 +10,17 @@ declare var bootstrap: any;
 })
 export class ShapeModalComponent {
   @ViewChild('shapeModal') miModal!: ElementRef;
-  clickedElement: number | null = null;
-  shapes: any[] = ['Normal', 'Normal', 'Normal', 'Normal'];
+  clickedElement: number = 0;
+  shapes: any[] = [
+    { name: 'Normal', img: '../../../assets/img/Rectangle-shape.png' },
+    { name: 'Uniforme', img: '../../../assets/img/rectangle_uniform.png' },
+    {
+      name: 'Exponential',
+      img: '../../../assets/img/rectangle_exponential.png',
+    },
+  ];
+
+  route: string = 'back';
   constructor() {}
 
   ngAfterViewInit() {
@@ -20,18 +29,36 @@ export class ShapeModalComponent {
     modal._element.addEventListener('shown.bs.modal', () => {});
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      console.log('jbhsjisb');
-      const openButton = document.querySelector('#exampleModalButton');
+      console.log(this.route);
+      const openButtonBack = document.querySelector('#exampleModalButton');
+      const openButtonNext = document.querySelector(
+        '#shapeModalSimulationButton'
+      );
 
-      // Verifica si el botón existe antes de intentar cerrar el modal
-      if (openButton) {
-        // Simula un clic en el botón para cerrar el modal
-        (openButton as HTMLElement).click();
+      if (this.route === 'back') {
+        if (openButtonBack) {
+          // Simula un clic en el botón para cerrar el modal
+          (openButtonBack as HTMLElement).click();
+        }
+      } else if (this.route === 'next') {
+        this.route = 'back';
+        if (openButtonNext) {
+          // Simula un clic en el botón para cerrar el modal
+          (openButtonNext as HTMLElement).click();
+        }
       }
     });
   }
 
   setClickedElement(index: number) {
     this.clickedElement = index;
+  }
+
+  next() {
+    this.route = 'next';
+    localStorage.setItem(
+      'shapetype',
+      JSON.stringify(this.shapes[this.clickedElement])
+    );
   }
 }

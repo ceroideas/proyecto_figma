@@ -1,10 +1,10 @@
 <!-- Button trigger modal -->
 <button
-  id="shapeModalButton"
+  id="shapeModalSimulationButton"
   type="button"
   class="btn btn-primary"
   data-bs-toggle="modal"
-  data-bs-target="#shapeModal"
+  data-bs-target="#shapeModal-simulation"
   style="display: none"
 >
   Launch demo modal
@@ -12,18 +12,18 @@
 
 <!-- Modal -->
 <div
-  #shapeModal
+  #shapeModalSimulation
   class="modal fade modal-font-color"
-  id="shapeModal"
+  id="shapeModal-simulation"
   tabindex="-1"
-  aria-labelledby="shapeModalLabel"
+  aria-labelledby="shapeModal-simulationLabel"
   aria-hidden="true"
 >
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header d-block">
         <div class="d-flex">
-          <p class="modal-title">Distribution shape</p>
+          <p class="modal-title">Distribución {{ shapeType?.name }}</p>
           <button
             type="button"
             class="btn-close"
@@ -35,20 +35,14 @@
 
       <div class="modal-body">
         <p style="font-weight: normal !important">
-          Select a distribution gallery
+          Simulación basada en el número de unidades vendidas.
         </p>
-        <div
-          *ngFor="let shape of shapes; let i = index"
-          class="inner-container size ml-3 mb-3"
-          [ngClass]="{
-            'inner-container': clickedElement !== i,
-            'inner-container-active': clickedElement === i
-          }"
-          (click)="setClickedElement(i)"
-        >
-          <img style="width: 100%; height: 90%" [src]="shape.img" alt="" />
+        <div class="d-flex">
+          <div>
+            <h5>Probabilidad</h5>
+          </div>
 
-          <p style="margin-top: 10px !important">{{ shape.name }}</p>
+          <canvas id="chart"></canvas>
         </div>
       </div>
       <div class="modal-footer mt-3">
@@ -66,10 +60,10 @@
           <button
             type="button"
             class="btn btn-lg save-variable-button col-md-5"
-            (click)="next()"
+            (click)="save()"
             data-bs-dismiss="modal"
           >
-            Siguiente
+            Guardar
           </button>
         </div>
       </div>

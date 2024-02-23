@@ -212,8 +212,7 @@
             <div class="col-md-11">
               <div class="input-group">
                 <input
-                  data-bs-toggle="modal"
-                  data-bs-target="#uniteModal"
+                  [(ngModel)]="variableUnidad"
                   type="text"
                   class="form-control input-formula mb-0 input-margin"
                   placeholder="Unidades"
@@ -221,14 +220,21 @@
                 />
               </div>
             </div>
+            <img
+              data-bs-toggle="modal"
+              data-bs-target="#uniteModal"
+              class="user-icon"
+              [src]="'../../../assets/icons/fi_edit-3.svg'"
+              alt="User Icon"
+            />
           </div>
+
           <div
             class="d-flex justify-content-between align-items-start w-100 mb-3"
           >
             <div class="col-md-11">
               <div class="input-group">
                 <input
-                  [disabled]="true"
                   data-bs-toggle="modal"
                   data-bs-target="#shapeModal"
                   type="text"

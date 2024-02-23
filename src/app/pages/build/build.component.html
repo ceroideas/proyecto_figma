@@ -44,6 +44,7 @@
   </div>
 </div> -->
 <app-shape-modal></app-shape-modal>
+<app-simulation-shape-modal></app-simulation-shape-modal>
 <div
   style="
     width: calc(100% - 330px);
@@ -57,6 +58,7 @@
     border: 1px solid;
     display: flex;
     overflow: hidden;
+    background-image: url('../../../assets/img/background.png');
   "
 >
   <div
@@ -74,7 +76,7 @@
     <div class="text-container">{{ countHidden }} Hidden branches</div>
   </div>
 
-  <div id="chart_container">
+  <div cdkDrag id="chart_container">
     <div id="chart_div"></div>
   </div>
 </div>

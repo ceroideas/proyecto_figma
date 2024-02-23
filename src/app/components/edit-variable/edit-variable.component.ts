@@ -181,7 +181,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.variableSelect2 = '';
         this.variableName = '';
         this.variableDescription = '';
-        this.variableUnidad = 0;
+        this.variableUnidad = undefined;
         this.editVariableName = false;
         this.editVariableDescription = false;
         this.editVariableUnidad = false;
@@ -194,7 +194,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.variableSelect1 = '';
         this.variableSelect2 = '';
         this.variableDescription = '';
-        this.variableUnidad = 0;
+        this.variableUnidad = undefined;
         this.variableName = '';
         this.editVariableName = false;
         this.editVariableDescription = false;
@@ -226,6 +226,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       operation: !this.constante,
       constante: this.constante,
       formula: this.sendOperations,
+      unite: this.variableUnidad,
     });
     this.cerrarModal();
     this.sendOperations = [];
@@ -245,6 +246,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       formula: this.sendOperations ? this.sendOperations : null,
       operation: !this.constante,
       constante: this.constante,
+      unite: this.variableUnidad,
     });
     this.cerrarModal();
 
