@@ -15,7 +15,7 @@ export class ShapeModalComponent {
     { name: 'Normal', img: '../../../assets/img/Rectangle-shape.png' },
     { name: 'Uniforme', img: '../../../assets/img/rectangle_uniform.png' },
     {
-      name: 'Exponential',
+      name: 'Exponencial',
       img: '../../../assets/img/rectangle_exponential.png',
     },
   ];

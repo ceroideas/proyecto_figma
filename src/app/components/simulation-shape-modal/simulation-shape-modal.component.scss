@@ -164,3 +164,40 @@ p {
   justify-content: center; /* Centrado horizontal */
   align-items: center; /* Centrado vertical */
 }
+.custom-input {
+  position: relative;
+  display: inline-block;
+}
+
+.input-label {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #555;
+}
+
+.input-field {
+  padding-left: 70px; /* Espacio suficiente para la etiqueta */
+  box-sizing: border-box;
+  width: 200px; /* Ajusta el ancho según tus necesidades */
+}
+.chart-inputs {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  /*   border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px; */
+}
+
+.chart-span {
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  color: #000f55;
+  font-weight: bold !important;
+  background-color: white !important;
+}
+.form-check-input:checked {
+  background-color: #8c64b1 !important;
+  border-color: #8c64b1 !important;
+}

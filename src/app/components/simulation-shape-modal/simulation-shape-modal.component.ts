@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
+import { NgZone } from '@angular/core';
 Chart.register(...registerables);
 declare var bootstrap: any;
 @Component({
@@ -22,12 +23,77 @@ export class SimulationShapeModalComponent implements OnInit {
       img: '../../../assets/img/rectangle_exponential.png',
     },
   ];
+  chart!: any;
   shapeType!: any;
-  constructor() {}
+  constructor(private ngZone: NgZone) {}
 
-  ngOnInit(): void {
-    const data = this.generateNormalDistribution(50, 10, 100);
-    new Chart('chart', {
+  ngOnInit(): void {}
+
+  ngAfterViewInit() {
+    const modal = new bootstrap.Modal(this.miModal.nativeElement);
+
+    modal._element.addEventListener('shown.bs.modal', () => {
+      this.ngZone.run(() => {
+        this.shapeType = this.getItem('shapetype');
+
+        if (this.shapeType.__zone_symbol__value.name === 'Normal') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.normalChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Uniforme') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.uniformChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Exponencial') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.exponentialChart();
+        }
+
+        console.log(this.shapeType.__zone_symbol__value.name, 'shapeType');
+      });
+    });
+
+    modal._element.addEventListener('hidden.bs.modal', () => {
+      console.log(this.route);
+      const openButtonSave = document.querySelector('#exampleModalButton');
+      const openButtoBack = document.querySelector('#shapeModalButton');
+
+      if (this.route === 'back') {
+        if (openButtoBack) {
+          // Simula un clic en el botón para cerrar el modal
+          (openButtoBack as HTMLElement).click();
+        }
+      } else if (this.route === 'save') {
+        this.route = 'back';
+        if (openButtonSave) {
+          // Simula un clic en el botón para cerrar el modal
+          (openButtonSave as HTMLElement).click();
+        }
+      }
+    });
+  }
+
+  save() {
+    this.route = 'save';
+  }
+
+  getItem(key: any) {
+    return new Promise((resolve) => {
+      const value = localStorage.getItem(key);
+      resolve(JSON.parse(value || ''));
+    });
+  }
+
+  normalChart() {
+    this.chart = new Chart('chart', {
       type: 'line',
       data: {
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
@@ -57,57 +123,65 @@ export class SimulationShapeModalComponent implements OnInit {
     });
   }
 
-  ngAfterViewInit() {
-    const modal = new bootstrap.Modal(this.miModal.nativeElement);
-
-    modal._element.addEventListener('shown.bs.modal', () => {
-      this.shapeType = this.getItem('shapetype');
-      console.log(this.shapeType, 'shapeType');
+  uniformChart() {
+    this.chart = new Chart('chart', {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: '# of Votes',
+            data: [19, 19, 19, 19, 19],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 1,
+            pointHitRadius: 25, // for improved touch support
+            // dragData: false // prohibit dragging this dataset
+            // same as returning `false` in the onDragStart callback
+            // for this datsets index position
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {
+            // dragData: false // disables datapoint dragging for the entire axis
+          },
+        },
+      },
     });
+  }
 
-    modal._element.addEventListener('hidden.bs.modal', () => {
-      console.log(this.route);
-      const openButtonSave = document.querySelector('#exampleModalButton');
-      const openButtoBack = document.querySelector('#shapeModalButton');
-
-      if (this.route === 'back') {
-        if (openButtoBack) {
-          // Simula un clic en el botón para cerrar el modal
-          (openButtoBack as HTMLElement).click();
-        }
-      } else if (this.route === 'save') {
-        this.route = 'back';
-        if (openButtonSave) {
-          // Simula un clic en el botón para cerrar el modal
-          (openButtonSave as HTMLElement).click();
-        }
-      }
+  exponentialChart() {
+    this.chart = new Chart('chart', {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: '# of Votes',
+            data: [19, 12, 7, 2, 0],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 1,
+            pointHitRadius: 25, // for improved touch support
+            // dragData: false // prohibit dragging this dataset
+            // same as returning `false` in the onDragStart callback
+            // for this datsets index position
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {
+            // dragData: false // disables datapoint dragging for the entire axis
+          },
+        },
+      },
     });
-  }
-
-  generateNormalDistribution(mean: any, stdDev: any, size: any) {
-    const data = [];
-    for (let i = 0; i < size; i++) {
-      const value = this.gaussianRandom(mean, stdDev);
-      data.push(value);
-    }
-    return data;
-  }
-
-  gaussianRandom(mean: any, stdDev: any) {
-    const u1 = Math.random();
-    const u2 = Math.random();
-    const z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-    return mean + stdDev * z;
-  }
-
-  save() {
-    this.route = 'save';
-  }
-
-  getItem(key: string): any {
-    const storedItem = localStorage.getItem(key);
-    console.log(storedItem);
-    return storedItem ? JSON.parse(storedItem) : null;
   }
 }
