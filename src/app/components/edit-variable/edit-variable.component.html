@@ -20,7 +20,7 @@
   aria-hidden="true"
   data-bs-backdrop="static"
 >
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <p class="modal-title" id="exampleModalLabel">
@@ -34,7 +34,7 @@
           aria-label="Close"
         ></button>
       </div>
-      <div (click)="verifyType()" class="d-flex type">
+      <div (click)="verifyType()" class="d-flex type mt-4">
         <div>
           <input
             class="form-check-input"
@@ -177,6 +177,7 @@
               class="mr-4 mb-3 p-2 operation-varible"
               (mouseover)="seleccionarCalculo(calculo)"
               (mouseout)="deseleccionarCalculo()"
+              (click)="eliminatedOperation(i)"
             >
               <img
                 class="user-icon"
@@ -184,15 +185,28 @@
                 alt="User Icon"
               />
               {{ calculo }}
-              <span
+              <!--               <span
                 (mouseover)="seleccionarCalculo(calculo)"
                 (mouseout)="deseleccionarCalculo()"
                 (click)="eliminatedOperation(i)"
                 *ngIf="calculo === selectedCalculo"
                 class="close-icon"
+                id="close-icon"
+                tabindex="0"
               >
                 X
-              </span>
+              </span> -->
+              <a
+                (mouseover)="seleccionarCalculo(calculo)"
+                (mouseout)="deseleccionarCalculo()"
+                (click)="eliminatedOperation(i)"
+                *ngIf="calculo === selectedCalculo"
+                class="close-icon"
+                id="close-icon"
+                href="javascript:void(0)"
+              >
+                X
+              </a>
             </div>
           </div>
 
@@ -237,13 +251,16 @@
             class="d-flex justify-content-between align-items-start w-100 mb-3"
             [class]="constante ? '' : 'mt-4'"
           >
-            <div class="col-md-11">
+            <div [class]="constante ? 'col-md-11' : 'w-100'">
               <div class="input-group">
                 <input
                   data-bs-toggle="modal"
                   data-bs-target="#shapeModal"
                   type="text"
-                  class="form-control input-formula mb-0 input-margin"
+                  class="form-control mb-0 input-margin"
+                  [class]="
+                    constante ? 'input-formula' : 'input-formula-variable'
+                  "
                   placeholder="Distribution shape"
                   aria-describedby="basic-addon1"
                 />

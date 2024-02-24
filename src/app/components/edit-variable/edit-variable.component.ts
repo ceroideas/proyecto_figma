@@ -569,7 +569,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos.splice(i, 1);
     this.operations.splice(i, 1);
     this.sendOperations.splice(i, 1);
-    console.log(this.sendOperations);
   }
   submitEdit() {
     const editVariable = {
