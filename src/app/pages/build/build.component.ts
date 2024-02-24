@@ -259,7 +259,7 @@ export class BuildComponent implements OnInit {
       ...data,
       project_id: this.id,
       type: data.operation ? 2 : 1,
-      distribution_shape: 1,
+
       node_id: this.isNewTree ? null : this.nodeName,
       tier: this.isNewTree === false ? +this.fatherNode + 1 : 0,
     };
@@ -362,7 +362,7 @@ export class BuildComponent implements OnInit {
 
     console.log(dataToSave, 'data tio savew');
     console.log(this.esceneries, 'esce');
-    this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
+    /*     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
       this.getContentToChart();
       console.log(this.esceneries, 'estoye n el for');
       if (this.esceneries.length > 0 && dataToSave.unite === undefined) {
@@ -373,7 +373,7 @@ export class BuildComponent implements OnInit {
         });
         this.esceneries = [];
       }
-    });
+    }); */
     this.isNewTree = false;
   }
 

@@ -2,12 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { NgZone } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 Chart.register(...registerables);
 declare var bootstrap: any;
 @Component({
   selector: 'app-simulation-shape-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './simulation-shape-modal.component.html',
   styleUrl: './simulation-shape-modal.component.scss',
 })
@@ -25,6 +26,10 @@ export class SimulationShapeModalComponent implements OnInit {
   ];
   chart!: any;
   shapeType!: any;
+  min!: any;
+  max!: any;
+  stDev!: any;
+  type: string = 'static';
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {}
@@ -82,6 +87,15 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   save() {
+    const formShape = {
+      min: this.min,
+      stDev: this.stDev,
+      max: this.max,
+      name: this.shapeType.__zone_symbol__value.name,
+      type: this.type,
+    };
+    localStorage.setItem('shapeData', JSON.stringify(formShape));
+    console.log(formShape);
     this.route = 'save';
   }
 

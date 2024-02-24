@@ -18,6 +18,7 @@
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
+  data-bs-backdrop="static"
 >
   <div class="modal-dialog">
     <div class="modal-content">
@@ -26,6 +27,7 @@
           {{ editVariable ? "Editar variable " : "Crear variable" }}
         </p>
         <button
+          (click)="deleteShapeData()"
           type="button"
           class="btn-close"
           data-bs-dismiss="modal"
@@ -251,6 +253,8 @@
               <div class="input-group col-md-4 input-group-sm mb-3">
                 <span class="input-group-text chart-span" id="min">Min:</span>
                 <input
+                  disabled
+                  [(ngModel)]="min"
                   type="text"
                   class="form-control chart-inputs"
                   aria-describedby="min"
@@ -259,6 +263,8 @@
               <div class="input-group col-md-4 input-group-sm mb-3">
                 <span class="input-group-text chart-span" id="min">StDev:</span>
                 <input
+                  disabled
+                  [(ngModel)]="stDev"
                   type="text"
                   class="form-control chart-inputs"
                   aria-describedby="min"
@@ -267,6 +273,8 @@
               <div class="input-group col-md-4 input-group-sm mb-3">
                 <span class="input-group-text chart-span" id="min">Max:</span>
                 <input
+                  [(ngModel)]="max"
+                  disabled
                   type="text"
                   class="form-control chart-inputs"
                   aria-describedby="min"

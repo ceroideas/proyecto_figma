@@ -5,11 +5,14 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  NgZone,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   SimpleChanges,
   ViewChild,
+  HostListener,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -38,6 +41,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
   editVariableDescription: boolean = false;
   editVariableUnidad: boolean = false;
   variableOperation: any;
+  min: number = 0;
+  max: number = 0;
+  stDev: number = 0;
   variableSelect1: any = '#';
   variableSelect2: any = '#';
   variableUnidad!: any;
@@ -97,10 +103,14 @@ export class EditVariableComponent implements OnInit, OnChanges {
     '&',
     '|',
   ];
+  shapeData: any = {
+    __zone_symbol__value: { name: 'Normal' },
+  };
   showNewEscenario: any[] = [];
   operations: any[] = [];
   sendOperations: any[] = [];
   selectedCalculo: any;
+  chart!: any;
   oldType!: boolean;
   @Output() sendDataEvent = new EventEmitter<any>();
 
@@ -110,7 +120,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Output() hiddenDataEvent = new EventEmitter<any>();
   constructor(
     private projectSvc: ProjectService,
-    private dataService: DataService
+    private dataService: DataService,
+    private ngZone: NgZone
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
@@ -126,7 +137,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    setTimeout(() => {
+    /*     setTimeout(() => {
       new Chart('myChart', {
         type: 'bar',
 
@@ -149,8 +160,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
           },
         },
       });
-    }, 1000);
-
+    }, 1000); */
+    this.deleteShapeData();
     this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
       console.log(res.nodes, 'RES');
       this.variables = res.node;
@@ -168,6 +179,54 @@ export class EditVariableComponent implements OnInit, OnChanges {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
     modal._element.addEventListener('shown.bs.modal', async () => {
+      this.ngZone.run(() => {
+        try {
+          this.shapeData = this.getItem('shapeData');
+
+          this.min = this.shapeData.__zone_symbol__value.min
+            ? this.shapeData.__zone_symbol__value.min
+            : this.min;
+
+          this.stDev = this.shapeData.__zone_symbol__value.stDev
+            ? this.shapeData.__zone_symbol__value.stDev
+            : this.stDev;
+
+          this.max = this.shapeData.__zone_symbol__value.max
+            ? this.shapeData.__zone_symbol__value.max
+            : this.max;
+
+          // Verificar si shapeData es nulo o indefinido
+
+          const chartName = this.shapeData.__zone_symbol__value.name;
+
+          // Destruir el gráfico si ya existe
+          if (this.chart) {
+            this.chart.destroy();
+          }
+
+          // Lógica del gráfico según el tipo
+          switch (chartName) {
+            case 'Normal':
+              this.normalChart();
+              break;
+            case 'SyntaxError':
+              this.normalChart();
+              break;
+            case 'Uniforme':
+              this.uniformChart();
+              break;
+            case 'Exponencial':
+              this.exponentialChart();
+              break;
+            default:
+              console.error(`Tipo de gráfico no reconocido: ${chartName}`);
+          }
+
+          console.log(chartName, 'shapeData');
+        } catch (error) {
+          console.error("Error al obtener o procesar 'shapeData':", error);
+        }
+      });
       this.updateVariables();
       this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
         this.variables = res.nodes;
@@ -227,6 +286,15 @@ export class EditVariableComponent implements OnInit, OnChanges {
       constante: this.constante,
       formula: this.sendOperations,
       unite: this.variableUnidad,
+      distribution_shape: {
+        name: this.shapeData.__zone_symbol__value.name
+          ? this.shapeData.__zone_symbol__value.name
+          : 'Normal',
+        max: this.max,
+        stDev: this.stDev,
+        min: this.min,
+        type: this.shapeData.__zone_symbol__value.type,
+      },
     });
     this.cerrarModal();
     this.sendOperations = [];
@@ -321,6 +389,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.sendData();
       }
     }
+
+    this.deleteShapeData();
   }
   editVariableUnidadClick() {
     this.editVariableUnidad = !this.editVariableUnidad;
@@ -341,7 +411,29 @@ export class EditVariableComponent implements OnInit, OnChanges {
   updateVariables(): void {
     if (this.editVariable) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-        console.log(res);
+        this.min = res.distribution_shape?.min
+          ? res.distribution_shape?.min
+          : 0;
+        this.max = res.distribution_shape?.max
+          ? res.distribution_shape?.max
+          : 0;
+        this.stDev = res.distribution_shape?.stDev
+          ? res.distribution_shape?.stDev
+          : 0;
+        const formShape = {
+          min: this.min,
+          stDev: this.stDev,
+          max: this.max,
+          name: res.distribution_shape?.name
+            ? res.distribution_shape?.name
+            : 'Normal',
+          type: res.distribution_shape?.type
+            ? res.distribution_shape?.type
+            : 'static',
+        };
+
+        console.log('#aqui', formShape);
+        localStorage.setItem('shapeData', JSON.stringify(formShape));
         this.constante = res.type === 1 ? true : false;
         this.oldType = res.type === 1 ? true : false;
         this.variableName = res.name;
@@ -536,5 +628,113 @@ export class EditVariableComponent implements OnInit, OnChanges {
         }
       }, 100);
     }
+  }
+
+  getItem(key: any) {
+    return new Promise((resolve) => {
+      const value = localStorage.getItem(key);
+      resolve(JSON.parse(value || ''));
+    });
+  }
+
+  normalChart() {
+    this.chart = new Chart('myChart', {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Normal',
+            data: [0, 10, 19, 10, 0],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 1,
+            pointHitRadius: 25, // for improved touch support
+            // dragData: false // prohibit dragging this dataset
+            // same as returning `false` in the onDragStart callback
+            // for this datsets index position
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {
+            // dragData: false // disables datapoint dragging for the entire axis
+          },
+        },
+      },
+    });
+  }
+
+  uniformChart() {
+    this.chart = new Chart('myChart', {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Uniforme',
+            data: [19, 19, 19, 19, 19],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 1,
+            pointHitRadius: 25, // for improved touch support
+            // dragData: false // prohibit dragging this dataset
+            // same as returning `false` in the onDragStart callback
+            // for this datsets index position
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {
+            // dragData: false // disables datapoint dragging for the entire axis
+          },
+        },
+      },
+    });
+  }
+
+  exponentialChart() {
+    this.chart = new Chart('myChart', {
+      type: 'line',
+      data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Exponencial',
+            data: [19, 12, 7, 2, 0],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 1,
+            pointHitRadius: 25, // for improved touch support
+            // dragData: false // prohibit dragging this dataset
+            // same as returning `false` in the onDragStart callback
+            // for this datsets index position
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {
+            // dragData: false // disables datapoint dragging for the entire axis
+          },
+        },
+      },
+    });
+  }
+
+  deleteShapeData() {
+    localStorage.removeItem('shapeData');
+    localStorage.removeItem('shapetype');
+    this.min = 0;
+    this.max = 0;
+    this.stDev = 0;
   }
 }
