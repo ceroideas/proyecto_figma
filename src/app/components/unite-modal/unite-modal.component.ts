@@ -198,8 +198,12 @@ export class UniteModalComponent implements OnInit {
               onDrag: (e: any, datasetIndex: any, index: any, value: any) => {
                 e.target.style.cursor = 'grabbing';
                 /* console.log(value); */
-                /*                this.calcularMontoConIncremento();
+                /*                 this.calcularMontoConIncremento();
                 this.renderChartVariable.options.scales.y.max = this.yMax; */
+                this.renderChartVariable.options.scales.y.max =
+                  this.calcularMontoConIncremento() < 1000
+                    ? 1000
+                    : this.calcularMontoConIncremento();
               },
               onDragEnd: (
                 e: any,
@@ -254,7 +258,10 @@ export class UniteModalComponent implements OnInit {
         scales: {
           y: {
             min: 0,
-            max: this.yMax,
+            max:
+              this.calcularMontoConIncremento() === 0
+                ? 1000
+                : this.calcularMontoConIncremento(),
           },
         },
         onHover: function (e: any) {
@@ -295,6 +302,7 @@ export class UniteModalComponent implements OnInit {
     }
 
     this.renderChartVariable = new Chart('chartJSContainer', option);
+    this.calcularMontoConIncremento();
   }
   onSelectChange() {
     if (this.selectedEscenary !== '#') {
@@ -311,6 +319,7 @@ export class UniteModalComponent implements OnInit {
       console.log(this.escenarys, 'ese');
       this.createModel();
       this.renderChart();
+      this.calcularMontoConIncremento();
     }
   }
 
@@ -333,14 +342,14 @@ export class UniteModalComponent implements OnInit {
               ) {
                 /* console.log(e); */
               },
-              onDrag: function (
-                e: any,
-                datasetIndex: any,
-                index: any,
-                value: any
-              ) {
+              onDrag: (e: any, datasetIndex: any, index: any, value: any) => {
                 e.target.style.cursor = 'grabbing';
                 /* console.log(value); */
+
+                this.createEscenaryChartVariable.options.scales.y.max =
+                  this.calcularMontoConIncremento() < 1000
+                    ? 1000
+                    : this.calcularMontoConIncremento();
               },
               onDragEnd: (
                 e: any,
@@ -376,7 +385,10 @@ export class UniteModalComponent implements OnInit {
         scales: {
           y: {
             min: 0,
-            max: 1000,
+            max:
+              this.calcularMontoConIncremento() === 0
+                ? 1000
+                : this.calcularMontoConIncremento(),
           },
         },
         onHover: function (e: any) {
@@ -407,7 +419,6 @@ export class UniteModalComponent implements OnInit {
 
     this.renderChartVariable.destroy();
     this.renderChart();
-    this.forceFocus(inputId);
   }
   yearKey(year: any): string {
     return Object.keys(year)[0];
@@ -485,6 +496,7 @@ export class UniteModalComponent implements OnInit {
 
     if (this.values) {
       // Filtrar y convertir a números
+      console.log(this.values, 'VALUES');
       const cantidadesNumeros: number[] = this.values.map((cantidad: any) =>
         typeof cantidad === 'string'
           ? parseFloat(cantidad)
@@ -501,6 +513,15 @@ export class UniteModalComponent implements OnInit {
         // Sumar el 20% a la cantidad más alta
         const resultado: number = cantidadMaxima + incremento;
         this.yMax = resultado;
+        if (this.renderChartVariable) {
+          this.renderChartVariable.options.scales.y.max =
+            this.yMax === 0 ? 1000 : this.yMax;
+        }
+
+        if (this.createEscenaryChartVariable) {
+          this.createEscenaryChartVariable.options.scales.y.max = 1000;
+        }
+
         console.log(resultado, this.values, 'resultado');
         return resultado;
       } else {
@@ -508,7 +529,7 @@ export class UniteModalComponent implements OnInit {
         throw new Error('No hay cantidades válidas para calcular.');
       }
     } else {
-      return 0;
+      return 1000;
     }
   }
 }
