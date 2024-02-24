@@ -362,7 +362,7 @@ export class BuildComponent implements OnInit {
 
     console.log(dataToSave, 'data tio savew');
     console.log(this.esceneries, 'esce');
-    /*     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
+    this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
       this.getContentToChart();
       console.log(this.esceneries, 'estoye n el for');
       if (this.esceneries.length > 0 && dataToSave.unite === undefined) {
@@ -373,7 +373,7 @@ export class BuildComponent implements OnInit {
         });
         this.esceneries = [];
       }
-    }); */
+    });
     this.isNewTree = false;
   }
 
