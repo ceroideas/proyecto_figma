@@ -291,7 +291,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       operation: !this.constante,
       constante: this.constante,
       formula: this.sendOperations,
-      unite: +this.variableUnidad,
+      unite: this.variableUnidad,
       distribution_shape: [
         {
           name:
