@@ -183,6 +183,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
         try {
           this.shapeData = this.getItem('shapeData');
 
+          console.log(this.shapeData, 'DATA');
+
           this.min = this.shapeData.__zone_symbol__value.min
             ? this.shapeData.__zone_symbol__value.min
             : this.min;
@@ -235,7 +237,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     modal._element.addEventListener('hidden.bs.modal', () => {
       this.calculos = [];
-      if (!this.editVariable) {
+      /*       if (!this.editVariable) {
         this.variableSelect1 = '';
         this.variableSelect2 = '';
         this.variableName = '';
@@ -263,7 +265,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.calculos = [];
         this.sendOperations = [];
         this.showNewEscenario = [];
-      }
+        this.variableUnidad = undefined;
+        this.min = 0;
+        this.max = 0;
+        this.stDev = 0;
+      } */
     });
   }
   editVariableNameClick() {
@@ -285,16 +291,19 @@ export class EditVariableComponent implements OnInit, OnChanges {
       operation: !this.constante,
       constante: this.constante,
       formula: this.sendOperations,
-      unite: this.variableUnidad,
-      distribution_shape: {
-        name: this.shapeData.__zone_symbol__value.name
-          ? this.shapeData.__zone_symbol__value.name
-          : 'Normal',
-        max: this.max,
-        stDev: this.stDev,
-        min: this.min,
-        type: this.shapeData.__zone_symbol__value.type,
-      },
+      unite: +this.variableUnidad,
+      distribution_shape: [
+        {
+          name:
+            this.shapeData.__zone_symbol__value.name !== 'SyntaxError'
+              ? this.shapeData.__zone_symbol__value.name
+              : 'Normal',
+          max: +this.max,
+          stDev: +this.stDev,
+          min: +this.min,
+          type: this.shapeData.__zone_symbol__value.type,
+        },
+      ],
     });
     this.cerrarModal();
     this.sendOperations = [];
@@ -315,7 +324,20 @@ export class EditVariableComponent implements OnInit, OnChanges {
       operation: !this.constante,
       constante: this.constante,
       unite: this.variableUnidad,
+      distribution_shape: [
+        {
+          name:
+            this.shapeData.__zone_symbol__value.name !== 'SyntaxError'
+              ? this.shapeData.__zone_symbol__value.name
+              : 'Normal',
+          max: +this.max,
+          stDev: +this.stDev,
+          min: +this.min,
+          type: this.shapeData.__zone_symbol__value.type,
+        },
+      ],
     });
+    console.log();
     this.cerrarModal();
 
     this.tempObject[this.variableId] = {
@@ -411,29 +433,35 @@ export class EditVariableComponent implements OnInit, OnChanges {
   updateVariables(): void {
     if (this.editVariable) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-        this.min = res.distribution_shape?.min
-          ? res.distribution_shape?.min
-          : 0;
-        this.max = res.distribution_shape?.max
-          ? res.distribution_shape?.max
-          : 0;
-        this.stDev = res.distribution_shape?.stDev
-          ? res.distribution_shape?.stDev
-          : 0;
-        const formShape = {
-          min: this.min,
-          stDev: this.stDev,
-          max: this.max,
-          name: res.distribution_shape?.name
-            ? res.distribution_shape?.name
-            : 'Normal',
-          type: res.distribution_shape?.type
-            ? res.distribution_shape?.type
-            : 'static',
-        };
+        this.variableUnidad = res.unite ? res.unite : undefined;
 
-        console.log('#aqui', formShape);
-        localStorage.setItem('shapeData', JSON.stringify(formShape));
+        const shapeDataExists = localStorage.getItem('shapeData') !== null;
+
+        // Si shapeData no existe, entonces lo establecemos
+        if (!shapeDataExists) {
+          this.min = res.distribution_shape[0]?.min
+            ? res.distribution_shape[0]?.min
+            : this.min;
+          this.max = res.distribution_shape[0]?.max
+            ? res.distribution_shape[0]?.max
+            : this.max;
+          this.stDev = res.distribution_shape[0]?.stDev
+            ? res.distribution_shape[0]?.stDev
+            : this.stDev;
+          console.log('NO EXISTE');
+          const formShape = {
+            min: this.min,
+            stDev: this.stDev,
+            max: this.max,
+            name: res.distribution_shape[0]?.name
+              ? res.distribution_shape[0]?.name
+              : 'Normal',
+            type: res.distribution_shape[0]?.type
+              ? res.distribution_shape[0]?.type
+              : 'static',
+          };
+          localStorage.setItem('shapeData', JSON.stringify(formShape));
+        }
         this.constante = res.type === 1 ? true : false;
         this.oldType = res.type === 1 ? true : false;
         this.variableName = res.name;
@@ -606,6 +634,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         });
       }
     });
+    this.deleteShapeData();
   }
 
   verifyType() {
@@ -732,6 +761,20 @@ export class EditVariableComponent implements OnInit, OnChanges {
   deleteShapeData() {
     localStorage.removeItem('shapeData');
     localStorage.removeItem('shapetype');
+    this.variableSelect1 = '';
+    this.variableSelect2 = '';
+    this.variableDescription = '';
+    this.variableUnidad = undefined;
+    this.variableName = '';
+    this.editVariableName = false;
+    this.editVariableDescription = false;
+    this.editVariableUnidad = false;
+    this.isOperation = false;
+    this.constante = true;
+    this.calculos = [];
+    this.sendOperations = [];
+    this.showNewEscenario = [];
+    this.variableUnidad = undefined;
     this.min = 0;
     this.max = 0;
     this.stDev = 0;

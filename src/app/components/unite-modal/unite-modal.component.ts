@@ -58,6 +58,7 @@ export class UniteModalComponent implements OnInit {
   @Input() lockedScenary: boolean = false;
   @Input() nodeId!: any;
   deleteEsceneries: boolean = false;
+  unite: any;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService
@@ -83,7 +84,6 @@ export class UniteModalComponent implements OnInit {
     }
 
     if (changes['this.model.locked']) {
-      console.log('changeeee');
     }
   }
 
@@ -92,20 +92,23 @@ export class UniteModalComponent implements OnInit {
 
     modal._element.addEventListener('shown.bs.modal', () => {
       if (!this.edit) {
-        this.escenarys = this.cleanEsceneries;
-        this.years = [this.escenarys[0].years];
+        /*         this.escenarys = this.cleanEsceneries;
+        this.years = [this.escenarys[0].years]; */
         console.log(this.years, this.escenarys[0], 'yearsssssss');
       }
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
+      this.showForm = false;
+      this.model.locked = false;
+      if (this.renderChartVariable) this.renderChartVariable.destroy();
       if (!this.edit) {
         this.sendEsceneries();
         this.selectedEscenary = '#';
       } else {
-        this.edit = false;
+        /*  this.edit = false; */
         this.selectedEscenary = '#';
-        this.escenarys = [];
+        /*  this.escenarys = []; */
       }
 
       const openButton = document.querySelector('#exampleModalButton');
@@ -122,6 +125,7 @@ export class UniteModalComponent implements OnInit {
       node_id: this.nodeId,
       name: this.model.name,
       years: JSON.parse(JSON.stringify(this.model.years[0])),
+      status: this.model.locked === true ? 0 : 1,
     };
 
     this.projectSvc.saveScenery(newEscenary).subscribe((res: any) => {
@@ -141,12 +145,21 @@ export class UniteModalComponent implements OnInit {
     this.createEscenaryChartVariable.destroy();
   }
   addEscenary() {
-    if (this.renderChartVariable) this.renderChartVariable.destroy();
-    this.selectedEscenary = '#';
-    this.model.name = '';
-    this.createModel();
     this.showForm = !this.showForm;
-    this.createEscenaryChart();
+    this.model.locked = false;
+    if (this.showForm) {
+      if (this.renderChartVariable) this.renderChartVariable.destroy();
+      this.values = undefined;
+      this.escenarys = this.cleanEsceneries;
+      this.years = [this.escenarys[0].years];
+      this.selectedEscenary = '#';
+      this.model.name = '';
+      this.createModel();
+
+      this.createEscenaryChart();
+    } else {
+      this.editScenarys();
+    }
   }
 
   createModel() {
@@ -154,11 +167,13 @@ export class UniteModalComponent implements OnInit {
 
     const years: any = {};
     keys.forEach((clave: string) => {
-      years[clave] = 0;
+      years[clave] = this.unite ? this.unite : 0;
     });
 
     if (this.escenarys[+this.selectedEscenary]) {
       this.model['years'] = [this.escenarys[+this.selectedEscenary].years];
+      this.model['locked'] =
+        this.escenarys[+this.selectedEscenary].status === 0 ? true : false;
       console.log(this.escenarys[+this.selectedEscenary].years, 'run');
     } else {
       this.model['years'] = [years];
@@ -175,6 +190,7 @@ export class UniteModalComponent implements OnInit {
     /*     const values = years.map(
       (key) => +this.escenarys[this.selectedEscenary].years[0][key]
     ); */
+
     const values = Object.values(this.escenarys[this.selectedEscenary].years);
     console.log(this.escenarys[this.selectedEscenary], 'values');
     if (!this.values) {
@@ -182,7 +198,7 @@ export class UniteModalComponent implements OnInit {
     }
 
     const plugins: any =
-      this.lockedScenary === false
+      this.model.locked === false
         ? {
             dragData: {
               round: 1,
@@ -326,7 +342,8 @@ export class UniteModalComponent implements OnInit {
   createEscenaryChart() {
     const years = Object.keys(this.escenarys[0].years);
 
-    if (!this.values) this.values = years.map((key) => 0);
+    if (!this.values)
+      this.values = years.map((key) => (this.unite ? this.unite : 0));
 
     const plugins: any =
       this.model.locked === false
@@ -453,18 +470,37 @@ export class UniteModalComponent implements OnInit {
     if (this.edit) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         this.escenarys = res.sceneries;
+        this.unite = res.unite;
         this.years = [this.escenarys[0].years];
-        console.log(this.escenarys[0].years, 'yearsssssss');
+
+        console.log(this.escenarys[0].years, 'años edit');
       });
     } else {
-      console.log('aqui');
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0].years];
     }
   }
   changeLocked() {
-    this.createEscenaryChartVariable.destroy();
-    this.createEscenaryChart();
+    console.log(this.escenarys[+this.selectedEscenary].id);
+    this.projectSvc
+      .updateScenery(this.escenarys[+this.selectedEscenary].id, {
+        years: this.model.years[0],
+        status: this.model.locked ? 0 : 1,
+      })
+      .subscribe((res: any) => {
+        console.log(res, 'res');
+      });
+    if (this.renderChartVariable) {
+      this.renderChartVariable.destroy();
+      this.renderChart();
+    }
+    if (this.createEscenaryChartVariable) {
+      this.createEscenaryChartVariable.destroy();
+      this.createEscenaryChart();
+    }
+
+    /*     this.createEscenaryChartVariable.destroy();
+    this.createEscenaryChart(); */
   }
 
   lockedScenarys() {

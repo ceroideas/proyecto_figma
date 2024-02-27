@@ -364,8 +364,8 @@ export class BuildComponent implements OnInit {
     console.log(this.esceneries, 'esce');
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
       this.getContentToChart();
-      console.log(this.esceneries, 'estoye n el for');
-      if (this.esceneries.length > 0 && dataToSave.unite === undefined) {
+      console.log(this.esceneries, dataToSave.unite, 'estoye n el for');
+      if (this.esceneries.length > 0 && Number.isNaN(dataToSave.unite)) {
         res.sceneries.forEach((element: any, i: any) => {
           this.projectSvc
             .updateScenery(element.id, this.esceneries[i])
@@ -428,7 +428,7 @@ export class BuildComponent implements OnInit {
       name: data.name,
     };
  */
-
+    console.log('edit', dataToSave);
     this.projectSvc.updateNode(data.id, dataToSave).subscribe((res: any) => {
       console.log(res);
       this.getContentToChart();
@@ -731,6 +731,163 @@ export class BuildComponent implements OnInit {
   } */
 
   getContentToChart() {
+    return new Promise<void>((resolve, reject) => {
+      this.projectSvc
+        .getProject(this.id)
+        .pipe(
+          switchMap((res: any) => {
+            this.cleanSceneries = res.clean_sceneries;
+            this.years = res.years;
+            const currentYear = new Date().getFullYear();
+            const position = this.years.indexOf(currentYear);
+            console.log(position, 'position');
+            this.aux = [];
+            this.currentYearIndex = position !== -1 ? position : 0;
+
+            this.sceneries = res.sceneries;
+            if (this.selectedScenery === '#') this.selectedScenery = '0';
+
+            console.log(res, 'ahuh');
+            this.sceneriesNodes = [];
+            if (res.nodes?.length > 0) {
+              res.nodes.forEach((element: any) => {
+                const data = {
+                  data: [
+                    {
+                      v: `${element.id}`,
+                      f: `<div  class="rotate" >
+                
+                <span>
+                       <div class="floating" style="display: none;">   
+                              <div class="flex-box">   
+                              <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                               class="tier-icon " 
+                              src="../../../assets/icons/u_plus.svg"
+                              alt=""
+                            /></button>
+                              <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                              class="tier-icon " 
+                             src="../../../assets/icons/pencil.svg"
+                             alt=""
+                           /></button>
+                              <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                              class="tier-icon " 
+                             src="../../../assets/icons/u_eye-slash-icon.svg"
+                             alt=""
+                           /> </button>
+                              </div>
+                              <div class="full-box">
+                                     
+                              </div> 
+                       </div>
+                      ${element.name}
+                       
+                </span>
+        
+         </div>`,
+                    },
+                    `${element.node_id ? element.node_id : ''}`,
+                    `${element.description}`,
+                  ],
+                  hidden: 0,
+                  hiddenNodeSon: false,
+                  name: element.name,
+                  tier: element.tier,
+                  f_original: `<div  class="rotate" >
+                
+                <span>
+                       <div class="floating" style="display: none;">   
+                              <div class="flex-box">   
+                              <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                               class="tier-icon " 
+                              src="../../../assets/icons/u_plus.svg"
+                              alt=""
+                            /></button>
+                              <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                              class="tier-icon " 
+                             src="../../../assets/icons/pencil.svg"
+                             alt=""
+                           /></button>
+                              <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                              class="tier-icon " 
+                             src="../../../assets/icons/u_eye-slash-icon.svg"
+                             alt=""
+                           /> </button>
+                              </div>
+                              <div class="full-box">
+                                     
+                              </div> 
+                       </div>
+                       
+                      ${element.name}
+                       
+                </span>
+        
+         </div>`,
+                  f_alternative: `<div  class="rotate" >
+                
+         <span>
+                <div class="floating" style="display: none;">   
+                       <div class="flex-box">   
+                       <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                        class="tier-icon " 
+                       src="../../../assets/icons/u_plus.svg"
+                       alt=""
+                     /></button>
+                       <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                       class="tier-icon " 
+                      src="../../../assets/icons/pencil.svg"
+                      alt=""
+                    /></button>
+                       <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                       class="tier-icon " 
+                      src="../../../assets/icons/u_eye-slash-icon.svg"
+                      alt=""
+                    /> </button>
+                       </div>
+                       <div class="full-box">
+                              
+                       </div> 
+                </div>
+                <div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>
+               ${element.name}
+                
+         </span>
+  
+  </div>`,
+                };
+                this.aux.push(data);
+
+                this.sceneriesNodes.push(
+                  element.type === 2 ? element.calculated : element.sceneries
+                );
+              });
+              this.addRow();
+              this.chart.draw(this.data, { allowHtml: true });
+              google.charts.setOnLoadCallback(this.drawChart);
+            }
+            this.getSceneries(this.selectedScenery);
+            return of(res);
+          })
+        )
+        .subscribe({
+          next: () => {
+            console.log('termino');
+            this.getSceneries(this.selectedScenery);
+            resolve();
+          },
+          error: (error) => {
+            console.error('Error en la suscripción:', error);
+            reject(error);
+          },
+          complete: () => {
+            console.log('Suscripción completada');
+          },
+        });
+    });
+  }
+
+  /*   getContentToChart() {
     this.projectSvc
       .getProject(this.id)
       .pipe(
@@ -873,7 +1030,7 @@ export class BuildComponent implements OnInit {
         console.log('termino');
         this.getSceneries(this.selectedScenery);
       });
-  }
+  } */
 
   deleteNode() {
     this.getContentToChart();
@@ -906,8 +1063,20 @@ export class BuildComponent implements OnInit {
 
     setTimeout(() => {
       this.getSceneries(this.selectedScenery);
-    }, 2000);
+    }, 3000);
   }
+
+  /*   printAll() {
+    this.getContentToChart()
+      .then(() => {
+        console.log('Todo ha sido procesado correctamente');
+        this.getSceneries(this.selectedScenery);
+      })
+      .catch((error) => {
+        console.error('Error en la operación:', error);
+        // Puedes manejar el error según tus necesidades
+      });
+  } */
 
   nextYear() {
     if (this.currentYearIndex < this.years.length - 1) {
