@@ -229,14 +229,15 @@ export class EditVariableComponent implements OnInit, OnChanges {
           console.error("Error al obtener o procesar 'shapeData':", error);
         }
       });
-      this.updateVariables();
+      if (!this.nodeId) {
+        this.updateVariables();
+      }
       this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
         this.variables = res.nodes;
       });
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      this.calculos = [];
       /*       if (!this.editVariable) {
         this.variableSelect1 = '';
         this.variableSelect2 = '';
@@ -454,6 +455,10 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
   }
   updateVariables(): void {
+    /*     this.variables = this.variables.filter(
+      (variable) => variable.id !== this.nodeId
+    ); */
+
     if (this.editVariable) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         this.variableUnidad = res.unite ? res.unite : undefined;
@@ -493,13 +498,14 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.sendOperations = res.formula ? res.formula : [];
         this.showNewEscenario = res.calculated ? res.calculated : [];
       });
+      console.log(this.variables, 'this.variables');
     }
   }
   hiddenData() {
     this.hiddenDataEvent.emit();
   }
   disable() {
-    if (this.variableName && this.variableDescription) {
+    if (this.variableName) {
       return false;
     } else {
       return true;
@@ -598,12 +604,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   addCalculo(operation: string) {
-    if (this.operations.length > 0) {
+    if (this.sendOperations.length > 0) {
       this.calculos.push(operation);
       this.operations.push([{ name: operation }]);
 
       this.sendOperations.push(operation);
-      console.log(this.operations);
     }
     console.log(this.sendOperations, 'kdjodjn');
     this.operationResult();

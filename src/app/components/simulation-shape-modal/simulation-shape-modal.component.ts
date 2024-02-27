@@ -40,6 +40,7 @@ export class SimulationShapeModalComponent implements OnInit {
     modal._element.addEventListener('shown.bs.modal', () => {
       this.ngZone.run(() => {
         this.shapeType = this.getItem('shapetype');
+        const shapeData: any = this.getItem('shapeData');
 
         if (this.shapeType.__zone_symbol__value.name === 'Normal') {
           if (this.chart) {
@@ -62,7 +63,15 @@ export class SimulationShapeModalComponent implements OnInit {
           this.exponentialChart();
         }
 
-        console.log(this.shapeType.__zone_symbol__value.name, 'shapeType');
+        this.min = shapeData?.__zone_symbol__value.min
+          ? shapeData?.__zone_symbol__value.min
+          : 0;
+        this.max = shapeData?.__zone_symbol__value.max
+          ? shapeData?.__zone_symbol__value.max
+          : 0;
+        this.stDev = shapeData?.__zone_symbol__value.stDev
+          ? shapeData?.__zone_symbol__value.stDev
+          : 0;
       });
     });
 
@@ -97,6 +106,9 @@ export class SimulationShapeModalComponent implements OnInit {
     localStorage.setItem('shapeData', JSON.stringify(formShape));
     console.log(formShape);
     this.route = 'save';
+    this.min = 0;
+    this.max = 0;
+    this.stDev = 0;
   }
 
   getItem(key: any) {
