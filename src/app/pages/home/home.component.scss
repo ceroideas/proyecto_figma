@@ -88,3 +88,6 @@ li {
   right: 0; /* Ajusta la posición del menú hacia la derecha */
   left: auto; /* Asegura que no haya un desplazamiento a la izquierda */
 }
+.nav-link {
+  cursor: pointer !important;
+}

@@ -70,7 +70,11 @@
               </a>
             </li>
 
-            <li class="nav-item" routerLinkActive="active">
+            <li
+              (click)="redirect('build')"
+              class="nav-item"
+              routerLinkActive="active"
+            >
               <a routerLink="build" class="nav-link">
                 <img
                   class="mr-2"

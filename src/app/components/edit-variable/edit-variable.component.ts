@@ -408,6 +408,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         });
       } else {
         this.editData();
+        this.deleteShapeData();
       }
     } else {
       if (this.disable()) {
@@ -433,10 +434,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
         });
       } else {
         this.sendData();
+        this.deleteShapeData();
       }
     }
-
-    this.deleteShapeData();
   }
   editVariableUnidadClick() {
     this.editVariableUnidad = !this.editVariableUnidad;
@@ -646,6 +646,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       iconColor: '#BC5800',
       showCancelButton: true,
       confirmButtonText: 'Si, borrar',
+      cancelButtonText: 'Cancelar',
       customClass: {
         confirmButton: 'confirm',
         cancelButton: 'cancel',
@@ -659,10 +660,29 @@ export class EditVariableComponent implements OnInit, OnChanges {
             text: 'El nodo fue borrado con exito!',
             icon: 'success',
           });
+          this.deleteShapeData();
         });
       }
+
+      if (result.isDenied) {
+        const openButton = document.querySelector('#exampleModalButton');
+
+        // Verifica si el botón existe antes de intentar cerrar el modal
+        if (openButton) {
+          // Simula un clic en el botón para cerrar el modal
+          (openButton as HTMLElement).click();
+        }
+      }
+      if (result.isDismissed) {
+        const openButton = document.querySelector('#exampleModalButton');
+
+        // Verifica si el botón existe antes de intentar cerrar el modal
+        if (openButton) {
+          // Simula un clic en el botón para cerrar el modal
+          (openButton as HTMLElement).click();
+        }
+      }
     });
-    this.deleteShapeData();
   }
 
   verifyType() {

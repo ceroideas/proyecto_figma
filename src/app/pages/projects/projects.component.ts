@@ -44,6 +44,7 @@ export class ProjectsComponent {
 
   redirect(id: any) {
     this.router.navigate([`home/build/${id}`]);
+    localStorage.setItem('project', id);
   }
 
   convertDateFormat(originalDate: string): string {
