@@ -365,7 +365,7 @@ export class BuildComponent implements OnInit {
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
       this.getContentToChart();
       console.log(this.esceneries, dataToSave.unite, 'estoye n el for');
-      if (this.esceneries.length > 0 && Number.isNaN(dataToSave.unite)) {
+      if (this.esceneries.length > 0 && dataToSave.unite === null) {
         res.sceneries.forEach((element: any, i: any) => {
           this.projectSvc
             .updateScenery(element.id, this.esceneries[i])

@@ -305,6 +305,29 @@ export class EditVariableComponent implements OnInit, OnChanges {
         },
       ],
     });
+    console.log(
+      {
+        name: this.variableName,
+        description: this.variableDescription,
+        operation: !this.constante,
+        constante: this.constante,
+        formula: this.sendOperations,
+        unite: this.variableUnidad,
+        distribution_shape: [
+          {
+            name:
+              this.shapeData.__zone_symbol__value.name !== 'SyntaxError'
+                ? this.shapeData.__zone_symbol__value.name
+                : 'Normal',
+            max: +this.max,
+            stDev: +this.stDev,
+            min: +this.min,
+            type: this.shapeData.__zone_symbol__value.type,
+          },
+        ],
+      },
+      'DATA SENDIADA'
+    );
     this.cerrarModal();
     this.sendOperations = [];
     this.tempObject.push({

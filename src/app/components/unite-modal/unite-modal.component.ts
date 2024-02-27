@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -58,10 +59,11 @@ export class UniteModalComponent implements OnInit {
   @Input() lockedScenary: boolean = false;
   @Input() nodeId!: any;
   deleteEsceneries: boolean = false;
-  unite: any;
+  unite!: any;
   constructor(
     private projectSvc: ProjectService,
-    private dataService: DataService
+    private dataService: DataService,
+    private cdRef: ChangeDetectorRef
   ) {}
   ngOnInit(): void {
     this.dataService.data$.subscribe((data) => {
@@ -99,6 +101,19 @@ export class UniteModalComponent implements OnInit {
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
+      if (this.escenarys[+this.selectedEscenary]) {
+        this.projectSvc
+          .updateScenery(this.escenarys[+this.selectedEscenary].id, {
+            years: this.model.years[0],
+          })
+          .subscribe((res: any) => {
+            this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+              this.escenarys = res.sceneries;
+            });
+
+            this.printAllEvent.emit();
+          });
+      }
       this.showForm = false;
       this.model.locked = false;
       if (this.renderChartVariable) this.renderChartVariable.destroy();
@@ -235,7 +250,7 @@ export class UniteModalComponent implements OnInit {
                   years: this.model.years,
                 });
 
-                if (this.edit) {
+                /*           if (this.edit) {
                   this.projectSvc
                     .updateScenery(this.escenarys[+this.selectedEscenary].id, {
                       years: this.model.years[0],
@@ -249,7 +264,7 @@ export class UniteModalComponent implements OnInit {
 
                       this.printAllEvent.emit();
                     });
-                }
+                } */
               },
             },
           }
@@ -432,7 +447,17 @@ export class UniteModalComponent implements OnInit {
     console.log(this.escenarys[+this.selectedEscenary].years[0], 'value');
   }
   changeValue2(i: number, value: any, inputId: any) {
-    this.values[i] = +value;
+    if (value.includes('%')) {
+      const valueBase = parseFloat(value.replace('%', ''));
+
+      this.values[i] = +valueBase / 100;
+
+      setTimeout(() => {
+        this.model.years[0][inputId.toString()] = (+valueBase / 100).toString();
+      }, 250);
+    } else {
+      this.values[i] = +value;
+    }
 
     this.renderChartVariable.destroy();
     this.renderChart();
@@ -566,6 +591,13 @@ export class UniteModalComponent implements OnInit {
       }
     } else {
       return 1000;
+    }
+  }
+  onKeyDown(event: KeyboardEvent): void {
+    const allowedChars = /[0-9%.]/;
+
+    if (!allowedChars.test(event.key) && event.key !== 'Backspace') {
+      event.preventDefault();
     }
   }
 }

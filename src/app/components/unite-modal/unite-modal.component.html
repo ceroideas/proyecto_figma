@@ -188,6 +188,7 @@
                     [disabled]="model.locked"
                     [id]="year.key.toString()"
                     [(ngModel)]="model.years[0][year.key]"
+                    onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace'"
                     class="form-control input-formula"
                   />
                 </div>
