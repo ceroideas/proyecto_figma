@@ -113,12 +113,41 @@ export class BuildComponent implements OnInit {
       );
 
       google.visualization.events.addListener(this.chart, 'select', () => {
-        console.log(this.aux, 'AUX');
+        console.log('SELECT');
         this.hidden = false;
         this.editVariable = false;
         var selection = this.chart.getSelection();
 
         var cstmbtnElements = document.querySelectorAll('.btn-add');
+        this.isNewTree = false;
+        // Verifica si se ha seleccionado algún elemento
+        if (selection.length > 0) {
+          // Obtén el índice de la fila seleccionada
+          var rowIndex = selection[0].row;
+
+          // Obtén el valor de la columna 'Name' (v)
+          this.nodeName = this.data.getValue(rowIndex, 0);
+
+          // Obtén el valor de la columna 'Manager' (en este caso, el nodo padre)
+          this.fatherNode = this.data.getValue(rowIndex, 1);
+
+          var maxNumber = 0;
+          for (var i = 0; i < this.data.getNumberOfRows(); i++) {
+            var nodeValue = this.data.getValue(i, 0);
+
+            // Verifica que el valor exista y sea un número
+            if (
+              nodeValue !== null &&
+              nodeValue !== undefined &&
+              !isNaN(nodeValue)
+            ) {
+              maxNumber = Math.max(maxNumber, nodeValue);
+            }
+          }
+
+          // Incrementa el valor máximo en uno para obtener el próximo valor
+          this.nextNode = this.aux.length + 1;
+        }
 
         Array.prototype.forEach.call(
           cstmbtnElements,
@@ -126,6 +155,7 @@ export class BuildComponent implements OnInit {
             cstmbtnElement.addEventListener('click', (e) => {
               this.editVariable = false;
               e.stopPropagation();
+              console.log(this.nodeName, 'AUX');
               const openButton = document.querySelector('#exampleModalButton');
 
               // Verifica si el botón existe antes de intentar cerrar el modal
@@ -168,43 +198,10 @@ export class BuildComponent implements OnInit {
             });
           }
         );
-        // Verifica si se ha seleccionado algún elemento
-        if (selection.length > 0) {
-          // Obtén el índice de la fila seleccionada
-          var rowIndex = selection[0].row;
-
-          // Obtén el valor de la columna 'Name' (v)
-          this.nodeName = this.data.getValue(rowIndex, 0);
-
-          // Obtén el valor de la columna 'Manager' (en este caso, el nodo padre)
-          this.fatherNode = this.data.getValue(rowIndex, 1);
-
-          var maxNumber = 0;
-          for (var i = 0; i < this.data.getNumberOfRows(); i++) {
-            var nodeValue = this.data.getValue(i, 0);
-
-            // Verifica que el valor exista y sea un número
-            if (
-              nodeValue !== null &&
-              nodeValue !== undefined &&
-              !isNaN(nodeValue)
-            ) {
-              maxNumber = Math.max(maxNumber, nodeValue);
-            }
-          }
-
-          // Incrementa el valor máximo en uno para obtener el próximo valor
-          this.nextNode = this.aux.length + 1;
-        }
       });
 
       this.chart.draw(this.data, { allowHtml: true });
       const interval = setInterval(() => {
-        var floatingElement = document.body.querySelectorAll(
-          '.floating'
-        ) as unknown as HTMLElement;
-
-        console.log(floatingElement);
         var orgChartTables = document.querySelectorAll(
           '.google-visualization-orgchart-table'
         );
@@ -219,20 +216,26 @@ export class BuildComponent implements OnInit {
             function (rotateElement: HTMLElement) {
               rotateElement.addEventListener('click', function (e) {
                 e.stopPropagation();
-                var floatingElement2 =
-                  document.body.querySelectorAll('.floating');
-
-                floatingElement2.forEach(function (element: any) {
-                  element.style.display = 'none';
-                });
 
                 var floatingElement = this.querySelector(
                   '.floating'
                 ) as HTMLElement;
 
                 if (floatingElement.style.display === 'block') {
+                  var floatingElement2 =
+                    document.body.querySelectorAll('.floating');
+
+                  floatingElement2.forEach(function (element: any) {
+                    element.style.display = 'none';
+                  });
                   floatingElement.style.display = 'none';
-                } else {
+                } else if (floatingElement.style.display === 'none') {
+                  var floatingElement2 =
+                    document.body.querySelectorAll('.floating');
+
+                  floatingElement2.forEach(function (element: any) {
+                    element.style.display = 'none';
+                  });
                   floatingElement.style.display = 'block';
                 }
               });
@@ -360,20 +363,22 @@ export class BuildComponent implements OnInit {
       this.isNewTree = false;
     } */
 
-    console.log(dataToSave, 'data tio savew');
-    console.log(this.esceneries, 'esce');
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
-      this.getContentToChart();
-      console.log(this.esceneries, dataToSave.unite, 'estoye n el for');
-      if (this.esceneries.length > 0 && dataToSave.unite === null) {
+      if (this.esceneries.length > 0 && dataToSave.unite == undefined) {
         res.sceneries.forEach((element: any, i: any) => {
           this.projectSvc
             .updateScenery(element.id, this.esceneries[i])
-            .subscribe();
+            .subscribe((res) => {
+              this.printAll();
+            });
         });
         this.esceneries = [];
+        this.printAll();
+      } else {
+        this.printAll();
       }
     });
+
     this.isNewTree = false;
   }
 
@@ -449,6 +454,8 @@ export class BuildComponent implements OnInit {
         this.rows.push(element?.data);
       }
     }
+
+    console.log(this.rows, 'ROEWS');
   }
   findAndHideFatherNode() {
     /*     var floatingElement = document.querySelector('.floating') as HTMLElement;
@@ -583,32 +590,19 @@ export class BuildComponent implements OnInit {
     this.editVariable = false;
   }
 
-  generarCadenaAleatoria() {
-    const caracteres =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let cadenaAleatoria = '';
-
-    for (let i = 0; i < 5; i++) {
-      const indiceAleatorio = Math.floor(Math.random() * caracteres.length);
-      cadenaAleatoria += caracteres.charAt(indiceAleatorio);
-    }
-
-    return cadenaAleatoria;
-  }
-  /*   getContentToChart() {
+  getContentToChart() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
       const currentYear = new Date().getFullYear();
       const position = this.years.indexOf(currentYear);
-      console.log(position, 'position');
+
       this.aux = [];
       this.currentYearIndex = position !== -1 ? position : 0;
 
       this.sceneries = res.sceneries;
       if (this.selectedScenery === '#') this.selectedScenery = '0';
 
-      console.log(res, 'ahuh');
       this.sceneriesNodes = [];
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
@@ -725,29 +719,37 @@ export class BuildComponent implements OnInit {
         this.chart.draw(this.data, { allowHtml: true });
         google.charts.setOnLoadCallback(this.drawChart);
         this.getSceneries(this.selectedScenery);
+      } else {
+        this.addRow();
+        this.chart.draw(this.data, { allowHtml: true });
+        google.charts.setOnLoadCallback(this.drawChart);
       }
+
       this.getSceneries(this.selectedScenery);
     });
-  } */
+  }
 
-  getContentToChart() {
+  /*   getContentToChart() {
     return new Promise<void>((resolve, reject) => {
       this.projectSvc
         .getProject(this.id)
         .pipe(
           switchMap((res: any) => {
             this.cleanSceneries = res.clean_sceneries;
+            console.log(
+              this.cleanSceneries,
+              'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE'
+            );
             this.years = res.years;
             const currentYear = new Date().getFullYear();
             const position = this.years.indexOf(currentYear);
-            console.log(position, 'position');
+
             this.aux = [];
             this.currentYearIndex = position !== -1 ? position : 0;
 
             this.sceneries = res.sceneries;
             if (this.selectedScenery === '#') this.selectedScenery = '0';
 
-            console.log(res, 'ahuh');
             this.sceneriesNodes = [];
             if (res.nodes?.length > 0) {
               res.nodes.forEach((element: any) => {
@@ -885,151 +887,6 @@ export class BuildComponent implements OnInit {
           },
         });
     });
-  }
-
-  /*   getContentToChart() {
-    this.projectSvc
-      .getProject(this.id)
-      .pipe(
-        switchMap((res: any) => {
-          this.cleanSceneries = res.clean_sceneries;
-          this.years = res.years;
-          const currentYear = new Date().getFullYear();
-          const position = this.years.indexOf(currentYear);
-          console.log(position, 'position');
-          this.aux = [];
-          this.currentYearIndex = position !== -1 ? position : 0;
-
-          this.sceneries = res.sceneries;
-          if (this.selectedScenery === '#') this.selectedScenery = '0';
-
-          console.log(res, 'ahuh');
-          this.sceneriesNodes = [];
-          if (res.nodes?.length > 0) {
-            res.nodes.forEach((element: any) => {
-              const data = {
-                data: [
-                  {
-                    v: `${element.id}`,
-                    f: `<div  class="rotate" >
-              
-              <span>
-                     <div class="floating" style="display: none;">   
-                            <div class="flex-box">   
-                            <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                             class="tier-icon " 
-                            src="../../../assets/icons/u_plus.svg"
-                            alt=""
-                          /></button>
-                            <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                            class="tier-icon " 
-                           src="../../../assets/icons/pencil.svg"
-                           alt=""
-                         /></button>
-                            <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                            class="tier-icon " 
-                           src="../../../assets/icons/u_eye-slash-icon.svg"
-                           alt=""
-                         /> </button>
-                            </div>
-                            <div class="full-box">
-                                   
-                            </div> 
-                     </div>
-                    ${element.name}
-                     
-              </span>
-      
-       </div>`,
-                  },
-                  `${element.node_id ? element.node_id : ''}`,
-                  `${element.description}`,
-                ],
-                hidden: 0,
-                hiddenNodeSon: false,
-                name: element.name,
-                tier: element.tier,
-                f_original: `<div  class="rotate" >
-              
-              <span>
-                     <div class="floating" style="display: none;">   
-                            <div class="flex-box">   
-                            <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                             class="tier-icon " 
-                            src="../../../assets/icons/u_plus.svg"
-                            alt=""
-                          /></button>
-                            <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                            class="tier-icon " 
-                           src="../../../assets/icons/pencil.svg"
-                           alt=""
-                         /></button>
-                            <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                            class="tier-icon " 
-                           src="../../../assets/icons/u_eye-slash-icon.svg"
-                           alt=""
-                         /> </button>
-                            </div>
-                            <div class="full-box">
-                                   
-                            </div> 
-                     </div>
-                     
-                    ${element.name}
-                     
-              </span>
-      
-       </div>`,
-                f_alternative: `<div  class="rotate" >
-              
-       <span>
-              <div class="floating" style="display: none;">   
-                     <div class="flex-box">   
-                     <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                      class="tier-icon " 
-                     src="../../../assets/icons/u_plus.svg"
-                     alt=""
-                   /></button>
-                     <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                     class="tier-icon " 
-                    src="../../../assets/icons/pencil.svg"
-                    alt=""
-                  /></button>
-                     <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                     class="tier-icon " 
-                    src="../../../assets/icons/u_eye-slash-icon.svg"
-                    alt=""
-                  /> </button>
-                     </div>
-                     <div class="full-box">
-                            
-                     </div> 
-              </div>
-              <div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>
-             ${element.name}
-              
-       </span>
-
-</div>`,
-              };
-              this.aux.push(data);
-
-              this.sceneriesNodes.push(
-                element.type === 2 ? element.calculated : element.sceneries
-              );
-            });
-            this.addRow();
-            this.chart.draw(this.data, { allowHtml: true });
-            google.charts.setOnLoadCallback(this.drawChart);
-          }
-          this.getSceneries(this.selectedScenery);
-          return of(res); // Devuelve un observable de 'res' para encadenar con switchMap
-        })
-      )
-      .subscribe(() => {
-        console.log('termino');
-        this.getSceneries(this.selectedScenery);
-      });
   } */
 
   deleteNode() {
@@ -1050,7 +907,7 @@ export class BuildComponent implements OnInit {
       filteredObject[desiredYear] = element[id].years[desiredYear];
       this.showSceneries.push(filteredObject);
     });
-    console.log(this.showSceneries);
+    console.log(this.showSceneries, 'SHOW ESCENARIES');
   }
   getSceneries2(esceneries: any) {
     /*     this.esceneries.push(esceneries);

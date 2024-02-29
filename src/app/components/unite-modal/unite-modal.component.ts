@@ -72,20 +72,20 @@ export class UniteModalComponent implements OnInit {
     });
   }
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['cleanEsceneries']) {
+      this.editScenarys();
+      console.log('clean change');
+    }
     if (changes['edit']) {
-      console.log('change');
       if (!this.edit) {
         /* this.emptyScenarys(); */
+
         this.editScenarys();
       }
       if (this.edit) {
         this.editScenarys();
-        console.log('changeeee');
       }
       this.createModel();
-    }
-
-    if (changes['this.model.locked']) {
     }
   }
 
@@ -491,6 +491,8 @@ export class UniteModalComponent implements OnInit {
       const element = this.escenario[i];
       this.escenarys.push({ name: element.name, years: this.yearsToSee });
     } */
+
+    console.log(this.cleanEsceneries, 'CLEAMD');
 
     if (this.edit) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {

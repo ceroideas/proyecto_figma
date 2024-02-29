@@ -296,29 +296,29 @@
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <div
-            class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
+      </div>
+      <div class="modal-footer">
+        <div
+          class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
+        >
+          <button
+            (click)="elimateNode()"
+            *ngIf="editVariable"
+            type="button"
+            class="btn btn-lg delete-variable-button col-md-5 mb-0"
+            data-bs-dismiss="modal"
           >
-            <button
-              (click)="elimateNode()"
-              *ngIf="editVariable"
-              type="button"
-              class="btn btn-lg delete-variable-button col-md-5 mb-0"
-              data-bs-dismiss="modal"
-            >
-              Eliminar variable
-            </button>
+            Eliminar variable
+          </button>
 
-            <button
-              (click)="submit()"
-              type="button"
-              class="btn btn-lg save-variable-button col-md-5"
-              data-bs-dismiss="modal"
-            >
-              Guardar cambios
-            </button>
-          </div>
+          <button
+            (click)="submit()"
+            type="button"
+            class="btn btn-lg save-variable-button col-md-5"
+            data-bs-dismiss="modal"
+          >
+            Guardar cambios
+          </button>
         </div>
       </div>
     </div>
