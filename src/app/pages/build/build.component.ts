@@ -263,12 +263,13 @@ export class BuildComponent implements OnInit {
     var matches = transform.match(regex);
 
     let position = {
-      x: parseInt(matches ? matches[1] : "0", 10),
-      y: parseInt((matches ? matches[2] : "0"), 10)
+      x: parseInt(matches ? matches[1] : '0', 10),
+      y: parseInt(matches ? matches[2] : '0', 10),
     };
 
-    this.projectSvc.savePosition(this.project.id, position)
-      .subscribe((res) => {console.log('oki');});
+    this.projectSvc.savePosition(this.project.id, position).subscribe((res) => {
+      console.log('oki');
+    });
   }
 
   getDataFromModal(data: any) {
@@ -499,7 +500,7 @@ export class BuildComponent implements OnInit {
       fatherNode[0].hiddenNodeSon = haveHidden;
     }
     node.hidden = 1;
-    sonNode.forEach((node: any) => {
+    /*   sonNode.forEach((node: any) => {
       node.hidden = 1;
       const sonNode = this.aux.filter(
         (item: any) => item.data[1] === node.data[0].v
@@ -508,7 +509,22 @@ export class BuildComponent implements OnInit {
       sonNode.forEach((node: any) => {
         node.hidden = 1;
       });
-    });
+    }); */
+    const hideSons = (childNode: any) => {
+      console.log('a');
+      childNode.forEach((node: any) => {
+        node.hidden = 1;
+
+        const sonNode = this.aux.filter(
+          (item: any) => item.data[1] === node.data[0].v
+        );
+
+        if (sonNode.length > 0) {
+          hideSons(sonNode);
+        }
+      });
+    };
+    hideSons(sonNode);
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
@@ -527,6 +543,39 @@ export class BuildComponent implements OnInit {
       (item: any) => item.data[0].v === tier.data[1]
     );
 
+    fatherNode.forEach((node: any) => {
+      if (tier.hidden == 0) {
+        node.hidden = 0;
+      }
+
+      const fatherNode = this.aux.filter(
+        (item: any) => item.data[0].v === node.data[1]
+      );
+
+      fatherNode.forEach((node: any) => {
+        if (tier.hidden == 0) {
+          node.hidden = 0;
+        }
+      });
+    });
+
+    const hideSons = (childNode: any) => {
+      console.log('a');
+      childNode.forEach((node: any) => {
+        node.hidden = 1;
+
+        const sonNode = this.aux.filter(
+          (item: any) => item.data[1] === node.data[0].v
+        );
+
+        if (sonNode.length > 0) {
+          hideSons(sonNode);
+        }
+      });
+    };
+    hideSons(sonNode);
+
+    this.aux[i] = tier;
     if (fatherNode.length > 0) {
       const takeSonNode = this.aux.filter(
         (item: any) => item.data[1] === fatherNode[0].data[0].v
@@ -554,35 +603,6 @@ export class BuildComponent implements OnInit {
         console.log('mo es padre');
       }
     });
-
-    fatherNode.forEach((node: any) => {
-      if (tier.hidden == 0) {
-        node.hidden = 0;
-      }
-
-      const fatherNode = this.aux.filter(
-        (item: any) => item.data[0].v === node.data[1]
-      );
-
-      fatherNode.forEach((node: any) => {
-        if (tier.hidden == 0) {
-          node.hidden = 0;
-        }
-      });
-    });
-
-    sonNode.forEach((node: any) => {
-      node.hidden = 1;
-
-      const sonNode = this.aux.filter(
-        (item: any) => item.data[1] === node.data[0].v
-      );
-
-      sonNode.forEach((node: any) => {
-        node.hidden = 1;
-      });
-    });
-    this.aux[i] = tier;
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
@@ -616,7 +636,9 @@ export class BuildComponent implements OnInit {
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
       this.project = res;
-      this.lastPosition = this.project.position ? JSON.parse(this.project.position) : {x:0,y:0};
+      this.lastPosition = this.project.position
+        ? JSON.parse(this.project.position)
+        : { x: 0, y: 0 };
 
       console.log(this.lastPosition);
 
@@ -668,7 +690,9 @@ export class BuildComponent implements OnInit {
      </div>`,
               },
               `${element.node_id ? element.node_id : ''}`,
-              `${element.description ? element.description : 'Sin descripción'}`,
+              `${
+                element.description ? element.description : 'Sin descripción'
+              }`,
             ],
             hidden: 0,
             hiddenNodeSon: false,

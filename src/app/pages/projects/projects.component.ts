@@ -101,7 +101,7 @@ export class ProjectsComponent {
         this.projectSvc.deleteProject(id).subscribe((res: any) => {
           Swal.fire({
             title: 'Borrado!',
-            text: 'El projecto fue borrado con exito!',
+            text: 'El proyecto fue borrado con exito!',
             icon: 'success',
           });
           this.getProjects();
