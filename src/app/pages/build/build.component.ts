@@ -616,7 +616,7 @@ export class BuildComponent implements OnInit {
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
       this.project = res;
-      this.lastPosition = this.project.position ? JSON.parse(this.project.position) : {};
+      this.lastPosition = this.project.position ? JSON.parse(this.project.position) : {x:0,y:0};
 
       console.log(this.lastPosition);
 
