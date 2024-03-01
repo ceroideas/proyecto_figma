@@ -42,4 +42,40 @@
 .icon {
   margin-right: 10px;
 }
-//alert//
+.button-up,
+.button-down,
+.button-left,
+.button-right {
+  position: absolute;
+  background-color: #8c64b1;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Estilos específicos para cada botón */
+.button-up {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.button-down {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.button-left {
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+.button-right {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}

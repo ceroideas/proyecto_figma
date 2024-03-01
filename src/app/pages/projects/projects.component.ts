@@ -15,6 +15,7 @@ import Swal from 'sweetalert2';
 })
 export class ProjectsComponent {
   projects: any[] = [];
+  selectedProjectIndex: number = -1;
   constructor(private projectSvc: ProjectService, private router: Router) {
     this.getProjects();
   }
@@ -42,9 +43,15 @@ export class ProjectsComponent {
     });
   }
 
-  redirect(id: any) {
-    this.router.navigate([`home/build/${id}`]);
-    localStorage.setItem('project', id);
+  redirect(event: Event, route: string, id: any) {
+    event.stopPropagation();
+    if (route !== 'build') {
+      this.router.navigate([`home/${route}`]);
+      localStorage.setItem('project', id);
+    } else {
+      this.router.navigate([`home/${route}/${id}`]);
+      localStorage.setItem('project', id);
+    }
   }
 
   convertDateFormat(originalDate: string): string {
@@ -69,6 +76,37 @@ export class ProjectsComponent {
   getProjects() {
     this.projectSvc.getProjects().subscribe((res: any) => {
       this.projects = res;
+    });
+  }
+
+  onDivClick(index: number): void {
+    this.selectedProjectIndex =
+      this.selectedProjectIndex === index ? -1 : index;
+  }
+  deleteProject(id: any) {
+    Swal.fire({
+      title: 'Estas seguro?',
+      text: 'No podras revertir esta accion',
+      icon: 'question',
+      iconColor: '#BC5800',
+      showCancelButton: true,
+      confirmButtonText: 'Si, borrar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'confirm',
+        cancelButton: 'cancel',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.projectSvc.deleteProject(id).subscribe((res: any) => {
+          Swal.fire({
+            title: 'Borrado!',
+            text: 'El projecto fue borrado con exito!',
+            icon: 'success',
+          });
+          this.getProjects();
+        });
+      }
     });
   }
 }

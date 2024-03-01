@@ -45,8 +45,9 @@ export class CreateProjectComponent {
   getYears() {
     const actualYear = new Date().getFullYear();
     const inicialYear = 2000;
+    const yearsToAdd = 5;
 
-    for (let year = inicialYear; year <= actualYear; year++) {
+    for (let year = inicialYear; year <= actualYear + yearsToAdd; year++) {
       this.years.push(year);
     }
     this.yearsTo = [...this.years];

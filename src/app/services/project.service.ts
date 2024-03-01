@@ -41,4 +41,8 @@ export class ProjectService {
   deleteNode(id: any) {
     return this.http.delete(`${this.url}/deleteNode/${id}`);
   }
+
+  deleteProject(id: any) {
+    return this.http.delete(`${this.url}/deleteProject/${id}`);
+  }
 }
