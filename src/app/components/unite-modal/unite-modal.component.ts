@@ -182,11 +182,23 @@ export class UniteModalComponent implements OnInit {
 
     const years: any = {};
     keys.forEach((clave: string) => {
-      years[clave] = this.unite ? this.unite : 0;
+      var newVal = 0;
+      if (localStorage.getItem('uniteVal')) {
+        if ((localStorage.getItem('uniteVal') as any).includes('%')) {
+          const valueBase = parseFloat((localStorage.getItem('uniteVal') as any).replace('%', ''));
+
+          newVal = valueBase / 100;
+        }else{
+          newVal = parseFloat((localStorage.getItem('uniteVal') as any));
+        }
+      }
+      years[clave] = this.unite ? this.unite : (this.edit ? 0 : (localStorage.getItem('uniteVal') ? newVal : 0) );
     });
 
+    console.log(years)
+
     if (this.escenarys[+this.selectedEscenary]) {
-      this.model['years'] = [this.escenarys[+this.selectedEscenary].years];
+      this.model['years'] = [this.edit ? this.escenarys[+this.selectedEscenary].years : years];
       this.model['locked'] =
         this.escenarys[+this.selectedEscenary].status === 0 ? true : false;
       console.log(this.escenarys[+this.selectedEscenary].years, 'run');
@@ -503,6 +515,7 @@ export class UniteModalComponent implements OnInit {
         console.log(this.escenarys[0].years, 'años edit');
       });
     } else {
+      this.unite = null;
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0].years];
     }
