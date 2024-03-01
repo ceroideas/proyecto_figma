@@ -76,7 +76,7 @@
     <div class="text-container">{{ countHidden }} Hidden branches</div>
   </div>
 
-  <div cdkDrag id="chart_container">
+  <div cdkDrag (cdkDragEnded)="dragEnd($event)" id="chart_container" [cdkDragFreeDragPosition]="lastPosition">
     <div id="chart_div"></div>
   </div>
 </div>

@@ -41,4 +41,8 @@ export class ProjectService {
   deleteNode(id: any) {
     return this.http.delete(`${this.url}/deleteNode/${id}`);
   }
+
+  savePosition(id: any,position: any) {
+    return this.http.put(`${this.url}/savePosition/${id}`, {position:position});
+  }
 }

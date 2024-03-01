@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, switchMap } from 'rxjs';
 import { ProjectService } from 'src/app/services/project.service';
@@ -88,10 +88,14 @@ export class BuildComponent implements OnInit {
   pointNode: any =
     '<div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>';
 
+  lastPosition: any = {};
+
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService
-  ) {}
+  ) {
+    this.dragEnd = this.dragEnd.bind(this);
+  }
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
@@ -249,6 +253,13 @@ export class BuildComponent implements OnInit {
 
     /* this.getContentToChart(); */
     this.printAll();
+  }
+
+  dragEnd(event: CdkDragEnd) {
+    let position = event.distance;
+
+    this.projectSvc.savePosition(this.project.id, position)
+      .subscribe((res) => {console.log('oki');});
   }
 
   getDataFromModal(data: any) {
@@ -594,6 +605,13 @@ export class BuildComponent implements OnInit {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
+      this.project = res;
+      this.lastPosition = this.project.position ? JSON.parse(this.project.position) : {};
+      
+      // this.lastPosition = {"x":0,"y":0};
+
+      console.log(this.lastPosition);
+
       const currentYear = new Date().getFullYear();
       const position = this.years.indexOf(currentYear);
 
