@@ -188,3 +188,41 @@ table {
   width: 150px;
   overflow: hidden;
 }
+
+#branch-container {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column-reverse;
+
+  >div {
+    margin: 3px 0;
+  }
+}
+
+.inverted-table {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  thead {
+    display: flex;
+    flex-direction: column;
+    tr {
+      display: flex;
+      th:nth-child(1) {width: 10% !important;}
+      th:nth-child(2) {width: 70% !important;}
+      th:nth-child(3) {width: 20% !important;}
+    }
+  }
+
+  tbody {
+    display: flex;
+    flex-direction: column-reverse;
+    tr {
+      display: flex;
+      td:nth-child(1) {width: 10% !important;}
+      td:nth-child(2) {width: 70% !important;}
+      td:nth-child(3) {width: 20% !important;}
+    }
+  }
+}

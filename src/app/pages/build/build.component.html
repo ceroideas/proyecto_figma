@@ -87,6 +87,7 @@
 
 <!-- Modal -->
 <div
+  cdkDrag
   class="modal custom-modal fade modal-sm position-relative"
   id="hide-show"
   tabindex="-1"
@@ -126,9 +127,10 @@
             />
           </div>
         </div>
-        <hr />
 
-        <div class="branch" *ngFor="let tier of aux | reverse; index as i">
+        <div id="branch-container">
+          
+        <div class="branch" *ngFor="let tier of aux; index as i">
           <div (click)="modalHideAndShowBranch(tier, i)" class="branch-content">
             <div style="width: 24px; height: 24px; position: relative">
               <img
@@ -143,6 +145,7 @@
               />
             </div>
             <div
+              style="width: 200px;"
               [style]="tier.hidden === 0 ? 'color: #00061f' : 'color: #64748b'"
               class="branch-name"
             >
@@ -152,6 +155,7 @@
           <div class="brach-level-container">
             <div class="brach-level">{{ "L" + tier.tier }}</div>
           </div>
+        </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -295,7 +299,7 @@
           display: inline-flex;
         "
       >
-        <table style="width: 100%" class="table">
+        <table style="width: 100%" class="table inverted-table">
           <thead>
             <tr class="table-light">
               <th style="width: 10%" scope="col">LAVEL</th>
