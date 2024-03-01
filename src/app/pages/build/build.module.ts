@@ -13,6 +13,9 @@ import { ShapeModalComponent } from 'src/app/components/shape-modal/shape-modal.
 import { FormsModule } from '@angular/forms';
 import { SimulationShapeModalComponent } from 'src/app/components/simulation-shape-modal/simulation-shape-modal.component';
 
+import { PipesModule } from '../../pipes/pipes.module';
+// import { ReversePipe } from '../../pipes/reverse.pipe';
+
 @NgModule({
   declarations: [BuildComponent, AdDirective], // Incluye BuildComponent aquí
   imports: [
@@ -25,6 +28,8 @@ import { SimulationShapeModalComponent } from 'src/app/components/simulation-sha
     SimulationShapeModalComponent,
     HttpClientModule,
     FormsModule,
+    PipesModule,
+    // ReversePipe
   ],
 
   exports: [BuildComponent],

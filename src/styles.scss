@@ -180,3 +180,11 @@ table {
 .btn-edit {
   background-color: #000f55 !important;
 }
+
+.ovf {
+  font-weight: 50 !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+  overflow: hidden;
+}

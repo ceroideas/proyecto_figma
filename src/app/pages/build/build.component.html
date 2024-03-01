@@ -124,7 +124,7 @@
         </div>
         <hr />
 
-        <div class="branch" *ngFor="let tier of aux; index as i">
+        <div class="branch" *ngFor="let tier of aux | reverse; index as i">
           <div (click)="modalHideAndShowBranch(tier, i)" class="branch-content">
             <div style="width: 24px; height: 24px; position: relative">
               <img

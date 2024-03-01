@@ -256,7 +256,15 @@ export class BuildComponent implements OnInit {
   }
 
   dragEnd(event: CdkDragEnd) {
-    let position = event.distance;
+    let transform = event.source.element.nativeElement.style.transform;
+
+    let regex = /[-]?\d+/g;
+    var matches = transform.match(regex);
+
+    let position = {
+      x: parseInt(matches ? matches[1] : "0", 10),
+      y: parseInt((matches ? matches[2] : "0"), 10)
+    };
 
     this.projectSvc.savePosition(this.project.id, position)
       .subscribe((res) => {console.log('oki');});
@@ -607,8 +615,6 @@ export class BuildComponent implements OnInit {
       this.years = res.years;
       this.project = res;
       this.lastPosition = this.project.position ? JSON.parse(this.project.position) : {};
-      
-      // this.lastPosition = {"x":0,"y":0};
 
       console.log(this.lastPosition);
 
@@ -653,14 +659,14 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                  ${element.name}
+                  <label class="ovf">${element.name}</label>
                    
             </span>
     
      </div>`,
               },
               `${element.node_id ? element.node_id : ''}`,
-              `${element.description}`,
+              `${element.description ? element.description : 'Sin descripción'}`,
             ],
             hidden: 0,
             hiddenNodeSon: false,
@@ -691,7 +697,7 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                  ${element.name}
+                  <label class="ovf">${element.name}</label>
                    
             </span>
     
@@ -721,7 +727,7 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                 ${this.pointNode}${element.name}
+                 ${this.pointNode}<label class="ovf">${element.name}</label>
                    
             </span>
     
@@ -800,14 +806,14 @@ export class BuildComponent implements OnInit {
                                      
                               </div> 
                        </div>
-                      ${element.name}
+                      <label class="ovf">${element.name}</label>
                        
                 </span>
         
          </div>`,
                     },
                     `${element.node_id ? element.node_id : ''}`,
-                    `${element.description}`,
+                    `${element.description ? element.description : 'Sin descripción'}`,
                   ],
                   hidden: 0,
                   hiddenNodeSon: false,
@@ -839,7 +845,7 @@ export class BuildComponent implements OnInit {
                               </div> 
                        </div>
                        
-                      ${element.name}
+                      <label class="ovf">${element.name}</label>
                        
                 </span>
         
@@ -870,7 +876,7 @@ export class BuildComponent implements OnInit {
                        </div> 
                 </div>
                 <div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>
-               ${element.name}
+               <label class="ovf">${element.name}</label>
                 
          </span>
   

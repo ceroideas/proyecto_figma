@@ -45,4 +45,9 @@ export class ProjectService {
   savePosition(id: any,position: any) {
     return this.http.put(`${this.url}/savePosition/${id}`, {position:position});
   }
+  
+  deleteProject(id: any) {
+    return this.http.delete(`${this.url}/deleteProject/${id}`);
+
+  }
 }

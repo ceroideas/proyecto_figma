@@ -12,11 +12,40 @@
 
 <div class="d-flex flex-wrap justify-content-start">
   <div
-    *ngFor="let project of projects"
+    *ngFor="let project of projects; let i = index"
     class="card mr-5 mb-4 p-1"
     style="width: 18rem; background-color: #f5f3ff"
-    (click)="redirect(project.id)"
+    (click)="onDivClick(i)"
   >
+    <div *ngIf="selectedProjectIndex === i" class="buttons-container">
+      <!-- Your buttons (up, down, left, right) go here -->
+      <button (click)="redirect($event, 'build', project.id)" class="button-up">
+        <img src="../../../assets/icons/bar_chart_menu.svg" alt="" />
+      </button>
+      <button class="button-down" (click)="deleteProject(project.id)">
+        <img
+          width="27"
+          height="27"
+          src="../../../assets/icons/u_trash-alt_menu.svg"
+          alt=""
+        />
+      </button>
+      <button
+        class="button-left"
+        (click)="redirect($event, 'simulate', project.id)"
+      >
+        <img src="../../../assets/icons/videogame_asset _menu.svg" alt="" />
+      </button>
+      <button
+        class="button-right"
+        (click)="redirect($event, 'inspect', project.id)"
+      >
+        <img
+          src="../../../assets/icons/swap_horizontal_circle_menu.svg"
+          alt=""
+        />
+      </button>
+    </div>
     <img src="../../../assets/img/project.png" class="card-img-top" alt="..." />
     <div class="custom-div">
       <p>
@@ -36,6 +65,9 @@
         <div class="user-info">
           <p class="user-name">Fernando Alcantara</p>
           <p class="card-text">Owner</p>
+        </div>
+        <div *ngIf="selectedProjectIndex === i" class="buttons-container">
+          <!-- Your buttons (up, down, left, right) go here -->
         </div>
       </div>
     </div>
