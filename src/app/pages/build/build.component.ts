@@ -559,8 +559,30 @@ export class BuildComponent implements OnInit {
       });
     });
 
+    const showFathers = (fatherNode: any) => {
+      fatherNode.forEach((node: any) => {
+        if (tier.hidden == 0) {
+          node.hidden = 0;
+        }
+
+        const fatherNode = this.aux.filter(
+          (item: any) => item.data[0].v === node.data[1]
+        );
+
+        /*         fatherNode.forEach((node: any) => {
+          if (tier.hidden == 0) {
+            node.hidden = 0;
+          }
+        }); */
+        if (fatherNode.length > 0) {
+          showFathers(fatherNode);
+        }
+      });
+    };
+
+    showFathers(fatherNode);
+
     const hideSons = (childNode: any) => {
-      console.log('a');
       childNode.forEach((node: any) => {
         node.hidden = 1;
 
