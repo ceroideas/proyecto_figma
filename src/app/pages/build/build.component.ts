@@ -648,6 +648,7 @@ export class BuildComponent implements OnInit {
   }
 
   newTree() {
+    localStorage.removeItem('uniteVal');
     this.isNewTree = true;
     this.editVariable = false;
   }

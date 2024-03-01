@@ -227,7 +227,7 @@
                     placeholder="Unidades"
                     aria-describedby="basic-addon1"
                     onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace'"
-                    onkeyup="return localStorage.setItem('uniteVal',JSON.stringify(this.value))"
+                    onkeyup="return localStorage.setItem('uniteVal',this.value)"
                   />
                 </div>
               </div>
