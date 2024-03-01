@@ -23,6 +23,7 @@ export class BuildComponent implements OnInit {
   nodeName!: any;
   showContent = true;
   drawChart!: any;
+  projectName!: string;
   project: any;
   chart!: any;
   data!: any;
@@ -611,6 +612,7 @@ export class BuildComponent implements OnInit {
 
   getContentToChart() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      this.projectName = res.name;
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
       this.project = res;
