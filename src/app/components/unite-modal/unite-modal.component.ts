@@ -379,8 +379,9 @@ export class UniteModalComponent implements OnInit {
   createEscenaryChart() {
     const years = Object.keys(this.escenarys[0].years);
 
-    if (!this.values)
-      this.values = years.map((key) => (this.unite ? this.unite : 0));
+    this.values = years.map((key) =>
+      localStorage.getItem('uniteVal') ? localStorage.getItem('uniteVal') : 0
+    );
 
     const plugins: any =
       this.model.locked === false
