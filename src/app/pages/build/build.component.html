@@ -80,7 +80,12 @@
     <div class="text-container">{{ countHidden }} Hidden branches</div>
   </div>
 
-  <div cdkDrag (cdkDragEnded)="dragEnd($event)" id="chart_container" [cdkDragFreeDragPosition]="lastPosition">
+  <div
+    cdkDrag
+    (cdkDragEnded)="dragEnd($event)"
+    id="chart_container"
+    [cdkDragFreeDragPosition]="lastPosition"
+  >
     <div id="chart_div"></div>
   </div>
 </div>
@@ -129,33 +134,37 @@
         </div>
 
         <div id="branch-container">
-          
-        <div class="branch" *ngFor="let tier of aux; index as i">
-          <div (click)="modalHideAndShowBranch(tier, i)" class="branch-content">
-            <div style="width: 24px; height: 24px; position: relative">
-              <img
-                style="position: absolute"
-                src="../../../assets/icons/u_eye-slash2.svg"
-                alt=""
-                [src]="
-                  tier.hidden === 0
-                    ? '../../../assets/icons/u_eye.svg'
-                    : '../../../assets/icons/u_eye-slash2.svg'
-                "
-              />
-            </div>
+          <div class="branch" *ngFor="let tier of aux; index as i">
             <div
-              style="width: 200px;"
-              [style]="tier.hidden === 0 ? 'color: #00061f' : 'color: #64748b'"
-              class="branch-name"
+              (click)="modalHideAndShowBranch(tier, i)"
+              class="branch-content"
             >
-              {{ tier.name }}
+              <div style="width: 24px; height: 24px; position: relative">
+                <img
+                  style="position: absolute"
+                  src="../../../assets/icons/u_eye-slash2.svg"
+                  alt=""
+                  [src]="
+                    tier.hidden === 0
+                      ? '../../../assets/icons/u_eye.svg'
+                      : '../../../assets/icons/u_eye-slash2.svg'
+                  "
+                />
+              </div>
+              <div
+                style="width: 200px"
+                [style]="
+                  tier.hidden === 0 ? 'color: #00061f' : 'color: #64748b'
+                "
+                class="branch-name"
+              >
+                {{ tier.name }}
+              </div>
+            </div>
+            <div class="brach-level-container">
+              <div class="brach-level">{{ "L" + tier.tier }}</div>
             </div>
           </div>
-          <div class="brach-level-container">
-            <div class="brach-level">{{ "L" + tier.tier }}</div>
-          </div>
-        </div>
         </div>
       </div>
       <div class="modal-footer">
@@ -366,6 +375,7 @@
   </div>
 </div>
 <app-edit-variable
+  #editModal
   [variableId]="nodeName"
   [variableFather]="fatherNode"
   [editVariable]="editVariable"

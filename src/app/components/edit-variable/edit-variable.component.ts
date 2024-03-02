@@ -179,10 +179,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
     modal._element.addEventListener('shown.bs.modal', async () => {
-      if (!this.editVariable) {
-        this.deleteShapeData();
-      }
-
       this.ngZone.run(() => {
         try {
           this.shapeData = this.getItem('shapeData');

@@ -4,6 +4,7 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, switchMap } from 'rxjs';
 import { ProjectService } from 'src/app/services/project.service';
+import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
 
 declare var google: any;
 declare var bootstrap: any;
@@ -15,7 +16,7 @@ declare var bootstrap: any;
 })
 export class BuildComponent implements OnInit {
   @ViewChild('hideShow') hideShowModal!: ElementRef;
-
+  @ViewChild('editModal', { static: false }) editModal!: EditVariableComponent;
   rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
@@ -651,6 +652,7 @@ export class BuildComponent implements OnInit {
     localStorage.removeItem('uniteVal');
     this.isNewTree = true;
     this.editVariable = false;
+    this.editModal.deleteShapeData();
   }
 
   getContentToChart() {
