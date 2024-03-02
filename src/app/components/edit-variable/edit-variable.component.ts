@@ -19,6 +19,7 @@ import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'node_modules/chart.js';
 import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
+import { EventsService } from 'src/app/services/events.service';
 import Swal from 'sweetalert2';
 Chart.register(...registerables);
 declare var bootstrap: any;
@@ -121,7 +122,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    public events: EventsService
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
@@ -827,5 +829,10 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.min = 0;
     this.max = 0;
     this.stDev = 0;
+  }
+
+  saveNewValue()
+  {
+    this.events.publish('changeEditUnite', this.variableUnidad);
   }
 }

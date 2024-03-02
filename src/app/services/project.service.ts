@@ -48,6 +48,9 @@ export class ProjectService {
   
   deleteProject(id: any) {
     return this.http.delete(`${this.url}/deleteProject/${id}`);
+  }
 
+  saveUnite(id: any, body: any) {
+    return this.http.put(`${this.url}/saveUnite/${id}`,body);
   }
 }

@@ -16,6 +16,7 @@ import 'chartjs-plugin-dragdata';
 import { HttpClientModule } from '@angular/common/http';
 import { ProjectService } from 'src/app/services/project.service';
 import { DataService } from 'src/app/services/data-service.service';
+import { EventsService } from 'src/app/services/events.service';
 /* import { Chart, registerables } from 'node_modules/chart.js';
 Chart.register(...registerables); */
 declare var bootstrap: any;
@@ -64,12 +65,23 @@ export class UniteModalComponent implements OnInit {
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    public events: EventsService
   ) {}
   ngOnInit(): void {
     this.dataService.data$.subscribe((data) => {
       this.deleteEsceneries = data;
     });
+
+    this.events.destroy('changeEditUnite');
+    this.events.subscribe('changeEditUnite',(a)=>{
+      this.unite = a;
+      if (this.edit) {
+        this.projectSvc.saveUnite(this.nodeId,{unite: a}).subscribe(data=>{
+          //console.log('guardado');
+        })
+      }
+    })
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['cleanEsceneries']) {
@@ -97,7 +109,7 @@ export class UniteModalComponent implements OnInit {
       if (!this.edit) {
         /*         this.escenarys = this.cleanEsceneries;
         this.years = [this.escenarys[0].years]; */
-        console.log(this.years, this.escenarys[0], 'yearsssssss');
+        //console.log(this.years, this.escenarys[0], 'yearsssssss');
       }
     });
 
@@ -149,7 +161,7 @@ export class UniteModalComponent implements OnInit {
     };
 
     this.projectSvc.saveScenery(newEscenary).subscribe((res: any) => {
-      console.log(res);
+      //console.log(res);
       this.printAllEvent.emit();
       if (this.edit) {
         this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
@@ -161,7 +173,7 @@ export class UniteModalComponent implements OnInit {
     this.escenarys.push(newEscenary);
     this.showForm = false;
 
-    console.log(this.escenarys);
+    //console.log(this.escenarys);
     this.createEscenaryChartVariable.destroy();
   }
   addEscenary() {
@@ -195,12 +207,12 @@ export class UniteModalComponent implements OnInit {
       this.model['years'] = [this.escenarys[+this.selectedEscenary].years];
       this.model['locked'] =
         this.escenarys[+this.selectedEscenary].status === 0 ? true : false;
-      console.log(this.escenarys[+this.selectedEscenary].years, 'run');
+      //console.log(this.escenarys[+this.selectedEscenary].years, 'run');
     } else {
       this.model['years'] = [years];
     }
 
-    console.log(this.model['years'], 'years');
+    //console.log(this.model['years'], 'years');
   }
 
   renderChart() {
@@ -213,7 +225,7 @@ export class UniteModalComponent implements OnInit {
     ); */
 
     const values = Object.values(this.escenarys[this.selectedEscenary].years);
-    console.log(this.escenarys[this.selectedEscenary], 'values');
+    //console.log(this.escenarys[this.selectedEscenary], 'values');
     if (!this.values) {
       this.values = values;
     }
@@ -230,11 +242,11 @@ export class UniteModalComponent implements OnInit {
                 index: any,
                 value: any
               ) {
-                /* console.log(e); */
+                /* //console.log(e); */
               },
               onDrag: (e: any, datasetIndex: any, index: any, value: any) => {
                 e.target.style.cursor = 'grabbing';
-                /* console.log(value); */
+                /* //console.log(value); */
                 /*                 this.calcularMontoConIncremento();
                 this.renderChartVariable.options.scales.y.max = this.yMax; */
                 this.renderChartVariable.options.scales.y.max =
@@ -252,9 +264,7 @@ export class UniteModalComponent implements OnInit {
                 this.model.years[0][years[index]] = value;
                 this.escenarys[this.selectedEscenary].years =
                   this.model.years[0];
-                console.log({
-                  years: this.model.years,
-                });
+                //console.log({years: this.model.years,});
 
                 /*           if (this.edit) {
                   this.projectSvc
@@ -323,7 +333,7 @@ export class UniteModalComponent implements OnInit {
 
     this.escenarys[+this.selectedEscenary] = escenary;
 
-    console.log(this.escenarys[+this.selectedEscenary].id, 'sl,dlm');
+    //console.log(this.escenarys[+this.selectedEscenary].id, 'sl,dlm');
 
     if (this.edit) {
       this.projectSvc
@@ -342,7 +352,7 @@ export class UniteModalComponent implements OnInit {
     this.calcularMontoConIncremento();
   }
   onSelectChange() {
-    console.log('disparoSelect', this.model.years[0]);
+    //console.log('disparoSelect', this.model.years[0]);
     if (this.oldEscenarieId && this.oldEscenarieId !== '#') {
       this.projectSvc
         .updateScenery(this.oldEscenarieId, {
@@ -513,6 +523,7 @@ export class UniteModalComponent implements OnInit {
         this.escenarys = res.sceneries;
         this.unite = res.unite;
         this.years = [this.escenarys[0].years];
+        console.log(res);
       });
     } else {
       /* this.unite = null; */
