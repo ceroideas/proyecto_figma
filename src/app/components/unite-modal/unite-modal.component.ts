@@ -59,6 +59,7 @@ export class UniteModalComponent implements OnInit {
   @Input() lockedScenary: boolean = false;
   @Input() nodeId!: any;
   deleteEsceneries: boolean = false;
+  oldEscenarieId!: any;
   unite!: any;
   constructor(
     private projectSvc: ProjectService,
@@ -68,13 +69,11 @@ export class UniteModalComponent implements OnInit {
   ngOnInit(): void {
     this.dataService.data$.subscribe((data) => {
       this.deleteEsceneries = data;
-      console.log(data);
     });
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['cleanEsceneries']) {
       this.editScenarys();
-      console.log('clean change');
     }
     if (changes['edit']) {
       if (!this.edit) {
@@ -86,6 +85,8 @@ export class UniteModalComponent implements OnInit {
         this.editScenarys();
       }
       this.createModel();
+    }
+    if (changes['selectedEscenary']) {
     }
   }
 
@@ -101,7 +102,11 @@ export class UniteModalComponent implements OnInit {
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      if (this.escenarys[+this.selectedEscenary]) {
+      this.oldEscenarieId = undefined;
+      if (this.createEscenaryChartVariable)
+        this.createEscenaryChartVariable.destroy();
+      if (this.renderChartVariable) this.renderChartVariable.destroy();
+      if (this.escenarys[+this.selectedEscenary] && !this.showForm) {
         this.projectSvc
           .updateScenery(this.escenarys[+this.selectedEscenary].id, {
             years: this.model.years[0],
@@ -168,6 +173,7 @@ export class UniteModalComponent implements OnInit {
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0].years];
       this.selectedEscenary = '#';
+      this.oldEscenarieId = undefined;
       this.model.name = '';
       this.createModel();
 
@@ -336,6 +342,21 @@ export class UniteModalComponent implements OnInit {
     this.calcularMontoConIncremento();
   }
   onSelectChange() {
+    console.log('disparoSelect', this.model.years[0]);
+    if (this.oldEscenarieId && this.oldEscenarieId !== '#') {
+      this.projectSvc
+        .updateScenery(this.oldEscenarieId, {
+          years: this.model.years[0],
+        })
+        .subscribe((res: any) => {
+          this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+            this.escenarys = res.sceneries;
+          });
+
+          this.printAllEvent.emit();
+        });
+    }
+
     if (this.selectedEscenary !== '#') {
       if (this.createEscenaryChartVariable)
         this.createEscenaryChartVariable.destroy();
@@ -347,10 +368,11 @@ export class UniteModalComponent implements OnInit {
         JSON.stringify([this.escenarys[this.selectedEscenary].years])
       );
       this.values = undefined;
-      console.log(this.escenarys, 'ese');
+
       this.createModel();
       this.renderChart();
       this.calcularMontoConIncremento();
+      this.oldEscenarieId = this.escenarys[+this.selectedEscenary].id;
     }
   }
 
@@ -371,12 +393,9 @@ export class UniteModalComponent implements OnInit {
                 datasetIndex: any,
                 index: any,
                 value: any
-              ) {
-                /* console.log(e); */
-              },
+              ) {},
               onDrag: (e: any, datasetIndex: any, index: any, value: any) => {
                 e.target.style.cursor = 'grabbing';
-                /* console.log(value); */
 
                 this.createEscenaryChartVariable.options.scales.y.max =
                   this.calcularMontoConIncremento() < 100
@@ -391,8 +410,6 @@ export class UniteModalComponent implements OnInit {
               ) => {
                 e.target.style.cursor = 'default';
                 this.model.years[0][years[index]] = value;
-                console.log(this.model);
-                console.log(value, datasetIndex, index);
               },
             },
           }
@@ -444,7 +461,6 @@ export class UniteModalComponent implements OnInit {
 
     this.createEscenaryChartVariable.destroy();
     this.createEscenaryChart();
-    console.log(this.escenarys[+this.selectedEscenary].years[0], 'value');
   }
   changeValue2(i: number, value: any, inputId: any) {
     if (value.includes('%')) {
@@ -492,32 +508,25 @@ export class UniteModalComponent implements OnInit {
       this.escenarys.push({ name: element.name, years: this.yearsToSee });
     } */
 
-    console.log(this.cleanEsceneries, 'CLEAMD');
-
     if (this.edit) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         this.escenarys = res.sceneries;
         this.unite = res.unite;
         this.years = [this.escenarys[0].years];
-
-        console.log(this.escenarys[0].years, 'años edit');
       });
     } else {
-      this.unite = null;
+      /* this.unite = null; */
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0].years];
     }
   }
   changeLocked() {
-    console.log(this.escenarys[+this.selectedEscenary].id);
     this.projectSvc
       .updateScenery(this.escenarys[+this.selectedEscenary].id, {
         years: this.model.years[0],
         status: this.model.locked ? 0 : 1,
       })
-      .subscribe((res: any) => {
-        console.log(res, 'res');
-      });
+      .subscribe((res: any) => {});
     if (this.renderChartVariable) {
       this.renderChartVariable.destroy();
       this.renderChart();
@@ -560,7 +569,7 @@ export class UniteModalComponent implements OnInit {
 
     if (this.values) {
       // Filtrar y convertir a números
-      console.log(this.values, 'VALUES');
+
       const cantidadesNumeros: number[] = this.values.map((cantidad: any) =>
         typeof cantidad === 'string'
           ? parseFloat(cantidad)
@@ -586,7 +595,6 @@ export class UniteModalComponent implements OnInit {
           this.createEscenaryChartVariable.options.scales.y.max = 100;
         }
 
-        console.log(resultado, this.values, 'resultado');
         return resultado;
       } else {
         // Manejar el caso en que no haya cantidades válidas

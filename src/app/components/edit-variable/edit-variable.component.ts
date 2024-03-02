@@ -462,7 +462,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (this.editVariable) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         this.variableUnidad = res.unite ? res.unite : undefined;
-        localStorage.setItem('uniteVal', this.variableUnidad);
 
         const shapeDataExists = localStorage.getItem('shapeData') !== null;
 
@@ -810,7 +809,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   deleteShapeData() {
     localStorage.removeItem('shapeData');
     localStorage.removeItem('shapetype');
-    localStorage.setItem('uniteVal', '0');
+
     this.variableSelect1 = '';
     this.variableSelect2 = '';
     this.variableDescription = '';
