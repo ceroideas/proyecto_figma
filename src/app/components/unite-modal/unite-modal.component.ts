@@ -46,7 +46,7 @@ export class UniteModalComponent implements OnInit {
   selectedEscenary: any = '#';
   renderChartVariable!: any;
   createEscenaryChartVariable!: any;
-  yMax: number = 1000;
+  yMax: number = 100;
   escenario: any = [
     { name: 'Escenario 1', yearFrom: 2020, yearTo: 2024 },
     { name: 'Escenario 2', yearFrom: 2020, yearTo: 2024 },
@@ -232,8 +232,8 @@ export class UniteModalComponent implements OnInit {
                 /*                 this.calcularMontoConIncremento();
                 this.renderChartVariable.options.scales.y.max = this.yMax; */
                 this.renderChartVariable.options.scales.y.max =
-                  this.calcularMontoConIncremento() < 1000
-                    ? 1000
+                  this.calcularMontoConIncremento() < 100
+                    ? 100
                     : this.calcularMontoConIncremento();
               },
               onDragEnd: (
@@ -291,7 +291,7 @@ export class UniteModalComponent implements OnInit {
             min: 0,
             max:
               this.calcularMontoConIncremento() === 0
-                ? 1000
+                ? 100
                 : this.calcularMontoConIncremento(),
           },
         },
@@ -379,8 +379,8 @@ export class UniteModalComponent implements OnInit {
                 /* console.log(value); */
 
                 this.createEscenaryChartVariable.options.scales.y.max =
-                  this.calcularMontoConIncremento() < 1000
-                    ? 1000
+                  this.calcularMontoConIncremento() < 100
+                    ? 100
                     : this.calcularMontoConIncremento();
               },
               onDragEnd: (
@@ -419,7 +419,7 @@ export class UniteModalComponent implements OnInit {
             min: 0,
             max:
               this.calcularMontoConIncremento() === 0
-                ? 1000
+                ? 100
                 : this.calcularMontoConIncremento(),
           },
         },
@@ -579,11 +579,11 @@ export class UniteModalComponent implements OnInit {
         this.yMax = resultado;
         if (this.renderChartVariable) {
           this.renderChartVariable.options.scales.y.max =
-            this.yMax === 0 ? 1000 : this.yMax;
+            this.yMax === 0 ? 100 : this.yMax;
         }
 
         if (this.createEscenaryChartVariable) {
-          this.createEscenaryChartVariable.options.scales.y.max = 1000;
+          this.createEscenaryChartVariable.options.scales.y.max = 100;
         }
 
         console.log(resultado, this.values, 'resultado');
@@ -593,7 +593,7 @@ export class UniteModalComponent implements OnInit {
         throw new Error('No hay cantidades válidas para calcular.');
       }
     } else {
-      return 1000;
+      return 100;
     }
   }
   onKeyDown(event: KeyboardEvent): void {
