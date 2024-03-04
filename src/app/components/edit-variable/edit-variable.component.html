@@ -263,12 +263,15 @@
           </div>
           <div>
             <canvas id="myChart"></canvas>
-            <div class="col-md-12 d-flex mt-4">
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Normal'"
+              class="col-md-12 d-flex mt-4"
+            >
               <div class="input-group col-md-4 input-group-sm mb-3">
-                <span class="input-group-text chart-span" id="min">Min:</span>
+                <span class="input-group-text chart-span" id="min">Mean:</span>
                 <input
                   disabled
-                  [(ngModel)]="min"
+                  [(ngModel)]="mean"
                   type="text"
                   class="form-control chart-inputs"
                   aria-describedby="min"
@@ -284,14 +287,69 @@
                   aria-describedby="min"
                 />
               </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'SyntaxError'"
+              class="col-md-12 d-flex mt-4"
+            >
               <div class="input-group col-md-4 input-group-sm mb-3">
-                <span class="input-group-text chart-span" id="min">Max:</span>
+                <span class="input-group-text chart-span" id="min">Mean:</span>
                 <input
-                  [(ngModel)]="max"
                   disabled
+                  [(ngModel)]="mean"
                   type="text"
                   class="form-control chart-inputs"
                   aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">StDev:</span>
+                <input
+                  disabled
+                  [(ngModel)]="stDev"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Uniforme'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Min:</span>
+                <input
+                  disabled
+                  [(ngModel)]="min"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="max">Max:</span>
+                <input
+                  disabled
+                  [(ngModel)]="max"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="max"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Exponencial'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Rate:</span>
+                <input
+                  disabled
+                  [(ngModel)]="rate"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="rate"
                 />
               </div>
             </div>

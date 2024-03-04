@@ -211,6 +211,7 @@ export class BuildComponent implements OnInit {
         var orgChartTables = document.querySelectorAll(
           '.google-visualization-orgchart-table'
         );
+
         if (orgChartTables.length > 0) {
           clearInterval(interval);
 
@@ -234,7 +235,7 @@ export class BuildComponent implements OnInit {
                   floatingElement2.forEach(function (element: any) {
                     element.style.display = 'none';
                   });
-                  floatingElement.style.display = 'none';
+                  /* floatingElement.style.display = 'none'; */
                 } else if (floatingElement.style.display === 'none') {
                   var floatingElement2 =
                     document.body.querySelectorAll('.floating');

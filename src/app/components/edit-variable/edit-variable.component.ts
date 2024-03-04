@@ -42,6 +42,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   editVariableDescription: boolean = false;
   editVariableUnidad: boolean = false;
   variableOperation: any;
+  mean: number = 0;
+  rate: number = 0;
   min: number = 0;
   max: number = 0;
   stDev: number = 0;
@@ -112,6 +114,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   sendOperations: any[] = [];
   selectedCalculo: any;
   chart!: any;
+
   oldType!: boolean;
   @Output() sendDataEvent = new EventEmitter<any>();
 
@@ -831,8 +834,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.stDev = 0;
   }
 
-  saveNewValue()
-  {
+  saveNewValue() {
     this.events.publish('changeEditUnite', this.variableUnidad);
   }
 }

@@ -28,8 +28,11 @@ export class SimulationShapeModalComponent implements OnInit {
   shapeType!: any;
   min!: any;
   max!: any;
-  stDev!: any;
+  stDev: number = 0;
+  rate!: any;
+  mean: number = 0;
   type: string = 'static';
+  size: number = 100;
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {}
@@ -41,6 +44,16 @@ export class SimulationShapeModalComponent implements OnInit {
       this.ngZone.run(() => {
         this.shapeType = this.getItem('shapetype');
         const shapeData: any = this.getItem('shapeData');
+
+        this.min = shapeData?.__zone_symbol__value.min
+          ? shapeData?.__zone_symbol__value.min
+          : 0;
+        this.max = shapeData?.__zone_symbol__value.max
+          ? shapeData?.__zone_symbol__value.max
+          : 0;
+        this.stDev = shapeData?.__zone_symbol__value.stDev
+          ? shapeData?.__zone_symbol__value.stDev
+          : 0;
 
         if (this.shapeType.__zone_symbol__value.name === 'Normal') {
           if (this.chart) {
@@ -62,16 +75,6 @@ export class SimulationShapeModalComponent implements OnInit {
           }
           this.exponentialChart();
         }
-
-        this.min = shapeData?.__zone_symbol__value.min
-          ? shapeData?.__zone_symbol__value.min
-          : 0;
-        this.max = shapeData?.__zone_symbol__value.max
-          ? shapeData?.__zone_symbol__value.max
-          : 0;
-        this.stDev = shapeData?.__zone_symbol__value.stDev
-          ? shapeData?.__zone_symbol__value.stDev
-          : 0;
       });
     });
 
@@ -119,15 +122,17 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   normalChart() {
+    // Generar datos para la distribución normal
+    const data = this.generateNormalDistributionData(this.mean, this.stDev);
     this.chart = new Chart('chart', {
       type: 'line',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        labels: data.labels,
         datasets: [
           {
             backgroundColor: '#8C64B1',
             label: '# of Votes',
-            data: [0, 10, 19, 10, 0],
+            data: data.values,
             fill: true,
             tension: 0.4,
             borderWidth: 1,
@@ -209,5 +214,30 @@ export class SimulationShapeModalComponent implements OnInit {
         },
       },
     });
+  }
+
+  changeValueNomarl() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.normalChart();
+  }
+  generateNormalDistributionData(mean: number, stDev: number) {
+    const labels = [];
+    const values = [];
+
+    for (let x = 0; x <= 10; x += 0.1) {
+      const y = this.normalDistribution(x, mean, stDev);
+      labels.push(x.toFixed(2));
+      values.push(y.toFixed(4));
+    }
+
+    return { labels, values };
+  }
+
+  normalDistribution(x: number, mean: number, stDev: number) {
+    const factor = 1 / (stDev * Math.sqrt(2 * Math.PI));
+    const exponent = -0.5 * Math.pow((x - mean) / stDev, 2);
+    return factor * Math.exp(exponent);
   }
 }
