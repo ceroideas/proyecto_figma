@@ -257,6 +257,15 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
+  refresher()
+  {
+    this.lastPosition = {x:20, y:90};
+
+    this.projectSvc.savePosition(this.project.id, this.lastPosition).subscribe((res) => {
+      console.log('oki');
+    });
+  }
+
   dragEnd(event: CdkDragEnd) {
     let transform = event.source.element.nativeElement.style.transform;
 
