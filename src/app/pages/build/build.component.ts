@@ -118,8 +118,27 @@ export class BuildComponent implements OnInit {
         document.getElementById('chart_div')
       );
 
+      let setCreate = (e:any) => {
+        console.log(this.nodeName, 'AUX');
+        this.editVariable = false;
+        e.stopPropagation();
+        const openButton = document.querySelector('#exampleModalButton');
+        if (openButton) {
+          (openButton as HTMLElement).click();
+        }
+      }
+
+      let setEdit = (e:any) => {
+        this.editVariable = true;
+        console.log(this.nodeName, 'V');
+        e.stopPropagation();
+        const openButton = document.querySelector('#exampleModalButton');
+        if (openButton) {
+          (openButton as HTMLElement).click();
+        }
+      }
+
       google.visualization.events.addListener(this.chart, 'select', () => {
-        console.log('SELECT');
         this.hidden = false;
         this.editVariable = false;
         var selection = this.chart.getSelection();
@@ -158,18 +177,8 @@ export class BuildComponent implements OnInit {
         Array.prototype.forEach.call(
           cstmbtnElements,
           (cstmbtnElement: HTMLElement) => {
-            cstmbtnElement.addEventListener('click', (e) => {
-              this.editVariable = false;
-              e.stopPropagation();
-              console.log(this.nodeName, 'AUX');
-              const openButton = document.querySelector('#exampleModalButton');
-
-              // Verifica si el botón existe antes de intentar cerrar el modal
-              if (openButton) {
-                // Simula un clic en el botón para cerrar el modal
-                (openButton as HTMLElement).click();
-              }
-            });
+            cstmbtnElement.removeEventListener('click', setCreate);
+            cstmbtnElement.addEventListener('click', setCreate);
           }
         );
 
@@ -178,18 +187,8 @@ export class BuildComponent implements OnInit {
         Array.prototype.forEach.call(
           editElements,
           (editElements: HTMLElement) => {
-            editElements.addEventListener('click', (e) => {
-              this.editVariable = true;
-              console.log(this.nodeName, 'V');
-              e.stopPropagation();
-              const openButton = document.querySelector('#exampleModalButton');
-
-              // Verifica si el botón existe antes de intentar cerrar el modal
-              if (openButton) {
-                // Simula un clic en el botón para cerrar el modal
-                (openButton as HTMLElement).click();
-              }
-            });
+            editElements.removeEventListener('click', setEdit);
+            editElements.addEventListener('click', setEdit);
           }
         );
 
@@ -206,6 +205,30 @@ export class BuildComponent implements OnInit {
         );
       });
 
+      function eventClick(this: any, e:any) {
+        e.stopPropagation();
+
+        var floatingElement = this.querySelector('.floating') as HTMLElement;
+        console.log('clickeado',floatingElement.style.display)
+
+        if (floatingElement.style.display === 'block') {
+          var floatingElement2 =
+            document.body.querySelectorAll('.floating');
+
+          floatingElement2.forEach(function (element: any) {
+            element.style.display = 'none';
+          });
+        } else if (floatingElement.style.display === 'none') {
+          var floatingElement2 =
+            document.body.querySelectorAll('.floating');
+
+          floatingElement2.forEach(function (element: any) {
+            element.style.display = 'none';
+          });
+          floatingElement.style.display = 'block';
+        }
+      }
+
       this.chart.draw(this.data, { allowHtml: true });
       const interval = setInterval(() => {
         var orgChartTables = document.querySelectorAll(
@@ -221,34 +244,12 @@ export class BuildComponent implements OnInit {
           Array.prototype.forEach.call(
             rotateElements,
             function (rotateElement: HTMLElement) {
-              rotateElement.addEventListener('click', function (e) {
-                e.stopPropagation();
-
-                var floatingElement = this.querySelector(
-                  '.floating'
-                ) as HTMLElement;
-
-                if (floatingElement.style.display === 'block') {
-                  var floatingElement2 =
-                    document.body.querySelectorAll('.floating');
-
-                  floatingElement2.forEach(function (element: any) {
-                    element.style.display = 'none';
-                  });
-                } else if (floatingElement.style.display === 'none') {
-                  var floatingElement2 =
-                    document.body.querySelectorAll('.floating');
-
-                  floatingElement2.forEach(function (element: any) {
-                    element.style.display = 'none';
-                  });
-                  floatingElement.style.display = 'block';
-                }
-              });
+              rotateElement.removeEventListener('click', eventClick)
+              rotateElement.addEventListener('click', eventClick);
             }
           );
         }
-      }, 1000);
+      }, 10);
     };
     google.charts.setOnLoadCallback(this.drawChart);
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;

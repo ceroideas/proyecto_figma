@@ -730,7 +730,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   getItem(key: any) {
     return new Promise((resolve) => {
       const value = localStorage.getItem(key);
-      resolve(JSON.parse(value || ''));
+      const def = '{"name":"Normal","min":"0","max":"0","stDev":"0","rate":"0","mean":"0","type":"static"}';
+      resolve(JSON.parse(value || def));
     });
   }
 
@@ -738,7 +739,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.chart = new Chart('myChart', {
       type: 'line',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        labels: ['-', '-', '-', '-', '-'],
         datasets: [
           {
             backgroundColor: '#8C64B1',
@@ -769,7 +770,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.chart = new Chart('myChart', {
       type: 'line',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        labels: ['-', '-', '-', '-', '-'],
         datasets: [
           {
             backgroundColor: '#8C64B1',
@@ -800,7 +801,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.chart = new Chart('myChart', {
       type: 'line',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        labels: ['-', '-', '-', '-', '-'],
         datasets: [
           {
             backgroundColor: '#8C64B1',
