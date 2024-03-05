@@ -118,7 +118,7 @@ export class BuildComponent implements OnInit {
         document.getElementById('chart_div')
       );
 
-      let setCreate = (e:any) => {
+      let setCreate = (e: any) => {
         console.log(this.nodeName, 'AUX');
         this.editVariable = false;
         e.stopPropagation();
@@ -126,9 +126,10 @@ export class BuildComponent implements OnInit {
         if (openButton) {
           (openButton as HTMLElement).click();
         }
-      }
+      };
 
-      let setEdit = (e:any) => {
+      let setEdit = (e: any) => {
+        this.editModal.removeStorage();
         this.editVariable = true;
         console.log(this.nodeName, 'V');
         e.stopPropagation();
@@ -136,7 +137,7 @@ export class BuildComponent implements OnInit {
         if (openButton) {
           (openButton as HTMLElement).click();
         }
-      }
+      };
 
       google.visualization.events.addListener(this.chart, 'select', () => {
         this.hidden = false;
@@ -205,22 +206,20 @@ export class BuildComponent implements OnInit {
         );
       });
 
-      function eventClick(this: any, e:any) {
+      function eventClick(this: any, e: any) {
         e.stopPropagation();
 
         var floatingElement = this.querySelector('.floating') as HTMLElement;
-        console.log('clickeado',floatingElement.style.display)
+        console.log('clickeado', floatingElement.style.display);
 
         if (floatingElement.style.display === 'block') {
-          var floatingElement2 =
-            document.body.querySelectorAll('.floating');
+          var floatingElement2 = document.body.querySelectorAll('.floating');
 
           floatingElement2.forEach(function (element: any) {
             element.style.display = 'none';
           });
         } else if (floatingElement.style.display === 'none') {
-          var floatingElement2 =
-            document.body.querySelectorAll('.floating');
+          var floatingElement2 = document.body.querySelectorAll('.floating');
 
           floatingElement2.forEach(function (element: any) {
             element.style.display = 'none';
@@ -244,7 +243,7 @@ export class BuildComponent implements OnInit {
           Array.prototype.forEach.call(
             rotateElements,
             function (rotateElement: HTMLElement) {
-              rotateElement.removeEventListener('click', eventClick)
+              rotateElement.removeEventListener('click', eventClick);
               rotateElement.addEventListener('click', eventClick);
             }
           );
@@ -257,13 +256,14 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  refresher()
-  {
-    this.lastPosition = {x:20, y:90};
+  refresher() {
+    this.lastPosition = { x: 20, y: 90 };
 
-    this.projectSvc.savePosition(this.project.id, this.lastPosition).subscribe((res) => {
-      console.log('oki');
-    });
+    this.projectSvc
+      .savePosition(this.project.id, this.lastPosition)
+      .subscribe((res) => {
+        console.log('oki');
+      });
   }
 
   dragEnd(event: CdkDragEnd) {

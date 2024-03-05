@@ -132,9 +132,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (changes['editVariable']) {
       this.updateVariables();
     }
-    if (changes['shapeData']) {
-      console.log('shape data cambio');
-    }
+
     if (changes.hasOwnProperty('isHidden')) {
       const hidden = changes['isHidden'].currentValue;
       if (hidden) {
@@ -513,6 +511,31 @@ export class EditVariableComponent implements OnInit, OnChanges {
           };
           localStorage.setItem('shapeData', JSON.stringify(formShape));
           this.shapeData = this.getItem('shapeData');
+
+          const chartName = res.distribution_shape[0]?.name
+            ? res.distribution_shape[0]?.name
+            : 'ANormal';
+
+          if (this.chart) {
+            this.chart.destroy();
+          }
+
+          switch (chartName) {
+            case 'Normal':
+              this.normalChart();
+              break;
+            case 'SyntaxError':
+              this.normalChart();
+              break;
+            case 'Uniforme':
+              this.uniformChart();
+              break;
+            case 'Exponencial':
+              this.exponentialChart();
+              break;
+            default:
+              console.error(`Tipo de gráfico no reconocido: ${chartName}`);
+          }
         }
         this.constante = res.type === 1 ? true : false;
         this.oldType = res.type === 1 ? true : false;
@@ -730,7 +753,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   getItem(key: any) {
     return new Promise((resolve) => {
       const value = localStorage.getItem(key);
-      const def = '{"name":"Normal","min":"0","max":"0","stDev":"0","rate":"0","mean":"0","type":"static"}';
+      const def =
+        '{"name":"Normal","min":"0","max":"0","stDev":"0","rate":"0","mean":"0","type":"static"}';
       resolve(JSON.parse(value || def));
     });
   }
@@ -855,5 +879,10 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   saveNewValue() {
     this.events.publish('changeEditUnite', this.variableUnidad);
+  }
+
+  removeStorage() {
+    localStorage.removeItem('shapeData');
+    localStorage.removeItem('shapetype');
   }
 }
