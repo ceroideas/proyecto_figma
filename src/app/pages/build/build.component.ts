@@ -235,7 +235,6 @@ export class BuildComponent implements OnInit {
                   floatingElement2.forEach(function (element: any) {
                     element.style.display = 'none';
                   });
-                  /* floatingElement.style.display = 'none'; */
                 } else if (floatingElement.style.display === 'none') {
                   var floatingElement2 =
                     document.body.querySelectorAll('.floating');
@@ -249,12 +248,11 @@ export class BuildComponent implements OnInit {
             }
           );
         }
-      });
+      }, 1000);
     };
     google.charts.setOnLoadCallback(this.drawChart);
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
 
-    /* this.getContentToChart(); */
     this.printAll();
   }
 

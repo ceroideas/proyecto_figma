@@ -26,8 +26,8 @@ export class SimulationShapeModalComponent implements OnInit {
   ];
   chart!: any;
   shapeType!: any;
-  min!: any;
-  max!: any;
+  min: number = 0;
+  max: number = 0;
   stDev: number = 0;
   rate!: any;
   mean: number = 0;
@@ -53,6 +53,13 @@ export class SimulationShapeModalComponent implements OnInit {
           : 0;
         this.stDev = shapeData?.__zone_symbol__value.stDev
           ? shapeData?.__zone_symbol__value.stDev
+          : 0;
+        this.rate = shapeData?.__zone_symbol__value.rate
+          ? shapeData?.__zone_symbol__value.rate
+          : 0;
+
+        this.mean = shapeData?.__zone_symbol__value.mean
+          ? shapeData?.__zone_symbol__value.mean
           : 0;
 
         if (this.shapeType.__zone_symbol__value.name === 'Normal') {
@@ -101,6 +108,8 @@ export class SimulationShapeModalComponent implements OnInit {
   save() {
     const formShape = {
       min: this.min,
+      mean: this.mean,
+      rate: this.rate,
       stDev: this.stDev,
       max: this.max,
       name: this.shapeType.__zone_symbol__value.name,
@@ -156,38 +165,37 @@ export class SimulationShapeModalComponent implements OnInit {
 
   uniformChart() {
     let uniformData: any;
-    if (this.min && this.min != 0 && this.max && this.min != 0) {
-      uniformData = this.generateUniformDistributionData(this.min, this.max);
 
-      this.chart = new Chart('chart', {
-        type: 'line',
-        data: {
-          labels: uniformData.labels,
-          datasets: [
-            {
-              backgroundColor: '#8C64B1',
-              label: 'Distribución Uniforme',
-              data: uniformData.values,
-              fill: true,
-              tension: 0.4,
-              borderWidth: 1,
-              pointHitRadius: 25, // for improved touch support
-              // dragData: false // prohibit dragging this dataset
-              // same as returning `false` in the onDragStart callback
-              // for this datsets index position
-            },
-          ],
-        },
-        options: {
-          plugins: {},
-          scales: {
-            y: {
-              // dragData: false // disables datapoint dragging for the entire axis
-            },
+    uniformData = this.generateUniformDistributionData(this.min, this.max);
+
+    this.chart = new Chart('chart', {
+      type: 'line',
+      data: {
+        labels: uniformData.labels,
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Distribución Uniforme',
+            data: uniformData.values,
+            fill: true,
+            tension: 0.4,
+            borderWidth: 1,
+            pointHitRadius: 25, // for improved touch support
+            // dragData: false // prohibit dragging this dataset
+            // same as returning `false` in the onDragStart callback
+            // for this datsets index position
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {
+            // dragData: false // disables datapoint dragging for the entire axis
           },
         },
-      });
-    }
+      },
+    });
   }
 
   exponentialChart() {

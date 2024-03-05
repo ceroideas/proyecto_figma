@@ -71,25 +71,25 @@
           *ngIf="shapeType?.__zone_symbol__value.name == 'Uniforme'"
           class="col-md-12 d-flex mt-4"
         >
-          <div class="input-group col-md-4 input-group-sm mb-3">
+          <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="min">Min:</span>
             <input
               [(ngModel)]="min"
               (ngModelChange)="changeValueUniforme()"
               style="background-color: #f6f3f9"
-              type="text"
+              type="number"
               class="form-control chart-inputs"
               aria-describedby="min"
             />
           </div>
 
-          <div class="input-group col-md-4 input-group-sm mb-3">
+          <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="min">Max:</span>
             <input
               [(ngModel)]="max"
               (ngModelChange)="changeValueUniforme()"
               style="background-color: #f6f3f9"
-              type="text"
+              type="number"
               class="form-control chart-inputs"
               aria-describedby="min"
             />
@@ -142,7 +142,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-footer mt-3">
+      <div class="modal-footer mt-1">
         <div
           class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
         >

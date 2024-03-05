@@ -132,6 +132,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (changes['editVariable']) {
       this.updateVariables();
     }
+    if (changes['shapeData']) {
+      console.log('shape data cambio');
+    }
     if (changes.hasOwnProperty('isHidden')) {
       const hidden = changes['isHidden'].currentValue;
       if (hidden) {
@@ -168,7 +171,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }, 1000); */
     this.deleteShapeData();
     this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
-      console.log(res.nodes, 'RES');
       this.variables = res.node;
     });
 
@@ -188,8 +190,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
         try {
           this.shapeData = this.getItem('shapeData');
 
-          console.log(this.shapeData, 'DATA');
-
           this.min = this.shapeData.__zone_symbol__value.min
             ? this.shapeData.__zone_symbol__value.min
             : this.min;
@@ -202,16 +202,20 @@ export class EditVariableComponent implements OnInit, OnChanges {
             ? this.shapeData.__zone_symbol__value.max
             : this.max;
 
-          // Verificar si shapeData es nulo o indefinido
+          this.mean = this.shapeData.__zone_symbol__value.mean
+            ? this.shapeData.__zone_symbol__value.mean
+            : this.mean;
+
+          this.rate = this.shapeData.__zone_symbol__value.rate
+            ? this.shapeData.__zone_symbol__value.rate
+            : this.rate;
 
           const chartName = this.shapeData.__zone_symbol__value.name;
 
-          // Destruir el gráfico si ya existe
           if (this.chart) {
             this.chart.destroy();
           }
 
-          // Lógica del gráfico según el tipo
           switch (chartName) {
             case 'Normal':
               this.normalChart();
@@ -228,8 +232,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
             default:
               console.error(`Tipo de gráfico no reconocido: ${chartName}`);
           }
-
-          console.log(chartName, 'shapeData');
         } catch (error) {
           console.error("Error al obtener o procesar 'shapeData':", error);
         }
@@ -307,6 +309,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
           max: +this.max,
           stDev: +this.stDev,
           min: +this.min,
+          rate: +this.rate,
+          mean: +this.mean,
           type: this.shapeData.__zone_symbol__value.type,
         },
       ],
@@ -327,6 +331,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
                 : 'Normal',
             max: +this.max,
             stDev: +this.stDev,
+            rate: +this.rate,
+            mean: +this.mean,
             min: +this.min,
             type: this.shapeData.__zone_symbol__value.type,
           },
@@ -362,11 +368,13 @@ export class EditVariableComponent implements OnInit, OnChanges {
           max: +this.max,
           stDev: +this.stDev,
           min: +this.min,
+          mean: this.mean,
+          rate: this.rate,
           type: this.shapeData.__zone_symbol__value.type,
         },
       ],
     });
-    console.log();
+
     this.cerrarModal();
 
     this.tempObject[this.variableId] = {
@@ -475,17 +483,27 @@ export class EditVariableComponent implements OnInit, OnChanges {
           this.min = res.distribution_shape[0]?.min
             ? res.distribution_shape[0]?.min
             : this.min;
+          this.mean = res.distribution_shape[0]?.mean
+            ? res.distribution_shape[0]?.mean
+            : this.mean;
+
+          this.rate = res.distribution_shape[0]?.rate
+            ? res.distribution_shape[0]?.rate
+            : this.rate;
+
           this.max = res.distribution_shape[0]?.max
             ? res.distribution_shape[0]?.max
             : this.max;
           this.stDev = res.distribution_shape[0]?.stDev
             ? res.distribution_shape[0]?.stDev
             : this.stDev;
-          console.log('NO EXISTE');
+
           const formShape = {
             min: this.min,
             stDev: this.stDev,
             max: this.max,
+            rate: this.rate,
+            mean: this.mean,
             name: res.distribution_shape[0]?.name
               ? res.distribution_shape[0]?.name
               : 'Normal',
@@ -494,6 +512,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
               : 'static',
           };
           localStorage.setItem('shapeData', JSON.stringify(formShape));
+          this.shapeData = this.getItem('shapeData');
         }
         this.constante = res.type === 1 ? true : false;
         this.oldType = res.type === 1 ? true : false;
@@ -503,7 +522,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.sendOperations = res.formula ? res.formula : [];
         this.showNewEscenario = res.calculated ? res.calculated : [];
       });
-      console.log(this.variables, 'this.variables');
     }
   }
   hiddenData() {
@@ -546,7 +564,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.operationResult();
     this.sendOperations.push(id);
-    console.log(this.sendOperations, 'smkdnm');
   }
   operationResult() {
     type YearValue = {
@@ -604,7 +621,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       }
     }
 
-    console.log(newEscenario, 'escenario');
     this.showNewEscenario = newEscenario;
   }
 
@@ -615,7 +631,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
       this.sendOperations.push(operation);
     }
-    console.log(this.sendOperations, 'kdjodjn');
+
     this.operationResult();
   }
 
@@ -637,7 +653,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       description: this.variableDescription,
       formula: this.sendOperations,
     };
-    console.log(editVariable, 'edit');
+
     this.projectSvc
       .updateNode(this.nodeId, editVariable)
       .subscribe((res: any) => {});
@@ -832,6 +848,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.min = 0;
     this.max = 0;
     this.stDev = 0;
+    this.mean = 0;
+    this.rate = 0;
   }
 
   saveNewValue() {
