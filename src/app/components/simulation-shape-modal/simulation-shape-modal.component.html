@@ -75,6 +75,7 @@
             <span class="input-group-text chart-span" id="min">Min:</span>
             <input
               [(ngModel)]="min"
+              (ngModelChange)="changeValueUniforme()"
               style="background-color: #f6f3f9"
               type="text"
               class="form-control chart-inputs"
@@ -86,6 +87,7 @@
             <span class="input-group-text chart-span" id="min">Max:</span>
             <input
               [(ngModel)]="max"
+              (ngModelChange)="changeValueUniforme()"
               style="background-color: #f6f3f9"
               type="text"
               class="form-control chart-inputs"
@@ -101,7 +103,7 @@
             <span class="input-group-text chart-span" id="stDev">Mean:</span>
             <input
               [(ngModel)]="mean"
-              (ngModelChange)="changeValueNomarl()"
+              (ngModelChange)="changeValueNormal()"
               name="mean"
               style="background-color: #f6f3f9"
               type="text"
@@ -113,7 +115,7 @@
             <span class="input-group-text chart-span" id="stDev">StDev:</span>
             <input
               [(ngModel)]="stDev"
-              (ngModelChange)="changeValueNomarl()"
+              (ngModelChange)="changeValueNormal()"
               name="stDev"
               style="background-color: #f6f3f9"
               type="text"
@@ -130,6 +132,7 @@
             <span class="input-group-text chart-span" id="rate">Rate:</span>
             <input
               [(ngModel)]="rate"
+              (ngModelChange)="changeValueExponential()"
               name="rate"
               style="background-color: #f6f3f9"
               type="text"

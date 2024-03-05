@@ -131,7 +131,7 @@ export class SimulationShapeModalComponent implements OnInit {
         datasets: [
           {
             backgroundColor: '#8C64B1',
-            label: '# of Votes',
+            label: 'Distribución Normal',
             data: data.values,
             fill: true,
             tension: 0.4,
@@ -155,46 +155,53 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   uniformChart() {
-    this.chart = new Chart('chart', {
-      type: 'line',
-      data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
-        datasets: [
-          {
-            backgroundColor: '#8C64B1',
-            label: '# of Votes',
-            data: [19, 19, 19, 19, 19],
-            fill: true,
-            tension: 0.4,
-            borderWidth: 1,
-            pointHitRadius: 25, // for improved touch support
-            // dragData: false // prohibit dragging this dataset
-            // same as returning `false` in the onDragStart callback
-            // for this datsets index position
-          },
-        ],
-      },
-      options: {
-        plugins: {},
-        scales: {
-          y: {
-            // dragData: false // disables datapoint dragging for the entire axis
+    let uniformData: any;
+    if (this.min && this.min != 0 && this.max && this.min != 0) {
+      uniformData = this.generateUniformDistributionData(this.min, this.max);
+
+      this.chart = new Chart('chart', {
+        type: 'line',
+        data: {
+          labels: uniformData.labels,
+          datasets: [
+            {
+              backgroundColor: '#8C64B1',
+              label: 'Distribución Uniforme',
+              data: uniformData.values,
+              fill: true,
+              tension: 0.4,
+              borderWidth: 1,
+              pointHitRadius: 25, // for improved touch support
+              // dragData: false // prohibit dragging this dataset
+              // same as returning `false` in the onDragStart callback
+              // for this datsets index position
+            },
+          ],
+        },
+        options: {
+          plugins: {},
+          scales: {
+            y: {
+              // dragData: false // disables datapoint dragging for the entire axis
+            },
           },
         },
-      },
-    });
+      });
+    }
   }
 
   exponentialChart() {
+    const data = this.generateExponentialDistributionData(this.rate);
+
     this.chart = new Chart('chart', {
       type: 'line',
       data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple'],
+        labels: data.labels,
         datasets: [
           {
             backgroundColor: '#8C64B1',
-            label: '# of Votes',
-            data: [19, 12, 7, 2, 0],
+            label: 'Distribución Exponencial',
+            data: data.values,
             fill: true,
             tension: 0.4,
             borderWidth: 1,
@@ -216,11 +223,25 @@ export class SimulationShapeModalComponent implements OnInit {
     });
   }
 
-  changeValueNomarl() {
+  changeValueNormal() {
     if (this.chart) {
       this.chart.destroy();
     }
     this.normalChart();
+  }
+
+  changeValueExponential() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.exponentialChart();
+  }
+
+  changeValueUniforme() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.uniformChart();
   }
   generateNormalDistributionData(mean: number, stDev: number) {
     const labels = [];
@@ -239,5 +260,45 @@ export class SimulationShapeModalComponent implements OnInit {
     const factor = 1 / (stDev * Math.sqrt(2 * Math.PI));
     const exponent = -0.5 * Math.pow((x - mean) / stDev, 2);
     return factor * Math.exp(exponent);
+  }
+
+  exponentialDistribution(x: number, rate: number) {
+    return rate * Math.exp(-rate * x);
+  }
+
+  generateExponentialDistributionData(rate: number) {
+    const numPoints = 10; // Número de puntos de datos
+    const labels: string[] = [];
+    const values: number[] = [];
+
+    for (let i = 1; i <= numPoints; i++) {
+      const randomValue = Math.random();
+      const exponentialValue = -Math.log(1 - randomValue) / rate;
+      values.push(Number(exponentialValue.toFixed(2))); // Convertir a número
+      labels.push(`Point ${i}`);
+    }
+
+    return { labels, values };
+  }
+
+  generateUniformDistributionData(min: number, max: number) {
+    const labels = [];
+    const values = [];
+
+    for (let x = min; x <= max; x += 10) {
+      const y = this.uniformDistribution(x, min, max);
+      labels.push(x.toFixed(2));
+      values.push(y.toFixed(4));
+    }
+
+    return { labels, values };
+  }
+
+  uniformDistribution(x: number, min: number, max: number) {
+    if (x >= min && x <= max) {
+      return 1 / (max - min);
+    } else {
+      return 0;
+    }
   }
 }
