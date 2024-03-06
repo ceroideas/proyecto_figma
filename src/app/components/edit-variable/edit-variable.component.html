@@ -130,7 +130,7 @@
                 style="cursor: pointer"
                 class="mr-4"
                 (click)="addVariable(variable, variable.id)"
-                *ngIf="variable.id !== +nodeId"
+                *ngIf="editVariable ? variable.id !== +nodeId : true"
               >
                 <img
                   class="user-icon"

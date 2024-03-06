@@ -166,7 +166,7 @@ export class SimulationShapeModalComponent implements OnInit {
   uniformChart() {
     let uniformData: any;
 
-    uniformData = this.generateUniformDistributionData(this.min, this.max);
+    uniformData = this.generateUniformDistributionData(+this.min, +this.max);
 
     this.chart = new Chart('chart', {
       type: 'line',
