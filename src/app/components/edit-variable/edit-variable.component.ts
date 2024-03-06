@@ -885,4 +885,14 @@ export class EditVariableComponent implements OnInit, OnChanges {
     localStorage.removeItem('shapeData');
     localStorage.removeItem('shapetype');
   }
+
+  setEvent()
+  {
+    setTimeout(()=>{
+      var evt = new Event('change');
+      var elem = (document.getElementById("escenarios-select") as HTMLSelectElement)
+      elem.selectedIndex = 1;
+      elem.dispatchEvent(evt)
+    },100)
+  }
 }
