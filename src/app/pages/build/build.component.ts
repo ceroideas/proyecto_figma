@@ -214,6 +214,8 @@ export class BuildComponent implements OnInit {
 
         if (floatingElement.style.display === 'block') {
           var floatingElement2 = document.body.querySelectorAll('.floating');
+          var tds = document.body.querySelectorAll('.google-visualization-orgchart-node');
+          tds.forEach(function (element: any) {element.style.zIndex = '1';});
 
           floatingElement2.forEach(function (element: any) {
             element.style.display = 'none';
@@ -221,10 +223,14 @@ export class BuildComponent implements OnInit {
         } else if (floatingElement.style.display === 'none') {
           var floatingElement2 = document.body.querySelectorAll('.floating');
 
+          var tds = document.body.querySelectorAll('.google-visualization-orgchart-node');
+          tds.forEach(function (element: any) {element.style.zIndex = '1';});
+
           floatingElement2.forEach(function (element: any) {
             element.style.display = 'none';
           });
           floatingElement.style.display = 'block';
+          this.style.zIndex = '5';
         }
       }
 
