@@ -23,7 +23,7 @@
           <div class="col md-3">
             Escenarios
             <select
-            id="escenarios-select"
+              id="escenarios-select"
               [disabled]="showForm"
               [(ngModel)]="selectedEscenary"
               class="form-select input-formula"
@@ -187,7 +187,9 @@
                   <input
                     (ngModelChange)="changeValue2(i, $event, year.key)"
                     [name]="year.key.toString()"
-                    [disabled]="model.locked"
+                    [disabled]="
+                      model.locked && year.key.toString() !== currentYear
+                    "
                     [id]="year.key.toString()"
                     [(ngModel)]="model.years[0][year.key]"
                     onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
@@ -234,7 +236,7 @@
         </div>
 
         <div class="modal-footer">
-          <p class="smoth">Smoth</p>
+          <!--           <p class="smoth">Smoth</p>
           <input
             style="width: 15% !important"
             type="text"
@@ -244,7 +246,7 @@
           />
           <button type="button" class="unite-button-calculate">
             Calculate
-          </button>
+          </button> -->
         </div>
       </div>
     </div>

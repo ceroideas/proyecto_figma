@@ -48,6 +48,7 @@ export class UniteModalComponent implements OnInit {
   renderChartVariable!: any;
   createEscenaryChartVariable!: any;
   yMax: number = 100;
+  currentYear: string = new Date().getFullYear().toString();
   escenario: any = [
     { name: 'Escenario 1', yearFrom: 2020, yearTo: 2024 },
     { name: 'Escenario 2', yearFrom: 2020, yearTo: 2024 },
@@ -74,14 +75,16 @@ export class UniteModalComponent implements OnInit {
     });
 
     this.events.destroy('changeEditUnite');
-    this.events.subscribe('changeEditUnite',(a)=>{
+    this.events.subscribe('changeEditUnite', (a) => {
       this.unite = a;
       if (this.edit) {
-        this.projectSvc.saveUnite(this.nodeId,{unite: a}).subscribe(data=>{
-          //console.log('guardado');
-        })
+        this.projectSvc
+          .saveUnite(this.nodeId, { unite: a })
+          .subscribe((data) => {
+            //console.log('guardado');
+          });
       }
-    })
+    });
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['cleanEsceneries']) {

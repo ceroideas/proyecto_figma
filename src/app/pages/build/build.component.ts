@@ -17,6 +17,7 @@ declare var bootstrap: any;
 export class BuildComponent implements OnInit {
   @ViewChild('hideShow') hideShowModal!: ElementRef;
   @ViewChild('editModal', { static: false }) editModal!: EditVariableComponent;
+  @ViewChild('zoomElement') zoomElement!: ElementRef;
   rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
@@ -37,50 +38,8 @@ export class BuildComponent implements OnInit {
   id!: any;
   cleanSceneries: any[] = [];
   esceneries: any[] = [];
-  aux: any = [
-    /*   {
-      data: [
-        {
-          v: '1',
-          f: `<div  class="rotate" >
-        
-        <span>
-               <div class="floating" style="display: none;">   
-                      <div class="flex-box">   
-                      <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
-                       class="tier-icon " 
-                      src="../../../assets/icons/u_plus.svg"
-                      alt=""
-                    /></button>
-                      <button class="cstmbtn  btn btn-xs btn-edit "> <img
-                      class="tier-icon " 
-                     src="../../../assets/icons/pencil.svg"
-                     alt=""
-                   /></button>
-                      <button class="cstmbtn btn btn-xs btn-hidden "> <img
-                      class="tier-icon " 
-                     src="../../../assets/icons/u_eye-slash-icon.svg"
-                     alt=""
-                   /> </button>
-                      </div>
-                      <div class="full-box">
-                             
-                      </div> 
-               </div>
-               Número de variable
-        </span>
-
- </div>`,
-        },
-        '',
-        '',
-      ],
-      hidden: 0,
-
-      name: 'Número de variable',
-      tier: 0,
-    }, */
-  ];
+  aux: any = [];
+  zoomLevel: number = 0.5;
   sceneriesNodes: any[] = [];
   showSceneries: any[] = [];
   sceneries: any[] = [];
@@ -214,8 +173,12 @@ export class BuildComponent implements OnInit {
 
         if (floatingElement.style.display === 'block') {
           var floatingElement2 = document.body.querySelectorAll('.floating');
-          var tds = document.body.querySelectorAll('.google-visualization-orgchart-node');
-          tds.forEach(function (element: any) {element.style.zIndex = '1';});
+          var tds = document.body.querySelectorAll(
+            '.google-visualization-orgchart-node'
+          );
+          tds.forEach(function (element: any) {
+            element.style.zIndex = '1';
+          });
 
           floatingElement2.forEach(function (element: any) {
             element.style.display = 'none';
@@ -223,8 +186,12 @@ export class BuildComponent implements OnInit {
         } else if (floatingElement.style.display === 'none') {
           var floatingElement2 = document.body.querySelectorAll('.floating');
 
-          var tds = document.body.querySelectorAll('.google-visualization-orgchart-node');
-          tds.forEach(function (element: any) {element.style.zIndex = '1';});
+          var tds = document.body.querySelectorAll(
+            '.google-visualization-orgchart-node'
+          );
+          tds.forEach(function (element: any) {
+            element.style.zIndex = '1';
+          });
 
           floatingElement2.forEach(function (element: any) {
             element.style.display = 'none';
@@ -264,6 +231,9 @@ export class BuildComponent implements OnInit {
 
   refresher() {
     this.lastPosition = { x: 20, y: 90 };
+    const element = this.zoomElement.nativeElement;
+    this.zoomLevel = 0.8;
+    element.style.transform = `scale(0.8)`;
 
     this.projectSvc
       .savePosition(this.project.id, this.lastPosition)
@@ -1036,6 +1006,29 @@ export class BuildComponent implements OnInit {
     if (this.currentYearIndex > 0) {
       this.currentYearIndex--;
       this.getSceneries(this.selectedScenery);
+    }
+  }
+
+  onZoom(event: WheelEvent): void {
+    event.preventDefault();
+
+    const zoomDelta = 0.1;
+    this.zoomLevel += event.deltaY > 0 ? -zoomDelta : zoomDelta;
+
+    this.updateZoom();
+  }
+
+  toggleZoom(): void {
+    this.zoomLevel = this.zoomLevel === 1 ? 2 : 1;
+    this.updateZoom();
+  }
+
+  private updateZoom(): void {
+    const element = this.zoomElement.nativeElement;
+    if (this.zoomLevel >= 0.8) {
+      element.style.transform = `scale(${this.zoomLevel})`;
+    } else {
+      this.zoomLevel = 0.8;
     }
   }
 }

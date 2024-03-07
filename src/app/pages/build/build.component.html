@@ -65,16 +65,9 @@
     background-image: url('../../../assets/img/background.png');
   "
 >
-  <div
-    class="custom-container-2"
-    (click)="refresher()"
-  >
+  <div class="custom-container-2" (click)="refresher()">
     <div class="icon-container">
-      <img
-        class="icon-img"
-        src="../../../assets/icons/refresher.png"
-        alt=""
-      />
+      <img class="icon-img" src="../../../assets/icons/refresher.png" alt="" />
     </div>
     <div class="text-container">Refrescar</div>
   </div>
@@ -100,7 +93,9 @@
     id="chart_container"
     [cdkDragFreeDragPosition]="lastPosition"
   >
-    <div id="chart_div"></div>
+    <div #zoomElement (wheel)="onZoom($event)">
+      <div id="chart_div"></div>
+    </div>
   </div>
 </div>
 

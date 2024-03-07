@@ -175,3 +175,14 @@
   max-height: calc(100vh - 200px);
   overflow-y: auto;
 }
+
+.container-organigrama {
+  position: absolute;
+  /* ... otros estilos ... */
+  overflow: hidden;
+}
+
+.zoomable-content {
+  transform-origin: top left;
+  transition: transform 0.3s ease;
+}
