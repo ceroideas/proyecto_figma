@@ -122,7 +122,9 @@
                   <input
                     (ngModelChange)="changeValue(i, $event)"
                     [name]="year.key"
-                    [disabled]="model.locked"
+                    [disabled]="
+                      model.locked && year.key.toString() !== currentYear
+                    "
                     [id]="year.key"
                     [(ngModel)]="model.years[0][year.key]"
                     class="form-control input-formula"
