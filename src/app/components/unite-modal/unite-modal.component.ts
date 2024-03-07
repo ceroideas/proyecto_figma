@@ -17,8 +17,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ProjectService } from 'src/app/services/project.service';
 import { DataService } from 'src/app/services/data-service.service';
 import { EventsService } from 'src/app/services/events.service';
-/* import { Chart, registerables } from 'node_modules/chart.js';
-Chart.register(...registerables); */
+
 declare var bootstrap: any;
 declare var Chart: any;
 interface Escenario {
@@ -66,7 +65,7 @@ export class UniteModalComponent implements OnInit {
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
-    private cdRef: ChangeDetectorRef,
+
     public events: EventsService
   ) {}
   ngOnInit(): void {
@@ -108,13 +107,7 @@ export class UniteModalComponent implements OnInit {
   ngAfterViewInit() {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
-    modal._element.addEventListener('shown.bs.modal', () => {
-      if (!this.edit) {
-        /*         this.escenarys = this.cleanEsceneries;
-        this.years = [this.escenarys[0].years]; */
-        //console.log(this.years, this.escenarys[0], 'yearsssssss');
-      }
-    });
+    modal._element.addEventListener('shown.bs.modal', () => {});
 
     modal._element.addEventListener('hidden.bs.modal', () => {
       this.oldEscenarieId = undefined;
@@ -141,16 +134,12 @@ export class UniteModalComponent implements OnInit {
         this.sendEsceneries();
         this.selectedEscenary = '#';
       } else {
-        /*  this.edit = false; */
         this.selectedEscenary = '#';
-        /*  this.escenarys = []; */
       }
 
       const openButton = document.querySelector('#exampleModalButton');
 
-      // Verifica si el botón existe antes de intentar cerrar el modal
       if (openButton) {
-        // Simula un clic en el botón para cerrar el modal
         (openButton as HTMLElement).click();
       }
     });
@@ -164,7 +153,6 @@ export class UniteModalComponent implements OnInit {
     };
 
     this.projectSvc.saveScenery(newEscenary).subscribe((res: any) => {
-      //console.log(res);
       this.printAllEvent.emit();
       if (this.edit) {
         this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
@@ -176,7 +164,6 @@ export class UniteModalComponent implements OnInit {
     this.escenarys.push(newEscenary);
     this.showForm = false;
 
-    //console.log(this.escenarys);
     this.createEscenaryChartVariable.destroy();
   }
   addEscenary() {
@@ -210,12 +197,9 @@ export class UniteModalComponent implements OnInit {
       this.model['years'] = [this.escenarys[+this.selectedEscenary].years];
       this.model['locked'] =
         this.escenarys[+this.selectedEscenary].status === 0 ? true : false;
-      //console.log(this.escenarys[+this.selectedEscenary].years, 'run');
     } else {
       this.model['years'] = [years];
     }
-
-    //console.log(this.model['years'], 'years');
   }
 
   renderChart() {
@@ -228,7 +212,7 @@ export class UniteModalComponent implements OnInit {
     ); */
 
     const values = Object.values(this.escenarys[this.selectedEscenary].years);
-    //console.log(this.escenarys[this.selectedEscenary], 'values');
+
     if (!this.values) {
       this.values = values;
     }
@@ -249,9 +233,7 @@ export class UniteModalComponent implements OnInit {
               },
               onDrag: (e: any, datasetIndex: any, index: any, value: any) => {
                 e.target.style.cursor = 'grabbing';
-                /* //console.log(value); */
-                /*                 this.calcularMontoConIncremento();
-                this.renderChartVariable.options.scales.y.max = this.yMax; */
+
                 this.renderChartVariable.options.scales.y.max =
                   this.calcularMontoConIncremento() < 100
                     ? 100
@@ -267,23 +249,6 @@ export class UniteModalComponent implements OnInit {
                 this.model.years[0][years[index]] = value;
                 this.escenarys[this.selectedEscenary].years =
                   this.model.years[0];
-                //console.log({years: this.model.years,});
-
-                /*           if (this.edit) {
-                  this.projectSvc
-                    .updateScenery(this.escenarys[+this.selectedEscenary].id, {
-                      years: this.model.years[0],
-                    })
-                    .subscribe((res: any) => {
-                      this.projectSvc
-                        .getNode(this.nodeId)
-                        .subscribe((res: any) => {
-                          this.escenarys = res.sceneries;
-                        });
-
-                      this.printAllEvent.emit();
-                    });
-                } */
               },
             },
           }
@@ -305,6 +270,7 @@ export class UniteModalComponent implements OnInit {
         ],
       },
       options: {
+        animation: false,
         scales: {
           y: {
             min: 0,
@@ -336,9 +302,7 @@ export class UniteModalComponent implements OnInit {
 
     this.escenarys[+this.selectedEscenary] = escenary;
 
-    //console.log(this.escenarys[+this.selectedEscenary].id, 'sl,dlm');
-
-    if (this.edit) {
+    /*     if (this.edit) {
       this.projectSvc
         .updateScenery(this.escenarys[+this.selectedEscenary].id, {
           years: this.escenarys[+this.selectedEscenary].years,
@@ -349,13 +313,12 @@ export class UniteModalComponent implements OnInit {
           });
           this.printAllEvent.emit();
         });
-    }
+    } */
 
     this.renderChartVariable = new Chart('chartJSContainer', option);
     this.calcularMontoConIncremento();
   }
   onSelectChange() {
-    //console.log('disparoSelect', this.model.years[0]);
     if (this.oldEscenarieId && this.oldEscenarieId !== '#') {
       this.projectSvc
         .updateScenery(this.oldEscenarieId, {
@@ -444,6 +407,7 @@ export class UniteModalComponent implements OnInit {
         ],
       },
       options: {
+        animation: false,
         scales: {
           y: {
             min: 0,
@@ -529,7 +493,6 @@ export class UniteModalComponent implements OnInit {
         console.log(res);
       });
     } else {
-      /* this.unite = null; */
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0].years];
     }
@@ -549,9 +512,6 @@ export class UniteModalComponent implements OnInit {
       this.createEscenaryChartVariable.destroy();
       this.createEscenaryChart();
     }
-
-    /*     this.createEscenaryChartVariable.destroy();
-    this.createEscenaryChart(); */
   }
 
   lockedScenarys() {
@@ -562,42 +522,24 @@ export class UniteModalComponent implements OnInit {
   sendEsceneries() {
     this.sendEsceneriesEvent.emit(this.escenarys);
   }
-  onInputFocus(event: any) {
-    // Puedes realizar acciones cuando el input obtiene el foco, si es necesario
-  }
 
-  onInputBlur(event: any) {
-    // Puedes realizar acciones cuando el input pierde el foco
-    // Además, puedes volver a enfocar el input si es necesario
-    event.target.focus();
-  }
-  forceFocus(id: string) {
-    document.getElementById(id)?.focus();
-  }
   trackByFn(index: any, item: any) {
     return index;
   }
 
   calcularMontoConIncremento() {
-    // Filtrar solo las cantidades que son números
-
     if (this.values) {
-      // Filtrar y convertir a números
-
       const cantidadesNumeros: number[] = this.values.map((cantidad: any) =>
         typeof cantidad === 'string'
           ? parseFloat(cantidad)
           : (cantidad as number)
       );
 
-      // Encontrar la cantidad más alta
       const cantidadMaxima: number | undefined = Math.max(...cantidadesNumeros);
 
       if (cantidadMaxima !== undefined) {
-        // Calcular el 20% de la cantidad más alta
         const incremento: number = cantidadMaxima * 0.2;
 
-        // Sumar el 20% a la cantidad más alta
         const resultado: number = cantidadMaxima + incremento;
         this.yMax = resultado;
         if (this.renderChartVariable) {
@@ -611,7 +553,6 @@ export class UniteModalComponent implements OnInit {
 
         return resultado;
       } else {
-        // Manejar el caso en que no haya cantidades válidas
         throw new Error('No hay cantidades válidas para calcular.');
       }
     } else {
