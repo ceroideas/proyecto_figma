@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -54,7 +60,9 @@ export class BuildComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private projectSvc: ProjectService
+    private projectSvc: ProjectService,
+    private renderer: Renderer2,
+    private el: ElementRef
   ) {
     this.dragEnd = this.dragEnd.bind(this);
   }
@@ -237,6 +245,14 @@ export class BuildComponent implements OnInit {
     const element = this.zoomElement.nativeElement;
     this.zoomLevel = 0.8;
     element.style.transform = `scale(0.8)`;
+    const elements = this.el.nativeElement.querySelectorAll('.ovf');
+    console.log(elements, 'elemen');
+    if (elements) {
+      elements.forEach((element: any) => {
+        this.renderer.setStyle(element, 'font-size', '14px');
+        element.style.setProperty('font-size', '14px', 'important');
+      });
+    }
 
     this.projectSvc
       .savePosition(this.project.id, this.lastPosition)
@@ -1016,10 +1032,76 @@ export class BuildComponent implements OnInit {
 
   private updateZoom(): void {
     const element = this.zoomElement.nativeElement;
+    console.log(this.zoomLevel);
+    const elements = this.el.nativeElement.querySelectorAll('.ovf');
+
     if (this.zoomLevel >= 0.8) {
       element.style.transform = `scale(${this.zoomLevel})`;
     } else {
       this.zoomLevel = 0.8;
+    }
+
+    if (this.zoomLevel >= 0.8 && this.zoomLevel < 1) {
+      if (elements) {
+        elements.forEach((element: any) => {
+          this.renderer.setStyle(element, 'font-size', '14px');
+          element.style.setProperty('font-size', '14px', 'important');
+        });
+      }
+    }
+
+    if (this.zoomLevel >= 1 && this.zoomLevel < 1.2) {
+      if (elements) {
+        elements.forEach((element: any) => {
+          this.renderer.setStyle(element, 'font-size', '13px');
+          element.style.setProperty('font-size', '13px', 'important');
+        });
+      }
+    }
+
+    if (this.zoomLevel >= 1.2 && this.zoomLevel < 1.4) {
+      if (elements) {
+        elements.forEach((element: any) => {
+          this.renderer.setStyle(element, 'font-size', '12px');
+          element.style.setProperty('font-size', '12px', 'important');
+        });
+      }
+    }
+
+    if (this.zoomLevel >= 1.4 && this.zoomLevel < 1.6) {
+      if (elements) {
+        elements.forEach((element: any) => {
+          this.renderer.setStyle(element, 'font-size', '11px');
+          element.style.setProperty('font-size', '11px', 'important');
+        });
+      }
+    }
+
+    if (this.zoomLevel >= 1.6 && this.zoomLevel < 1.8) {
+      if (elements) {
+        elements.forEach((element: any) => {
+          this.renderer.setStyle(element, 'font-size', '10px');
+          element.style.setProperty('font-size', '10px', 'important');
+        });
+      }
+    }
+
+    if (this.zoomLevel >= 1.8 && this.zoomLevel < 2) {
+      if (elements) {
+        elements.forEach((element: any) => {
+          this.renderer.setStyle(element, 'font-size', '9px');
+          element.style.setProperty('font-size', '9px', 'important');
+        });
+      }
+    }
+
+    if (this.zoomLevel >= 2 && this.zoomLevel < 2.2) {
+      if (elements) {
+        elements.forEach((element: any) => {
+          this.renderer.setStyle(element, 'font-size', '8px');
+          element.style.setProperty('font-size', '8px', 'important');
+        });
+      }
     }
   }
 }
