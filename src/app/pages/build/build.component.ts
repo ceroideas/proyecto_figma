@@ -28,6 +28,7 @@ export class BuildComponent implements OnInit {
   projectName!: string;
   project: any;
   chart!: any;
+  tier!: number;
   data!: any;
   countHidden!: number;
   interval!: any;
@@ -78,7 +79,10 @@ export class BuildComponent implements OnInit {
       );
 
       let setCreate = (e: any) => {
-        console.log(this.nodeName, 'AUX');
+        this.projectSvc.getNode(this.nodeName).subscribe((res: any) => {
+          this.tier = +res.tier;
+          console.log(res);
+        });
         this.editVariable = false;
         e.stopPropagation();
         const openButton = document.querySelector('#exampleModalButton');
@@ -90,7 +94,7 @@ export class BuildComponent implements OnInit {
       let setEdit = (e: any) => {
         this.editModal.removeStorage();
         this.editVariable = true;
-        console.log(this.nodeName, 'V');
+
         e.stopPropagation();
         const openButton = document.querySelector('#exampleModalButton');
         if (openButton) {
@@ -169,7 +173,6 @@ export class BuildComponent implements OnInit {
         e.stopPropagation();
 
         var floatingElement = this.querySelector('.floating') as HTMLElement;
-        console.log('clickeado', floatingElement.style.display);
 
         if (floatingElement.style.display === 'block') {
           var floatingElement2 = document.body.querySelectorAll('.floating');
@@ -237,9 +240,7 @@ export class BuildComponent implements OnInit {
 
     this.projectSvc
       .savePosition(this.project.id, this.lastPosition)
-      .subscribe((res) => {
-        console.log('oki');
-      });
+      .subscribe((res) => {});
   }
 
   dragEnd(event: CdkDragEnd) {
@@ -253,9 +254,9 @@ export class BuildComponent implements OnInit {
       y: parseInt(matches ? matches[2] : '0', 10),
     };
 
-    this.projectSvc.savePosition(this.project.id, position).subscribe((res) => {
-      console.log('oki');
-    });
+    this.projectSvc
+      .savePosition(this.project.id, position)
+      .subscribe((res) => {});
   }
 
   getDataFromModal(data: any) {
@@ -271,7 +272,7 @@ export class BuildComponent implements OnInit {
       type: data.operation ? 2 : 1,
 
       node_id: this.isNewTree ? null : this.nodeName,
-      tier: this.isNewTree === false ? +this.fatherNode + 1 : 0,
+      tier: this.isNewTree === false ? +this.tier + 1 : 0,
     };
 
     /*     if (!this.isNewTree) {
@@ -387,6 +388,7 @@ export class BuildComponent implements OnInit {
     });
 
     this.isNewTree = false;
+    this.tier = 0;
   }
 
   editDataFromModal(data: any) {
@@ -440,9 +442,8 @@ export class BuildComponent implements OnInit {
       name: data.name,
     };
  */
-    console.log('edit', dataToSave);
+
     this.projectSvc.updateNode(data.id, dataToSave).subscribe((res: any) => {
-      console.log(res);
       this.getContentToChart();
     });
   }
@@ -461,8 +462,6 @@ export class BuildComponent implements OnInit {
         this.rows.push(element?.data);
       }
     }
-
-    console.log(this.rows, 'ROEWS');
   }
   findAndHideFatherNode() {
     /*     var floatingElement = document.querySelector('.floating') as HTMLElement;
@@ -497,7 +496,6 @@ export class BuildComponent implements OnInit {
       });
     }); */
     const hideSons = (childNode: any) => {
-      console.log('a');
       childNode.forEach((node: any) => {
         node.hidden = 1;
 
@@ -518,8 +516,6 @@ export class BuildComponent implements OnInit {
   }
   modalHideAndShowBranch(tier: any, i: number) {
     tier.hidden === 0 ? (tier.hidden = 1) : (tier.hidden = 0);
-
-    console.log(tier, 'tier');
 
     const sonNode = this.aux.filter(
       (item: any) => item.data[1] === tier.data[0].v
@@ -608,7 +604,6 @@ export class BuildComponent implements OnInit {
 
         element.hiddenNodeSon = haveHidden;
       } else {
-        console.log('mo es padre');
       }
     });
     this.addRow();
@@ -649,8 +644,6 @@ export class BuildComponent implements OnInit {
       this.lastPosition = this.project.position
         ? JSON.parse(this.project.position)
         : { x: 0, y: 0 };
-
-      console.log(this.lastPosition);
 
       const currentYear = new Date().getFullYear();
       const position = this.years.indexOf(currentYear);
@@ -967,13 +960,11 @@ export class BuildComponent implements OnInit {
       filteredObject[desiredYear] = element[id].years[desiredYear];
       this.showSceneries.push(filteredObject);
     });
-    console.log(this.showSceneries, 'SHOW ESCENARIES');
   }
   getSceneries2(esceneries: any) {
     /*     this.esceneries.push(esceneries);
     console.log(this.esceneries, 'es'); */
     this.esceneries = esceneries;
-    console.log(this.esceneries, 'esenarios en event');
   }
   printAll() {
     this.getContentToChart();
