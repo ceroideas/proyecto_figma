@@ -247,12 +247,9 @@ export class BuildComponent implements OnInit {
     element.style.transform = `scale(0.8)`;
     const elements = this.el.nativeElement.querySelectorAll('.ovf');
     console.log(elements, 'elemen');
-    if (elements) {
-      elements.forEach((element: any) => {
-        this.renderer.setStyle(element, 'font-size', '14px');
-        element.style.setProperty('font-size', '14px', 'important');
-      });
-    }
+    (document.querySelector('#chart_container') as HTMLElement).classList.remove("ovf-mod");
+    (document.querySelector('#chart_container') as HTMLElement).classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+    (document.querySelector('#chart_container') as HTMLElement).classList.add("fz14");
 
     this.projectSvc
       .savePosition(this.project.id, this.lastPosition)
@@ -661,6 +658,10 @@ export class BuildComponent implements OnInit {
         ? JSON.parse(this.project.position)
         : { x: 0, y: 0 };
 
+      this.zoomLevel = parseFloat(this.project.zoom);
+
+      this.updateZoom(false);
+
       const currentYear = new Date().getFullYear();
       const position = this.years.indexOf(currentYear);
 
@@ -1030,10 +1031,13 @@ export class BuildComponent implements OnInit {
     this.updateZoom();
   }
 
-  private updateZoom(): void {
+  zoomTimeout:any = null;
+
+  private updateZoom(save = true): void {
     const element = this.zoomElement.nativeElement;
     console.log(this.zoomLevel);
     const elements = this.el.nativeElement.querySelectorAll('.ovf');
+    const container = (document.querySelector('#chart_container') as HTMLElement);
 
     if (this.zoomLevel >= 0.8) {
       element.style.transform = `scale(${this.zoomLevel})`;
@@ -1041,67 +1045,60 @@ export class BuildComponent implements OnInit {
       this.zoomLevel = 0.8;
     }
 
-    if (this.zoomLevel >= 0.8 && this.zoomLevel < 1) {
-      if (elements) {
-        elements.forEach((element: any) => {
-          this.renderer.setStyle(element, 'font-size', '14px');
-          element.style.setProperty('font-size', '14px', 'important');
-        });
+    if (save) {
+      if (this.zoomTimeout) {
+        clearTimeout(this.zoomTimeout)
       }
+      this.zoomTimeout = setTimeout(()=>{
+
+        clearTimeout(this.zoomTimeout)
+
+        this.projectSvc
+        .saveZoom(this.project.id, this.zoomLevel)
+        .subscribe((res) => {});
+      },1000)
+    }
+
+    if (this.zoomLevel >= 0.8 && this.zoomLevel < 1) {
+      container.classList.remove("ovf-mod");
+      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+      container.classList.add("fz14");
     }
 
     if (this.zoomLevel >= 1 && this.zoomLevel < 1.2) {
-      if (elements) {
-        elements.forEach((element: any) => {
-          this.renderer.setStyle(element, 'font-size', '13px');
-          element.style.setProperty('font-size', '13px', 'important');
-        });
-      }
+      container.classList.remove("ovf-mod");
+      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+      container.classList.add("fz13");
     }
 
     if (this.zoomLevel >= 1.2 && this.zoomLevel < 1.4) {
-      if (elements) {
-        elements.forEach((element: any) => {
-          this.renderer.setStyle(element, 'font-size', '12px');
-          element.style.setProperty('font-size', '12px', 'important');
-        });
-      }
+      container.classList.remove("ovf-mod");
+      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+      container.classList.add("fz12");
     }
 
     if (this.zoomLevel >= 1.4 && this.zoomLevel < 1.6) {
-      if (elements) {
-        elements.forEach((element: any) => {
-          this.renderer.setStyle(element, 'font-size', '11px');
-          element.style.setProperty('font-size', '11px', 'important');
-        });
-      }
+      container.classList.add("ovf-mod");
+      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+      container.classList.add("fz11");
     }
 
     if (this.zoomLevel >= 1.6 && this.zoomLevel < 1.8) {
-      if (elements) {
-        elements.forEach((element: any) => {
-          this.renderer.setStyle(element, 'font-size', '10px');
-          element.style.setProperty('font-size', '10px', 'important');
-        });
-      }
+      container.classList.add("ovf-mod");
+      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+      container.classList.add("fz10");
     }
 
     if (this.zoomLevel >= 1.8 && this.zoomLevel < 2) {
-      if (elements) {
-        elements.forEach((element: any) => {
-          this.renderer.setStyle(element, 'font-size', '9px');
-          element.style.setProperty('font-size', '9px', 'important');
-        });
-      }
+      container.classList.add("ovf-mod");
+      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+      container.classList.add("fz9");
     }
 
     if (this.zoomLevel >= 2 && this.zoomLevel < 2.2) {
-      if (elements) {
-        elements.forEach((element: any) => {
-          this.renderer.setStyle(element, 'font-size', '8px');
-          element.style.setProperty('font-size', '8px', 'important');
-        });
-      }
+      container.classList.add("ovf-mod");
+      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
+      container.classList.add("fz8");
     }
   }
 }

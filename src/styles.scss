@@ -188,6 +188,14 @@ table {
   width: 150px;
   overflow: hidden;
   font-size: 14px;
+  height: 25px;
+}
+
+.ovf-mod .ovf {
+  white-space: normal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #branch-container {
@@ -238,4 +246,26 @@ table {
       }
     }
   }
+}
+
+.fz14 .ovf {
+  font-size: 14px !important;
+}
+.fz13 .ovf {
+  font-size: 13px !important;
+}
+.fz12 .ovf {
+  font-size: 12px !important;
+}
+.fz11 .ovf {
+  font-size: 11px !important;
+}
+.fz10 .ovf {
+  font-size: 10px !important;
+}
+.fz9 .ovf {
+  font-size: 9px !important;
+}
+.fz8 .ovf {
+  font-size: 8px !important;
 }
