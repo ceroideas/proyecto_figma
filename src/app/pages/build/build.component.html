@@ -120,26 +120,30 @@
         ></button>
       </div>
       <div class="modal-body modal-body2">
-        <div class="view-all">
-          <div
+        <div>
+          <select
             style="
-              flex: 1 1 0;
-              color: #111827;
-              font-size: 14px;
-
-              font-weight: 400;
-              word-wrap: break-word;
+              border-radius: 15px;
+              color: #000f55 !important;
+              width: 50%;
+              align-self: center;
+              text-align: center;
+              margin-left: 25%;
             "
+            class="form-select"
+            aria-label="Default select example"
+            [(ngModel)]="selectedTierLv"
+            (change)="hideTierAll()"
           >
-            View all
-          </div>
-          <div style="width: 20px; height: 20px; position: relative">
-            <img
-              style="position: absolute"
-              src="../../../assets/icons/Chevron down.svg"
-              alt=""
-            />
-          </div>
+            <option value="#">Ver todos</option>
+            <option
+              style="text-align: center !important"
+              *ngFor="let tier of tierLv; let i = index"
+              [value]="tier"
+            >
+              <div>Tier {{ tier }}</div>
+            </option>
+          </select>
         </div>
 
         <div id="branch-container">

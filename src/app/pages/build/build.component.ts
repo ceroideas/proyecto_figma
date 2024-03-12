@@ -51,12 +51,14 @@ export class BuildComponent implements OnInit {
   showSceneries: any[] = [];
   sceneries: any[] = [];
   selectedScenery: any = '#';
+  selectedTierLv: any = '#';
   years: any[] = [];
   currentYearIndex: number = 0;
   pointNode: any =
     '<div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>';
 
   lastPosition: any = {};
+  tierLv: number[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -247,9 +249,15 @@ export class BuildComponent implements OnInit {
     element.style.transform = `scale(0.8)`;
     const elements = this.el.nativeElement.querySelectorAll('.ovf');
     console.log(elements, 'elemen');
-    (document.querySelector('#chart_container') as HTMLElement).classList.remove("ovf-mod");
-    (document.querySelector('#chart_container') as HTMLElement).classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-    (document.querySelector('#chart_container') as HTMLElement).classList.add("fz14");
+    (
+      document.querySelector('#chart_container') as HTMLElement
+    ).classList.remove('ovf-mod');
+    (
+      document.querySelector('#chart_container') as HTMLElement
+    ).classList.remove('fz14', 'fz13', 'fz12', 'fz11', 'fz10', 'fz9', 'fz8');
+    (document.querySelector('#chart_container') as HTMLElement).classList.add(
+      'fz14'
+    );
 
     this.projectSvc
       .savePosition(this.project.id, this.lastPosition)
@@ -508,6 +516,47 @@ export class BuildComponent implements OnInit {
         node.hidden = 1;
       });
     }); */
+    const hideSons = (childNode: any) => {
+      childNode.forEach((node: any) => {
+        node.hidden = 1;
+
+        const sonNode = this.aux.filter(
+          (item: any) => item.data[1] === node.data[0].v
+        );
+
+        if (sonNode.length > 0) {
+          hideSons(sonNode);
+        }
+      });
+    };
+    hideSons(sonNode);
+    this.addRow();
+    this.chart.draw(this.data, { allowHtml: true });
+    google.charts.setOnLoadCallback(this.drawChart);
+    this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
+  }
+
+  findAndHideNodesModal() {
+    const node = this.aux.find((item: any) =>
+      item.data.some((subItem: any) => subItem.v === this.nodeName)
+    );
+    const fatherNode = this.aux.filter(
+      (item: any) => item.data[0].v === node.data[1]
+    );
+
+    const sonNode = this.aux.filter(
+      (item: any) => item.data[1] === this.nodeName
+    );
+
+    if (fatherNode.length > 0) {
+      const takeSonNode = this.aux.filter(
+        (item: any) => item.data[1] === fatherNode[0].data[0].v
+      );
+      const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
+      fatherNode[0].hiddenNodeSon = haveHidden;
+    }
+    node.hidden = 1;
+
     const hideSons = (childNode: any) => {
       childNode.forEach((node: any) => {
         node.hidden = 1;
@@ -786,7 +835,10 @@ export class BuildComponent implements OnInit {
           );
         });
         this.addRow();
-        this.chart.draw(this.data, { allowHtml: true });
+        if (this.chart) {
+          this.chart.draw(this.data, { allowHtml: true });
+        }
+
         google.charts.setOnLoadCallback(this.drawChart);
         this.getSceneries(this.selectedScenery);
       } else {
@@ -796,6 +848,7 @@ export class BuildComponent implements OnInit {
       }
 
       this.getSceneries(this.selectedScenery);
+      this.hideTier();
     });
   }
 
@@ -963,9 +1016,50 @@ export class BuildComponent implements OnInit {
     this.getContentToChart();
   }
 
+  hideTier() {
+    for (let i = 0; i < this.aux.length; i++) {
+      const element = this.aux[i];
+      if (!this.tierLv.includes(element.tier)) {
+        this.tierLv.push(element.tier);
+      }
+    }
+
+    this.tierLv.sort(function (a, b) {
+      return a - b;
+    });
+
+    console.log(this.tierLv);
+  }
+
   onSceneryChange() {
     if (this.selectedScenery !== undefined) {
       this.getSceneries(this.selectedScenery);
+    }
+  }
+
+  hideTierAll() {
+    console.log('smkdsnm');
+
+    if (this.selectedTierLv != '#') {
+      const filterNodeTier = this.aux
+        .map((obj: any, i: any) => {
+          if (obj.tier === +this.selectedTierLv) {
+            return { obj: obj, i: i };
+          } else {
+            return;
+          }
+        })
+        .filter(function (element: any) {
+          return element !== undefined;
+        });
+
+      for (let i = 0; i < filterNodeTier.length; i++) {
+        const element = filterNodeTier[i];
+        this.modalHideAndShowBranch(element.obj, element.i);
+      }
+    } else {
+      this.printAll();
+      this.countHidden = 0;
     }
   }
 
@@ -1031,13 +1125,13 @@ export class BuildComponent implements OnInit {
     this.updateZoom();
   }
 
-  zoomTimeout:any = null;
+  zoomTimeout: any = null;
 
   private updateZoom(save = true): void {
     const element = this.zoomElement.nativeElement;
     console.log(this.zoomLevel);
     const elements = this.el.nativeElement.querySelectorAll('.ovf');
-    const container = (document.querySelector('#chart_container') as HTMLElement);
+    const container = document.querySelector('#chart_container') as HTMLElement;
 
     if (this.zoomLevel >= 0.8) {
       element.style.transform = `scale(${this.zoomLevel})`;
@@ -1047,58 +1141,113 @@ export class BuildComponent implements OnInit {
 
     if (save) {
       if (this.zoomTimeout) {
-        clearTimeout(this.zoomTimeout)
+        clearTimeout(this.zoomTimeout);
       }
-      this.zoomTimeout = setTimeout(()=>{
-
-        clearTimeout(this.zoomTimeout)
+      this.zoomTimeout = setTimeout(() => {
+        clearTimeout(this.zoomTimeout);
 
         this.projectSvc
-        .saveZoom(this.project.id, this.zoomLevel)
-        .subscribe((res) => {});
-      },1000)
+          .saveZoom(this.project.id, this.zoomLevel)
+          .subscribe((res) => {});
+      }, 1000);
     }
 
     if (this.zoomLevel >= 0.8 && this.zoomLevel < 1) {
-      container.classList.remove("ovf-mod");
-      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-      container.classList.add("fz14");
+      container.classList.remove('ovf-mod');
+      container.classList.remove(
+        'fz14',
+        'fz13',
+        'fz12',
+        'fz11',
+        'fz10',
+        'fz9',
+        'fz8'
+      );
+      container.classList.add('fz14');
     }
 
     if (this.zoomLevel >= 1 && this.zoomLevel < 1.2) {
-      container.classList.remove("ovf-mod");
-      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-      container.classList.add("fz13");
+      container.classList.remove('ovf-mod');
+      container.classList.remove(
+        'fz14',
+        'fz13',
+        'fz12',
+        'fz11',
+        'fz10',
+        'fz9',
+        'fz8'
+      );
+      container.classList.add('fz13');
     }
 
     if (this.zoomLevel >= 1.2 && this.zoomLevel < 1.4) {
-      container.classList.remove("ovf-mod");
-      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-      container.classList.add("fz12");
+      container.classList.remove('ovf-mod');
+      container.classList.remove(
+        'fz14',
+        'fz13',
+        'fz12',
+        'fz11',
+        'fz10',
+        'fz9',
+        'fz8'
+      );
+      container.classList.add('fz12');
     }
 
     if (this.zoomLevel >= 1.4 && this.zoomLevel < 1.6) {
-      container.classList.add("ovf-mod");
-      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-      container.classList.add("fz11");
+      container.classList.add('ovf-mod');
+      container.classList.remove(
+        'fz14',
+        'fz13',
+        'fz12',
+        'fz11',
+        'fz10',
+        'fz9',
+        'fz8'
+      );
+      container.classList.add('fz11');
     }
 
     if (this.zoomLevel >= 1.6 && this.zoomLevel < 1.8) {
-      container.classList.add("ovf-mod");
-      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-      container.classList.add("fz10");
+      container.classList.add('ovf-mod');
+      container.classList.remove(
+        'fz14',
+        'fz13',
+        'fz12',
+        'fz11',
+        'fz10',
+        'fz9',
+        'fz8'
+      );
+      container.classList.add('fz10');
     }
 
     if (this.zoomLevel >= 1.8 && this.zoomLevel < 2) {
-      container.classList.add("ovf-mod");
-      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-      container.classList.add("fz9");
+      container.classList.add('ovf-mod');
+      container.classList.remove(
+        'fz14',
+        'fz13',
+        'fz12',
+        'fz11',
+        'fz10',
+        'fz9',
+        'fz8'
+      );
+      container.classList.add('fz9');
     }
 
     if (this.zoomLevel >= 2 && this.zoomLevel < 2.2) {
-      container.classList.add("ovf-mod");
-      container.classList.remove("fz14","fz13","fz12","fz11","fz10","fz9","fz8");
-      container.classList.add("fz8");
+      container.classList.add('ovf-mod');
+      container.classList.remove(
+        'fz14',
+        'fz13',
+        'fz12',
+        'fz11',
+        'fz10',
+        'fz9',
+        'fz8'
+      );
+      container.classList.add('fz8');
     }
   }
 }
