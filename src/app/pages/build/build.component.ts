@@ -244,10 +244,14 @@ export class BuildComponent implements OnInit {
   }
 
   refresher() {
-    this.lastPosition = { x: 20, y: 90 };
+    let rect:any = (document.querySelector('table.google-visualization-orgchart-table') as HTMLTableElement).getBoundingClientRect();
+
+    console.log(rect);
+
+    this.lastPosition = { x: 300, y: ((rect.height/2)-20) };
     const element = this.zoomElement.nativeElement;
-    this.zoomLevel = 0.8;
-    element.style.transform = `scale(0.8)`;
+    this.zoomLevel = 1;
+    element.style.transform = `scale(1)`;
     const elements = this.el.nativeElement.querySelectorAll('.ovf');
     console.log(elements, 'elemen');
     (
@@ -257,7 +261,7 @@ export class BuildComponent implements OnInit {
       document.querySelector('#chart_container') as HTMLElement
     ).classList.remove('fz14', 'fz13', 'fz12', 'fz11', 'fz10', 'fz9', 'fz8');
     (document.querySelector('#chart_container') as HTMLElement).classList.add(
-      'fz14'
+      'fz13'
     );
 
     this.projectSvc
