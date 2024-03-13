@@ -339,7 +339,10 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let tier of aux; index as i">
+            <tr
+              *ngFor="let tier of aux; index as i"
+              [style]="tier.hidden == 0 ? '' : 'display: none'"
+            >
               <td
                 [ngClass]="
                   tier.hidden === 0 ? 'branch-active' : 'branch-noactive'
