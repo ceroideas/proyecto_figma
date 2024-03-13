@@ -131,17 +131,31 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   normalChart() {
-    // Generar datos para la distribución normal
-    const data = this.generateNormalDistributionData(this.mean, this.stDev);
+    // Valores de x en el rango deseado
+    const xValues = [];
+    for (
+      let i = +this.mean - 3 * +this.stDev;
+      i <= +this.mean + 3 * +this.stDev;
+      i += 0.1
+    ) {
+      xValues.push(i);
+    }
+
+    // Calcula la PDF para cada valor de x
+    const pdfValues = xValues.map((x) => {
+      const exponent = -0.5 * Math.pow((x - +this.mean) / +this.stDev, 2);
+      return (1 / (+this.stDev * Math.sqrt(2 * Math.PI))) * Math.exp(exponent);
+    });
+
     this.chart = new Chart('chart', {
       type: 'line',
       data: {
-        labels: data.labels,
+        labels: xValues,
         datasets: [
           {
             backgroundColor: '#8C64B1',
             label: 'Distribución Normal',
-            data: data.values,
+            data: pdfValues,
             fill: true,
             tension: 0.4,
             borderWidth: 1,
@@ -164,34 +178,40 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   uniformChart() {
-    let uniformData: any;
+    // Datos para la distribución uniforme
 
-    uniformData = this.generateUniformDistributionData(+this.min, +this.max);
+    // Etiquetas para los valores
+    const labels = ['Intervalo'];
+
+    // Datos (probabilidad constante en el intervalo)
+    const data = [1 / (+this.max - +this.min)];
+
+    console.log(data);
+
+    // Configura la gráfica
 
     this.chart = new Chart('chart', {
-      type: 'line',
+      type: 'bar',
       data: {
-        labels: uniformData.labels,
+        labels: labels,
         datasets: [
           {
-            backgroundColor: '#8C64B1',
             label: 'Distribución Uniforme',
-            data: uniformData.values,
-            fill: true,
-            tension: 0.4,
+            data: data,
+            backgroundColor: '#8C64B1', // Color de las barras
             borderWidth: 1,
-            pointHitRadius: 25, // for improved touch support
-            // dragData: false // prohibit dragging this dataset
-            // same as returning `false` in the onDragStart callback
-            // for this datsets index position
           },
         ],
       },
       options: {
-        plugins: {},
         scales: {
+          yAxes: {
+            display: true,
+            suggestedMax: 0.5,
+            suggestedMin: -0.5,
+          },
           y: {
-            // dragData: false // disables datapoint dragging for the entire axis
+            display: false,
           },
         },
       },
@@ -199,21 +219,30 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   exponentialChart() {
-    const data = this.generateExponentialDistributionData(this.rate);
+    // Valores de x en el rango deseado
+    const xValuesExp = [];
+    for (let x = 0; x <= 10; x += 0.1) {
+      xValuesExp.push(x);
+    }
+
+    // Calcula la PDF para cada valor de x
+    const exponentialValues = xValuesExp.map((x) => {
+      const pdf = +this.rate * Math.exp(-+this.rate * x);
+      return pdf;
+    });
 
     this.chart = new Chart('chart', {
       type: 'line',
       data: {
-        labels: data.labels,
+        labels: xValuesExp,
         datasets: [
           {
             backgroundColor: '#8C64B1',
             label: 'Distribución Exponencial',
-            data: data.values,
-            fill: true,
-            tension: 0.4,
+            data: exponentialValues,
+
             borderWidth: 1,
-            pointHitRadius: 25, // for improved touch support
+
             // dragData: false // prohibit dragging this dataset
             // same as returning `false` in the onDragStart callback
             // for this datsets index position
@@ -221,10 +250,13 @@ export class SimulationShapeModalComponent implements OnInit {
         ],
       },
       options: {
-        plugins: {},
         scales: {
           y: {
-            // dragData: false // disables datapoint dragging for the entire axis
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'PDF',
+            },
           },
         },
       },
