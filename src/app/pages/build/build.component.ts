@@ -54,6 +54,7 @@ export class BuildComponent implements OnInit {
   selectedTierLv: any = '#';
   years: any[] = [];
   currentYearIndex: number = 0;
+  query:string = "";
   pointNode: any =
     '<div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>';
 

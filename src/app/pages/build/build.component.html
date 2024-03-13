@@ -125,10 +125,10 @@
             style="
               border-radius: 15px;
               color: #000f55 !important;
-              width: 50%;
+              width: 80%;
               align-self: center;
               text-align: center;
-              margin-left: 25%;
+              margin-left: 10%;
             "
             class="form-select"
             aria-label="Default select example"
@@ -281,6 +281,7 @@
             "
           ></div>
         </div> -->
+        <input type="text" class="form-control" style="border-radius: 15px; width: 300px;" placeholder="Search..." [(ngModel)]="query">
         <select
           style="border-radius: 15px"
           class="form-select"
@@ -340,8 +341,8 @@
           </thead>
           <tbody>
             <tr
-              *ngFor="let tier of aux; index as i"
-              [style]="tier.hidden == 0 ? '' : 'display: none'"
+              *ngFor="let tier of aux | search:query; index as i"
+              [style]="tier.hidden == 0 ? '' : 'display: none-'"
             >
               <td
                 [ngClass]="
