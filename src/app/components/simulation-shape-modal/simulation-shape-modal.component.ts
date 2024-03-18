@@ -131,74 +131,63 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   normalChart() {
-    // Valores de x en el rango deseado
-    const xValues = [];
-    for (
-      let i = +this.mean - 3 * +this.stDev;
-      i <= +this.mean + 3 * +this.stDev;
-      i += 0.1
-    ) {
-      xValues.push(i);
+    // Definir la media y la desviación estándar
+    var mu = +this.mean,
+      sigma = +this.stDev,
+      samples = 10000;
+
+    // Generar una distribución normal
+    var s = [];
+    for (var i = 0; i < samples; i++) {
+      s.push(
+        mu +
+          sigma *
+            Math.sqrt(-2.0 * Math.log(Math.random())) *
+            Math.cos(2.0 * Math.PI * Math.random())
+      );
+    }
+    // Crear el histograma
+    var histogram = new Array(samples).fill(0);
+    for (var i = 0; i < s.length; i++) {
+      histogram[Math.floor(((s[i] - mu + 5 * sigma) / (10 * sigma)) * 100)]++;
     }
 
-    // Calcula la PDF para cada valor de x
-    const pdfValues = xValues.map((x) => {
-      const exponent = -0.5 * Math.pow((x - +this.mean) / +this.stDev, 2);
-      return (1 / (+this.stDev * Math.sqrt(2 * Math.PI))) * Math.exp(exponent);
+    var binWidth = (10 * sigma) / 100;
+    histogram = histogram.map(function (value) {
+      return value / (binWidth * s.length);
     });
+    console.log(histogram);
+
+    // Crear la curva de la función de densidad de probabilidad
+    var x = Array.from({ length: 100 }, (_, i) =>
+      (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
+    );
+    var y = x.map(function (x) {
+      return (
+        (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+        Math.exp(-((+x - mu) ** 2) / (2 * sigma ** 2))
+      );
+    });
+
+    // Crear el gráfico
 
     this.chart = new Chart('chart', {
       type: 'line',
       data: {
-        labels: xValues,
+        labels: x,
         datasets: [
           {
-            backgroundColor: '#8C64B1',
-            label: 'Distribución Normal',
-            data: pdfValues,
-            fill: true,
-            tension: 0.4,
+            label: 'Histogram',
+            data: histogram,
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+            borderColor: 'rgba(0, 0, 255, 1)',
             borderWidth: 1,
-            pointHitRadius: 25, // for improved touch support
-            // dragData: false // prohibit dragging this dataset
-            // same as returning `false` in the onDragStart callback
-            // for this datsets index position
           },
-        ],
-      },
-      options: {
-        plugins: {},
-        scales: {
-          y: {
-            // dragData: false // disables datapoint dragging for the entire axis
-          },
-        },
-      },
-    });
-  }
-
-  uniformChart() {
-    // Datos para la distribución uniforme
-
-    // Etiquetas para los valores
-    const labels = ['Intervalo'];
-
-    // Datos (probabilidad constante en el intervalo)
-    const data = [1 / (+this.max - +this.min)];
-
-    console.log(data);
-
-    // Configura la gráfica
-
-    this.chart = new Chart('chart', {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [
           {
-            label: 'Distribución Uniforme',
-            data: data,
-            backgroundColor: '#8C64B1', // Color de las barras
+            label: 'PDF',
+            data: y,
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+            borderColor: 'rgba(255, 0, 0, 1)',
             borderWidth: 1,
           },
         ],
@@ -206,12 +195,74 @@ export class SimulationShapeModalComponent implements OnInit {
       options: {
         scales: {
           yAxes: {
-            display: true,
-            suggestedMax: 0.5,
-            suggestedMin: -0.5,
+            beginAtZero: true,
+            ticks: {},
           },
           y: {
             display: false,
+          },
+        },
+      },
+    });
+  }
+
+  uniformChart() {
+    // Generar muestras de la distribución
+    var s = [];
+    for (var i = 0; i < 10000; i++) {
+      s.push(+this.min + Math.random() * (+this.max - +this.min));
+    }
+
+    // Verificar que todos los valores están dentro del intervalo dado
+    console.log(s.every((value) => value >= -1 && value < 0));
+
+    // Crear el histograma
+    var histogram = new Array(15).fill(0);
+    for (var i = 0; i < s.length; i++) {
+      histogram[Math.floor((s[i] + 1) / (1 / 15))]++;
+    }
+
+    // Normalizar el histograma
+    var binWidth = 1 / 15;
+    histogram = histogram.map(function (value) {
+      return value / (binWidth * s.length);
+    });
+
+    // Crear el gráfico
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: Array.from({ length: 15 }, (_, i) =>
+          (+this.min + i * binWidth).toFixed(2)
+        ),
+        datasets: [
+          {
+            type: 'line',
+            label: 'PDF',
+            fill: false,
+            data: Array.from({ length: 15 }, () => 1),
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+            borderColor: 'rgba(255, 0, 0, 1)',
+            borderWidth: 2,
+          },
+          {
+            label: 'Histogram',
+            data: histogram,
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+            borderColor: 'rgba(0, 0, 255, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            display: false,
+          },
+          yAxes: {
+            beginAtZero: true,
+            ticks: {},
           },
         },
       },
