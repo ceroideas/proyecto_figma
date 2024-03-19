@@ -137,6 +137,7 @@ export class SimulationShapeModalComponent implements OnInit {
       samples = 10000;
 
     // Generar una distribución normal
+    // Generar una distribución normal
     var s = [];
     for (var i = 0; i < samples; i++) {
       s.push(
@@ -177,17 +178,18 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: x,
         datasets: [
           {
-            label: 'Histogram',
-            data: histogram,
-            backgroundColor: 'rgba(0, 0, 255, 0.5)',
-            borderColor: 'rgba(0, 0, 255, 1)',
-            borderWidth: 1,
-          },
-          {
             label: 'PDF',
             data: y,
             backgroundColor: 'rgba(255, 0, 0, 0.5)',
             borderColor: 'rgba(255, 0, 0, 1)',
+            borderWidth: 1,
+          },
+          {
+            type: 'bar',
+            label: 'Histogram',
+            data: histogram,
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+            borderColor: 'rgba(0, 0, 255, 1)',
             borderWidth: 1,
           },
         ],
@@ -207,23 +209,26 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   uniformChart() {
+    var min = +this.min;
+    var max = +this.max;
+
     // Generar muestras de la distribución
     var s = [];
-    for (var i = 0; i < 10000; i++) {
-      s.push(+this.min + Math.random() * (+this.max - +this.min));
+    for (var i = 0; i < 1000; i++) {
+      s.push(min + Math.random() * (max - min));
     }
 
     // Verificar que todos los valores están dentro del intervalo dado
-    console.log(s.every((value) => value >= -1 && value < 0));
+    console.log(s.every((value) => value >= min && value < max));
 
     // Crear el histograma
     var histogram = new Array(15).fill(0);
     for (var i = 0; i < s.length; i++) {
-      histogram[Math.floor((s[i] + 1) / (1 / 15))]++;
+      histogram[Math.floor((s[i] - min) / ((max - min) / 15))]++;
     }
 
     // Normalizar el histograma
-    var binWidth = 1 / 15;
+    var binWidth = (max - min) / 15;
     histogram = histogram.map(function (value) {
       return value / (binWidth * s.length);
     });
@@ -234,7 +239,7 @@ export class SimulationShapeModalComponent implements OnInit {
       type: 'bar',
       data: {
         labels: Array.from({ length: 15 }, (_, i) =>
-          (+this.min + i * binWidth).toFixed(2)
+          (min + i * binWidth).toFixed(2)
         ),
         datasets: [
           {
@@ -256,6 +261,58 @@ export class SimulationShapeModalComponent implements OnInit {
         ],
       },
       options: {
+        scales: {},
+      },
+    });
+  }
+
+  exponentialChart() {
+    // Generar muestras de la distribución
+    var s = [];
+    var rate = +this.rate;
+    for (var i = 0; i < 1000; i++) {
+      s.push(-rate * Math.log(1.0 - Math.random()));
+    }
+
+    // Crear el histograma
+    var histogram = new Array(50).fill(0);
+    for (var i = 0; i < s.length; i++) {
+      histogram[Math.floor(s[i] / (10 / 50))]++;
+    }
+
+    // Normalizar el histograma
+    var binWidth = 10 / 50;
+    histogram = histogram.map(function (value) {
+      return value / (binWidth * s.length);
+    });
+
+    console.log(histogram);
+
+    // Crear el gráfico del histograma y la PDF
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: Array.from({ length: 50 }, (_, i) => (i * binWidth).toFixed(2)),
+        datasets: [
+          {
+            label: 'PDF',
+            data: Array.from({ length: 50 }, (_, i) => Math.exp(-i * binWidth)),
+            fill: false,
+            borderColor: 'rgba(255, 0, 0, 1)',
+            borderWidth: 1,
+            type: 'line',
+          },
+          {
+            label: 'Histogram',
+            data: histogram,
+            backgroundColor: 'rgba(0, 0, 255, 0.5)',
+            borderColor: 'rgba(0, 0, 255, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
         scales: {
           y: {
             display: false,
@@ -263,51 +320,6 @@ export class SimulationShapeModalComponent implements OnInit {
           yAxes: {
             beginAtZero: true,
             ticks: {},
-          },
-        },
-      },
-    });
-  }
-
-  exponentialChart() {
-    // Valores de x en el rango deseado
-    const xValuesExp = [];
-    for (let x = 0; x <= 10; x += 0.1) {
-      xValuesExp.push(x);
-    }
-
-    // Calcula la PDF para cada valor de x
-    const exponentialValues = xValuesExp.map((x) => {
-      const pdf = +this.rate * Math.exp(-+this.rate * x);
-      return pdf;
-    });
-
-    this.chart = new Chart('chart', {
-      type: 'line',
-      data: {
-        labels: xValuesExp,
-        datasets: [
-          {
-            backgroundColor: '#8C64B1',
-            label: 'Distribución Exponencial',
-            data: exponentialValues,
-
-            borderWidth: 1,
-
-            // dragData: false // prohibit dragging this dataset
-            // same as returning `false` in the onDragStart callback
-            // for this datsets index position
-          },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'PDF',
-            },
           },
         },
       },
