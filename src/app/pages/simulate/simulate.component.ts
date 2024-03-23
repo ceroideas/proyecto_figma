@@ -16,6 +16,11 @@ export class SimulateComponent implements OnInit {
   id!: any;
   nodes: any[] = [];
   isSelectedAll: boolean = false;
+  simulateName: string = 'simulation Name';
+  simulateDescription: string = 'simulation description';
+  simulationNumber: number = 10000;
+  editSimulation: boolean = false;
+  tierCero: any;
 
   constructor(
     private projectSvc: ProjectService,
@@ -26,7 +31,9 @@ export class SimulateComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.nodes = res.nodes;
-      console.log(this.nodes);
+      this.tierCero = res.nodes.find((node: any) => node.tier == 0);
+      const result = eval(this.tierCero.formula.join(''));
+      console.log(result, 'result');
     });
   }
 
@@ -43,5 +50,20 @@ export class SimulateComponent implements OnInit {
 
   getNumberOfActiveNodes(): number {
     return this.nodes.filter((node) => node.isActive).length;
+  }
+
+  editSimulationClick() {
+    this.editSimulation = !this.editSimulation;
+  }
+
+  resetData() {
+    this.editSimulation = true;
+    this.simulateDescription = '';
+    this.simulationNumber = 0;
+    this.simulateName = '';
+  }
+
+  generateSimulation() {
+    console.log(this.nodes);
   }
 }

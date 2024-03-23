@@ -1535,9 +1535,27 @@
     <div class="container">
       <div class="p-4 bg-light rounded" style="max-width: 400px">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="font-weight-bold">Edit variable</div>
+          <div class="font-weight-bold">Editar variable</div>
           <div class="d-flex">
-            <div style="width: 16.67px; height: 16.67px">
+            <div
+              (click)="editSimulationClick()"
+              style="width: 20.67px; height: 20.67px; cursor: pointer"
+            >
+              <img
+                style="width: 20.67px; height: 20.67px"
+                [src]="
+                  editSimulation
+                    ? '../../../assets/icons/fi_x2.svg'
+                    : '../../../assets/icons/fi_edit-3.svg'
+                "
+                alt=""
+              />
+            </div>
+            <div
+              (click)="resetData()"
+              class="ml-2"
+              style="width: 16.67px; height: 16.67px; cursor: pointer"
+            >
               <img
                 style="width: 16.67px; height: 16.67px; cursor: pointer"
                 src="../../../assets/icons/back.png"
@@ -1559,7 +1577,7 @@
         <div class="d-flex flex-column mb-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="d-flex">
-              <div class="text-dark">Items to use variables</div>
+              <div class="text-dark">Variables utilizadas</div>
               <div class="text-dark ml-2">({{ getNumberOfActiveNodes() }})</div>
             </div>
             <div
@@ -1567,7 +1585,7 @@
               data-bs-target="#exampleModal"
               class="see-more font-weight-bold"
             >
-              See more
+              Ver mas
             </div>
           </div>
           <!--           <div class="d-flex flex-wrap">
@@ -1609,20 +1627,57 @@
         </div>
         <hr class="my-4" />
         <div class="mb-4">
-          <div class="text-muted">Simulation name</div>
+          <div class="text-muted">Nombre de la simulacion</div>
           <div class="font-weight-bold">
-            Simulation based on number of units sold
+            <div *ngIf="!editSimulation">
+              {{ simulateName }}
+            </div>
+            <div class="input-group" *ngIf="editSimulation">
+              <input
+                [(ngModel)]="simulateName"
+                type="text"
+                class="form-control input-formula mb-0 input-margin"
+                placeholder="Nombre"
+                aria-describedby="basic-addon1"
+              />
+            </div>
           </div>
         </div>
         <div class="mb-4">
           <div class="text-muted">Number of simulated steps</div>
-          <div class="font-weight-bold">10,000</div>
+          <div class="font-weight-bold">
+            <div *ngIf="!editSimulation">
+              {{ simulationNumber }}
+            </div>
+
+            <div class="input-group" *ngIf="editSimulation">
+              <input
+                [(ngModel)]="simulationNumber"
+                type="text"
+                class="form-control input-formula mb-0 input-margin"
+                placeholder="numero de simulacion"
+                aria-describedby="basic-addon1"
+              />
+            </div>
+          </div>
         </div>
         <div class="mb-4">
           <div class="text-muted">Description</div>
           <div class="font-weight-bold">
-            Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet
-            sint...
+            <div *ngIf="!editSimulation">
+              {{ simulateDescription }}
+            </div>
+
+            <div class="input-group" *ngIf="editSimulation">
+              <textarea
+                [(ngModel)]="simulateDescription"
+                type="text"
+                class="form-control input-formula mb-0 input-margin"
+                style="height: 120px"
+                placeholder="Descripcion"
+                aria-describedby="basic-addon1"
+              ></textarea>
+            </div>
           </div>
         </div>
         <div class="mb-4">
@@ -1654,7 +1709,9 @@
             ></div>
           </div>
         </div>
-        <div class="btn simulate-button">Simulate</div>
+        <div (click)="generateSimulation()" class="btn simulate-button">
+          Simulate
+        </div>
       </div>
     </div>
   </div>
@@ -1721,6 +1778,7 @@
           </button>
 
           <button
+            data-bs-dismiss="modal"
             type="button"
             class="btn btn-lg save-variable-button col-md-5"
           >
