@@ -18,7 +18,7 @@ export const routes: Routes = [
         component: InspectComponent,
       },
       { path: 'waterfall', component: WaterfallChartComponent },
-      { path: 'simulate', component: SimulateComponent },
+      { path: 'simulate/:id', component: SimulateComponent },
       { path: 'build/:id', component: BuildComponent },
     ],
   },

@@ -1560,7 +1560,7 @@
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="d-flex">
               <div class="text-dark">Items to use variables</div>
-              <div class="text-dark ml-2">(24)</div>
+              <div class="text-dark ml-2">({{ getNumberOfActiveNodes() }})</div>
             </div>
             <div
               data-bs-toggle="modal"
@@ -1570,42 +1570,42 @@
               See more
             </div>
           </div>
-          <div class="d-flex flex-wrap">
-            <!-- Primer elemento -->
+          <!--           <div class="d-flex flex-wrap">
+           
             <div class="flex-item">
               <div class="inner-box">
                 <div class="content">Units</div>
               </div>
             </div>
 
-            <!-- Segundo elemento -->
+            
             <div class="flex-item">
               <div class="inner-box">
                 <div class="content">Units</div>
               </div>
             </div>
 
-            <!-- Tercer elemento -->
+            
             <div class="flex-item">
               <div class="inner-box-active">
                 <div class="content">Units</div>
               </div>
             </div>
 
-            <!-- Cuarto elemento -->
+            
             <div class="flex-item">
               <div class="inner-box">
                 <div class="content">Units</div>
               </div>
             </div>
 
-            <!-- Quinto elemento -->
+           
             <div class="flex-item">
               <div class="inner-box">
                 <div class="content">Units</div>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
         <hr class="my-4" />
         <div class="mb-4">
@@ -1665,13 +1665,13 @@
   class="modal fade"
   id="exampleModal"
   tabindex="-1"
-  aria-labelledby="exampleModalLabel"
+  aria-labelledby="variableModal"
   aria-hidden="true"
 >
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <p class="modal-title" id="exampleModalLabel">Variables a utilizar</p>
+        <p class="modal-title" id="variableModal">Variables a utilizar</p>
         <button
           type="button"
           class="btn-close"
@@ -1683,208 +1683,26 @@
         <div class="d-flex justify-content-between align-items-center mb-2">
           <div class="d-flex">
             <div class="text-dark">Items to use variables</div>
-            <div class="text-dark ml-2">(24)</div>
+            <div class="text-dark ml-2">({{ getNumberOfActiveNodes() }})</div>
           </div>
-          <div class="see-more font-weight-bold">Seleccionar todo</div>
+          <div class="see-more font-weight-bold" (click)="toggleSelectAll()">
+            Seleccionar todo
+          </div>
         </div>
         <div class="d-flex flex-wrap">
           <!-- Primer elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Segundo elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Tercer elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box-active">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Cuarto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Quinto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Segundo elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Tercer elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box-active">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Cuarto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Quinto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Segundo elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Tercer elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box-active">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Cuarto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Quinto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Segundo elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Tercer elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box-active">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Cuarto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Quinto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Segundo elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Tercer elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box-active">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Cuarto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Quinto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Segundo elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Tercer elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box-active">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Cuarto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
-            </div>
-          </div>
-
-          <!-- Quinto elemento -->
-          <div class="flex-item-modal">
-            <div class="inner-box">
-              <div class="content">Units</div>
+          <div
+            class="flex-item-modal"
+            *ngFor="let node of nodes"
+            (click)="toggleActive(node)"
+          >
+            <div
+              [ngClass]="{
+                'inner-box': true,
+                'inner-box-active': node.isActive
+              }"
+            >
+              <div class="content">{{ node.name }}</div>
             </div>
           </div>
         </div>

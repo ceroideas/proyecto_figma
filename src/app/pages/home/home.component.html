@@ -96,7 +96,11 @@
               </a>
             </li>
 
-            <li class="nav-item" routerLinkActive="active">
+            <li
+              (click)="redirect('simulate')"
+              class="nav-item"
+              routerLinkActive="active"
+            >
               <a routerLink="simulate" class="nav-link">
                 <img
                   class="mr-2"

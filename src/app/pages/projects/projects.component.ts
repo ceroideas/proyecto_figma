@@ -45,13 +45,15 @@ export class ProjectsComponent {
 
   redirect(event: Event, route: string, id: any) {
     event.stopPropagation();
-    if (route !== 'build') {
+    /*     if (route !== 'build') {
       this.router.navigate([`home/${route}`]);
       localStorage.setItem('project', id);
     } else {
       this.router.navigate([`home/${route}/${id}`]);
       localStorage.setItem('project', id);
-    }
+    } */
+    localStorage.setItem('project', id);
+    this.router.navigate([`home/${route}/${id}`]);
   }
 
   convertDateFormat(originalDate: string): string {
