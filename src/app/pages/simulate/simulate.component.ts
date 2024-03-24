@@ -73,7 +73,7 @@ export class SimulateComponent implements OnInit {
 
       if (typeof nodeId === 'number') {
         if (!node.isActive || node.isActive == false) {
-          formula.push(node.unite == null ? 0 : node.unite);
+          formula.push(node.unite == null || undefined ? 0 : node.unite);
         } else {
           switch (node.distribution_shape[0].name) {
             case 'Uniforme':
@@ -90,6 +90,13 @@ export class SimulateComponent implements OnInit {
                 node.distribution_shape[0].stDev
               );
               formula.push(randomNumberNormal);
+              break;
+
+            case 'Exponencial':
+              const randomNumberExponential = this.exponentialOperation(
+                node.distribution_shape[0].rate
+              );
+              formula.push(randomNumberExponential);
               break;
 
             default:
@@ -171,5 +178,33 @@ export class SimulateComponent implements OnInit {
     );
 
     return x[Math.floor(Math.random() * x.length)];
+  }
+
+  exponentialOperation(rateOperation: any) {
+    // Escala de la distribución exponencial
+    let rate = +rateOperation; // Cambia este valor para ajustar la escala
+
+    // Dibujar muestras de la distribución exponencial
+    let s = [];
+    for (let i = 0; i < +this.simulationNumber; i++) {
+      s.push(-rate * Math.log(1.0 - Math.random()));
+    }
+
+    // Crear el histograma
+    let histogram = new Array(+this.simulationNumber).fill(0);
+    for (let i = 0; i < s.length; i++) {
+      histogram[Math.min(Math.floor(s[i] / (10 / 50)), histogram.length - 1)]++;
+    }
+
+    // Normalizar el histograma
+    let binWidth = 10 / 50;
+    histogram = histogram.map((value) => value / (binWidth * s.length));
+
+    // Crear bins para el histograma
+    let bins = Array.from({ length: histogram.length }, (_, i) =>
+      (i * binWidth).toFixed(2)
+    );
+
+    return bins[Math.floor(Math.random() * bins.length)];
   }
 }
