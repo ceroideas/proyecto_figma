@@ -134,7 +134,7 @@ export class SimulationShapeModalComponent implements OnInit {
     // Definir la media y la desviación estándar
     var mu = +this.mean,
       sigma = +this.stDev,
-      samples = 10000;
+      samples = 1000;
 
     // Generar una distribución normal
     // Generar una distribución normal
@@ -267,62 +267,62 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   exponentialChart() {
-    // Generar muestras de la distribución
-    var s = [];
-    var rate = +this.rate;
-    for (var i = 0; i < 1000; i++) {
-      s.push(-rate * Math.log(1.0 - Math.random()));
+    // Escala de la distribución exponencial
+    let rate = this.rate; // Cambia este valor para ajustar la escala
+
+    // Dibujar muestras de la distribución exponencial
+    let s = [];
+    for(let i = 0; i < 1000; i++) {
+        s.push(-rate * Math.log(1.0 - Math.random()));
     }
 
     // Crear el histograma
-    var histogram = new Array(50).fill(0);
-    for (var i = 0; i < s.length; i++) {
-      histogram[Math.floor(s[i] / (10 / 50))]++;
+    let histogram = new Array(50).fill(0);
+    for(let i = 0; i < s.length; i++) {
+        histogram[Math.min(Math.floor(s[i] / (10/50)), histogram.length - 1)]++;
     }
 
     // Normalizar el histograma
-    var binWidth = 10 / 50;
-    histogram = histogram.map(function (value) {
-      return value / (binWidth * s.length);
-    });
+    let binWidth = 10/50;
+    histogram = histogram.map(value => value / (binWidth * s.length));
 
-    console.log(histogram);
+    // Crear bins para el histograma
+    let bins = Array.from({length: histogram.length}, (_, i) => (i * binWidth).toFixed(2));
 
-    // Crear el gráfico del histograma y la PDF
+    // Crear PDF de la distribución exponencial
+    let pdf = bins.map(bin => Math.exp(-bin));
 
+    // Crear el gráfico con Chart.js
     this.chart = new Chart('chart', {
-      type: 'bar',
-      data: {
-        labels: Array.from({ length: 50 }, (_, i) => (i * binWidth).toFixed(2)),
-        datasets: [
-          {
-            label: 'PDF',
-            data: Array.from({ length: 50 }, (_, i) => Math.exp(-i * binWidth)),
-            fill: false,
-            borderColor: 'rgba(255, 0, 0, 1)',
-            borderWidth: 1,
-            type: 'line',
-          },
-          {
-            label: 'Histogram',
-            data: histogram,
-            backgroundColor: 'rgba(0, 0, 255, 0.5)',
-            borderColor: 'rgba(0, 0, 255, 1)',
-            borderWidth: 1,
-          },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            display: false,
-          },
-          yAxes: {
-            beginAtZero: true,
-            ticks: {},
-          },
+        type: 'bar',
+        data: {
+            labels: bins,
+            datasets: [{
+                label: 'PDF',
+                data: pdf,
+                fill: false,
+                borderColor: 'rgba(255, 0, 0, 1)',
+                borderWidth: 1,
+                type: 'line'
+            },{
+                label: 'Histogram',
+                data: histogram,
+                backgroundColor: 'rgba(0, 0, 255, 0.5)',
+                borderColor: 'rgba(0, 0, 255, 1)',
+                borderWidth: 1
+            }]
         },
-      },
+        options: {
+            scales: {
+                y: {
+                  display: false,
+                },
+                yAxes: {
+                    beginAtZero: true,
+                    ticks: {}
+                }
+            }
+        }
     });
   }
 
