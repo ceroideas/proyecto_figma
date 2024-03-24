@@ -75,13 +75,101 @@ export class SimulateComponent implements OnInit {
         if (!node.isActive || node.isActive == false) {
           formula.push(node.unite == null ? 0 : node.unite);
         } else {
-          formula.push(node.unite == null ? 0 : node.unite);
+          switch (node.distribution_shape[0].name) {
+            case 'Uniforme':
+              const randomNumber = this.uniformOperation(
+                node.distribution_shape[0].min,
+                node.distribution_shape[0].max
+              );
+              formula.push(randomNumber);
+              break;
+
+            case 'Normal':
+              const randomNumberNormal = this.normalOperation(
+                node.distribution_shape[0].mean,
+                node.distribution_shape[0].stDev
+              );
+              formula.push(randomNumberNormal);
+              break;
+
+            default:
+              break;
+          }
         }
       } else {
         formula.push(nodeId);
       }
-
-      console.log(formula);
     }
+
+    console.log(formula);
+  }
+
+  uniformOperation(minValue: any, maxValue: any) {
+    const min = +minValue;
+    const max = +maxValue;
+
+    // Generar muestras de la distribución
+    var s = [];
+    for (var i = 0; i < +this.simulationNumber; i++) {
+      s.push(min + Math.random() * (max - min));
+    }
+
+    // Verificar que todos los valores están dentro del intervalo dado
+    console.log(s.every((value) => value >= min && value < max));
+
+    // Crear el histograma
+    var histogram = new Array(15).fill(0);
+    for (var i = 0; i < s.length; i++) {
+      histogram[Math.floor((s[i] - min) / ((max - min) / 15))]++;
+    }
+
+    // Normalizar el histograma
+    var binWidth = (max - min) / 15;
+    histogram = histogram.map(function (value) {
+      return value / (binWidth * s.length);
+    });
+
+    const arrayOperation = Array.from(
+      { length: +this.simulationNumber },
+      (_, i) => (min + i * binWidth).toFixed(2)
+    );
+
+    return arrayOperation[Math.floor(Math.random() * arrayOperation.length)];
+  }
+
+  normalOperation(meanOperation: any, stDevOperation: any) {
+    // Definir la media y la desviación estándar
+    var mu = +meanOperation,
+      sigma = +stDevOperation,
+      samples = +this.simulationNumber;
+
+    // Generar una distribución normal
+    // Generar una distribución normal
+    var s = [];
+    for (var i = 0; i < samples; i++) {
+      s.push(
+        mu +
+          sigma *
+            Math.sqrt(-2.0 * Math.log(Math.random())) *
+            Math.cos(2.0 * Math.PI * Math.random())
+      );
+    }
+    // Crear el histograma
+    var histogram = new Array(samples).fill(0);
+    for (var i = 0; i < s.length; i++) {
+      histogram[Math.floor(((s[i] - mu + 5 * sigma) / (10 * sigma)) * 100)]++;
+    }
+
+    var binWidth = (10 * sigma) / 100;
+    histogram = histogram.map(function (value) {
+      return value / (binWidth * s.length);
+    });
+
+    // Crear la curva de la función de densidad de probabilidad
+    var x = Array.from({ length: +this.simulationNumber }, (_, i) =>
+      (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
+    );
+
+    return x[Math.floor(Math.random() * x.length)];
   }
 }
