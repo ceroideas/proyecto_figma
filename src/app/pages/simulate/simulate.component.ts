@@ -64,6 +64,24 @@ export class SimulateComponent implements OnInit {
   }
 
   generateSimulation() {
-    console.log(this.nodes);
+    let formula = [];
+
+    for (let i = 0; i < this.tierCero.formula.length; i++) {
+      const nodeId = this.tierCero.formula[i];
+
+      const node = this.nodes.find((node: any) => node.id == nodeId);
+
+      if (typeof nodeId === 'number') {
+        if (!node.isActive || node.isActive == false) {
+          formula.push(node.unite == null ? 0 : node.unite);
+        } else {
+          formula.push(node.unite == null ? 0 : node.unite);
+        }
+      } else {
+        formula.push(nodeId);
+      }
+
+      console.log(formula);
+    }
   }
 }
