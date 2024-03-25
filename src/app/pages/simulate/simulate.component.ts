@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
+import { Chart, registerables } from 'node_modules/chart.js';
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-simulate',
@@ -21,6 +23,8 @@ export class SimulateComponent implements OnInit {
   simulationNumber: number = 10000;
   editSimulation: boolean = false;
   tierCero: any;
+  chart: any;
+  arraySamples: any[] = [];
 
   constructor(
     private projectSvc: ProjectService,
@@ -65,50 +69,59 @@ export class SimulateComponent implements OnInit {
 
   generateSimulation() {
     let formula = [];
+    let arrayToSee = [];
+    for (let i = 0; i < 1000; i++) {
+      for (let i = 0; i < this.tierCero.formula.length; i++) {
+        const nodeId = this.tierCero.formula[i];
 
-    for (let i = 0; i < this.tierCero.formula.length; i++) {
-      const nodeId = this.tierCero.formula[i];
+        const node = this.nodes.find((node: any) => node.id == nodeId);
 
-      const node = this.nodes.find((node: any) => node.id == nodeId);
+        if (typeof nodeId === 'number') {
+          if (!node.isActive || node.isActive == false) {
+            formula.push(node.unite == null || undefined ? '0' : node.unite);
+          } else {
+            switch (node.distribution_shape[0].name) {
+              case 'Uniforme':
+                const randomNumber = this.uniformOperation(
+                  node.distribution_shape[0].min,
+                  node.distribution_shape[0].max
+                );
+                formula.push(randomNumber);
+                break;
 
-      if (typeof nodeId === 'number') {
-        if (!node.isActive || node.isActive == false) {
-          formula.push(node.unite == null || undefined ? 0 : node.unite);
-        } else {
-          switch (node.distribution_shape[0].name) {
-            case 'Uniforme':
-              const randomNumber = this.uniformOperation(
-                node.distribution_shape[0].min,
-                node.distribution_shape[0].max
-              );
-              formula.push(randomNumber);
-              break;
+              case 'Normal':
+                const randomNumberNormal = this.normalOperation(
+                  node.distribution_shape[0].mean,
+                  node.distribution_shape[0].stDev
+                );
+                formula.push(randomNumberNormal);
+                break;
 
-            case 'Normal':
-              const randomNumberNormal = this.normalOperation(
-                node.distribution_shape[0].mean,
-                node.distribution_shape[0].stDev
-              );
-              formula.push(randomNumberNormal);
-              break;
+              case 'Exponencial':
+                const randomNumberExponential = this.exponentialOperation(
+                  node.distribution_shape[0].rate
+                );
+                formula.push(randomNumberExponential);
+                break;
 
-            case 'Exponencial':
-              const randomNumberExponential = this.exponentialOperation(
-                node.distribution_shape[0].rate
-              );
-              formula.push(randomNumberExponential);
-              break;
-
-            default:
-              break;
+              default:
+                break;
+            }
           }
+        } else {
+          formula.push(nodeId);
         }
-      } else {
-        formula.push(nodeId);
       }
-    }
 
-    console.log(formula);
+      const operation = eval(formula.join(''));
+
+      arrayToSee.push(operation);
+
+      formula = [];
+    }
+    this.arraySamples = arrayToSee;
+    console.log(arrayToSee);
+    this.simulationChart();
   }
 
   uniformOperation(minValue: any, maxValue: any) {
@@ -206,5 +219,56 @@ export class SimulateComponent implements OnInit {
     );
 
     return bins[Math.floor(Math.random() * bins.length)];
+  }
+
+  simulationChart() {
+    // Realizar una simulación de Montecarlo de 10000 muestras
+    const muestras = this.arraySamples;
+    const samples = 26;
+    console.log(muestras);
+    // Crear un histograma con samples bins para reducir la cantidad de valores
+    const conteos = Array(samples).fill(0);
+    muestras.forEach((muestra) => {
+      const bin = Math.floor(muestra * samples);
+      conteos[bin]++;
+    });
+
+    // Calcular los percentiles
+    const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    const valores = percentiles.map((percentil) => {
+      const index = Math.floor((percentil / 100) * (conteos.length - 1));
+      console.log(index);
+      return conteos.sort((a, b) => a - b)[index];
+    });
+
+    // Crear las etiquetas del eje X con letras de la A a la Z
+    const etiquetas = Array.from({ length: samples }, (_, i) =>
+      String.fromCharCode(65 + i)
+    );
+
+    // Configurar el gráfico de barras con Chart.js
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: etiquetas,
+        datasets: [
+          {
+            label: 'Simulación Montecarlo',
+            data: conteos,
+            borderColor: 'black',
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+
+    // Crear una lista HTML con los percentiles
+    const lista: any = document.getElementById('percentiles');
+    percentiles.forEach((p, i) => {
+      const li = document.createElement('li');
+      li.textContent = `El ${p}% de los valores son menores que ${valores[i]}`;
+      lista.appendChild(li);
+    });
   }
 }
