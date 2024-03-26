@@ -1228,6 +1228,7 @@
               />
             </div>
             <div
+              (click)="elimateSimulation()"
               class="ml-2"
               style="width: 20.67px; height: 20.67px; cursor: pointer"
             >
@@ -1352,13 +1353,25 @@
               *ngFor="let color of colorsOption"
               class="rounded-circle mr-2"
               [style.background-color]="color"
-              (click)="selectColor(color)"
+              [class.colorBorder]="colorBar === color"
+              (click)="selectColor(color, $event)"
               style="width: 30px; height: 30px"
             ></div>
           </div>
         </div>
-        <div (click)="generateSimulation()" class="btn simulate-button">
+        <div
+          (click)="generateSimulation()"
+          *ngIf="!editSimulation"
+          class="btn simulate-button"
+        >
           Simulate
+        </div>
+        <div
+          (click)="saveSimulationData()"
+          *ngIf="editSimulation"
+          class="btn simulate-button"
+        >
+          Guadar datos
         </div>
       </div>
     </div>

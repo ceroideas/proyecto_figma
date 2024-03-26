@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
 import { Chart, registerables } from 'node_modules/chart.js';
+import Swal from 'sweetalert2';
 Chart.register(...registerables);
 
 @Component({
@@ -29,6 +30,7 @@ export class SimulateComponent implements OnInit {
   values: any[] = [];
   colorBar: any = '#8C64B1';
   colorsOption: any[] = [
+    '#8C64B1',
     '#6c757d',
     '#ffc107',
     '#007bff',
@@ -69,14 +71,42 @@ export class SimulateComponent implements OnInit {
   }
 
   editSimulationClick() {
-    this.editSimulation = !this.editSimulation;
+    if (this.disable()) {
+      Swal.fire({
+        title: 'Error',
+        text: 'El nombre y numero de simulaciones son necesarios',
+        icon: 'error',
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+        },
+      }).then((result) => {});
+    } else {
+      this.editSimulation = !this.editSimulation;
+    }
   }
 
   resetData() {
-    this.editSimulation = true;
-    this.simulateDescription = '';
-    this.simulationNumber = 0;
-    this.simulateName = '';
+    Swal.fire({
+      title: 'Estas seguro?',
+      text: 'Los datos de la simulacion seran borrados.',
+      icon: 'question',
+      iconColor: '#BC5800',
+      showCancelButton: true,
+      confirmButtonText: 'Si, borrar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'confirm',
+        cancelButton: 'cancel',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.editSimulation = true;
+        this.simulateDescription = '';
+        this.simulationNumber = 0;
+        this.simulateName = '';
+      }
+    });
   }
 
   generateSimulation() {
@@ -139,6 +169,30 @@ export class SimulateComponent implements OnInit {
       this.chart.destroy();
     }
     this.simulationChart();
+  }
+
+  saveSimulationData() {
+    if (this.disable()) {
+      Swal.fire({
+        title: 'Error',
+        text: 'El nombre y numero de simulaciones son necesarios',
+        icon: 'error',
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+        },
+      }).then((result) => {});
+    } else {
+      this.editSimulation = !this.editSimulation;
+    }
+  }
+
+  disable() {
+    if (this.simulateName && this.simulationNumber > 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   uniformOperation(minValue: any, maxValue: any) {
@@ -246,7 +300,7 @@ export class SimulateComponent implements OnInit {
     muestras = muestras.sort((a, b) => a - b);
 
     // Decide cuántos datos quieres en tu muestra
-    const numMuestra = 30;
+    const numMuestra = +this.simulationNumber;
 
     // Crea una nueva array para tu muestra
     const newmuestra = [];
@@ -314,12 +368,43 @@ export class SimulateComponent implements OnInit {
     });
   }
 
-  selectColor(color: string) {
-    this.colorBar = color;
+  selectColor(color: string, event: any) {
+    if (this.editSimulation) {
+      this.colorBar = color;
 
-    if (this.chart) {
-      this.chart.destroy();
+      if (this.chart) {
+        this.chart.destroy();
+      }
+      this.simulationChart();
+    } else {
     }
-    this.simulationChart();
+  }
+
+  elimateSimulation() {
+    Swal.fire({
+      title: 'Estas seguro?',
+      text: 'No podras revertir esta accion',
+      icon: 'question',
+      iconColor: '#BC5800',
+      showCancelButton: true,
+      confirmButtonText: 'Si, borrar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+        confirmButton: 'confirm',
+        cancelButton: 'cancel',
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        /*         this.projectSvc.deleteNode(this.nodeId).subscribe((res: any) => {
+         
+          Swal.fire({
+            title: 'Borrado!',
+            text: 'El nodo fue borrado con exito!',
+            icon: 'success',
+          });
+          
+        }); */
+      }
+    });
   }
 }
