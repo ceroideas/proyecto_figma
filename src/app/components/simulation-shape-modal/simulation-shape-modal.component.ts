@@ -157,7 +157,6 @@ export class SimulationShapeModalComponent implements OnInit {
     histogram = histogram.map(function (value) {
       return value / (binWidth * s.length);
     });
-    console.log(histogram);
 
     // Crear la curva de la función de densidad de probabilidad
     var x = Array.from({ length: 100 }, (_, i) =>
@@ -169,6 +168,8 @@ export class SimulationShapeModalComponent implements OnInit {
         Math.exp(-((+x - mu) ** 2) / (2 * sigma ** 2))
       );
     });
+
+    console.log(x);
 
     // Crear el gráfico
 

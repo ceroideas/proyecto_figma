@@ -68,13 +68,15 @@ export class SimulateComponent implements OnInit {
   }
 
   generateSimulation() {
-    let formula = [];
+    let formula:any = [];
     let arrayToSee = [];
     for (let i = 0; i < 1000; i++) {
       for (let i = 0; i < this.tierCero.formula.length; i++) {
         const nodeId = this.tierCero.formula[i];
 
         const node = this.nodes.find((node: any) => node.id == nodeId);
+
+        // console.log(node);
 
         if (typeof nodeId === 'number') {
           if (!node.isActive || node.isActive == false) {
@@ -137,20 +139,20 @@ export class SimulateComponent implements OnInit {
     // Verificar que todos los valores están dentro del intervalo dado
     console.log(s.every((value) => value >= min && value < max));
 
-    // Crear el histograma
+    var binWidth = (max - min) / 15;
+    /*// Crear el histograma
     var histogram = new Array(15).fill(0);
     for (var i = 0; i < s.length; i++) {
       histogram[Math.floor((s[i] - min) / ((max - min) / 15))]++;
     }
 
     // Normalizar el histograma
-    var binWidth = (max - min) / 15;
     histogram = histogram.map(function (value) {
       return value / (binWidth * s.length);
-    });
+    });*/
 
     const arrayOperation = Array.from(
-      { length: +this.simulationNumber },
+      { length: 15 },
       (_, i) => (min + i * binWidth).toFixed(2)
     );
 
@@ -175,7 +177,7 @@ export class SimulateComponent implements OnInit {
       );
     }
     // Crear el histograma
-    var histogram = new Array(samples).fill(0);
+    /*var histogram = new Array(samples).fill(0);
     for (var i = 0; i < s.length; i++) {
       histogram[Math.floor(((s[i] - mu + 5 * sigma) / (10 * sigma)) * 100)]++;
     }
@@ -183,10 +185,10 @@ export class SimulateComponent implements OnInit {
     var binWidth = (10 * sigma) / 100;
     histogram = histogram.map(function (value) {
       return value / (binWidth * s.length);
-    });
+    });*/
 
     // Crear la curva de la función de densidad de probabilidad
-    var x = Array.from({ length: +this.simulationNumber }, (_, i) =>
+    var x = Array.from({ length: 100 }, (_, i) =>
       (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
     );
 
@@ -204,7 +206,7 @@ export class SimulateComponent implements OnInit {
     }
 
     // Crear el histograma
-    let histogram = new Array(+this.simulationNumber).fill(0);
+    let histogram = new Array(50).fill(0);
     for (let i = 0; i < s.length; i++) {
       histogram[Math.min(Math.floor(s[i] / (10 / 50)), histogram.length - 1)]++;
     }
@@ -223,44 +225,65 @@ export class SimulateComponent implements OnInit {
 
   simulationChart() {
     // Realizar una simulación de Montecarlo de 10000 muestras
-    const muestras = this.arraySamples;
-    const samples = 26;
-    console.log(muestras);
-    // Crear un histograma con samples bins para reducir la cantidad de valores
-    const conteos = Array(samples).fill(0);
-    muestras.forEach((muestra) => {
-      const bin = Math.floor(muestra * samples);
-      conteos[bin]++;
+    var muestras = this.arraySamples;
+    
+    const conteos:any = {};
+
+    muestras = muestras.sort((a,b) => a - b);
+
+    /*// Decide cuántos datos quieres en tu muestra
+    const numMuestra = 1000;
+
+    // Crea una nueva array para tu muestra
+    const muestra = [];
+
+    // Llena tu muestra con datos aleatorios de tus datos originales
+    for (let i = 0; i < numMuestra; i++) {
+        const index = Math.floor(Math.random() * muestras.length);
+        muestra.push(muestras[index]);
+    }*/
+
+    muestras.forEach(muestra => {
+      if (conteos[muestra]) {
+          conteos[muestra]++;
+      } else {
+          conteos[muestra] = 1;
+      }
     });
 
     // Calcular los percentiles
     const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
     const valores = percentiles.map((percentil) => {
-      const index = Math.floor((percentil / 100) * (conteos.length - 1));
-      console.log(index);
-      return conteos.sort((a, b) => a - b)[index];
+      const index = Math.floor((percentil / 100) * (muestras.length - 1));
+      return muestras.sort((a, b) => a - b)[index];
     });
 
-    // Crear las etiquetas del eje X con letras de la A a la Z
-    const etiquetas = Array.from({ length: samples }, (_, i) =>
-      String.fromCharCode(65 + i)
-    );
+    const etiquetas = Object.keys(conteos).sort((a,b) => Number(a) - Number(b));
 
-    // Configurar el gráfico de barras con Chart.js
+    // const datosY = Object.values(conteos).sort((a,b) => Number(a) - Number(b));
+    const datosY = Array.from({length: Object.values(conteos).length},(_,i)=> '-');;
 
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
-        labels: etiquetas,
+        labels: datosY,
         datasets: [
           {
             label: 'Simulación Montecarlo',
-            data: conteos,
-            borderColor: 'black',
+            data: etiquetas,
+            backgroundColor: 'rgba(140, 100, 177, 0.5)',
+            borderColor: 'rgba(140, 100, 177, 1)',
             borderWidth: 1,
           },
         ],
       },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          }
+        }
+      }
     });
 
     // Crear una lista HTML con los percentiles
