@@ -231,19 +231,19 @@ export class SimulateComponent implements OnInit {
 
     muestras = muestras.sort((a,b) => a - b);
 
-    /*// Decide cuántos datos quieres en tu muestra
-    const numMuestra = 1000;
+    // Decide cuántos datos quieres en tu muestra
+    const numMuestra = 30;
 
     // Crea una nueva array para tu muestra
-    const muestra = [];
+    const newmuestra = [];
 
     // Llena tu muestra con datos aleatorios de tus datos originales
     for (let i = 0; i < numMuestra; i++) {
         const index = Math.floor(Math.random() * muestras.length);
-        muestra.push(muestras[index]);
-    }*/
+        newmuestra.push(muestras[index]);
+    }
 
-    muestras.forEach(muestra => {
+    newmuestra.forEach(muestra => {
       if (conteos[muestra]) {
           conteos[muestra]++;
       } else {
