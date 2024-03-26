@@ -1133,7 +1133,7 @@
               word-wrap: break-word;
             "
           >
-            Percentiles:
+            Porcentajes:
           </div>
           <div
             style="
@@ -1144,7 +1144,7 @@
               word-wrap: break-word;
             "
           >
-            Forecast values
+            Valores de pronóstico
           </div>
         </div>
         <div
@@ -1310,7 +1310,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <div class="text-muted">Number of simulated steps</div>
+          <div class="text-muted">Número de pasos simulados</div>
           <div class="font-weight-bold">
             <div *ngIf="!editSimulation">
               {{ simulationNumber }}
@@ -1328,7 +1328,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <div class="text-muted">Description</div>
+          <div class="text-muted">Descripción</div>
           <div class="font-weight-bold">
             <div *ngIf="!editSimulation">
               {{ simulateDescription }}
@@ -1347,7 +1347,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <div class="text-muted">Select the color of the bars</div>
+          <div class="text-muted">Selecciona el color de las barras</div>
           <div class="d-flex">
             <div
               *ngFor="let color of colorsOption"
@@ -1364,7 +1364,7 @@
           *ngIf="!editSimulation"
           class="btn simulate-button"
         >
-          Simulate
+          Simular
         </div>
         <div
           (click)="saveSimulationData()"
