@@ -25,6 +25,17 @@ export class SimulateComponent implements OnInit {
   tierCero: any;
   chart: any;
   arraySamples: any[] = [];
+  percentiles: any[] = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+  values: any[] = [];
+  colorBar: any = '#8C64B1';
+  colorsOption: any[] = [
+    '#6c757d',
+    '#ffc107',
+    '#007bff',
+    '#dc3545',
+    '#17a2b8',
+    '#28a745 ',
+  ];
 
   constructor(
     private projectSvc: ProjectService,
@@ -38,6 +49,7 @@ export class SimulateComponent implements OnInit {
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
       const result = eval(this.tierCero.formula.join(''));
       console.log(result, 'result');
+      this.simulationChart();
     });
   }
 
@@ -68,7 +80,7 @@ export class SimulateComponent implements OnInit {
   }
 
   generateSimulation() {
-    let formula:any = [];
+    let formula: any = [];
     let arrayToSee = [];
     for (let i = 0; i < 1000; i++) {
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -123,6 +135,9 @@ export class SimulateComponent implements OnInit {
     }
     this.arraySamples = arrayToSee;
     console.log(arrayToSee);
+    if (this.chart) {
+      this.chart.destroy();
+    }
     this.simulationChart();
   }
 
@@ -151,9 +166,8 @@ export class SimulateComponent implements OnInit {
       return value / (binWidth * s.length);
     });*/
 
-    const arrayOperation = Array.from(
-      { length: 15 },
-      (_, i) => (min + i * binWidth).toFixed(2)
+    const arrayOperation = Array.from({ length: 15 }, (_, i) =>
+      (min + i * binWidth).toFixed(2)
     );
 
     return arrayOperation[Math.floor(Math.random() * arrayOperation.length)];
@@ -226,10 +240,10 @@ export class SimulateComponent implements OnInit {
   simulationChart() {
     // Realizar una simulación de Montecarlo de 10000 muestras
     var muestras = this.arraySamples;
-    
-    const conteos:any = {};
 
-    muestras = muestras.sort((a,b) => a - b);
+    const conteos: any = {};
+
+    muestras = muestras.sort((a, b) => a - b);
 
     // Decide cuántos datos quieres en tu muestra
     const numMuestra = 30;
@@ -239,29 +253,34 @@ export class SimulateComponent implements OnInit {
 
     // Llena tu muestra con datos aleatorios de tus datos originales
     for (let i = 0; i < numMuestra; i++) {
-        const index = Math.floor(Math.random() * muestras.length);
-        newmuestra.push(muestras[index]);
+      const index = Math.floor(Math.random() * muestras.length);
+      newmuestra.push(muestras[index]);
     }
 
-    newmuestra.forEach(muestra => {
+    newmuestra.forEach((muestra) => {
       if (conteos[muestra]) {
-          conteos[muestra]++;
+        conteos[muestra]++;
       } else {
-          conteos[muestra] = 1;
+        conteos[muestra] = 1;
       }
     });
 
     // Calcular los percentiles
     const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-    const valores = percentiles.map((percentil) => {
+    this.values = percentiles.map((percentil) => {
       const index = Math.floor((percentil / 100) * (muestras.length - 1));
       return muestras.sort((a, b) => a - b)[index];
     });
 
-    const etiquetas = Object.keys(conteos).sort((a,b) => Number(a) - Number(b));
+    const etiquetas = Object.keys(conteos).sort(
+      (a, b) => Number(a) - Number(b)
+    );
 
     // const datosY = Object.values(conteos).sort((a,b) => Number(a) - Number(b));
-    const datosY = Array.from({length: Object.values(conteos).length},(_,i)=> '-');;
+    const datosY = Array.from(
+      { length: Object.values(conteos).length },
+      (_, i) => '-'
+    );
 
     this.chart = new Chart('chart', {
       type: 'bar',
@@ -271,7 +290,7 @@ export class SimulateComponent implements OnInit {
           {
             label: 'Simulación Montecarlo',
             data: etiquetas,
-            backgroundColor: 'rgba(140, 100, 177, 0.5)',
+            backgroundColor: this.colorBar,
             borderColor: 'rgba(140, 100, 177, 1)',
             borderWidth: 1,
           },
@@ -281,17 +300,26 @@ export class SimulateComponent implements OnInit {
         scales: {
           y: {
             beginAtZero: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     // Crear una lista HTML con los percentiles
     const lista: any = document.getElementById('percentiles');
     percentiles.forEach((p, i) => {
       const li = document.createElement('li');
-      li.textContent = `El ${p}% de los valores son menores que ${valores[i]}`;
+      li.textContent = `El ${p}% de los valores son menores que ${this.values[i]}`;
       lista.appendChild(li);
     });
+  }
+
+  selectColor(color: string) {
+    this.colorBar = color;
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.simulationChart();
   }
 }
