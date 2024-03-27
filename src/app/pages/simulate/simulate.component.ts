@@ -5,11 +5,12 @@ import { ActivatedRoute } from '@angular/router';
 import { ProjectService } from 'src/app/services/project.service';
 import { Chart, registerables } from 'node_modules/chart.js';
 import Swal from 'sweetalert2';
+import { SimulationService } from 'src/app/services/simulation.service';
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-simulate',
-  providers: [ProjectService],
+  providers: [ProjectService, SimulationService],
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './simulate.component.html',
@@ -41,11 +42,17 @@ export class SimulateComponent implements OnInit {
 
   constructor(
     private projectSvc: ProjectService,
+    private simulationSvc: SimulationService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
+
+    this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
+      console.log(res, 'SIMULATION');
+    });
+
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.nodes = res.nodes;
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
@@ -58,6 +65,12 @@ export class SimulateComponent implements OnInit {
   toggleActive(node: any) {
     node.isActive = !node.isActive;
     this.getNumberOfActiveNodes();
+  }
+
+  getSelectedSimulation(id: any) {
+    this.simulationSvc.getSimulation(id).subscribe((res: any) => {
+      console.log(res, 'SELECTED SIMULATION');
+    });
   }
 
   toggleSelectAll() {
