@@ -582,17 +582,16 @@ export class SimulateComponent implements OnInit {
       24000000, 24000000, 24000000, 24000000, 24000000, 24000000, 24000000,
       24000000, 24000000, 24500000, 24500000, 24500000, 24500000, 24500000,
       24500000, 24500000, 24500000, 24500000, 24500000, 24500000, 24500000,
-      24500000, 24500000, 24500000,
-    ];
+      24500000, 24500000, 24500000];
 
-    console.log(muestras, 'muestras');
+    // console.log(muestras, 'muestras');
 
     const conteos: any = {};
 
     muestras = muestras.sort((a, b) => a - b);
 
     // Decide cuántos datos quieres en tu muestra
-    const numMuestra = +this.simulationNumber;
+    const numMuestra = 30;
 
     // Crea una nueva array para tu muestra
     const newmuestra = [];
@@ -603,7 +602,7 @@ export class SimulateComponent implements OnInit {
       newmuestra.push(muestras[index]);
     }
 
-    newmuestra.forEach((muestra) => {
+    muestras.forEach((muestra) => {
       if (conteos[muestra]) {
         conteos[muestra]++;
       } else {
@@ -612,8 +611,8 @@ export class SimulateComponent implements OnInit {
     });
 
     // Calcular los percentiles
-    const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-    const values = percentiles.map((percentil) => {
+    // const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    this.values = this.percentiles.map((percentil) => {
       const index = Math.floor((percentil / 100) * (muestras.length - 1));
       return muestras.sort((a, b) => a - b)[index];
     });
@@ -652,12 +651,12 @@ export class SimulateComponent implements OnInit {
     });
 
     // Crear una lista HTML con los percentiles
-    const lista: any = document.getElementById('percentiles');
+    /*const lista: any = document.getElementById('percentiles');
     percentiles.forEach((p, i) => {
       const li = document.createElement('li');
       li.textContent = `El ${p}% de los valores son menores que ${values[i]}`;
       lista.appendChild(li);
-    });
+    });*/
   }
 
   selectColor(color: string, event: any) {
