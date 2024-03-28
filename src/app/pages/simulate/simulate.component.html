@@ -1,35 +1,15 @@
 <div class="title-page mb-5">Simulation</div>
-<button (click)="chartetc()">BOTONCHART</button>
 
 <div class="col-md-12">
-  <div class="card-container mr-5 mb-5">
-    <img class="card-image" src="../../../assets/img/rectangle1.png" />
+  <div
+    *ngFor="let simulation of simulations"
+    class="card-container mr-5 mb-5"
+    [class.card-container-active]="simulationId === simulation.id"
+    (click)="selectSimulacion(simulation.id)"
+  >
+    <img class="card-image" [src]="simulation.simulation" />
     <div class="card-content">
-      <div class="simulation-name">Simulation name 1</div>
-    </div>
-  </div>
-  <div class="card-container mr-5 mb-5">
-    <img class="card-image" src="../../../assets/img/rectangle2.png" />
-    <div class="card-content">
-      <div class="simulation-name">Simulation name 2</div>
-    </div>
-  </div>
-  <div class="card-container mr-5 mb-5">
-    <img class="card-image" src="../../../assets/img/rectangle2.png" />
-    <div class="card-content">
-      <div class="simulation-name">Simulation name 3</div>
-    </div>
-  </div>
-  <div class="card-container-active mr-5 mb-5">
-    <img class="card-image" src="../../../assets/img/rectangle3.png" />
-    <div class="card-content">
-      <div class="simulation-name">Simulation name 4</div>
-    </div>
-  </div>
-  <div class="card-container mr-5 mb-5">
-    <img class="card-image" src="../../../assets/img/rectangle4.png" />
-    <div class="card-content">
-      <div class="simulation-name">Simulation name 5</div>
+      <div class="simulation-name">{{ simulation.name }}</div>
     </div>
   </div>
 </div>
@@ -1196,8 +1176,7 @@
       </div>
     </div>
 
-    <br>
-    
+    <br />
   </div>
 
   <div class="col-md-1"></div>
