@@ -105,6 +105,9 @@ export class SimulateComponent implements OnInit {
 
     this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
       this.simulations = res.reverse();
+      if (this.simulations.length > 0) {
+        this.selectSimulacion(this.simulations[0].id);
+      }
       console.log(this.simulations, 'SIMULATION');
     });
 
@@ -131,6 +134,20 @@ export class SimulateComponent implements OnInit {
     this.isSelectedAll = !this.isSelectedAll;
     console.log(this.nodes);
     this.nodes.forEach((node) => (node.isActive = this.isSelectedAll));
+  }
+
+  createSimualtion() {
+    this.simulationId = null;
+    this.simulationNumber = 0;
+    this.simulateName = '';
+    this.simulateDescription = '';
+    this.arraySamples = [];
+    this.editSimulation = true;
+    this.nodes.forEach((node: any) => (node.isActive = false));
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.simulationChart();
   }
 
   getNumberOfActiveNodes(): number {
@@ -318,11 +335,14 @@ export class SimulateComponent implements OnInit {
   }
 
   updateSimulation() {
+    var image = this.chart.toBase64Image();
+    const nuevaVentana = window.open();
+    nuevaVentana?.document.write(`<img src="${image}" />`);
+
     const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
 
-    var image = this.chart.toBase64Image();
     const simulationData = {
       nodes: nodos,
       samples: this.arraySamples,
@@ -552,17 +572,31 @@ export class SimulateComponent implements OnInit {
 
   selectSimulacion(id: any) {
     this.simulationId = id;
+    this.nodes.forEach((node: any) => (node.isActive = false));
     const simulation = this.simulations.find(
       (simulation: any) => simulation.id == this.simulationId
     );
-
+    this.editSimulation = false;
     this.simulateName = simulation.name;
     this.simulateDescription = simulation.description;
     this.arraySamples = simulation.samples;
     this.simulationNumber = simulation.steps;
     this.colorBar = simulation.color;
 
+    for (let i = 0; i < simulation.nodes.length; i++) {
+      const nodeId = simulation.nodes[i];
+      const findNode = this.nodes.filter((node: any) => node.id == nodeId);
+      if (findNode.length > 0) {
+        findNode[0].isActive = true;
+      }
+    }
+
     console.log(simulation, 'SIMULATION ENCONTRADA');
+
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.simulationChart();
   }
 
   elimateSimulation() {
@@ -584,7 +618,7 @@ export class SimulateComponent implements OnInit {
           .deleteSimulation(this.simulationId)
           .subscribe((res: any) => {
             this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
-              this.simulations = res;
+              this.simulations = res.reverse();
 
               if (this.chart) {
                 this.chart.destroy();

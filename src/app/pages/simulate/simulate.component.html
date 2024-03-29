@@ -4,6 +4,7 @@
   <div
     *ngFor="let simulation of simulations"
     class="card-container mr-5 mb-5"
+    style="cursor: pointer"
     [class.card-container-active]="simulationId === simulation.id"
     (click)="selectSimulacion(simulation.id)"
   >
@@ -1186,6 +1187,17 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="font-weight-bold">Editar variable</div>
           <div class="d-flex">
+            <div
+              (click)="createSimualtion()"
+              class="ml-2"
+              style="width: 30.67px; height: 27.67px; cursor: pointer"
+            >
+              <img
+                style="width: 30.67px; height: 27.67px; cursor: pointer"
+                src="../../../assets/icons/fi_plus.svg"
+                alt=""
+              />
+            </div>
             <div
               (click)="editSimulationClick()"
               style="width: 20.67px; height: 20.67px; cursor: pointer"
