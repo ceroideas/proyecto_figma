@@ -55,15 +55,15 @@ export class SimulateComponent implements OnInit {
       this.nodes = res.nodes;
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
 
-      this.simulationChart();
-    });
+      this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
+        this.simulations = res.reverse();
+        if (this.simulations.length > 0) {
+          this.selectSimulacion(this.simulations[0].id);
+          console.log('SIMULATION');
+        }
+      });
 
-    this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
-      this.simulations = res.reverse();
-      if (this.simulations.length > 0) {
-        this.selectSimulacion(this.simulations[0].id);
-        console.log('SIMULATION');
-      }
+      this.simulationChart();
     });
   }
 
@@ -200,7 +200,7 @@ export class SimulateComponent implements OnInit {
 
       formula = [];
     }
-    console.log(arrayToSee);
+
     this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
@@ -284,27 +284,31 @@ export class SimulateComponent implements OnInit {
   }
 
   updateSimulation() {
-    var image = this.chart.toBase64Image();
-    const nuevaVentana = window.open();
-    nuevaVentana?.document.write(`<img src="${image}" />`);
-
     const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
 
-    const simulationData = {
-      nodes: nodos,
-      samples: this.arraySamples,
-      simulation: image,
-    };
-
     try {
+      const simulationData = {
+        nodes: nodos,
+        samples: this.arraySamples,
+      };
       this.simulationSvc
         .updateSimulation(this.simulationId, simulationData)
         .subscribe((res: any) => {
-          this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
-            this.simulations = res.reverse();
-          });
+          var image = this.chart.toBase64Image();
+
+          this.simulationSvc
+            .updateSimulation(this.simulationId, { simulation: image })
+            .subscribe((res: any) => {
+              this.simulationSvc
+                .getSimulations(this.id)
+                .subscribe((res: any) => {
+                  this.simulations = res.reverse();
+                  console.log(res);
+                });
+            });
+
           Swal.fire({
             title: 'Guardado!',
             text: 'La simulacion fue guardada con exito!',
