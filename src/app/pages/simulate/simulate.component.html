@@ -1348,7 +1348,7 @@
             <div
               *ngFor="let color of colorsOption"
               class="rounded-circle mr-2"
-              [style.background-color]="color"
+              [style.background-color]="'rgb('+color+')'"
               [class.colorBorder]="colorBar === color"
               (click)="selectColor(color, $event)"
               style="width: 30px; height: 30px"

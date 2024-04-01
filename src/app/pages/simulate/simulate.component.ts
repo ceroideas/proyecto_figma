@@ -25,72 +25,20 @@ export class SimulateComponent implements OnInit {
   simulateDescription: string = 'simulation description';
   simulationNumber: number = 0;
   editSimulation: boolean = false;
-  etiquetas: any[] = [
-    '0',
-    '500000',
-    '1000000',
-    '1500000',
-    '2000000',
-    '2500000',
-    '3000000',
-    '3500000',
-    '4000000',
-    '4500000',
-    '5000000',
-    '5500000',
-    '6000000',
-    '6500000',
-    '7000000',
-    '7500000',
-    '8000000',
-    '8500000',
-    '9000000',
-    '9500000',
-    '10000000',
-    '10500000',
-    '11000000',
-    '11500000',
-    '12000000',
-    '12500000',
-    '13000000',
-    '13500000',
-    '14000000',
-    '14500000',
-    '15000000',
-    '15500000',
-    '16000000',
-    '16500000',
-    '17000000',
-    '17500000',
-    '18000000',
-    '18500000',
-    '19000000',
-    '19500000',
-    '20000000',
-    '20500000',
-    '21000000',
-    '21500000',
-    '22000000',
-    '22500000',
-    '23000000',
-    '23500000',
-    '24000000',
-    '24500000',
-  ];
   tierCero: any;
   chart: any;
   arraySamples: any[] = [];
   percentiles: any[] = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
   values: any[] = [];
-  colorBar: any = '#8C64B1';
+  colorBar: any = '140, 100, 177';
   colorsOption: any[] = [
-    '#8C64B1',
-    '#6c757d',
-    '#ffc107',
-    '#007bff',
-    '#dc3545',
-    '#17a2b8',
-    '#28a745 ',
+    '140, 100, 177',
+    '108, 117, 125',
+    '255, 193, 7',
+    '0, 123, 255',
+    '220, 53, 69',
+    '23, 162, 184',
+    '40, 167, 69 ',
   ];
   simulations: any[] = [];
 
@@ -246,13 +194,14 @@ export class SimulateComponent implements OnInit {
       }
 
       const operation = eval(formula.join(''));
+      // const operation = formula;
 
       arrayToSee.push(operation);
 
       formula = [];
     }
-    this.arraySamples = arrayToSee;
     console.log(arrayToSee);
+    this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
     }
@@ -394,7 +343,7 @@ export class SimulateComponent implements OnInit {
     }
 
     // Verificar que todos los valores están dentro del intervalo dado
-    console.log(s.every((value) => value >= min && value < max));
+    // console.log(s.every((value) => value >= min && value < max));
 
     var binWidth = (max - min) / 15;
     /*// Crear el histograma
@@ -526,6 +475,8 @@ export class SimulateComponent implements OnInit {
       (_, i) => '-'
     );
 
+    console.log(conteos);
+
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
@@ -534,8 +485,8 @@ export class SimulateComponent implements OnInit {
           {
             label: 'Simulación Montecarlo',
             data: etiquetas,
-            backgroundColor: this.colorBar,
-            borderColor: 'rgba(140, 100, 177, 1)',
+            backgroundColor: 'rgba('+this.colorBar+', .5)',
+            borderColor: 'rgba('+this.colorBar+', 1)',
             borderWidth: 1,
           },
         ],
