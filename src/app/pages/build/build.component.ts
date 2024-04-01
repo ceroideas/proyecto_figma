@@ -61,6 +61,8 @@ export class BuildComponent implements OnInit {
   lastPosition: any = {};
   tierLv: number[] = [];
 
+  loadedCallBack = false;
+
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService,
@@ -76,6 +78,9 @@ export class BuildComponent implements OnInit {
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
+
+      console.log('loaded')
+
       this.data = new google.visualization.DataTable();
       this.data.addColumn('string', 'Name');
       this.data.addColumn('string', 'Manager');
@@ -216,6 +221,7 @@ export class BuildComponent implements OnInit {
       }
 
       this.chart.draw(this.data, { allowHtml: true });
+
       const interval = setInterval(() => {
         var orgChartTables = document.querySelectorAll(
           '.google-visualization-orgchart-table'
@@ -227,17 +233,23 @@ export class BuildComponent implements OnInit {
           var rotateElements = document.querySelectorAll(
             '.google-visualization-orgchart-node'
           );
-          Array.prototype.forEach.call(
-            rotateElements,
-            function (rotateElement: HTMLElement) {
-              rotateElement.removeEventListener('click', eventClick);
-              rotateElement.addEventListener('click', eventClick);
-            }
-          );
+
+          if (!this.loadedCallBack) {
+            Array.prototype.forEach.call(
+              rotateElements,
+              function (rotateElement: HTMLElement) {
+                rotateElement.removeEventListener('click', eventClick);
+                rotateElement.addEventListener('click', eventClick);
+              }
+            );
+            this.loadedCallBack = true;
+          }
         }
-      }, 10);
+      }, 1000);
     };
+
     google.charts.setOnLoadCallback(this.drawChart);
+
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
 
     this.printAll();
