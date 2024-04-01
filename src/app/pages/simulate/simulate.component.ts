@@ -51,19 +51,19 @@ export class SimulateComponent implements OnInit {
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
 
-    this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
-      this.simulations = res.reverse();
-      if (this.simulations.length > 0) {
-        this.selectSimulacion(this.simulations[0].id);
-      }
-      console.log(this.simulations, 'SIMULATION');
-    });
-
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.nodes = res.nodes;
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
 
       this.simulationChart();
+    });
+
+    this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
+      this.simulations = res.reverse();
+      if (this.simulations.length > 0) {
+        this.selectSimulacion(this.simulations[0].id);
+        console.log('SIMULATION');
+      }
     });
   }
 
@@ -106,7 +106,7 @@ export class SimulateComponent implements OnInit {
     if (this.disable() && this.editSimulation) {
       Swal.fire({
         title: 'Error',
-        text: 'El nombre y numero (mayor a 0) de simulaciones son necesarios',
+        text: 'Por favor, asegúrate de ingresar un nombre y un número de simulaciones válido (mayor a 0) para continuar.',
         icon: 'error',
         iconColor: '#BC5800',
         customClass: {
@@ -121,7 +121,7 @@ export class SimulateComponent implements OnInit {
   resetData() {
     Swal.fire({
       title: 'Estas seguro?',
-      text: 'Los datos de la simulacion seran borrados.',
+      text: '¿Estás seguro de que deseas borrar los datos actuales de los campos? ',
       icon: 'question',
       iconColor: '#BC5800',
       showCancelButton: true,
@@ -485,8 +485,8 @@ export class SimulateComponent implements OnInit {
           {
             label: 'Simulación Montecarlo',
             data: etiquetas,
-            backgroundColor: 'rgba('+this.colorBar+', .5)',
-            borderColor: 'rgba('+this.colorBar+', 1)',
+            backgroundColor: 'rgba(' + this.colorBar + ', .5)',
+            borderColor: 'rgba(' + this.colorBar + ', 1)',
             borderWidth: 1,
           },
         ],

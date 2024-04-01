@@ -26,7 +26,21 @@ export class ShapeModalComponent {
   ngAfterViewInit() {
     const modal = new bootstrap.Modal(this.miModal.nativeElement);
 
-    modal._element.addEventListener('shown.bs.modal', () => {});
+    modal._element.addEventListener('shown.bs.modal', () => {
+      const shapes: any = this.getItem('shapeData');
+
+      if (shapes !== null) {
+        const index = this.shapes.findIndex(
+          (shape: any) => shape.name == shapes.__zone_symbol__value.name
+        );
+        console.log('El valor obtenido del Local Storage es:', index);
+        this.clickedElement = index;
+      } else {
+        console.log(
+          'No hay ningún valor almacenado con esa clave en el Local Storage.'
+        );
+      }
+    });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
       console.log(this.route);
@@ -60,5 +74,12 @@ export class ShapeModalComponent {
       'shapetype',
       JSON.stringify(this.shapes[this.clickedElement])
     );
+  }
+
+  getItem(key: any) {
+    return new Promise((resolve) => {
+      const value = localStorage.getItem(key);
+      resolve(JSON.parse(value || ''));
+    });
   }
 }
