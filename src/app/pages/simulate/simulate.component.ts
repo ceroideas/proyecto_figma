@@ -6,6 +6,7 @@ import { ProjectService } from 'src/app/services/project.service';
 import { Chart, registerables } from 'node_modules/chart.js';
 import Swal from 'sweetalert2';
 import { SimulationService } from 'src/app/services/simulation.service';
+import { ChangeDetectorRef } from '@angular/core';
 Chart.register(...registerables);
 
 @Component({
@@ -45,7 +46,8 @@ export class SimulateComponent implements OnInit {
   constructor(
     private projectSvc: ProjectService,
     private simulationSvc: SimulationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -283,6 +285,13 @@ export class SimulateComponent implements OnInit {
     });
   }
 
+  updateImageUrls() {
+    this.simulations.forEach((simulation) => {
+      // Agregar un parámetro de tiempo a la URL de la imagen
+      simulation.simulation += `?t=${new Date().getTime()}`;
+    });
+  }
+
   updateSimulation() {
     const nodos = this.nodes
       .filter((node) => node.isActive)
@@ -305,6 +314,8 @@ export class SimulateComponent implements OnInit {
                 .getSimulations(this.id)
                 .subscribe((res: any) => {
                   this.simulations = res.reverse();
+                  this.updateImageUrls();
+                  this.cdRef.detectChanges();
                   console.log(res);
                 });
             });
