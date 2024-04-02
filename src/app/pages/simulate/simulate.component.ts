@@ -170,7 +170,7 @@ export class SimulateComponent implements OnInit {
                   node.distribution_shape[0].min,
                   node.distribution_shape[0].max
                 );
-                formula.push(randomNumber);
+                formula.push('('+randomNumber+')');
                 break;
 
               case 'Normal':
@@ -178,14 +178,14 @@ export class SimulateComponent implements OnInit {
                   node.distribution_shape[0].mean,
                   node.distribution_shape[0].stDev
                 );
-                formula.push(randomNumberNormal);
+                formula.push('('+randomNumberNormal+')');
                 break;
 
               case 'Exponencial':
                 const randomNumberExponential = this.exponentialOperation(
                   node.distribution_shape[0].rate
                 );
-                formula.push(randomNumberExponential);
+                formula.push('('+randomNumberExponential+')');
                 break;
 
               default:
@@ -201,8 +201,6 @@ export class SimulateComponent implements OnInit {
       }
 
     }
-    
-    console.log('formula',formula);
     return formula;
   }
 
@@ -215,9 +213,7 @@ export class SimulateComponent implements OnInit {
     let formula: any = [];
     let arrayToSee = [];
     
-    for (let i = 0; i < nodos.length; i++) {
-
-      // console.log(this.tierCero.formula);
+    for (let i = 0; i < +this.simulationNumber; i++) {
 
       for (let i = 0; i < this.tierCero.formula.length; i++) {
 
@@ -240,7 +236,7 @@ export class SimulateComponent implements OnInit {
                     node.distribution_shape[0].min,
                     node.distribution_shape[0].max
                   );
-                  formula.push(randomNumber);
+                  formula.push('('+randomNumber+')');
                   break;
 
                 case 'Normal':
@@ -248,14 +244,14 @@ export class SimulateComponent implements OnInit {
                     node.distribution_shape[0].mean,
                     node.distribution_shape[0].stDev
                   );
-                  formula.push(randomNumberNormal);
+                  formula.push('('+randomNumberNormal+')');
                   break;
 
                 case 'Exponencial':
                   const randomNumberExponential = this.exponentialOperation(
                     node.distribution_shape[0].rate
                   );
-                  formula.push(randomNumberExponential);
+                  formula.push('('+randomNumberExponential+')');
                   break;
 
                 default:
@@ -263,7 +259,7 @@ export class SimulateComponent implements OnInit {
               }
             }
           }else{
-            formula.push(this.recursiveCalculate(node));
+            formula.push('('+this.recursiveCalculate(node)+')');
           }
 
         } else {
@@ -271,22 +267,20 @@ export class SimulateComponent implements OnInit {
         }
       }
 
-      // const operation = eval(formula.join(''));
-      const operation = formula;
+      const operation = eval(formula.flat(5).join("").replaceAll(',',''));
+      // const operation = formula;
 
-      console.log(formula);
-
-      // arrayToSee.push(operation.toFixed(2));
+      arrayToSee.push(operation.toFixed(2));
 
       formula = [];
     }
 
-    /*this.arraySamples = arrayToSee;
+    this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
     }
     this.simulationChart();
-    this.updateSimulation();*/
+    this.updateSimulation();
   }
   chartetc() {
     if (this.chart) {
