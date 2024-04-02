@@ -75,6 +75,8 @@ export class BuildComponent implements OnInit {
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
 
+    var _this = this;
+
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
@@ -187,6 +189,8 @@ export class BuildComponent implements OnInit {
 
       function eventClick(this: any, e: any) {
         e.stopPropagation();
+
+        _this.loadedCallBack = false;
 
         var floatingElement = this.querySelector('.floating') as HTMLElement;
 
