@@ -143,25 +143,27 @@ export class SimulateComponent implements OnInit {
     });
   }
 
-  generateSimulation() {
-    const nodos = this.nodes
-      .filter((node) => node.isActive)
-      .map((node) => node.id);
-    console.log(nodos, 'NODOA');
+  recursiveCalculate(_node:any)
+  {
     let formula: any = [];
-    let arrayToSee = [];
-    for (let i = 0; i < +this.simulationNumber; i++) {
-      for (let i = 0; i < this.tierCero.formula.length; i++) {
-        const nodeId = this.tierCero.formula[i];
 
-        const node = this.nodes.find((node: any) => node.id == nodeId);
+    // console.log(_node.id,_node.formula);
 
-        // console.log(node);
+    for (let i = 0; i < _node.formula.length; i++) {
 
-        if (typeof nodeId === 'number') {
+      var nodeId = _node.formula[i];
+
+      if (typeof nodeId === 'number') {
+
+        var node = this.nodes.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
           if (!node.isActive || node.isActive == false) {
+
             formula.push(node.unite === null || node.unite === undefined ? '0' : node.unite);
+
           } else {
+
             switch (node.distribution_shape[0].name) {
               case 'Uniforme':
                 const randomNumber = this.uniformOperation(
@@ -190,6 +192,80 @@ export class SimulateComponent implements OnInit {
                 break;
             }
           }
+        }else{
+          formula.push(this.recursiveCalculate(node));
+        }
+
+      } else {
+        formula.push(nodeId);
+      }
+
+    }
+    
+    console.log('formula',formula);
+    return formula;
+  }
+
+  generateSimulation() {
+
+    const nodos = this.nodes
+      .filter((node) => node.isActive)
+      .map((node) => node.id);
+    console.log(nodos, 'NODOA');
+    let formula: any = [];
+    let arrayToSee = [];
+    
+    for (let i = 0; i < nodos.length; i++) {
+
+      // console.log(this.tierCero.formula);
+
+      for (let i = 0; i < this.tierCero.formula.length; i++) {
+
+        var nodeId = this.tierCero.formula[i];
+
+        if (typeof nodeId === 'number') {
+
+          var node = this.nodes.find((node: any) => node.id == nodeId);
+
+          if (node.type == 1) {
+            if (!node.isActive || node.isActive == false) {
+
+              formula.push(node.unite === null || node.unite === undefined ? '0' : node.unite);
+
+            } else {
+
+              switch (node.distribution_shape[0].name) {
+                case 'Uniforme':
+                  const randomNumber = this.uniformOperation(
+                    node.distribution_shape[0].min,
+                    node.distribution_shape[0].max
+                  );
+                  formula.push(randomNumber);
+                  break;
+
+                case 'Normal':
+                  const randomNumberNormal = this.normalOperation(
+                    node.distribution_shape[0].mean,
+                    node.distribution_shape[0].stDev
+                  );
+                  formula.push(randomNumberNormal);
+                  break;
+
+                case 'Exponencial':
+                  const randomNumberExponential = this.exponentialOperation(
+                    node.distribution_shape[0].rate
+                  );
+                  formula.push(randomNumberExponential);
+                  break;
+
+                default:
+                  break;
+              }
+            }
+          }else{
+            formula.push(this.recursiveCalculate(node));
+          }
+
         } else {
           formula.push(nodeId);
         }
