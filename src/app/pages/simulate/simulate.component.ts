@@ -160,7 +160,7 @@ export class SimulateComponent implements OnInit {
 
         if (typeof nodeId === 'number') {
           if (!node.isActive || node.isActive == false) {
-            formula.push(node.unite == null || undefined ? '0' : node.unite);
+            formula.push(node.unite === null || node.unite === undefined ? '0' : node.unite);
           } else {
             switch (node.distribution_shape[0].name) {
               case 'Uniforme':
@@ -195,22 +195,22 @@ export class SimulateComponent implements OnInit {
         }
       }
 
-      const operation = eval(formula.join(''));
-      // const operation = formula;
+      // const operation = eval(formula.join(''));
+      const operation = formula;
 
-      // console.log(formula,eval(formula.join('')));
+      console.log(formula);
 
-      arrayToSee.push(operation.toFixed(2));
+      // arrayToSee.push(operation.toFixed(2));
 
       formula = [];
     }
 
-    this.arraySamples = arrayToSee;
+    /*this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
     }
     this.simulationChart();
-    this.updateSimulation();
+    this.updateSimulation();*/
   }
   chartetc() {
     if (this.chart) {
@@ -414,9 +414,9 @@ export class SimulateComponent implements OnInit {
       (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
     );
 
-    x = x.filter(function (_, i) {
+    /*x = x.filter(function (_, i) {
       return histogram[i] > 0;
-    });
+    });*/
 
     return x[Math.floor(Math.random() * x.length)];
   }
