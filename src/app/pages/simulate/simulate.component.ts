@@ -195,20 +195,22 @@ export class SimulateComponent implements OnInit {
         }
       }
 
-      const operation = eval(formula.join(''));
-      // const operation = formula;
+      // const operation = eval(formula.join(''));
+      const operation = formula;
 
-      arrayToSee.push(operation);
+      console.log(formula,eval(formula.join('')));
+
+      // arrayToSee.push(operation.toFixed(2));
 
       formula = [];
     }
 
-    this.arraySamples = arrayToSee;
+    /*this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
     }
     this.simulationChart();
-    this.updateSimulation();
+    this.updateSimulation();*/
   }
   chartetc() {
     if (this.chart) {
@@ -396,23 +398,41 @@ export class SimulateComponent implements OnInit {
             Math.cos(2.0 * Math.PI * Math.random())
       );
     }
-    // Crear el histograma
-    /*var histogram = new Array(samples).fill(0);
+    // Crea el histograma
+    var histogram = new Array(samples).fill(0);
     for (var i = 0; i < s.length; i++) {
-      histogram[Math.floor(((s[i] - mu + 5 * sigma) / (10 * sigma)) * 100)]++;
+      var binIndex = Math.floor(((s[i] - mu + 5 * sigma) / (10 * sigma)) * 100);
+      if (binIndex >= 0 && binIndex < histogram.length) {
+        histogram[binIndex]++;
+      }
     }
 
+    // Normaliza el histograma
     var binWidth = (10 * sigma) / 100;
     histogram = histogram.map(function (value) {
       return value / (binWidth * s.length);
-    });*/
+    });
 
-    // Crear la curva de la función de densidad de probabilidad
-    var x = Array.from({ length: 100 }, (_, i) =>
-      (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
-    );
+    // Calcula la función de densidad acumulada (CDF)
+    var cdf = [];
+    var cumulativeSum = 0;
+    for (var i = 0; i < histogram.length; i++) {
+      cumulativeSum += histogram[i];
+      cdf.push(cumulativeSum);
+    }
 
-    return x[Math.floor(Math.random() * x.length)];
+    // Genera un valor aleatorio basado en la CDF
+    var randomValue = Math.random(); // Valor aleatorio entre 0 y 1
+    var index = cdf.findIndex(function (value) {
+      return value >= randomValue;
+    });
+
+    // Calcula el valor correspondiente de x
+    var selectedX = (mu - 5 * sigma + (index * (10 * sigma)) / 100).toFixed(2);
+
+    // El valor seleccionado está dentro del rango del histograma
+    // console.log("Valor aleatorio dentro del rango del histograma:", selectedX);
+    return selectedX;
   }
 
   exponentialOperation(rateOperation: any) {
