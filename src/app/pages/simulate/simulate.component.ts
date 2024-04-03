@@ -7,13 +7,16 @@ import { Chart, registerables } from 'node_modules/chart.js';
 import Swal from 'sweetalert2';
 import { SimulationService } from 'src/app/services/simulation.service';
 import { ChangeDetectorRef } from '@angular/core';
+
+import { PipesModule } from '../../pipes/pipes.module';
+
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-simulate',
   providers: [ProjectService, SimulationService],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PipesModule],
   templateUrl: './simulate.component.html',
   styleUrl: './simulate.component.scss',
 })
@@ -550,8 +553,7 @@ export class SimulateComponent implements OnInit {
     // const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
     this.values = this.percentiles.map((percentil) => {
       const index = Math.floor((percentil / 100) * (muestras.length - 1));
-      var value = muestras.sort((a, b) => a - b)[index];
-      return value ? new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value) : 0;
+      return muestras.sort((a, b) => a - b)[index];
     });
 
     const etiquetas = Object.keys(conteos).sort(
@@ -573,7 +575,7 @@ export class SimulateComponent implements OnInit {
         datasets: [
           {
             label: 'Simulación Montecarlo',
-            data: etiquetas,
+            data: this.values,
             backgroundColor: 'rgba(' + this.colorBar + ', .5)',
             borderColor: 'rgba(' + this.colorBar + ', 1)',
             borderWidth: 1,
