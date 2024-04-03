@@ -61,6 +61,9 @@ export class BuildComponent implements OnInit {
   lastPosition: any = {};
   tierLv: number[] = [];
 
+  selected: number[] = [];
+  selectedHidden: number[] = [];
+
   loadedCallBack = false;
 
   constructor(
@@ -511,6 +514,7 @@ export class BuildComponent implements OnInit {
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
+
     const fatherNode = this.aux.filter(
       (item: any) => item.data[0].v === node.data[1]
     );
@@ -598,6 +602,7 @@ export class BuildComponent implements OnInit {
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
   }
   modalHideAndShowBranch(tier: any, i: number) {
+    this.loadedCallBack = false;
     tier.hidden === 0 ? (tier.hidden = 1) : (tier.hidden = 0);
 
     const sonNode = this.aux.filter(
@@ -744,6 +749,11 @@ export class BuildComponent implements OnInit {
       this.sceneriesNodes = [];
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
+
+          if (element.hidden_table) {
+            this.selectedHidden.push(element.id);
+          }
+
           const data = {
             data: [
               {
@@ -786,6 +796,7 @@ export class BuildComponent implements OnInit {
             ],
             hidden: 0,
             hiddenNodeSon: false,
+            hiddenTable: element.hidden_table,
             name: element.name,
             tier: element.tier,
             f_original: `<div  class="rotate" >
@@ -1059,6 +1070,7 @@ export class BuildComponent implements OnInit {
   }
 
   hideTierAll() {
+    this.loadedCallBack = false;
     console.log('smkdsnm');
 
     if (this.selectedTierLv != '#') {
@@ -1270,5 +1282,47 @@ export class BuildComponent implements OnInit {
       );
       container.classList.add('fz8');
     }
+  }
+
+  selectTr(node:any)
+  {
+    let id = node.data[0].v;
+    console.log('selectTr',id)
+    let el = this.selected.findIndex(x => x==id);
+
+    if (el != -1) {
+      this.selected.splice(el,1);
+    }else{
+      this.selected.push(id);
+    }
+
+    console.log(this.selected);
+  }
+
+  hideSelected()
+  {
+    for (let i of this.selected)
+    {
+      let node = this.aux.find((item: any) =>
+        item.data.some((subItem: any) => subItem.v === i)
+      );
+
+      this.selectedHidden.push(i);
+      console.log(node.hiddenTable = 1);
+    }
+
+    this.projectSvc.setHiddenTable(this.selected).subscribe(data=>{
+      this.selected = [];
+    });
+  }
+  showHidden()
+  {
+    for (let i of this.aux)
+    {
+      i.hiddenTable = null;
+    }
+    this.projectSvc.setHiddenTable(this.selectedHidden).subscribe(data=>{
+      this.selectedHidden = [];
+    });
   }
 }

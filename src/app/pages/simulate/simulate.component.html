@@ -1411,6 +1411,7 @@
             (click)="toggleActive(node)"
           >
             <div
+              *ngIf="node.type == 1"
               [ngClass]="{
                 'inner-box': true,
                 'inner-box-active': node.isActive

@@ -239,7 +239,7 @@
           word-wrap: break-word;
         "
       >
-        Variables summary
+        Variables summary ({{selected.length}} selected) <a href="javascript:;" (click)="hideSelected()">Hide selected</a> | <a href="javascript:;" (click)="showHidden()">Show hidden ({{selectedHidden.length}})</a>
       </div>
       <div
         style="
@@ -343,6 +343,8 @@
             <tr
               *ngFor="let tier of aux | search:query; index as i"
               [style]="tier.hidden == 0 ? '' : 'display: none-'"
+              [ngClass]="{'selected': selected | selected:tier, 'hidden': tier.hiddenTable == 1}"
+              (click)="selectTr(tier)"
             >
               <td
                 [ngClass]="

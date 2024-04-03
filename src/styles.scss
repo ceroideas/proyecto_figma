@@ -270,3 +270,13 @@ table {
 .fz8 .ovf {
   font-size: 8px !important;
 }
+
+.selected {
+  td {
+    background-color: #eeeeee !important;
+  }
+}
+
+.hidden {
+  display: none !important;
+}

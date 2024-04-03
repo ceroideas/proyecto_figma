@@ -54,7 +54,7 @@ export class SimulateComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
 
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
-      this.nodes = res.nodes.filter((node: any) => node.type == 1);
+      this.nodes = res.nodes; //.filter((node: any) => node.type == 1);
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
 
       this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
@@ -81,9 +81,16 @@ export class SimulateComponent implements OnInit {
   }
 
   toggleSelectAll() {
-    this.isSelectedAll = !this.isSelectedAll;
+    
+    var allNodes = this.nodes.filter((node: any) => node.type == 1);
+
     console.log(this.nodes);
-    this.nodes.forEach((node) => (node.isActive = this.isSelectedAll));
+    allNodes.forEach((node) => (node.isActive = this.isSelectedAll));
+    if (!this.isSelectedAll) {
+      this.nodes.forEach((node) => (node.isActive = this.isSelectedAll));
+    }
+
+    this.isSelectedAll = !this.isSelectedAll;
   }
 
   createSimualtion() {
@@ -146,7 +153,7 @@ export class SimulateComponent implements OnInit {
   recursiveCalculate(_node: any) {
     let formula: any = [];
 
-    // console.log(_node.id,_node.formula);
+    // console.log(_node);
 
     for (let i = 0; i < _node.formula.length; i++) {
       var nodeId = _node.formula[i];
@@ -474,9 +481,9 @@ export class SimulateComponent implements OnInit {
       (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
     );
 
-    /*x = x.filter(function (_, i) {
+    x = x.filter(function (_, i) {
       return histogram[i] > 0;
-    });*/
+    });
 
     return x[Math.floor(Math.random() * x.length)];
   }
@@ -520,7 +527,7 @@ export class SimulateComponent implements OnInit {
     muestras = muestras.sort((a, b) => a - b);
 
     // Decide cuántos datos quieres en tu muestra
-    const numMuestra = 30;
+    const numMuestra = 11;
 
     // Crea una nueva array para tu muestra
     const newmuestra = [];
@@ -605,6 +612,7 @@ export class SimulateComponent implements OnInit {
   selectSimulacion(id: any) {
     this.simulationId = id;
     this.nodes.forEach((node: any) => (node.isActive = false));
+
     const simulation = this.simulations.find(
       (simulation: any) => simulation.id == this.simulationId
     );
@@ -629,6 +637,16 @@ export class SimulateComponent implements OnInit {
       this.chart.destroy();
     }
     this.simulationChart();
+    
+    var allNodes = this.nodes.filter((node: any) => node.type == 1);
+    var allNodesSelected = this.nodes.filter((node: any) => node.type == 1 && node.isActive);
+
+    if (allNodes.length == allNodesSelected.length) {
+      this.isSelectedAll = false;
+    }else{
+      this.isSelectedAll = true;
+    }
+    console.log(this.isSelectedAll);
   }
 
   elimateSimulation() {

@@ -56,4 +56,7 @@ export class ProjectService {
   saveUnite(id: any, body: any) {
     return this.http.put(`${this.url}/saveUnite/${id}`,body);
   }
+  setHiddenTable(ids: any) {
+    return this.http.put(`${this.url}/setHiddenTable`,{ids:ids});
+  }
 }
