@@ -444,7 +444,7 @@ export class SimulateComponent implements OnInit {
       return value / (binWidth * s.length);
     });*/
 
-    const arrayOperation = Array.from({ length: 15 }, (_, i) =>
+    const arrayOperation = Array.from({ length: 50 }, (_, i) =>
       (min + i * binWidth).toFixed(2)
     );
 
