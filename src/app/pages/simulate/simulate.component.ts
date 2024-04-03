@@ -550,7 +550,8 @@ export class SimulateComponent implements OnInit {
     // const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
     this.values = this.percentiles.map((percentil) => {
       const index = Math.floor((percentil / 100) * (muestras.length - 1));
-      return muestras.sort((a, b) => a - b)[index];
+      var value = muestras.sort((a, b) => a - b)[index];
+      return value ? new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(value) : 0;
     });
 
     const etiquetas = Object.keys(conteos).sort(
@@ -558,17 +559,17 @@ export class SimulateComponent implements OnInit {
     );
 
     // const datosY = Object.values(conteos).sort((a,b) => Number(a) - Number(b));
-    const datosY = Array.from(
+    /*const datosY = Array.from(
       { length: Object.values(conteos).length },
       (_, i) => '-'
-    );
+    );*/
 
     console.log(conteos);
 
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
-        labels: datosY,
+        labels: this.percentiles.map((p)=>{return p+'%'}),
         datasets: [
           {
             label: 'Simulación Montecarlo',
