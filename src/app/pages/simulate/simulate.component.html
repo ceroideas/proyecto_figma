@@ -15,8 +15,8 @@
   </div>
 </div>
 <div class="col-md-12 d-flex">
-  <div style="position: relative" class="col-md-7">
-    <div style="height: 60%">
+  <div style="position: relative" class="col-md-6">
+    <div style="padding-bottom: 40px;">
       <canvas id="chart"></canvas>
     </div>
 
@@ -39,7 +39,7 @@
         <div
           *ngFor="let percentile of percentiles; let i = index"
           class="d-flex justify-content-between align-items-end flex-shrink-0"
-          style="width: 100%"
+          style="width: 100%; margin-bottom: 8px;"
         >
           <div class="text-dark mr-2" style="font-size: 14px">
             {{ percentile }}%
@@ -55,7 +55,7 @@
     <br />
   </div>
   <div class="col-md-1"></div>
-  <div class="col-md-4">
+  <div class="col-md-5">
     <div class="container">
       <div class="p-4 bg-light rounded" style="max-width: 400px">
         <div class="d-flex justify-content-between align-items-center mb-3">
