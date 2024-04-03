@@ -511,6 +511,7 @@ export class BuildComponent implements OnInit {
   findAndHideFatherNode() {
     /*     var floatingElement = document.querySelector('.floating') as HTMLElement;
     floatingElement.style.display = 'block'; */
+    console.log(this.aux);
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
@@ -799,6 +800,7 @@ export class BuildComponent implements OnInit {
             hiddenTable: element.hidden_table,
             name: element.name,
             tier: element.tier,
+            sceneries: element.type == 1 ? element.sceneries : element.calculated,
             f_original: `<div  class="rotate" >
             
             <span>

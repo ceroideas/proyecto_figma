@@ -10,9 +10,16 @@ export class SearchPipe implements PipeTransform {
     if (!query) {
       return value;
     }
-    return value.filter((item:any)=>{
+    
+    // value = value;
+
+    let res = value.filter((item:any)=>{
        return JSON.stringify(item['name']).toLowerCase().includes(query.toLowerCase());
     });
+
+    console.log(res);
+
+    return res;
   }
 
 }
