@@ -74,6 +74,7 @@
           <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="min">Min:</span>
             <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
               [(ngModel)]="min"
               (ngModelChange)="changeValueUniforme()"
               style="background-color: #f6f3f9"
@@ -86,6 +87,7 @@
           <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="min">Max:</span>
             <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
               [(ngModel)]="max"
               (ngModelChange)="changeValueUniforme()"
               style="background-color: #f6f3f9"
@@ -102,6 +104,7 @@
           <div class="input-group col-md-4 input-group-sm mb-3">
             <span class="input-group-text chart-span" id="stDev">Mean:</span>
             <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
               [(ngModel)]="mean"
               (ngModelChange)="changeValueNormal()"
               name="mean"
@@ -114,6 +117,7 @@
           <div class="input-group col-md-4 input-group-sm mb-3">
             <span class="input-group-text chart-span" id="stDev">StDev:</span>
             <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
               [(ngModel)]="stDev"
               (ngModelChange)="changeValueNormal()"
               name="stDev"
@@ -131,6 +135,7 @@
           <div class="input-group col-md-4 input-group-sm mb-3">
             <span class="input-group-text chart-span" id="rate">Rate:</span>
             <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
               [(ngModel)]="rate"
               (ngModelChange)="changeValueExponential()"
               name="rate"

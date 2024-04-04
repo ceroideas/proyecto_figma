@@ -26,8 +26,8 @@ export class SimulationShapeModalComponent implements OnInit {
   ];
   chart!: any;
   shapeType!: any;
-  min: number = 0;
-  max: number = 0;
+  min: any = 0;
+  max: any = 0;
   stDev: number = 0;
   rate!: any;
   mean: number = 0;
@@ -46,10 +46,10 @@ export class SimulationShapeModalComponent implements OnInit {
         const shapeData: any = this.getItem('shapeData');
 
         this.min = shapeData?.__zone_symbol__value.min
-          ? shapeData?.__zone_symbol__value.min
+          ? +shapeData?.__zone_symbol__value.min
           : 0;
         this.max = shapeData?.__zone_symbol__value.max
-          ? shapeData?.__zone_symbol__value.max
+          ? +shapeData?.__zone_symbol__value.max
           : 0;
         this.stDev = shapeData?.__zone_symbol__value.stDev
           ? shapeData?.__zone_symbol__value.stDev
@@ -132,6 +132,17 @@ export class SimulationShapeModalComponent implements OnInit {
 
   normalChart() {
     // Definir la media y la desviación estándar
+    if (this.mean.toString().includes('%')) {
+      const valueBase = parseFloat(this.mean.toString().replace('%', ''));
+
+      this.mean = +valueBase / 100;
+    }
+
+    if (this.stDev.toString().includes('%')) {
+      const valueBase = parseFloat(this.stDev.toString().replace('%', ''));
+
+      this.stDev = +valueBase / 100;
+    }
     var mu = +this.mean,
       sigma = +this.stDev,
       samples = 1000;
@@ -210,6 +221,19 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   uniformChart() {
+    if (this.min.toString().includes('%')) {
+      const valueBase = parseFloat(this.min.replace('%', ''));
+      console.log('min');
+
+      this.min = +valueBase / 100;
+    }
+
+    if (this.max.toString().includes('%')) {
+      const valueBase = parseFloat(this.max.replace('%', ''));
+      console.log('max');
+      this.max = +valueBase / 100;
+    }
+
     var min = +this.min;
     var max = +this.max;
 
@@ -269,6 +293,12 @@ export class SimulationShapeModalComponent implements OnInit {
 
   exponentialChart() {
     // Escala de la distribución exponencial
+
+    if (this.rate.includes('%')) {
+      const valueBase = parseFloat(this.rate.replace('%', ''));
+
+      this.rate = +valueBase / 100;
+    }
     let rate = this.rate; // Cambia este valor para ajustar la escala
 
     // Dibujar muestras de la distribución exponencial
