@@ -688,4 +688,35 @@ export class SimulateComponent implements OnInit {
       }
     });
   }
+
+  exportToCsv() {
+    let csvString = "";
+
+    let a:any = "Valores";
+
+    // Encabezados
+    csvString += a + "\n";
+
+    const simulation = this.simulations.find(
+      (simulation: any) => simulation.id == this.simulationId
+    );
+
+    console.log(simulation.samples);
+
+    // Filas de datos
+    csvString += simulation.samples.join("\n");
+
+    // Crear un Blob con el contenido CSV
+    const blob = new Blob([csvString], { type: "text/csv" });
+
+    // Crear un enlace de descarga
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "valores simulados.csv"; // Nombre del archivo
+    link.click();
+
+    // Liberar el objeto URL
+    URL.revokeObjectURL(url);
+  }
 }

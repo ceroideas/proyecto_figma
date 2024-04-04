@@ -49,10 +49,18 @@
             €{{ values[i] | formateur }}
           </div>
         </div>
+        <br>
+        <br>
+        <div class="text-end" style="width: 100%;">
+        <button (click)="exportToCsv()" 
+        class="btn simulate-button" style="background-color: #28a745; width: auto !important;"
+        >Exportar datos a CSV</button>
+        </div>
       </div>
     </div>
 
     <br />
+
   </div>
   <div class="col-md-1"></div>
   <div class="col-md-5">
