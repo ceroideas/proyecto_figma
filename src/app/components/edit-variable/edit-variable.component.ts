@@ -56,6 +56,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Input() isHidden: boolean = false;
   variableDescription!: any;
   operationType: any = '+';
+  closeToogle: boolean = false;
   tempObject = [
     {},
     {
@@ -114,7 +115,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   sendOperations: any[] = [];
   selectedCalculo: any;
   chart!: any;
-
+  mostrarPopover: boolean = false;
+  inputValue: string = '';
   oldType!: boolean;
   @Output() sendDataEvent = new EventEmitter<any>();
 
@@ -126,7 +128,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     private projectSvc: ProjectService,
     private dataService: DataService,
     private ngZone: NgZone,
-    public events: EventsService
+    public events: EventsService,
+    private elementRef: ElementRef
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
@@ -178,6 +181,32 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.variableDescription = variable?.description;
     } else {
     }
+  }
+
+  togglePopover() {
+    this.mostrarPopover = !this.mostrarPopover;
+    setTimeout(() => {
+      this.closeToogle = this.mostrarPopover;
+    }, 100);
+  }
+
+  guardar() {
+    console.log('Guardando:', this.inputValue);
+    // Aquí puedes implementar la lógica para guardar los datos
+    // por ejemplo, puedes hacer una llamada a una API
+    this.mostrarPopover = false; // Oculta el popover después de guardar
+  }
+
+  cerrarPopover(event: MouseEvent) {
+    if (this.closeToogle) {
+      this.mostrarPopover = false;
+      this.closeToogle = false;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    this.cerrarPopover(event);
   }
 
   ngAfterViewInit() {
@@ -657,6 +686,20 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.operationResult();
   }
+  addCustom() {
+    if (this.inputValue.toString().includes('%')) {
+      const valueBase = parseFloat(this.inputValue.toString().replace('%', ''));
+
+      this.inputValue = (+valueBase / 100).toString();
+    }
+
+    this.calculos.push(this.inputValue);
+    this.operations.push([{ name: this.inputValue }]);
+
+    this.sendOperations.push(this.inputValue);
+    this.inputValue = '';
+    this.mostrarPopover = false; //
+  }
 
   seleccionarCalculo(calculo: any): void {
     this.selectedCalculo = calculo;
@@ -886,13 +929,14 @@ export class EditVariableComponent implements OnInit, OnChanges {
     localStorage.removeItem('shapetype');
   }
 
-  setEvent()
-  {
-    setTimeout(()=>{
+  setEvent() {
+    setTimeout(() => {
       var evt = new Event('change');
-      var elem = (document.getElementById("escenarios-select") as HTMLSelectElement)
+      var elem = document.getElementById(
+        'escenarios-select'
+      ) as HTMLSelectElement;
       elem.selectedIndex = 1;
-      elem.dispatchEvent(evt)
-    },100)
+      elem.dispatchEvent(evt);
+    }, 100);
   }
 }

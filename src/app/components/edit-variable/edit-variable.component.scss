@@ -124,3 +124,37 @@ input-group-sm > .btn,
 .modal-dialog {
   height: 850px;
 }
+.popover {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000; /* Asegura que el popover esté sobre otros elementos */
+  top: auto; /* Ajusta la posición del popover */
+  left: calc(15% + 10px); /* Posición a la derecha del botón */
+  min-width: 150px; /* Ancho mínimo para el popover */
+}
+
+.popover input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.popover button {
+  padding: 8px 16px;
+  background-color: #000f55;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popover button:hover {
+  background-color: #000f55;
+}

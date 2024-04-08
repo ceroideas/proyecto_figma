@@ -20,7 +20,10 @@
   aria-hidden="true"
   data-bs-backdrop="static"
 >
-  <div class="modal-dialog modal-dialog-scrollable" [ngClass]="constante!==true ? 'modal-lg' : ''">
+  <div
+    class="modal-dialog modal-dialog-scrollable"
+    [ngClass]="constante !== true ? 'modal-lg' : ''"
+  >
     <div class="modal-content">
       <div class="modal-header">
         <p class="modal-title" id="exampleModalLabel">
@@ -151,6 +154,26 @@
           </div>
 
           <div class="variable-box d-flex flex-wrap">
+            <div
+              (click)="togglePopover()"
+              style="cursor: pointer; padding: 20px"
+            >
+              <img
+                class="user-icon"
+                src="../../../assets/icons/database.svg"
+                alt="User Icon"
+              />
+              custom
+            </div>
+            <div *ngIf="mostrarPopover" class="popover">
+              <input
+                style="font-size: 20px"
+                onkeydown="return /[^a-zA-Z]/.test(event.key) || event.key === 'Backspace' || event.key === 'Tab'"
+                type="text"
+                [(ngModel)]="inputValue"
+              />
+              <button (click)="addCustom()">Guardar</button>
+            </div>
             <div
               *ngFor="let operator of operators"
               style="cursor: pointer; padding: 20px"
