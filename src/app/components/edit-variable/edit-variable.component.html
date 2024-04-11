@@ -131,7 +131,7 @@
             <div *ngFor="let variable of variables">
               <div
                 style="cursor: pointer"
-                class="mr-4"
+                class="mr-1 p-3"
                 (click)="addVariable(variable, variable.id)"
                 *ngIf="editVariable ? variable.id !== +nodeId : true"
               >
@@ -153,7 +153,7 @@
             <p class="mb-0">Agregar operadores</p>
           </div>
 
-          <div class="variable-box d-flex flex-wrap">
+          <div class="operator-box d-flex flex-wrap">
             <div
               (click)="togglePopover()"
               style="cursor: pointer; padding: 20px"
