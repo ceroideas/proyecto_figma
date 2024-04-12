@@ -62,7 +62,7 @@ p {
 ///
 .size {
   width: calc(33.33% - 22px);
-  height: 210px !important;
+  height: 280px !important;
 }
 
 .inner-container {
@@ -73,18 +73,21 @@ p {
   background: #f6f3f9;
   justify-content: flex-start;
   align-items: flex-end;
-  gap: 15px;
+
   display: inline-flex;
+  overflow: auto;
 }
 .inner-container-active {
   padding: 2%;
+
   border-radius: 15px;
   flex-direction: column;
   background: #f6f3f9;
   justify-content: flex-start;
   align-items: flex-end;
-  gap: 15px;
+
   display: inline-flex;
+  overflow: auto;
   border: 2px solid rgba(140, 100, 177, 0.5);
 }
 
