@@ -1327,4 +1327,55 @@ export class BuildComponent implements OnInit {
       this.selectedHidden = [];
     });
   }
+
+  exportCsv()
+  {
+    let datos = [];
+    let header = ["LABEL","NAME"];
+    for (let y of this.project.years)
+    {
+      header.push(y);
+    }
+
+    // console.log(header);
+
+    for (let i of this.project.nodes.reverse())
+    {
+      let aux = ["L"+i.tier,i.name];
+      let sceneries = null;
+
+      if (i.type == 1) {
+        sceneries = i.sceneries;
+      }else{
+        sceneries = i.calculated;
+      }
+      let y:any;
+      for (y of Object.values(sceneries[this.selectedScenery]['years']))
+      {
+        aux.push(parseFloat(y).toFixed(2));
+      }
+      datos.push(aux);
+    }
+
+    let csvString = header.join(";")+'\n';
+    for (let i of datos)
+    {
+      csvString += i.join(";")+'\n';
+    }
+
+    const blob = new Blob([csvString], { type: "text/csv" });
+
+    // Crear un enlace de descarga
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = this.project.name+"-"+this.project.sceneries[this.selectedScenery]+".csv"; // Nombre del archivo
+    link.click();
+
+    // Liberar el objeto URL
+    URL.revokeObjectURL(url);
+
+    console.log(csvString);
+    // console.log(header,datos);
+  }
 }

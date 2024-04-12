@@ -120,6 +120,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
   oldType!: boolean;
   @Output() sendDataEvent = new EventEmitter<any>();
 
+  @ViewChild('popover') popover!: ElementRef;
+
   @Output() deleteDataEvent = new EventEmitter<any>();
   @Output() deleteNode = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
@@ -204,9 +206,17 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
   }
 
+  // @HostListener('document:click', ['$event'])
+  // onClick(event: MouseEvent) {
+  //   this.cerrarPopover(event);
+  // }
+
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
-    this.cerrarPopover(event);
+    const clickedInside = this.popover.nativeElement.contains(event.target);
+    if (!clickedInside) {
+      this.cerrarPopover(event);
+    }
   }
 
   ngAfterViewInit() {

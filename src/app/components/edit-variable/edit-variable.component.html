@@ -165,12 +165,13 @@
               />
               custom
             </div>
-            <div *ngIf="mostrarPopover" class="popover">
+            <div *ngIf="mostrarPopover" class="popover" #popover>
               <input
                 style="font-size: 20px"
                 onkeydown="return /[^a-zA-Z]/.test(event.key) || event.key === 'Backspace' || event.key === 'Tab'"
                 type="text"
                 [(ngModel)]="inputValue"
+                autofocus 
               />
               <button (click)="addCustom()">Guardar</button>
             </div>
