@@ -33,33 +33,14 @@
 
       <div class="modal-body">
         <div class="ml-2">
-          <div class="inner-container size mr-3 mb-3">
-            <div class="circle">
-              <div class="circle-content">L0</div>
-            </div>
-            <div class="text-container">
-              <p class="main-text">15.325.896 €</p>
-              <div class="sub-text">
-                <p class="sub-text-item">of &nbsp; &nbsp; 15.325.896 €</p>
-
-                <p>Lorem lorem lorem</p>
-              </div>
-            </div>
-          </div>
-          <div class="inner-container size mr-3 mb-3">
-            <div class="circle">
-              <div class="circle-content">L0</div>
-            </div>
-            <div class="text-container">
-              <p class="main-text">15.325.896 €</p>
-              <div class="sub-text">
-                <p class="sub-text-item">of &nbsp; &nbsp; 15.325.896 €</p>
-
-                <p>Lorem lorem lorem</p>
-              </div>
-            </div>
-          </div>
-          <div class="inner-container-active size mr-3 mb-3">
+          <div
+            *ngFor="let data of datas; let i = index"
+            [ngClass]="{
+              'inner-container-active': clickedElement === i
+            }"
+            class="inner-container size mr-3 mb-3"
+            (click)="setClickedElement(i)"
+          >
             <div class="circle">
               <div class="circle-content">L0</div>
             </div>
