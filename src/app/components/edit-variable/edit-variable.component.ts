@@ -213,7 +213,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
-    const clickedInside = this.popover.nativeElement.contains(event.target);
+    const clickedInside = this.popover?.nativeElement.contains(event.target);
     if (!clickedInside) {
       this.cerrarPopover(event);
     }
