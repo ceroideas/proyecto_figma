@@ -54,7 +54,7 @@ export class BuildComponent implements OnInit {
   selectedTierLv: any = '#';
   years: any[] = [];
   currentYearIndex: number = 0;
-  query:string = "";
+  query: string = '';
   pointNode: any =
     '<div style="width:10px;height:10px;background:#30c7e1;border-radius:9999px;"></div>';
 
@@ -83,8 +83,7 @@ export class BuildComponent implements OnInit {
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
-
-      console.log('loaded')
+      console.log('loaded');
 
       this.data = new google.visualization.DataTable();
       this.data.addColumn('string', 'Name');
@@ -263,11 +262,15 @@ export class BuildComponent implements OnInit {
   }
 
   refresher() {
-    let rect:any = (document.querySelector('table.google-visualization-orgchart-table') as HTMLTableElement).getBoundingClientRect();
+    let rect: any = (
+      document.querySelector(
+        'table.google-visualization-orgchart-table'
+      ) as HTMLTableElement
+    ).getBoundingClientRect();
 
     console.log(rect);
 
-    this.lastPosition = { x: 300, y: ((rect.height/2)-20) };
+    this.lastPosition = { x: 300, y: rect.height / 2 - 20 };
     const element = this.zoomElement.nativeElement;
     this.zoomLevel = 1;
     element.style.transform = `scale(1)`;
@@ -750,7 +753,6 @@ export class BuildComponent implements OnInit {
       this.sceneriesNodes = [];
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
-
           if (element.hidden_table) {
             this.selectedHidden.push(element.id);
           }
@@ -800,7 +802,8 @@ export class BuildComponent implements OnInit {
             hiddenTable: element.hidden_table,
             name: element.name,
             tier: element.tier,
-            sceneries: element.type == 1 ? element.sceneries : element.calculated,
+            sceneries:
+              element.type == 1 ? element.sceneries : element.calculated,
             f_original: `<div  class="rotate" >
             
             <span>
@@ -1286,90 +1289,85 @@ export class BuildComponent implements OnInit {
     }
   }
 
-  selectTr(node:any)
-  {
+  selectTr(node: any) {
     let id = node.data[0].v;
-    console.log('selectTr',id)
-    let el = this.selected.findIndex(x => x==id);
+    console.log('selectTr', id);
+    let el = this.selected.findIndex((x) => x == id);
 
     if (el != -1) {
-      this.selected.splice(el,1);
-    }else{
+      this.selected.splice(el, 1);
+    } else {
       this.selected.push(id);
     }
 
     console.log(this.selected);
   }
 
-  hideSelected()
-  {
-    for (let i of this.selected)
-    {
+  hideSelected() {
+    for (let i of this.selected) {
       let node = this.aux.find((item: any) =>
         item.data.some((subItem: any) => subItem.v === i)
       );
 
       this.selectedHidden.push(i);
-      console.log(node.hiddenTable = 1);
+      console.log((node.hiddenTable = 1));
     }
 
-    this.projectSvc.setHiddenTable(this.selected).subscribe(data=>{
+    this.projectSvc.setHiddenTable(this.selected).subscribe((data) => {
       this.selected = [];
     });
   }
-  showHidden()
-  {
-    for (let i of this.aux)
-    {
+  showHidden() {
+    for (let i of this.aux) {
       i.hiddenTable = null;
     }
-    this.projectSvc.setHiddenTable(this.selectedHidden).subscribe(data=>{
+    this.projectSvc.setHiddenTable(this.selectedHidden).subscribe((data) => {
       this.selectedHidden = [];
     });
   }
 
-  exportCsv()
-  {
+  exportCsv() {
     let datos = [];
-    let header = ["LABEL","NAME"];
-    for (let y of this.project.years)
-    {
+    let header = ['LABEL', 'NAME'];
+    for (let y of this.project.years) {
       header.push(y);
     }
 
     // console.log(header);
 
-    for (let i of this.project.nodes.reverse())
-    {
-      let aux = ["L"+i.tier,i.name];
+    for (let i of this.project.nodes.reverse()) {
+      let aux = ['L' + i.tier, i.name];
       let sceneries = null;
 
       if (i.type == 1) {
         sceneries = i.sceneries;
-      }else{
+      } else {
         sceneries = i.calculated;
       }
-      let y:any;
-      for (y of Object.values(sceneries[this.selectedScenery]['years']))
-      {
-        aux.push(parseFloat(y).toFixed(2));
+      let y: any;
+      for (y of Object.values(sceneries[this.selectedScenery]['years'])) {
+        console.log(y.toString().replace(',', '.'));
+        aux.push(y.toString().replace(',', '.'));
       }
       datos.push(aux);
     }
 
-    let csvString = header.join(";")+'\n';
-    for (let i of datos)
-    {
-      csvString += i.join(";")+'\n';
+    let csvString = header.join(';') + '\n';
+    for (let i of datos) {
+      csvString += i.join(';') + '\n';
     }
 
-    const blob = new Blob([csvString], { type: "text/csv" });
+    const blob = new Blob([csvString], { type: 'text/csv' });
 
     // Crear un enlace de descarga
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = this.project.name+"-"+this.project.sceneries[this.selectedScenery]+".csv"; // Nombre del archivo
+    link.download =
+      this.project.name +
+      '-' +
+      this.project.sceneries[this.selectedScenery] +
+      '.csv'; // Nombre del archivo
     link.click();
 
     // Liberar el objeto URL
