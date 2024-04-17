@@ -155,6 +155,7 @@ export class SimulateComponent implements OnInit {
 
   recursiveCalculate(_node: any) {
     let formula: any = [];
+    let aux;
 
     // console.log(_node);
 
@@ -166,9 +167,20 @@ export class SimulateComponent implements OnInit {
 
         if (node.type == 1) {
           if (!node.isActive || node.isActive == false) {
-            formula.push(
-              node.unite === null || node.unite === undefined ? '0' : node.unite
-            );
+            let value = 
+              node.unite === null || node.unite === undefined
+                ? '0'
+                : node.unite;
+            formula.push(value);
+
+            aux = this.valoresPorNodo.find(x=>x.name == node.name);
+            if (!aux) {
+              this.valoresPorNodo.push({name:node.name, values: [value]})
+            }else{
+              let values = aux.values;
+              values.push(value);
+              aux.values = values;
+            }
           } else {
             switch (node.distribution_shape[0].name) {
               case 'Uniforme':
@@ -176,6 +188,14 @@ export class SimulateComponent implements OnInit {
                   node.distribution_shape[0].min,
                   node.distribution_shape[0].max
                 );
+                aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({name:node.name, values: [randomNumber]})
+                }else{
+                  let values = aux.values;
+                  values.push(randomNumber);
+                  aux.values = values;
+                }
                 formula.push('(' + randomNumber + ')');
                 break;
 
@@ -184,6 +204,14 @@ export class SimulateComponent implements OnInit {
                   node.distribution_shape[0].mean,
                   node.distribution_shape[0].stDev
                 );
+                aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({name:node.name, values: [randomNumberNormal]})
+                }else{
+                  let values = aux.values;
+                  values.push(randomNumberNormal);
+                  aux.values = values;
+                }
                 formula.push('(' + randomNumberNormal + ')');
                 break;
 
@@ -191,6 +219,14 @@ export class SimulateComponent implements OnInit {
                 const randomNumberExponential = this.exponentialOperation(
                   node.distribution_shape[0].rate
                 );
+                aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({name:node.name, values: [randomNumberExponential]})
+                }else{
+                  let values = aux.values;
+                  values.push(randomNumberExponential);
+                  aux.values = values;
+                }
                 formula.push('(' + randomNumberExponential + ')');
                 break;
 
@@ -208,13 +244,17 @@ export class SimulateComponent implements OnInit {
     return formula;
   }
 
+  valoresPorNodo:any[] = [];
+
   generateSimulation() {
+    this.valoresPorNodo = [];
     const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
     console.log(nodos, 'NODOA');
     let formula: any = [];
     let arrayToSee = [];
+    let aux;
 
     for (let i = 0; i < +this.simulationNumber; i++) {
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -225,11 +265,20 @@ export class SimulateComponent implements OnInit {
 
           if (node.type == 1) {
             if (!node.isActive || node.isActive == false) {
-              formula.push(
+              let value = 
                 node.unite === null || node.unite === undefined
                   ? '0'
-                  : node.unite
-              );
+                  : node.unite;
+              formula.push(value);
+
+              aux = this.valoresPorNodo.find(x=>x.name == node.name);
+              if (!aux) {
+                this.valoresPorNodo.push({name:node.name, values: [value]})
+              }else{
+                let values = aux.values;
+                values.push(value);
+                aux.values = values;
+              }
             } else {
               switch (node.distribution_shape[0].name) {
                 case 'Uniforme':
@@ -237,6 +286,14 @@ export class SimulateComponent implements OnInit {
                     node.distribution_shape[0].min,
                     node.distribution_shape[0].max
                   );
+                  aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({name:node.name, values: [randomNumber]})
+                  }else{
+                    let values = aux.values;
+                    values.push(randomNumber);
+                    aux.values = values;
+                  }
                   formula.push('(' + randomNumber + ')');
                   break;
 
@@ -245,6 +302,14 @@ export class SimulateComponent implements OnInit {
                     node.distribution_shape[0].mean,
                     node.distribution_shape[0].stDev
                   );
+                  aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({name:node.name, values: [randomNumberNormal]})
+                  }else{
+                    let values = aux.values;
+                    values.push(randomNumberNormal);
+                    aux.values = values;
+                  }
                   formula.push('(' + randomNumberNormal + ')');
                   break;
 
@@ -252,6 +317,14 @@ export class SimulateComponent implements OnInit {
                   const randomNumberExponential = this.exponentialOperation(
                     node.distribution_shape[0].rate
                   );
+                  aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({name:node.name, values: [randomNumberExponential]})
+                  }else{
+                    let values = aux.values;
+                    values.push(randomNumberExponential);
+                    aux.values = values;
+                  }
                   formula.push('(' + randomNumberExponential + ')');
                   break;
 
@@ -281,6 +354,17 @@ export class SimulateComponent implements OnInit {
     }
     this.simulationChart();
     this.updateSimulation();
+
+    for (let j in this.valoresPorNodo)
+    {
+      let values = this.valoresPorNodo[j].values;
+      values = values.map(Number);
+      let sum = values.reduce((a:any,b:any) => a+b,0);
+      let avg = sum / values.length;
+      this.valoresPorNodo[j].values = avg.toFixed(2);
+    }
+
+    console.log(this.valoresPorNodo);
   }
   chartetc() {
     if (this.chart) {
