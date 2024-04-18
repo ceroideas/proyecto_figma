@@ -46,6 +46,7 @@ export class SimulateComponent implements OnInit {
   ];
   simulations: any[] = [];
   temp: any = {};
+  csvData: any = [];
 
   constructor(
     private projectSvc: ProjectService,
@@ -248,7 +249,14 @@ export class SimulateComponent implements OnInit {
           }
         } else {
           // Utiliza await para esperar la resolución de la función recursiva
+          const form = await this.recursiveCalculate(node);
           formula.push(await this.recursiveCalculate(node));
+          csvData = {
+            ...csvData,
+            [node.name]: eval(
+              form.flat(5).join('').replaceAll(',', '')
+            ).toFixed(2),
+          };
         }
       } else {
         formula.push(nodeId);
@@ -284,6 +292,10 @@ export class SimulateComponent implements OnInit {
 
         if (typeof nodeId === 'number') {
           var node = this.nodes.find((node: any) => node.id == nodeId);
+          csvData[j] = {
+            ...csvData[j],
+            id: this.simulationId,
+          };
           if (node.type == 1) {
             if (!node.isActive || node.isActive == false) {
               let value =
@@ -293,6 +305,10 @@ export class SimulateComponent implements OnInit {
               formula.push(value);
 
               aux = this.valoresPorNodo.find((x) => x.name == node.name);
+              csvData[j] = {
+                ...csvData[j],
+                [node.name]: value,
+              };
               if (!aux) {
                 this.valoresPorNodo.push({ name: node.name, values: [value] });
               } else {
@@ -319,6 +335,10 @@ export class SimulateComponent implements OnInit {
                     aux.values = values;
                   }
                   formula.push('(' + randomNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: randomNumber,
+                  };
                   break;
 
                 case 'Normal':
@@ -338,6 +358,10 @@ export class SimulateComponent implements OnInit {
                     aux.values = values;
                   }
                   formula.push('(' + randomNumberNormal + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: randomNumberNormal,
+                  };
                   break;
 
                 case 'Exponencial':
@@ -356,6 +380,10 @@ export class SimulateComponent implements OnInit {
                     aux.values = values;
                   }
                   formula.push('(' + randomNumberExponential + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: randomNumberExponential,
+                  };
                   break;
 
                 default:
@@ -363,8 +391,15 @@ export class SimulateComponent implements OnInit {
               }
             }
           } else {
-            formula.push('(' + (await this.recursiveCalculate(node)) + ')');
+            let formula2 = await this.recursiveCalculate(node);
+            formula.push('(' + formula2 + ')');
+            console.log('(' + formula2 + ')', 'forumla variable esa');
             const data = this.temp;
+
+            csvData[j] = {
+              ...csvData[j],
+              [node.name]: eval(formula2.flat(5).join('').replaceAll(',', '')),
+            };
 
             if (Object.keys(data).length !== 0) {
               // Unir csvData[j] con data
@@ -374,26 +409,25 @@ export class SimulateComponent implements OnInit {
               };
             }
           }
-
-          csvData[j] = {
-            ...csvData[j],
-            [node.name]: eval(
-              formula.flat(5).join('').replaceAll(',', '')
-            ).toFixed(2),
-          };
         } else {
           formula.push(nodeId);
         }
       }
-
+      console.log(formula, 'Formula final');
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
+
       // const operation = formula;
+      csvData[j] = {
+        ...csvData[j],
+        [this.tierCero.name]: operation,
+      };
 
       arrayToSee.push(operation.toFixed(2));
 
       formula = [];
     }
     console.log(csvData, 'DATA');
+    this.csvData = csvData;
     this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
