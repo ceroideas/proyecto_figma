@@ -1346,8 +1346,15 @@ export class BuildComponent implements OnInit {
       }
       let y: any;
       for (y of Object.values(sceneries[this.selectedScenery]['years'])) {
-        console.log(y.toString().replace(',', '.'));
-        aux.push(y.toString().replace(',', '.'));
+        // Eliminar comas
+        var valorSinComas = y.replace(/,/g, '');
+        // Convertir a número y redondear a dos decimales si es un número
+        var resultado: any = parseFloat(valorSinComas);
+        if (!isNaN(resultado)) {
+          resultado = resultado.toFixed(2);
+        }
+
+        aux.push(resultado);
       }
       datos.push(aux);
     }

@@ -393,7 +393,7 @@ export class SimulateComponent implements OnInit {
           } else {
             let formula2 = await this.recursiveCalculate(node);
             formula.push('(' + formula2 + ')');
-            console.log('(' + formula2 + ')', 'forumla variable esa');
+
             const data = this.temp;
 
             csvData[j] = {
@@ -413,7 +413,7 @@ export class SimulateComponent implements OnInit {
           formula.push(nodeId);
         }
       }
-      console.log(formula, 'Formula final');
+
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
 
       // const operation = formula;
@@ -864,17 +864,61 @@ export class SimulateComponent implements OnInit {
     // Encabezados
     csvString += a + '\n';
 
+    function obtenerKeysUnicas(objetos: any[]) {
+      let keysUnicas: string[] = [];
+      objetos.forEach((objeto: {}) => {
+        Object.keys(objeto).forEach((key) => {
+          if (!keysUnicas.includes(key)) {
+            keysUnicas.push(key);
+          }
+        });
+      });
+      return keysUnicas;
+    }
+
+    // Función para convertir array de objetos a CSV
+    function convertirArrayA_CSV(arrayObjetos: any[]) {
+      const keysUnicas = obtenerKeysUnicas(arrayObjetos);
+
+      // Encabezados CSV
+      const encabezadosCSV = keysUnicas.join(',') + '\n';
+
+      // Valores CSV
+      let valoresCSV = '';
+      arrayObjetos.forEach((objeto: { [x: string]: any }) => {
+        keysUnicas.forEach((key) => {
+          if (key === 'id') {
+            valoresCSV +=
+              typeof objeto[key] === 'number' ? objeto[key] : objeto[key] || '';
+            valoresCSV += ',';
+          } else {
+            valoresCSV +=
+              typeof objeto[key] === 'number'
+                ? objeto[key].toFixed(2)
+                : objeto[key] || '';
+            valoresCSV += ',';
+          }
+        });
+        valoresCSV += '\n';
+      });
+
+      return encabezadosCSV + valoresCSV;
+    }
+
+    // Convertir array de objetos a CSV
+    const csv = convertirArrayA_CSV(this.csvData);
+
+    console.log(csv);
+
     const simulation = this.simulations.find(
       (simulation: any) => simulation.id == this.simulationId
     );
 
-    console.log(simulation);
-
-    /*     // Filas de datos
-    csvString += simulation.samples.join('\n');
+    // Filas de datos
+    /* csvString += simulation.samples.join('\n'); */
 
     // Crear un Blob con el contenido CSV
-    const blob = new Blob([csvString], { type: 'text/csv' });
+    const blob = new Blob([csv], { type: 'text/csv' });
 
     // Crear un enlace de descarga
     const url = URL.createObjectURL(blob);
@@ -884,6 +928,6 @@ export class SimulateComponent implements OnInit {
     link.click();
 
     // Liberar el objeto URL
-    URL.revokeObjectURL(url); */
+    URL.revokeObjectURL(url);
   }
 }
