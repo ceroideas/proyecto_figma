@@ -45,6 +45,7 @@ export class SimulateComponent implements OnInit {
     '40, 167, 69 ',
   ];
   simulations: any[] = [];
+  temp: any = {};
 
   constructor(
     private projectSvc: ProjectService,
@@ -84,7 +85,6 @@ export class SimulateComponent implements OnInit {
   }
 
   toggleSelectAll() {
-    
     var allNodes = this.nodes.filter((node: any) => node.type == 1);
 
     console.log(this.nodes);
@@ -153,11 +153,10 @@ export class SimulateComponent implements OnInit {
     });
   }
 
-  recursiveCalculate(_node: any) {
+  async recursiveCalculate(_node: any) {
     let formula: any = [];
     let aux;
-
-    // console.log(_node);
+    let csvData: any = {};
 
     for (let i = 0; i < _node.formula.length; i++) {
       var nodeId = _node.formula[i];
@@ -167,16 +166,17 @@ export class SimulateComponent implements OnInit {
 
         if (node.type == 1) {
           if (!node.isActive || node.isActive == false) {
-            let value = 
+            let value =
               node.unite === null || node.unite === undefined
                 ? '0'
                 : node.unite;
             formula.push(value);
+            csvData = { ...csvData, [node.name]: value };
 
-            aux = this.valoresPorNodo.find(x=>x.name == node.name);
+            aux = this.valoresPorNodo.find((x) => x.name == node.name);
             if (!aux) {
-              this.valoresPorNodo.push({name:node.name, values: [value]})
-            }else{
+              this.valoresPorNodo.push({ name: node.name, values: [value] });
+            } else {
               let values = aux.values;
               values.push(value);
               aux.values = values;
@@ -188,15 +188,19 @@ export class SimulateComponent implements OnInit {
                   node.distribution_shape[0].min,
                   node.distribution_shape[0].max
                 );
-                aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
                 if (!aux) {
-                  this.valoresPorNodo.push({name:node.name, values: [randomNumber]})
-                }else{
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [randomNumber],
+                  });
+                } else {
                   let values = aux.values;
                   values.push(randomNumber);
                   aux.values = values;
                 }
                 formula.push('(' + randomNumber + ')');
+                csvData = { ...csvData, [node.name]: randomNumber };
                 break;
 
               case 'Normal':
@@ -204,30 +208,38 @@ export class SimulateComponent implements OnInit {
                   node.distribution_shape[0].mean,
                   node.distribution_shape[0].stDev
                 );
-                aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
                 if (!aux) {
-                  this.valoresPorNodo.push({name:node.name, values: [randomNumberNormal]})
-                }else{
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [randomNumberNormal],
+                  });
+                } else {
                   let values = aux.values;
                   values.push(randomNumberNormal);
                   aux.values = values;
                 }
                 formula.push('(' + randomNumberNormal + ')');
+                csvData = { ...csvData, [node.name]: randomNumberNormal };
                 break;
 
               case 'Exponencial':
                 const randomNumberExponential = this.exponentialOperation(
                   node.distribution_shape[0].rate
                 );
-                aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
                 if (!aux) {
-                  this.valoresPorNodo.push({name:node.name, values: [randomNumberExponential]})
-                }else{
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [randomNumberExponential],
+                  });
+                } else {
                   let values = aux.values;
                   values.push(randomNumberExponential);
                   aux.values = values;
                 }
                 formula.push('(' + randomNumberExponential + ')');
+                csvData = { ...csvData, [node.name]: randomNumberExponential };
                 break;
 
               default:
@@ -235,46 +247,55 @@ export class SimulateComponent implements OnInit {
             }
           }
         } else {
-          formula.push(this.recursiveCalculate(node));
+          // Utiliza await para esperar la resolución de la función recursiva
+          formula.push(await this.recursiveCalculate(node));
         }
       } else {
         formula.push(nodeId);
       }
     }
+
+    if (Object.keys(csvData).length === 0) {
+    } else {
+      this.temp = { ...this.temp, ...csvData };
+    }
+
     return formula;
   }
 
-  valoresPorNodo:any[] = [];
+  valoresPorNodo: any[] = [];
 
-  generateSimulation() {
+  async generateSimulation() {
     this.valoresPorNodo = [];
     const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
-    console.log(nodos, 'NODOA');
+
     let formula: any = [];
     let arrayToSee = [];
     let aux;
 
+    let csvData: any = [];
+
     for (let i = 0; i < +this.simulationNumber; i++) {
+      let j = i;
       for (let i = 0; i < this.tierCero.formula.length; i++) {
         var nodeId = this.tierCero.formula[i];
 
         if (typeof nodeId === 'number') {
           var node = this.nodes.find((node: any) => node.id == nodeId);
-
           if (node.type == 1) {
             if (!node.isActive || node.isActive == false) {
-              let value = 
+              let value =
                 node.unite === null || node.unite === undefined
                   ? '0'
                   : node.unite;
               formula.push(value);
 
-              aux = this.valoresPorNodo.find(x=>x.name == node.name);
+              aux = this.valoresPorNodo.find((x) => x.name == node.name);
               if (!aux) {
-                this.valoresPorNodo.push({name:node.name, values: [value]})
-              }else{
+                this.valoresPorNodo.push({ name: node.name, values: [value] });
+              } else {
                 let values = aux.values;
                 values.push(value);
                 aux.values = values;
@@ -286,10 +307,13 @@ export class SimulateComponent implements OnInit {
                     node.distribution_shape[0].min,
                     node.distribution_shape[0].max
                   );
-                  aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
                   if (!aux) {
-                    this.valoresPorNodo.push({name:node.name, values: [randomNumber]})
-                  }else{
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [randomNumber],
+                    });
+                  } else {
                     let values = aux.values;
                     values.push(randomNumber);
                     aux.values = values;
@@ -302,10 +326,13 @@ export class SimulateComponent implements OnInit {
                     node.distribution_shape[0].mean,
                     node.distribution_shape[0].stDev
                   );
-                  aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
                   if (!aux) {
-                    this.valoresPorNodo.push({name:node.name, values: [randomNumberNormal]})
-                  }else{
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [randomNumberNormal],
+                    });
+                  } else {
                     let values = aux.values;
                     values.push(randomNumberNormal);
                     aux.values = values;
@@ -317,10 +344,13 @@ export class SimulateComponent implements OnInit {
                   const randomNumberExponential = this.exponentialOperation(
                     node.distribution_shape[0].rate
                   );
-                  aux = this.valoresPorNodo.find(x=>x.name == node.name);
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
                   if (!aux) {
-                    this.valoresPorNodo.push({name:node.name, values: [randomNumberExponential]})
-                  }else{
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [randomNumberExponential],
+                    });
+                  } else {
                     let values = aux.values;
                     values.push(randomNumberExponential);
                     aux.values = values;
@@ -333,8 +363,24 @@ export class SimulateComponent implements OnInit {
               }
             }
           } else {
-            formula.push('(' + this.recursiveCalculate(node) + ')');
+            formula.push('(' + (await this.recursiveCalculate(node)) + ')');
+            const data = this.temp;
+
+            if (Object.keys(data).length !== 0) {
+              // Unir csvData[j] con data
+              csvData[j] = {
+                ...csvData[j],
+                ...data,
+              };
+            }
           }
+
+          csvData[j] = {
+            ...csvData[j],
+            [node.name]: eval(
+              formula.flat(5).join('').replaceAll(',', '')
+            ).toFixed(2),
+          };
         } else {
           formula.push(nodeId);
         }
@@ -347,7 +393,7 @@ export class SimulateComponent implements OnInit {
 
       formula = [];
     }
-
+    console.log(csvData, 'DATA');
     this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
@@ -355,16 +401,15 @@ export class SimulateComponent implements OnInit {
     this.simulationChart();
     this.updateSimulation();
 
-    for (let j in this.valoresPorNodo)
-    {
+    for (let j in this.valoresPorNodo) {
       let values = this.valoresPorNodo[j].values;
       values = values.map(Number);
-      let sum = values.reduce((a:any,b:any) => a+b,0);
+      let sum = values.reduce((a: any, b: any) => a + b, 0);
       let avg = sum / values.length;
       this.valoresPorNodo[j].values = avg.toFixed(2);
     }
 
-    console.log(this.valoresPorNodo);
+    console.log(this.valoresPorNodo, 'NODOS VALORES');
   }
   chartetc() {
     if (this.chart) {
@@ -655,7 +700,9 @@ export class SimulateComponent implements OnInit {
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
-        labels: this.percentiles.map((p)=>{return p+'%'}),
+        labels: this.percentiles.map((p) => {
+          return p + '%';
+        }),
         datasets: [
           {
             label: 'Simulación Montecarlo',
@@ -724,13 +771,15 @@ export class SimulateComponent implements OnInit {
       this.chart.destroy();
     }
     this.simulationChart();
-    
+
     var allNodes = this.nodes.filter((node: any) => node.type == 1);
-    var allNodesSelected = this.nodes.filter((node: any) => node.type == 1 && node.isActive);
+    var allNodesSelected = this.nodes.filter(
+      (node: any) => node.type == 1 && node.isActive
+    );
 
     if (allNodes.length == allNodesSelected.length) {
       this.isSelectedAll = false;
-    }else{
+    } else {
       this.isSelectedAll = true;
     }
     console.log(this.isSelectedAll);
@@ -774,33 +823,33 @@ export class SimulateComponent implements OnInit {
   }
 
   exportToCsv() {
-    let csvString = "";
+    let csvString = '';
 
-    let a:any = "Valores";
+    let a: any = 'Valores';
 
     // Encabezados
-    csvString += a + "\n";
+    csvString += a + '\n';
 
     const simulation = this.simulations.find(
       (simulation: any) => simulation.id == this.simulationId
     );
 
-    console.log(simulation.samples);
+    console.log(simulation);
 
-    // Filas de datos
-    csvString += simulation.samples.join("\n");
+    /*     // Filas de datos
+    csvString += simulation.samples.join('\n');
 
     // Crear un Blob con el contenido CSV
-    const blob = new Blob([csvString], { type: "text/csv" });
+    const blob = new Blob([csvString], { type: 'text/csv' });
 
     // Crear un enlace de descarga
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
-    link.download = "valores simulados.csv"; // Nombre del archivo
+    link.download = 'valores simulados.csv'; // Nombre del archivo
     link.click();
 
     // Liberar el objeto URL
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(url); */
   }
 }
