@@ -402,10 +402,14 @@ export class SimulateComponent implements OnInit {
             };
 
             if (Object.keys(data).length !== 0) {
-              // Unir csvData[j] con data
               csvData[j] = {
                 ...csvData[j],
-                ...data,
+                ...Object.keys(data).reduce((acc: any, key) => {
+                  if (!(key in csvData[j])) {
+                    acc[key] = data[key];
+                  }
+                  return acc;
+                }, {}),
               };
             }
           }
@@ -426,7 +430,7 @@ export class SimulateComponent implements OnInit {
 
       formula = [];
     }
-    console.log(csvData, 'DATA');
+    /*  console.log(csvData, 'DATA'); */
     this.csvData = csvData;
     this.arraySamples = arrayToSee;
     if (this.chart) {
@@ -442,8 +446,6 @@ export class SimulateComponent implements OnInit {
       let avg = sum / values.length;
       this.valoresPorNodo[j].values = avg.toFixed(2);
     }
-
-    console.log(this.valoresPorNodo, 'NODOS VALORES');
   }
   chartetc() {
     if (this.chart) {
@@ -729,8 +731,6 @@ export class SimulateComponent implements OnInit {
       (_, i) => '-'
     );*/
 
-    console.log(conteos);
-
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
@@ -864,6 +864,13 @@ export class SimulateComponent implements OnInit {
     // Encabezados
     csvString += a + '\n';
 
+    function tieneMasDeDosDecimales(valor: any) {
+      // Convertir el valor a una cadena de texto
+      const strValor = valor.toString();
+      // Buscar la presencia de más de dos decimales
+      return /\.\d{3,}/.test(strValor);
+    }
+
     function obtenerKeysUnicas(objetos: any[]) {
       let keysUnicas: string[] = [];
       objetos.forEach((objeto: {}) => {
@@ -891,11 +898,26 @@ export class SimulateComponent implements OnInit {
             valoresCSV +=
               typeof objeto[key] === 'number' ? objeto[key] : objeto[key] || '';
             valoresCSV += ',';
+          } else if (!Number.isInteger(Number(objeto[key]))) {
+            const value = parseFloat(objeto[key]);
+            // Verificar si el valor tiene menos de dos o más de tres decimales
+            if (
+              value % 1 !== 0 &&
+              (value.toString().split('.')[1].length < 2 ||
+                value.toString().split('.')[1].length > 2)
+            ) {
+              console.log(value);
+              valoresCSV += value.toFixed(2);
+            } else {
+              console.log(value);
+              valoresCSV += value;
+            }
+            valoresCSV += ',';
           } else {
             valoresCSV +=
               typeof objeto[key] === 'number'
                 ? objeto[key].toFixed(2)
-                : objeto[key] || '';
+                : Number(objeto[key]).toFixed(2) || '';
             valoresCSV += ',';
           }
         });
@@ -907,8 +929,6 @@ export class SimulateComponent implements OnInit {
 
     // Convertir array de objetos a CSV
     const csv = convertirArrayA_CSV(this.csvData);
-
-    console.log(csv);
 
     const simulation = this.simulations.find(
       (simulation: any) => simulation.id == this.simulationId
