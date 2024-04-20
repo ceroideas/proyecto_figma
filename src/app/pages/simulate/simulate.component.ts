@@ -538,6 +538,7 @@ export class SimulateComponent implements OnInit {
       const simulationData = {
         nodes: nodos,
         samples: this.arraySamples,
+        csvData: this.csvData,
       };
       this.simulationSvc
         .updateSimulation(this.simulationId, simulationData)
@@ -799,7 +800,9 @@ export class SimulateComponent implements OnInit {
       }
     }
 
-    console.log(simulation, 'SIMULATION ENCONTRADA');
+    this.csvData = JSON.parse(simulation?.csvData);
+
+    /* console.log(simulation, 'SIMULATION ENCONTRADA'); */
 
     if (this.chart) {
       this.chart.destroy();
@@ -906,10 +909,8 @@ export class SimulateComponent implements OnInit {
               (value.toString().split('.')[1].length < 2 ||
                 value.toString().split('.')[1].length > 2)
             ) {
-              console.log(value);
               valoresCSV += value.toFixed(2);
             } else {
-              console.log(value);
               valoresCSV += value;
             }
             valoresCSV += ',';
