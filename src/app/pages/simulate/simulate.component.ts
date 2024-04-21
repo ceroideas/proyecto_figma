@@ -253,9 +253,7 @@ export class SimulateComponent implements OnInit {
           formula.push(await this.recursiveCalculate(node));
           csvData = {
             ...csvData,
-            [node.name]: eval(
-              form.flat(5).join('').replaceAll(',', '')
-            ).toFixed(2),
+            [node.name]: eval(form.flat(5).join('').replaceAll(',', '')),
           };
         }
       } else {
@@ -444,7 +442,7 @@ export class SimulateComponent implements OnInit {
       values = values.map(Number);
       let sum = values.reduce((a: any, b: any) => a + b, 0);
       let avg = sum / values.length;
-      this.valoresPorNodo[j].values = avg.toFixed(2);
+      this.valoresPorNodo[j].values = avg;
     }
   }
   chartetc() {
@@ -610,8 +608,9 @@ export class SimulateComponent implements OnInit {
       return value / (binWidth * s.length);
     });*/
 
-    const arrayOperation = Array.from({ length: 50 }, (_, i) =>
-      (min + i * binWidth).toFixed(2)
+    const arrayOperation = Array.from(
+      { length: 50 },
+      (_, i) => min + i * binWidth
     );
 
     return arrayOperation[Math.floor(Math.random() * arrayOperation.length)];
@@ -646,8 +645,9 @@ export class SimulateComponent implements OnInit {
     });
 
     // Crear la curva de la función de densidad de probabilidad
-    var x = Array.from({ length: 100 }, (_, i) =>
-      (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
+    var x = Array.from(
+      { length: 100 },
+      (_, i) => mu - 5 * sigma + (i * (10 * sigma)) / 100
     );
 
     x = x.filter(function (_, i) {
@@ -678,9 +678,7 @@ export class SimulateComponent implements OnInit {
     histogram = histogram.map((value) => value / (binWidth * s.length));
 
     // Crear bins para el histograma
-    let bins = Array.from({ length: histogram.length }, (_, i) =>
-      (i * binWidth).toFixed(2)
-    );
+    let bins = Array.from({ length: histogram.length }, (_, i) => i * binWidth);
 
     return bins[Math.floor(Math.random() * bins.length)];
   }
@@ -897,7 +895,7 @@ export class SimulateComponent implements OnInit {
       let valoresCSV = '';
       arrayObjetos.forEach((objeto: { [x: string]: any }) => {
         keysUnicas.forEach((key) => {
-          if (key === 'id') {
+          /*           if (key === 'id') {
             valoresCSV +=
               typeof objeto[key] === 'number' ? objeto[key] : objeto[key] || '';
             valoresCSV += ',';
@@ -920,7 +918,10 @@ export class SimulateComponent implements OnInit {
                 ? objeto[key].toFixed(2)
                 : Number(objeto[key]).toFixed(2) || '';
             valoresCSV += ',';
-          }
+          } */
+          valoresCSV += objeto[key];
+
+          valoresCSV += ',';
         });
         valoresCSV += '\n';
       });
