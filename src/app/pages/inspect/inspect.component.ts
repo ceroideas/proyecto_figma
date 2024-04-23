@@ -20,17 +20,15 @@ export class InspectComponent implements OnInit {
   nodes: any[] = [];
   selectedIndex: number | null = null;
   clickedElement: number = 0;
-  barData = [
-    38, 43, 47, 52, 55, 59, 62, 66, 71, 76, 82, 87, 92, 96, 101, 108, 112, 116,
-    119, 123, 129, 135, 141, 151, 160, 176, 52, 55, 59, 62, 66, 71, 76, 82, 119,
-    123, 129, 135, 141, 151, 160, 119, 123, 129, 135, 141, 151, 1000,
-  ];
+  barData = [38, 43, 47, 52, 55, 59, 62];
   datas: any[] = [];
   maxBarHeight: number = 160;
   minBarWidth: number = 7;
   showTooltip: boolean = false;
   hoveredValue: number | null = null;
   tierCero: any = {};
+  years: any[] = [];
+  yearIndex: any[] = [];
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -63,22 +61,23 @@ export class InspectComponent implements OnInit {
         const yearKey = keys[i];
         for (let i = 0; i < this.tierCero.length; i++) {
           const scenerie = this.tierCero[i];
-          let findYear = array.find((year) => year.hasOwnProperty(yearKey));
-          if (findYear) {
-            findYear[yearKey] = {
-              ...findYear[yearKey],
-              [scenerie.newName]: scenerie.years[yearKey],
-            };
-          } else {
-            const newObj = {
-              [yearKey]: { [scenerie.newName]: scenerie.years[yearKey] },
-            };
 
-            array.push(newObj);
-          }
+          const newObj = {
+            name: scenerie.newName,
+            year: yearKey,
+            value: scenerie.years[yearKey],
+          };
+          array.push(newObj);
         }
       }
-      console.log(array);
+
+      const valoresAños: any[] = [];
+
+      array.forEach((obj: any) => {
+        valoresAños.push(obj.value);
+      });
+      this.years = array;
+      this.barData = valoresAños;
     });
   }
 
@@ -92,6 +91,27 @@ export class InspectComponent implements OnInit {
   showBarValue(value: number) {
     this.showTooltip = true;
     this.hoveredValue = value;
+  }
+
+  toggleActive(year: any, i: any) {
+    let yearCount = 0;
+
+    for (let i = 0; i < this.years.length; i++) {
+      const element = this.years[i];
+
+      if (element?.isSelect) {
+        yearCount++;
+
+        if (yearCount === 2) {
+          console.log(this.yearIndex);
+          this.years[this.yearIndex[0]].isSelect = false;
+          this.yearIndex.shift();
+          break;
+        }
+      }
+    }
+    this.yearIndex.push(i);
+    year.isSelect = !year.isSelect;
   }
 
   hideBarValue() {

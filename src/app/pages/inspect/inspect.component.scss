@@ -116,3 +116,48 @@
   font-size: medium;
   color: white;
 }
+
+.year {
+  width: 37px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-radius: 15px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  display: inline-flex;
+}
+
+.year-text {
+  color: #64748b;
+  font-size: 12px;
+
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.year-selected {
+  width: 37px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  background: #000f55;
+  border-radius: 15px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  display: inline-flex;
+}
+
+.year-text-selected {
+  color: #f6f8fc;
+  font-size: 12px;
+
+  font-weight: 400;
+  word-wrap: break-word;
+}
