@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { some } from 'highcharts';
 import { SetPriceComponent } from 'src/app/components/set-price/set-price.component';
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { ProjectService } from 'src/app/services/project.service';
@@ -29,12 +30,14 @@ export class InspectComponent implements OnInit {
   minBarWidth: number = 7;
   showTooltip: boolean = false;
   hoveredValue: number | null = null;
+  tierCero: any = {};
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private projectSvc: ProjectService
   ) {}
   ngOnInit(): void {
+    const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     this.id = this.route.snapshot.params['id'];
 
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
@@ -47,7 +50,35 @@ export class InspectComponent implements OnInit {
       });
 
       this.datas = nodes.reverse();
-      console.log(this.datas);
+      this.tierCero = res.nodes
+        .find((node: any) => node.tier == 0)
+        .sceneries.map((obj: any, i: number) => {
+          obj.newName = abc.charAt(i);
+
+          return obj;
+        });
+      let array: any[] = [];
+      const keys = Object.keys(this.tierCero[0].years);
+      for (let i = 0; i < keys.length; i++) {
+        const yearKey = keys[i];
+        for (let i = 0; i < this.tierCero.length; i++) {
+          const scenerie = this.tierCero[i];
+          let findYear = array.find((year) => year.hasOwnProperty(yearKey));
+          if (findYear) {
+            findYear[yearKey] = {
+              ...findYear[yearKey],
+              [scenerie.newName]: scenerie.years[yearKey],
+            };
+          } else {
+            const newObj = {
+              [yearKey]: { [scenerie.newName]: scenerie.years[yearKey] },
+            };
+
+            array.push(newObj);
+          }
+        }
+      }
+      console.log(array);
     });
   }
 
