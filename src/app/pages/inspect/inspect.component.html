@@ -1342,7 +1342,7 @@
         }"
         class="circle-content"
       >
-        L0
+        {{ data.tier }}
       </div>
     </div>
     <div class="text-container mb-3">
@@ -1350,9 +1350,33 @@
       <div class="sub-text">
         <p class="sub-text-item">of &nbsp; &nbsp; 15.325.896 €</p>
 
-        <p>Lorem lorem lorem</p>
+        <p>{{ data.description }}</p>
       </div>
     </div>
+  </div>
+</div>
+<!-- <div
+  *ngFor="let monto of montos"
+  [ngStyle]="{
+    'background-color':
+      monto >= rangoSeleccionado.inicio && monto <= rangoSeleccionado.fin
+        ? 'darkblue'
+        : 'blue',
+    width: monto + 'px',
+    height: '20px',
+    'margin-bottom': '10px'
+  }"
+></div> -->
+
+<div class="bar-container">
+  <div
+    *ngFor="let value of barData; let i = index"
+    class="bar"
+    [style.height]="calculateHeight(value)"
+    (mouseover)="showBarValue(value)"
+    (mouseleave)="hideBarValue()"
+  >
+    <span class="tooltip" *ngIf="showTooltip">{{ hoveredValue }}</span>
   </div>
 </div>
 

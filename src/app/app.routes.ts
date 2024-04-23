@@ -14,7 +14,7 @@ export const routes: Routes = [
     children: [
       { path: 'projects', component: ProjectsComponent },
       {
-        path: 'inspect',
+        path: 'inspect/:id',
         component: InspectComponent,
       },
       { path: 'waterfall', component: WaterfallChartComponent },

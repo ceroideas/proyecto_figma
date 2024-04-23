@@ -27,6 +27,20 @@
   display: inline-flex;
   border: 2px solid rgba(140, 100, 177, 0.5);
 }
+.bar-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.bar {
+  width: 37px;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  overflow: hidden;
+  background: #4a6bff;
+}
 
 .circle {
   width: 44px;
