@@ -1,4 +1,5 @@
 <div class="title-page">Set price range</div>
+
 <div
   class="mb-5"
   style="width: 100%; height: 100%; background: #f6f8fc; border-radius: 15px"
@@ -8,12 +9,15 @@
       *ngFor="let value of barData; let i = index"
       class="bar"
       [style.height]="calculateHeight(value)"
-      (mouseover)="showBarValue(value)"
-      (mouseleave)="hideBarValue()"
+      (mouseover)="showValue(i)"
+      (mouseleave)="hideValue(i)"
     >
-      <span class="tooltip" *ngIf="showTooltip">{{ hoveredValue }}</span>
+      <div [id]="i" class="ventana-flotante" style="display: none">
+        <span class="texto-oculto">{{ value }} </span>
+      </div>
     </div>
   </div>
+
   <div style="width: 100%; height: 100%; position: relative">
     <div
       style="

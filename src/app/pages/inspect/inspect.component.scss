@@ -161,3 +161,23 @@
   font-weight: 400;
   word-wrap: break-word;
 }
+.ventana-flotante {
+  position: absolute;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  z-index: 999;
+}
+
+.elemento:hover .ventana-flotante {
+  display: block;
+}
+
+.texto-oculto {
+  display: block;
+  color: #333;
+  font-size: 14px;
+}

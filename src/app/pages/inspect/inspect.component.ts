@@ -6,7 +6,7 @@ import { some } from 'highcharts';
 import { SetPriceComponent } from 'src/app/components/set-price/set-price.component';
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { ProjectService } from 'src/app/services/project.service';
-
+declare var bootstrap: any;
 @Component({
   selector: 'app-inspect',
   providers: [ProjectService],
@@ -20,15 +20,15 @@ export class InspectComponent implements OnInit {
   nodes: any[] = [];
   selectedIndex: number | null = null;
   clickedElement: number = 0;
-  barData = [38, 43, 47, 52, 55, 59, 62];
+  barData: any = [];
   datas: any[] = [];
   maxBarHeight: number = 160;
   minBarWidth: number = 7;
-  showTooltip: boolean = false;
-  hoveredValue: number | null = null;
+
   tierCero: any = {};
   years: any[] = [];
   yearIndex: any[] = [];
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -39,6 +39,8 @@ export class InspectComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
 
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      this.nodes = res.nodes;
+      console.log(this.nodes);
       const nodes = res.nodes.map((node: any) => {
         return {
           tier: 'L' + node.tier,
@@ -66,6 +68,7 @@ export class InspectComponent implements OnInit {
             name: scenerie.newName,
             year: yearKey,
             value: scenerie.years[yearKey],
+            originalNAme: scenerie.name,
           };
           array.push(newObj);
         }
@@ -74,9 +77,10 @@ export class InspectComponent implements OnInit {
       const valoresAños: any[] = [];
 
       array.forEach((obj: any) => {
-        valoresAños.push(obj.value);
+        valoresAños.push(+obj.value);
       });
       this.years = array;
+
       this.barData = valoresAños;
     });
   }
@@ -86,11 +90,6 @@ export class InspectComponent implements OnInit {
     let normalizedHeight = (value / maxData) * this.maxBarHeight;
     normalizedHeight = Math.max(normalizedHeight, this.minBarWidth);
     return `${normalizedHeight}px`;
-  }
-
-  showBarValue(value: number) {
-    this.showTooltip = true;
-    this.hoveredValue = value;
   }
 
   toggleActive(year: any, i: any) {
@@ -112,11 +111,36 @@ export class InspectComponent implements OnInit {
     }
     this.yearIndex.push(i);
     year.isSelect = !year.isSelect;
+    this.calculatedNode();
   }
 
-  hideBarValue() {
-    this.showTooltip = false;
-    this.hoveredValue = null;
+  showValue(i: any): void {
+    const valueDiv = document.getElementById(`${i}`);
+
+    if (valueDiv?.style.display === 'none') {
+      valueDiv.style.display = 'block';
+    }
+  }
+
+  hideValue(i: any): void {
+    const valueDiv = document.getElementById(`${i}`);
+
+    if (valueDiv?.style.display === 'block') {
+      valueDiv.style.display = 'none';
+    }
+  }
+
+  calculatedNode() {
+    if (this.yearIndex.length === 2) {
+      console.log([
+        this.years[this.yearIndex[0]],
+        this.years[this.yearIndex[1]],
+      ]);
+
+      for (let i = 0; i < this.nodes.length; i++) {
+        const element = this.nodes[i];
+      }
+    }
   }
 
   goWaterfall() {
