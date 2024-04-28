@@ -13,7 +13,7 @@
       (mouseleave)="hideValue(i)"
     >
       <div [id]="i" class="ventana-flotante" style="display: none">
-        <span class="texto-oculto">{{ value }} </span>
+        <span class="texto-oculto">{{ valueToShow[i] }} </span>
       </div>
     </div>
   </div>
@@ -83,9 +83,9 @@
       </div>
     </div>
     <div class="text-container mb-3">
-      <p class="main-text">15.325.896 €</p>
+      <p class="main-text">{{ data.value }}€</p>
       <div class="sub-text">
-        <p class="sub-text-item">of &nbsp; &nbsp; 15.325.896 €</p>
+        <p class="sub-text-item">of &nbsp; &nbsp; {{ tierCeroValue }} €</p>
 
         <p>{{ data.description }}</p>
       </div>
