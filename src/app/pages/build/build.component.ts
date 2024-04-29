@@ -1347,7 +1347,9 @@ export class BuildComponent implements OnInit {
       let y: any;
       for (y of Object.values(sceneries[this.selectedScenery]['years'])) {
         // Eliminar comas
-        var valorSinComas = y.replace(/,/g, '');
+        y.toString();
+
+        var valorSinComas = `${y}`.replace(/,/g, '');
         // Convertir a número y redondear a dos decimales si es un número
         var resultado: any = parseFloat(valorSinComas);
         if (!isNaN(resultado)) {
