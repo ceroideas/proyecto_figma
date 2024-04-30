@@ -9,8 +9,6 @@
 
 # Node
 /node_modules
-/src/assets/plugins
-/src/assets/dist
 
 npm-debug.log
 yarn-error.log
