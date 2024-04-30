@@ -20,5 +20,5 @@ jobs:
           cd /home/proyecto_figma
           git pull
           npm install
-          ng build --prod
+          ng build
           cp -r ./dist/figma/browser/* /var/www/html
