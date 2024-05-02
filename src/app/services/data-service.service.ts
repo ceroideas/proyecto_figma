@@ -7,6 +7,11 @@ import { BehaviorSubject } from 'rxjs';
 export class DataService {
   private dataSubject = new BehaviorSubject<boolean>(false);
   public data$ = this.dataSubject.asObservable();
+  dataNodes: any[] = [];
+  tierCero: any;
+  tierCeroData: any[] = [];
+
+  constructor() {}
 
   deleteEsceneries(data: boolean) {
     this.dataSubject.next(data);

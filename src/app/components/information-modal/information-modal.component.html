@@ -5,6 +5,7 @@
   tabindex="-1"
   aria-labelledby="exampleModalLabel"
   aria-hidden="true"
+  data-bs-backdrop="static"
 >
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -36,20 +37,24 @@
           <div
             *ngFor="let data of datas; let i = index"
             [ngClass]="{
-              'inner-container-active': clickedElement === i
+              'inner-container-active': data.isActive
             }"
             class="inner-container size mr-3 mb-3"
-            (click)="setClickedElement(i)"
+            (click)="toggleActive(data)"
           >
             <div class="circle">
-              <div class="circle-content">L0</div>
+              <div class="circle-content">{{ data.tier }}</div>
             </div>
             <div class="text-container">
-              <p class="main-text">15.325.896 €</p>
+              <p class="main-text">
+                {{ data.value.toLocaleString("es-ES") }} €
+              </p>
               <div class="sub-text">
-                <p class="sub-text-item">of &nbsp; &nbsp; 15.325.896 €</p>
+                <p class="sub-text-item">
+                  of &nbsp; &nbsp; {{ tierCeroValue.toLocaleString("es-ES") }} €
+                </p>
 
-                <p>Lorem lorem lorem</p>
+                <p>{{ data.name }}</p>
               </div>
             </div>
           </div>
@@ -60,6 +65,7 @@
           class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
         >
           <button
+            (click)="deleteAll()"
             type="button"
             class="btn btn-lg delete-variable-button col-md-5 mb-0"
           >
@@ -67,8 +73,10 @@
           </button>
 
           <button
+            (click)="save()"
             type="button"
             class="btn btn-lg save-variable-button col-md-5"
+            data-bs-dismiss="modal"
           >
             Guardar cambios
           </button>

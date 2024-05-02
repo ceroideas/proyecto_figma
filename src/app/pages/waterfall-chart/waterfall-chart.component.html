@@ -559,4 +559,8 @@
 <div class="d-flex">
   <canvas id="chart"></canvas>
 </div>
-<app-information-modal></app-information-modal>
+<app-information-modal
+  (sendNodes)="receiveNodes($event)"
+  [datas]="data"
+  [tierCeroValue]="tierCeroValue"
+></app-information-modal>

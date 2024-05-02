@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { some } from 'highcharts';
 import { SetPriceComponent } from 'src/app/components/set-price/set-price.component';
 import { PipesModule } from 'src/app/pipes/pipes.module';
+import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
 declare var bootstrap: any;
 @Component({
@@ -35,7 +36,8 @@ export class InspectComponent implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private projectSvc: ProjectService
+    private projectSvc: ProjectService,
+    private dataSvc: DataService
   ) {}
   ngOnInit(): void {
     this.valueToShow = [];
@@ -105,14 +107,14 @@ export class InspectComponent implements OnInit {
         }
       }
 
-      console.log(array);
-
       const valoresAños: any[] = [];
 
       array.forEach((obj: any) => {
         this.valueToShow.push(obj.value);
 
         const valueWithoutDecimals = obj.value.replace(/\.\d{2}$/, '');
+
+        console.log('1');
 
         // Eliminar tanto los puntos como las comas del valor
         const cleanValue = valueWithoutDecimals.replace(/[,.]/g, '');
@@ -159,8 +161,13 @@ export class InspectComponent implements OnInit {
         }
       }
     }
-    this.yearIndex.push(i);
-    year.isSelect = !year.isSelect;
+
+    console.log(year);
+    if (!year.isSelect) {
+      this.yearIndex.push(i);
+      year.isSelect = !year.isSelect;
+    }
+
     this.calculatedNode();
   }
 
@@ -186,6 +193,8 @@ export class InspectComponent implements OnInit {
         this.years[this.yearIndex[0]],
         this.years[this.yearIndex[1]],
       ];
+      this.dataSvc.tierCeroData = years;
+      console.log(years, 'datas');
 
       let nodos: any = [];
       for (let i = 0; i < this.nodes.length; i++) {
@@ -215,8 +224,8 @@ export class InspectComponent implements OnInit {
       const diferencias = nodos
         .map((par: any) => {
           console.log(par);
-          const monto1 = parseFloat(par[0].replace(/,/g, ''));
-          const monto2 = parseFloat(par[1].replace(/,/g, ''));
+          const monto1 = parseFloat(par[0].toString().replace(/,/g, ''));
+          const monto2 = parseFloat(par[1].toString().replace(/,/g, ''));
           return {
             tier: par[2],
             name: par[3],
@@ -225,7 +234,10 @@ export class InspectComponent implements OnInit {
         })
         .reverse();
 
+      this.dataSvc.dataNodes = diferencias;
+
       this.tierCeroValue = diferencias.shift().value.toLocaleString('es-ES');
+      this.dataSvc.tierCero = this.tierCeroValue;
 
       this.datas = diferencias.map((value: any) => {
         return {
