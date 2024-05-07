@@ -312,6 +312,21 @@ export class InspectComponent implements OnInit {
           description: value.name,
         };
       });
+
+      function ordenarPorTier(a: any, b: any) {
+        // Comparar los valores de "tier" y devolver el resultado
+        if (a.tier < b.tier) {
+          return -1;
+        }
+        if (a.tier > b.tier) {
+          return 1;
+        }
+        return 0;
+      }
+
+      this.datas.sort(ordenarPorTier);
+
+      console.log(this.datas);
     }
   }
 
@@ -324,8 +339,36 @@ export class InspectComponent implements OnInit {
   }
 
   calculateImpactsForAngular(variableData: any[]): any {
-    const oldValues = variableData.map((variable) => variable.oldValue);
-    const newValues = variableData.map((variable) => variable.newValue);
+    const oldValues = variableData.map((variable) => {
+      if (
+        typeof variable.oldValue === 'string' &&
+        variable.oldValue.endsWith('.00')
+      ) {
+        variable.oldValue.replace(',', '.');
+        var numeroSinDecimales = variable.oldValue
+          .slice(0, -3)
+          .replace(',', ''); // Elimina los últimos tres caracteres
+
+        return +numeroSinDecimales;
+      } else {
+        return variable.oldValue;
+      }
+    });
+    const newValues = variableData.map((variable) => {
+      if (
+        typeof variable.newValue === 'string' &&
+        variable.newValue.endsWith('.00')
+      ) {
+        variable.newValue.replace(',', '.');
+        var numeroSinDecimales = variable.newValue
+          .slice(0, -3)
+          .replace(',', ''); // Elimina los últimos tres caracteres
+
+        return +numeroSinDecimales;
+      } else {
+        return variable.newValue;
+      }
+    });
 
     const directImpacts = [];
     const interactions: any = [];

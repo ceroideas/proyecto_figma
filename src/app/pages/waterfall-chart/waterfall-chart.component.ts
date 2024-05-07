@@ -32,15 +32,16 @@ export class WaterfallChartComponent implements OnInit {
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
-        labels: ['Brand A', 'Brand B', 'Brand C', 'Brand D'],
+        labels: ['Brand A', 'Brand B', 'Brand C', 'Brand D', 'Brand D'],
         datasets: [
           {
             label: 'Waterfall Chart',
-            data: [100, 150, -50, 100],
+            data: [50, 116, -96, -41, 29],
             backgroundColor: [
               'LightGray', // Inicio
               '#2cb02c', // Ingresos
               '#ff3a58', // Gastos
+              '#2cb02c', // Ganancias
               '#2cb02c', // Ganancias
             ],
             borderColor: [
@@ -48,6 +49,7 @@ export class WaterfallChartComponent implements OnInit {
               'rgba(54, 162, 235, 1)', // Ingresos
               'rgba(255, 99, 132, 1)', // Gastos
               'rgba(54, 162, 235, 1)', // Ganancias
+              'rgba(54, 162, 235, 1)', // Ganancia
             ],
           },
         ],
