@@ -32,6 +32,29 @@ export class InspectComponent implements OnInit {
 
   valueToShow: any[] = [];
   tierCeroValue: any = 0;
+  variableData = [
+    {
+      name: 'Número empleados equipo central',
+      oldValue: 6,
+      newValue: 7,
+    },
+    {
+      name: 'Coste por empleado equipo central',
+      oldValue: 7500,
+      newValue: 9000,
+    },
+
+    {
+      name: 'Seguridad social',
+      oldValue: 0.35,
+      newValue: 0.4,
+    },
+    {
+      name: 'Multiplicador mágico',
+      oldValue: 1,
+      newValue: 2,
+    },
+  ];
 
   constructor(
     private router: Router,
@@ -40,6 +63,8 @@ export class InspectComponent implements OnInit {
     private dataSvc: DataService
   ) {}
   ngOnInit(): void {
+    const result = this.calculateImpactsForAngular(this.variableData);
+
     this.valueToShow = [];
     const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     this.id = this.route.snapshot.params['id'];
@@ -114,8 +139,6 @@ export class InspectComponent implements OnInit {
 
         const valueWithoutDecimals = obj.value.replace(/\.\d{2}$/, '');
 
-        console.log('1');
-
         // Eliminar tanto los puntos como las comas del valor
         const cleanValue = valueWithoutDecimals.replace(/[,.]/g, '');
 
@@ -124,7 +147,6 @@ export class InspectComponent implements OnInit {
 
         // Verificar si el valor es un número válido
         if (!isNaN(numericValue)) {
-          console.log(numericValue);
           valoresAños.push(numericValue);
         } else {
           console.log('Valor no válido:', obj.value);
@@ -133,7 +155,6 @@ export class InspectComponent implements OnInit {
       this.years = array;
 
       this.barData = valoresAños;
-      console.log(this.barData);
     });
   }
 
@@ -154,7 +175,6 @@ export class InspectComponent implements OnInit {
         yearCount++;
 
         if (yearCount === 2) {
-          console.log(this.yearIndex);
           this.years[this.yearIndex[0]].isSelect = false;
           this.yearIndex.shift();
           break;
@@ -162,7 +182,6 @@ export class InspectComponent implements OnInit {
       }
     }
 
-    console.log(year);
     if (!year.isSelect) {
       this.yearIndex.push(i);
       year.isSelect = !year.isSelect;
@@ -194,12 +213,11 @@ export class InspectComponent implements OnInit {
         this.years[this.yearIndex[1]],
       ];
       this.dataSvc.tierCeroData = years;
-      console.log(years, 'datas');
 
       let nodos: any = [];
       for (let i = 0; i < this.nodes.length; i++) {
         const node = this.nodes[i];
-        let yearValues: any = [];
+        let yearValues: any = {};
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
           if (node.type === 2) {
@@ -207,37 +225,85 @@ export class InspectComponent implements OnInit {
               (node: any) => node.newName == year.name
             );
             const yearValue = scenerie.years[`${year.year}`];
-            yearValues.push(yearValue);
+
+            if (yearValues.oldValue) {
+              yearValues = { ...yearValues, newValue: yearValue };
+            } else {
+              yearValues = { ...yearValues, oldValue: yearValue };
+            }
           } else {
             const scenerie = node.sceneries.find(
               (node: any) => node.newName == year.name
             );
             const yearValue = scenerie.years[`${year.year}`];
-            yearValues.push(yearValue);
+
+            if (yearValues.oldValue) {
+              yearValues = { ...yearValues, newValue: yearValue };
+            } else {
+              yearValues = { ...yearValues, oldValue: yearValue };
+            }
           }
         }
-        yearValues.push('L' + node.tier);
-        yearValues.push(node.name);
+
+        yearValues = { ...yearValues, tier: 'L' + node.tier };
+        yearValues = { ...yearValues, name: node.name };
+        yearValues = { ...yearValues, id: node.id };
+        yearValues = { ...yearValues, type: node.type };
+        yearValues = { ...yearValues, formula: node.formula };
+
         nodos.push(yearValues);
       }
 
+      const otherValues: any[] = [];
+
       const diferencias = nodos
         .map((par: any) => {
-          console.log(par);
-          const monto1 = parseFloat(par[0].toString().replace(/,/g, ''));
-          const monto2 = parseFloat(par[1].toString().replace(/,/g, ''));
+          /*  console.log(par, 'PAR'); */
+
+          if (par.type == 2) {
+            var result = this.verificarOperadores(par.formula, nodos);
+            console.log(result);
+            const sumaTotal = result?.interactions?.reduce(
+              (acumulador: any, objeto: any) => {
+                return acumulador + objeto.value;
+              },
+              0
+            );
+
+            if (sumaTotal !== undefined && sumaTotal > 0) {
+              var other = {
+                tier: par.tier,
+                name: 'Otros valores',
+                value: sumaTotal,
+              };
+
+              otherValues.push(other);
+            }
+          }
+
+          const monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
+          const monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
+
           return {
-            tier: par[2],
-            name: par[3],
-            value: Math.abs(monto1 - monto2),
+            tier: par.tier,
+            name: par.name,
+            value:
+              result && result.totalImpact !== undefined
+                ? result.totalImpact
+                : Math.abs(monto1 - monto2),
           };
         })
         .reverse();
+
+      /*  console.log(diferencias); */
 
       this.dataSvc.dataNodes = diferencias;
 
       this.tierCeroValue = diferencias.shift().value.toLocaleString('es-ES');
       this.dataSvc.tierCero = this.tierCeroValue;
+      otherValues.forEach((node: any) => {
+        diferencias.push(node);
+      });
 
       this.datas = diferencias.map((value: any) => {
         return {
@@ -246,8 +312,6 @@ export class InspectComponent implements OnInit {
           description: value.name,
         };
       });
-
-      console.log(diferencias, 'nodos');
     }
   }
 
@@ -257,5 +321,196 @@ export class InspectComponent implements OnInit {
 
   setClickedElement(index: number) {
     this.clickedElement = index;
+  }
+
+  calculateImpactsForAngular(variableData: any[]): any {
+    const oldValues = variableData.map((variable) => variable.oldValue);
+    const newValues = variableData.map((variable) => variable.newValue);
+
+    const directImpacts = [];
+    const interactions: any = [];
+    let totalImpact = 0;
+
+    for (let i = 0; i < variableData.length; i++) {
+      const multiplier = oldValues.reduce(
+        (acc, val, idx) => (idx === i ? acc : acc * val),
+        1
+      );
+
+      const directImpact = (newValues[i] - oldValues[i]) * multiplier;
+      directImpacts.push({ impact: directImpact, variables: [i + 1] });
+      totalImpact += directImpact;
+    }
+
+    calculateInteractions([]);
+
+    function calculateInteractions(indices: number[] = []) {
+      if (indices.length > 1) {
+        let interactionImpact = indices.reduce(
+          (acc, idx) => acc * (newValues[idx] - oldValues[idx]),
+          1
+        );
+        const remainingMultiplier = oldValues
+          .filter((value, idx) => !indices.includes(idx))
+          .reduce((acc, val) => acc * val, 1);
+
+        interactionImpact *= remainingMultiplier;
+        interactions.push({
+          level: indices.length,
+          value: interactionImpact,
+          variables: indices.map((idx) => idx + 1),
+        });
+        totalImpact += interactionImpact;
+      }
+      for (
+        let i = indices.length > 0 ? indices[indices.length - 1] + 1 : 0;
+        i < variableData.length;
+        i++
+      ) {
+        calculateInteractions([...indices, i]);
+      }
+    }
+
+    return { directImpacts, interactions, totalImpact };
+  }
+
+  /*   calculateImpactsForAngular(variableData: any[]): any {
+    const oldValues = variableData.map((variable) => variable.oldValue);
+    const newValues = variableData.map((variable) => variable.newValue);
+
+    const directImpacts = [];
+    const interactions: any = [];
+    let totalImpact = 0;
+
+    for (let i = 0; i < variableData.length; i++) {
+      const multiplier = oldValues.reduce(
+        (acc, val, idx) => (idx === i ? acc + val : acc + 0),
+        0
+      );
+      console.log(
+        multiplier,
+        newValues[i],
+        oldValues[i],
+        newValues[i] - oldValues[i],
+        'multi' + i
+      );
+      const directImpact = newValues[i] - oldValues[i] + multiplier;
+      directImpacts.push({ impact: directImpact, variables: [i + 1] });
+      totalImpact += directImpact;
+    }
+
+    calculateInteractions([]);
+
+    function calculateInteractions(indices: number[] = []) {
+      if (indices.length > 1) {
+        let interactionImpact = indices.reduce(
+          (acc, idx) => acc + (newValues[idx] - oldValues[idx]),
+          0
+        );
+        const remainingMultiplier = oldValues
+          .filter((value, idx) => !indices.includes(idx))
+          .reduce((acc, val) => acc + val, 0);
+        interactionImpact += remainingMultiplier;
+        interactions.push({
+          level: indices.length,
+          value: interactionImpact,
+          variables: indices.map((idx) => idx + 1),
+        });
+        totalImpact += interactionImpact;
+      }
+      for (
+        let i = indices.length > 0 ? indices[indices.length - 1] + 1 : 0;
+        i < variableData.length;
+        i++
+      ) {
+        calculateInteractions([...indices, i]);
+      }
+    }
+
+    return { directImpacts, interactions, totalImpact };
+  }
+ */
+
+  verificarOperadores(array: (number | string)[], nodes: any) {
+    // Define un conjunto de operadores válidos
+    const operadoresValidos = new Set(['+', '-', '*', '/']);
+
+    // Contadores para cada tipo de operador
+    let suma = 0,
+      resta = 0,
+      multiplicacion = 0,
+      division = 0;
+
+    for (let i = 0; i < array.length; i++) {
+      // Convertir el elemento a cadena si es un número
+      const elemento =
+        typeof array[i] === 'number' ? array[i].toString() : array[i];
+
+      // Verifica si el elemento actual es un operador válido
+      if (typeof elemento === 'string' && operadoresValidos.has(elemento)) {
+        // Incrementa el contador correspondiente
+        switch (elemento) {
+          case '+':
+            suma++;
+            break;
+          case '-':
+            resta++;
+            break;
+          case '*':
+            multiplicacion++;
+            break;
+          case '/':
+            division++;
+            break;
+        }
+      } else if (typeof array[i] === 'number') {
+        // Si es un número, sigue al siguiente elemento
+        continue;
+      } else {
+        // Si encuentra un elemento que no es ni un número ni un operador, retorna 'Combinación'
+        return 'Combinación';
+      }
+    }
+
+    // Verifica qué tipo de operadores están presentes
+    if (suma > 0 && resta === 0 && multiplicacion === 0 && division === 0) {
+      return 'Solo suma';
+    } else if (
+      suma === 0 &&
+      resta > 0 &&
+      multiplicacion === 0 &&
+      division === 0
+    ) {
+      return 'Solo resta';
+    } else if (
+      suma === 0 &&
+      resta === 0 &&
+      multiplicacion > 0 &&
+      division === 0
+    ) {
+      const ids: any = array;
+      const arrayToSend = [];
+
+      for (let i = 0; i < ids.length; i++) {
+        const element = ids[i];
+        if (isNaN(element)) {
+          continue;
+        } else {
+          arrayToSend.push(nodes.find((node: any) => node.id == element));
+        }
+      }
+      const result = this.calculateImpactsForAngular(arrayToSend);
+
+      return result;
+    } else if (
+      suma === 0 &&
+      resta === 0 &&
+      multiplicacion === 0 &&
+      division > 0
+    ) {
+      return 'Solo división';
+    } else {
+      return 'Combinación';
+    }
   }
 }
