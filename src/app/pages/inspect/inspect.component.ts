@@ -63,7 +63,7 @@ export class InspectComponent implements OnInit {
     private dataSvc: DataService
   ) {}
   ngOnInit(): void {
-    const result = this.calculateImpactsForAngular(this.variableData);
+    const result = this.calculateImpactsMultiplie(this.variableData);
 
     this.valueToShow = [];
     const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -265,12 +265,15 @@ export class InspectComponent implements OnInit {
             console.log(result);
             const sumaTotal = result?.interactions?.reduce(
               (acumulador: any, objeto: any) => {
+                console.log(acumulador, objeto.value, 'suma');
                 return acumulador + objeto.value;
               },
               0
             );
 
-            if (sumaTotal !== undefined && sumaTotal > 0) {
+            console.log(sumaTotal, 'suma total');
+
+            if (sumaTotal !== undefined && sumaTotal >= 1) {
               var other = {
                 tier: par.tier,
                 name: 'Otros valores',
@@ -291,6 +294,7 @@ export class InspectComponent implements OnInit {
               result && result.totalImpact !== undefined
                 ? result.totalImpact
                 : Math.abs(monto1 - monto2),
+            combination: result == 'combinacion' ? true : false,
           };
         })
         .reverse();
@@ -310,6 +314,7 @@ export class InspectComponent implements OnInit {
           tier: value.tier,
           value: value.value.toLocaleString('es-ES'),
           description: value.name,
+          combination: value.combination,
         };
       });
 
@@ -326,7 +331,7 @@ export class InspectComponent implements OnInit {
 
       this.datas.sort(ordenarPorTier);
 
-      console.log(this.datas);
+      console.log(this.datas, 'datas');
     }
   }
 
@@ -338,7 +343,7 @@ export class InspectComponent implements OnInit {
     this.clickedElement = index;
   }
 
-  calculateImpactsForAngular(variableData: any[]): any {
+  calculateImpactsMultiplie(variableData: any[]): any {
     const oldValues = variableData.map((variable) => {
       if (
         typeof variable.oldValue === 'string' &&
@@ -379,7 +384,7 @@ export class InspectComponent implements OnInit {
         (acc, val, idx) => (idx === i ? acc : acc * val),
         1
       );
-
+      console.log(newValues[i], oldValues[i], multiplier, 'DIVICON');
       const directImpact = (newValues[i] - oldValues[i]) * multiplier;
       directImpacts.push({ impact: directImpact, variables: [i + 1] });
       totalImpact += directImpact;
@@ -417,9 +422,37 @@ export class InspectComponent implements OnInit {
     return { directImpacts, interactions, totalImpact };
   }
 
-  /*   calculateImpactsForAngular(variableData: any[]): any {
-    const oldValues = variableData.map((variable) => variable.oldValue);
-    const newValues = variableData.map((variable) => variable.newValue);
+  calculateImpactsDivide(variableData: any[]): any {
+    const oldValues = variableData.map((variable) => {
+      if (
+        typeof variable.oldValue === 'string' &&
+        variable.oldValue.endsWith('.00')
+      ) {
+        variable.oldValue.replace(',', '.');
+        var numeroSinDecimales = variable.oldValue
+          .slice(0, -3)
+          .replace(',', ''); // Elimina los últimos tres caracteres
+
+        return +numeroSinDecimales;
+      } else {
+        return variable.oldValue;
+      }
+    });
+    const newValues = variableData.map((variable) => {
+      if (
+        typeof variable.newValue === 'string' &&
+        variable.newValue.endsWith('.00')
+      ) {
+        variable.newValue.replace(',', '.');
+        var numeroSinDecimales = variable.newValue
+          .slice(0, -3)
+          .replace(',', ''); // Elimina los últimos tres caracteres
+
+        return +numeroSinDecimales;
+      } else {
+        return variable.newValue;
+      }
+    });
 
     const directImpacts = [];
     const interactions: any = [];
@@ -427,17 +460,12 @@ export class InspectComponent implements OnInit {
 
     for (let i = 0; i < variableData.length; i++) {
       const multiplier = oldValues.reduce(
-        (acc, val, idx) => (idx === i ? acc + val : acc + 0),
-        0
+        (acc, val, idx) =>
+          idx === i ? acc : acc === undefined ? val : acc / val,
+        undefined
       );
-      console.log(
-        multiplier,
-        newValues[i],
-        oldValues[i],
-        newValues[i] - oldValues[i],
-        'multi' + i
-      );
-      const directImpact = newValues[i] - oldValues[i] + multiplier;
+      console.log(newValues[i], oldValues[i], multiplier, 'DIVICON');
+      const directImpact = (newValues[i] - oldValues[i]) / multiplier;
       directImpacts.push({ impact: directImpact, variables: [i + 1] });
       totalImpact += directImpact;
     }
@@ -447,13 +475,14 @@ export class InspectComponent implements OnInit {
     function calculateInteractions(indices: number[] = []) {
       if (indices.length > 1) {
         let interactionImpact = indices.reduce(
-          (acc, idx) => acc + (newValues[idx] - oldValues[idx]),
-          0
+          (acc, idx) => acc / (newValues[idx] - oldValues[idx]),
+          1
         );
         const remainingMultiplier = oldValues
           .filter((value, idx) => !indices.includes(idx))
-          .reduce((acc, val) => acc + val, 0);
-        interactionImpact += remainingMultiplier;
+          .reduce((acc, val) => acc / val, 1);
+
+        interactionImpact /= remainingMultiplier;
         interactions.push({
           level: indices.length,
           value: interactionImpact,
@@ -472,7 +501,6 @@ export class InspectComponent implements OnInit {
 
     return { directImpacts, interactions, totalImpact };
   }
- */
 
   verificarOperadores(array: (number | string)[], nodes: any) {
     // Define un conjunto de operadores válidos
@@ -510,8 +538,9 @@ export class InspectComponent implements OnInit {
         // Si es un número, sigue al siguiente elemento
         continue;
       } else {
+        console.log(elemento, 'cobinacion elementop');
         // Si encuentra un elemento que no es ni un número ni un operador, retorna 'Combinación'
-        return 'Combinación';
+        return 'combinacion';
       }
     }
 
@@ -542,7 +571,7 @@ export class InspectComponent implements OnInit {
           arrayToSend.push(nodes.find((node: any) => node.id == element));
         }
       }
-      const result = this.calculateImpactsForAngular(arrayToSend);
+      const result = this.calculateImpactsMultiplie(arrayToSend);
 
       return result;
     } else if (
@@ -551,9 +580,22 @@ export class InspectComponent implements OnInit {
       multiplicacion === 0 &&
       division > 0
     ) {
-      return 'Solo división';
+      const ids: any = array;
+      const arrayToSend = [];
+
+      for (let i = 0; i < ids.length; i++) {
+        const element = ids[i];
+        if (isNaN(element)) {
+          continue;
+        } else {
+          arrayToSend.push(nodes.find((node: any) => node.id == element));
+        }
+      }
+      const result = this.calculateImpactsDivide(arrayToSend);
+
+      return result;
     } else {
-      return 'Combinación';
+      return 'combinacion';
     }
   }
 }
