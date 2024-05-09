@@ -63,8 +63,6 @@ export class InspectComponent implements OnInit {
     private dataSvc: DataService
   ) {}
   ngOnInit(): void {
-    const result = this.calculateImpactsMultiplie(this.variableData);
-
     this.valueToShow = [];
     const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     this.id = this.route.snapshot.params['id'];
@@ -283,9 +281,23 @@ export class InspectComponent implements OnInit {
               otherValues.push(other);
             }
           }
+          /*       if (par.tier == 'L0') {
+            var monto2 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
+            var monto1 = parseFloat(par.newValue.toString().replace(/,/g, ''));
 
-          const monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
-          const monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
+            console.log(
+              Math.abs(monto1 - monto2),
+              monto1,
+              monto2,
+              'SUMAAAAAAAAA'
+            );
+          } else {
+            var monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
+            var monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
+          } */
+
+          var monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
+          var monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
 
           return {
             tier: par.tier,
@@ -293,17 +305,17 @@ export class InspectComponent implements OnInit {
             value:
               result && result.totalImpact !== undefined
                 ? result.totalImpact
-                : Math.abs(monto1 - monto2),
+                : +monto2 - +monto1,
             combination: result == 'combinacion' ? true : false,
           };
         })
         .reverse();
 
-      /*  console.log(diferencias); */
-
       this.dataSvc.dataNodes = diferencias;
+      const tierCero = diferencias.shift();
 
-      this.tierCeroValue = diferencias.shift().value.toLocaleString('es-ES');
+      this.tierCeroValue = tierCero.value.toLocaleString('es-ES');
+
       this.dataSvc.tierCero = this.tierCeroValue;
       otherValues.forEach((node: any) => {
         diferencias.push(node);
@@ -327,6 +339,11 @@ export class InspectComponent implements OnInit {
           return 1;
         }
         return 0;
+      }
+
+      if (tierCero?.combination) {
+        tierCero.description = tierCero.name;
+        this.datas.push(tierCero);
       }
 
       this.datas.sort(ordenarPorTier);
