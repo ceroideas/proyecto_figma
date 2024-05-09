@@ -68,6 +68,35 @@
     (click)="setClickedElement(i)"
   >
     <div
+      *ngIf="data.combination"
+      style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+      "
+    >
+      <img src="../../../assets/icons/fi_alert-circle.svg" alt="" />
+
+      <div
+        [ngClass]="{
+          'circle-active': clickedElement === i
+        }"
+        class="circle"
+      >
+        <div
+          [ngClass]="{
+            'circle-content-active': clickedElement === i
+          }"
+          class="circle-content"
+        >
+          {{ data.tier }}
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="!data.combination"
       [ngClass]="{
         'circle-active': clickedElement === i
       }"
