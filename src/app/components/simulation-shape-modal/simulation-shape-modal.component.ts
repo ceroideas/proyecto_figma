@@ -27,12 +27,16 @@ export class SimulationShapeModalComponent implements OnInit {
   chart!: any;
   shapeType!: any;
   min: any = 0;
+  mode: any = 0;
   max: any = 0;
   stDev: number = 0;
   rate!: any;
   mean: number = 0;
   type: string = 'static';
   size: number = 100;
+  lamda: number = 0;
+  trials: number = 0;
+  probability: number = 0;
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {}
@@ -62,6 +66,22 @@ export class SimulationShapeModalComponent implements OnInit {
           ? shapeData?.__zone_symbol__value.mean
           : 0;
 
+        this.mode = shapeData?.__zone_symbol__value.mode
+          ? shapeData?.__zone_symbol__value.mode
+          : 0;
+
+        this.lamda = shapeData?.__zone_symbol__value.lamda
+          ? shapeData?.__zone_symbol__value.lamda
+          : 0;
+
+        this.trials = shapeData?.__zone_symbol__value.trials
+          ? shapeData?.__zone_symbol__value.trials
+          : 0;
+
+        this.probability = shapeData?.__zone_symbol__value.probability
+          ? shapeData?.__zone_symbol__value.probability
+          : 0;
+
         if (this.shapeType.__zone_symbol__value.name === 'Normal') {
           if (this.chart) {
             this.chart.destroy();
@@ -82,6 +102,27 @@ export class SimulationShapeModalComponent implements OnInit {
           }
           this.exponentialChart();
         }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Triangular') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.triangularChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Poisson') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.poissonChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Binominal') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.binomialChart();
+        }
       });
     });
 
@@ -92,13 +133,11 @@ export class SimulationShapeModalComponent implements OnInit {
 
       if (this.route === 'back') {
         if (openButtoBack) {
-          // Simula un clic en el botón para cerrar el modal
           (openButtoBack as HTMLElement).click();
         }
       } else if (this.route === 'save') {
         this.route = 'back';
         if (openButtonSave) {
-          // Simula un clic en el botón para cerrar el modal
           (openButtonSave as HTMLElement).click();
         }
       }
@@ -112,6 +151,10 @@ export class SimulationShapeModalComponent implements OnInit {
       rate: this.rate,
       stDev: this.stDev,
       max: this.max,
+      mode: this.mode,
+      lamda: this.lamda,
+      trials: this.trials,
+      probability: this.probability,
       name: this.shapeType.__zone_symbol__value.name,
       type: this.type,
     };
@@ -214,6 +257,256 @@ export class SimulationShapeModalComponent implements OnInit {
           },
           y: {
             display: false,
+          },
+        },
+      },
+    });
+  }
+
+  triangularChart() {
+    // Función para generar números aleatorios con distribución triangular
+    function triangularDistribution(
+      sampleSize: any,
+      low: any,
+      mode: any,
+      high: any
+    ) {
+      const triangularSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        const u = Math.random();
+        const f = (mode - low) / (high - low);
+        if (u <= f) {
+          triangularSamples.push(
+            low + Math.sqrt(u * (high - low) * (mode - low))
+          );
+        } else {
+          triangularSamples.push(
+            high - Math.sqrt((1 - u) * (high - low) * (high - mode))
+          );
+        }
+      }
+      return triangularSamples;
+    }
+
+    // Definir parámetros de la distribución triangular
+    const sampleSize = 1000;
+    const low = 3; // Valor mínimo
+    const mode = 5; // Valor modal
+    const high = 7; // Valor máximo
+
+    // Generar números aleatorios con distribución triangular
+    const triangularSamples = triangularDistribution(
+      sampleSize,
+      +this.min,
+      +this.mode,
+      +this.max
+    );
+    console.log(triangularSamples, 'SAMPLES');
+
+    // Calcular el histograma
+    const numBins = 20; // Número de bins para el histograma
+    const binWidth = (high - low) / numBins;
+    const histogram = new Array(numBins).fill(0);
+
+    triangularSamples.forEach((value) => {
+      if (value >= low && value <= high) {
+        const binIndex = Math.floor((value - low) / binWidth);
+        histogram[binIndex]++;
+      }
+    });
+
+    // Preparar datos para el histograma
+    const labels = Array.from({ length: numBins }, (_, i) =>
+      (low + i * binWidth).toFixed(2)
+    );
+    const data = histogram;
+
+    // Crear un histograma con Chart.js (gráfico de barras)
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Triangular Distribution',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Value',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+            ticks: {},
+          },
+        },
+      },
+    });
+  }
+
+  poissonChart() {
+    // Función para generar números aleatorios con distribución de Poisson
+    function poissonDistribution(sampleSize: any, lambda: any) {
+      const poissonSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        let L = Math.exp(-lambda);
+        let k = 0;
+        let p = 1;
+        do {
+          k++;
+          p *= Math.random();
+        } while (p > L);
+        poissonSamples.push(k - 1);
+      }
+      return poissonSamples;
+    }
+
+    // Definir parámetros de la distribución de Poisson
+    const sampleSize = 1000;
+    const lambda = 8; // Parámetro lambda
+
+    // Generar números aleatorios con distribución de Poisson
+    const poissonSamples = poissonDistribution(sampleSize, this.lamda);
+    console.log(poissonSamples);
+
+    // Calcular el histograma
+    const maxVal = Math.max(...poissonSamples);
+    const minVal = Math.min(...poissonSamples);
+    const numBins = maxVal - minVal + 1;
+    const histogram = new Array(numBins).fill(0);
+
+    poissonSamples.forEach((value) => {
+      histogram[value - minVal]++;
+    });
+
+    // Preparar datos para el histograma
+    const labels = Array.from({ length: numBins }, (_, i) => i + minVal);
+    const data = histogram;
+
+    // Crear un histograma con Chart.js (gráfico de barras)
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Poisson Distribution',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Value',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+            ticks: {},
+          },
+        },
+      },
+    });
+  }
+
+  binomialChart() {
+    // Función para generar números aleatorios con distribución binomial
+    function binomialDistribution(sampleSize: any, n: any, p: any) {
+      const binomialSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        let successes = 0;
+        for (let j = 0; j < n; j++) {
+          if (Math.random() < p) {
+            successes++;
+          }
+        }
+        binomialSamples.push(successes);
+      }
+      return binomialSamples;
+    }
+
+    // Definir parámetros de la distribución binomial
+    const sampleSize = 1000;
+    const n = 10; // Número de ensayos
+    const p = 0.5; // Probabilidad de éxito en cada ensayo
+
+    // Generar números aleatorios con distribución binomial
+    const binomialSamples = binomialDistribution(
+      sampleSize,
+      this.trials,
+      this.probability
+    );
+
+    // Calcular el histograma
+    const maxVal = Math.max(...binomialSamples);
+    const minVal = Math.min(...binomialSamples);
+    const numBins = maxVal - minVal + 1;
+    const histogram = new Array(numBins).fill(0);
+
+    binomialSamples.forEach((value) => {
+      histogram[value - minVal]++;
+    });
+
+    // Preparar datos para el histograma
+    const labels = Array.from({ length: numBins }, (_, i) => i + minVal);
+    const data = histogram;
+
+    // Crear un histograma con Chart.js (gráfico de barras)
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Binomial Distribution',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Number of Successes',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+            ticks: {},
           },
         },
       },
@@ -382,7 +675,28 @@ export class SimulationShapeModalComponent implements OnInit {
     }
     this.uniformChart();
   }
-  generateNormalDistributionData(mean: number, stDev: number) {
+
+  changeValuePoisson() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.poissonChart();
+  }
+
+  changeValueTriangular() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.triangularChart();
+  }
+
+  changeValueBinomial() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.binomialChart();
+  }
+  /*   generateNormalDistributionData(mean: number, stDev: number) {
     const labels = [];
     const values = [];
 
@@ -431,7 +745,7 @@ export class SimulationShapeModalComponent implements OnInit {
     }
 
     return { labels, values };
-  }
+  } */
 
   uniformDistribution(x: number, min: number, max: number) {
     if (x >= min && x <= max) {
