@@ -126,6 +126,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Output() deleteNode = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
+  mode: number = 0;
+  lamda: number = 0;
+  trials: number = 0;
+  probability: number = 0;
+  scale: number = 0;
+  form: number = 0;
+  alpha: number = 0;
+  beta: number = 0;
+  success: number = 0;
+  population: number = 0;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
@@ -231,21 +241,61 @@ export class EditVariableComponent implements OnInit, OnChanges {
             ? this.shapeData.__zone_symbol__value.min
             : this.min;
 
+          this.max = this.shapeData.__zone_symbol__value.max
+            ? this.shapeData.__zone_symbol__value.max
+            : this.max;
+
           this.stDev = this.shapeData.__zone_symbol__value.stDev
             ? this.shapeData.__zone_symbol__value.stDev
             : this.stDev;
 
-          this.max = this.shapeData.__zone_symbol__value.max
-            ? this.shapeData.__zone_symbol__value.max
-            : this.max;
+          this.rate = this.shapeData.__zone_symbol__value.rate
+            ? this.shapeData.__zone_symbol__value.rate
+            : this.rate;
 
           this.mean = this.shapeData.__zone_symbol__value.mean
             ? this.shapeData.__zone_symbol__value.mean
             : this.mean;
 
-          this.rate = this.shapeData.__zone_symbol__value.rate
-            ? this.shapeData.__zone_symbol__value.rate
-            : this.rate;
+          this.mode = this.shapeData.__zone_symbol__value.mode
+            ? this.shapeData.__zone_symbol__value.mode
+            : this.mode;
+
+          this.lamda = this.shapeData.__zone_symbol__value.lamda
+            ? this.shapeData.__zone_symbol__value.lamda
+            : this.lamda;
+
+          this.trials = this.shapeData.__zone_symbol__value.trials
+            ? this.shapeData.__zone_symbol__value.trials
+            : this.trials;
+
+          this.probability = this.shapeData.__zone_symbol__value.probability
+            ? this.shapeData.__zone_symbol__value.probability
+            : this.probability;
+
+          this.scale = this.shapeData.__zone_symbol__value.scale
+            ? this.shapeData.__zone_symbol__value.scale
+            : this.scale;
+
+          this.form = this.shapeData.__zone_symbol__value.form
+            ? this.shapeData.__zone_symbol__value.form
+            : this.form;
+
+          this.alpha = this.shapeData.__zone_symbol__value.alpha
+            ? this.shapeData.__zone_symbol__value.alpha
+            : this.alpha;
+
+          this.beta = this.shapeData.__zone_symbol__value.beta
+            ? this.shapeData.__zone_symbol__value.beta
+            : this.beta;
+
+          this.success = this.shapeData.__zone_symbol__value.success
+            ? this.shapeData.__zone_symbol__value.success
+            : this.success;
+
+          this.population = this.shapeData.__zone_symbol__value.population
+            ? this.shapeData.__zone_symbol__value.population
+            : this.population;
 
           const chartName = this.shapeData.__zone_symbol__value.name;
 
@@ -265,6 +315,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
               break;
             case 'Exponencial':
               this.exponentialChart();
+              break;
+            case 'Triangular':
+              this.triangularChart();
               break;
             default:
               console.error(`Tipo de gráfico no reconocido: ${chartName}`);
@@ -348,6 +401,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
           min: +this.min,
           rate: +this.rate,
           mean: +this.mean,
+          form: +this.form,
+          alpha: +this.alpha,
+          beta: +this.beta,
+          success: +this.success,
+          population: +this.population,
+          trials: +this.trials,
+          probability: +this.probability,
+          scale: +this.scale,
+          lamda: +this.lamda,
+          mode: +this.mode,
           type: this.shapeData.__zone_symbol__value.type,
         },
       ],
@@ -368,9 +431,19 @@ export class EditVariableComponent implements OnInit, OnChanges {
                 : 'Normal',
             max: +this.max,
             stDev: +this.stDev,
+            min: +this.min,
             rate: +this.rate,
             mean: +this.mean,
-            min: +this.min,
+            form: +this.form,
+            alpha: +this.alpha,
+            beta: +this.beta,
+            success: +this.success,
+            population: +this.population,
+            trials: +this.trials,
+            probability: +this.probability,
+            scale: +this.scale,
+            lamda: +this.lamda,
+            mode: +this.mode,
             type: this.shapeData.__zone_symbol__value.type,
           },
         ],
@@ -405,8 +478,18 @@ export class EditVariableComponent implements OnInit, OnChanges {
           max: +this.max,
           stDev: +this.stDev,
           min: +this.min,
-          mean: this.mean,
-          rate: this.rate,
+          rate: +this.rate,
+          mean: +this.mean,
+          form: +this.form,
+          alpha: +this.alpha,
+          beta: +this.beta,
+          success: +this.success,
+          population: +this.population,
+          trials: +this.trials,
+          probability: +this.probability,
+          scale: +this.scale,
+          lamda: +this.lamda,
+          mode: +this.mode,
           type: this.shapeData.__zone_symbol__value.type,
         },
       ],
@@ -517,23 +600,23 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
         // Si shapeData no existe, entonces lo establecemos
         if (!shapeDataExists) {
-          this.min = res.distribution_shape[0]?.min
-            ? res.distribution_shape[0]?.min
-            : this.min;
-          this.mean = res.distribution_shape[0]?.mean
-            ? res.distribution_shape[0]?.mean
-            : this.mean;
-
-          this.rate = res.distribution_shape[0]?.rate
-            ? res.distribution_shape[0]?.rate
-            : this.rate;
-
-          this.max = res.distribution_shape[0]?.max
-            ? res.distribution_shape[0]?.max
-            : this.max;
-          this.stDev = res.distribution_shape[0]?.stDev
-            ? res.distribution_shape[0]?.stDev
-            : this.stDev;
+          this.min = res.distribution_shape[0]?.min || this.min;
+          this.max = res.distribution_shape[0]?.max || this.max;
+          this.stDev = res.distribution_shape[0]?.stDev || this.stDev;
+          this.rate = res.distribution_shape[0]?.rate || this.rate;
+          this.mean = res.distribution_shape[0]?.mean || this.mean;
+          this.mode = res.distribution_shape[0]?.mode || this.mode;
+          this.lamda = res.distribution_shape[0]?.lamda || this.lamda;
+          this.trials = res.distribution_shape[0]?.trials || this.trials;
+          this.probability =
+            res.distribution_shape[0]?.probability || this.probability;
+          this.scale = res.distribution_shape[0]?.scale || this.scale;
+          this.form = res.distribution_shape[0]?.form || this.form;
+          this.alpha = res.distribution_shape[0]?.alpha || this.alpha;
+          this.beta = res.distribution_shape[0]?.beta || this.beta;
+          this.success = res.distribution_shape[0]?.success || this.success;
+          this.population =
+            res.distribution_shape[0]?.population || this.population;
 
           const formShape = {
             min: this.min,
@@ -541,6 +624,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
             max: this.max,
             rate: this.rate,
             mean: this.mean,
+            form: +this.form,
+            alpha: +this.alpha,
+            beta: +this.beta,
+            success: +this.success,
+            population: +this.population,
+            trials: +this.trials,
+            probability: +this.probability,
+            scale: +this.scale,
+            lamda: +this.lamda,
+            mode: +this.mode,
             name: res.distribution_shape[0]?.name
               ? res.distribution_shape[0]?.name
               : 'Normal',
@@ -571,6 +664,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
               break;
             case 'Exponencial':
               this.exponentialChart();
+              break;
+            case 'Triangular':
+              this.triangularChart();
               break;
             default:
               console.error(`Tipo de gráfico no reconocido: ${chartName}`);
@@ -806,8 +902,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
   getItem(key: any) {
     return new Promise((resolve) => {
       const value = localStorage.getItem(key);
+
       const def =
-        '{"name":"Normal","min":"0","max":"0","stDev":"0","rate":"0","mean":"0","type":"static"}';
+        '{"name":"Normal","min":"0","max":"0","stDev":"0","rate":"0","mean":"0","type":"static","form":"0","alpha":"0","beta":"0","success":"0","population":"0","trials":"0","probability":"0","scale":"0","lamda":"0","mode":"0"}';
       resolve(JSON.parse(value || def));
     });
   }
@@ -838,6 +935,29 @@ export class EditVariableComponent implements OnInit, OnChanges {
           y: {
             // dragData: false // disables datapoint dragging for the entire axis
           },
+        },
+      },
+    });
+  }
+
+  triangularChart() {
+    this.chart = new Chart('myChart', {
+      type: 'line',
+      data: {
+        labels: ['-', '-', '-'],
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Triangular',
+            data: [1, 100, 1], // Modifica los datos para que tengan forma triangular
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {},
         },
       },
     });

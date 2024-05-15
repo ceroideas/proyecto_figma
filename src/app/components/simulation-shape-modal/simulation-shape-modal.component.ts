@@ -328,12 +328,13 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   triangularChart() {
+    console.log(this.min, this.max, this.mode, 'MODE');
     // Función para generar números aleatorios con distribución triangular
     function triangularDistribution(
       sampleSize: any,
-      low: any,
-      mode: any,
-      high: any
+      low: number,
+      mode: number,
+      high: number
     ) {
       const triangularSamples = [];
       for (let i = 0; i < sampleSize; i++) {
@@ -366,20 +367,23 @@ export class SimulationShapeModalComponent implements OnInit {
 
     // Calcular el histograma
     const numBins = 20; // Número de bins para el histograma
-    const binWidth = (this.max - this.min) / numBins;
+    const binWidth = (+this.max - +this.min) / numBins;
     const histogram = new Array(numBins).fill(0);
 
     triangularSamples.forEach((value) => {
-      if (value >= this.min && value <= this.max) {
-        const binIndex = Math.floor((value - this.min) / binWidth);
+      if (value >= +this.min && value <= +this.max) {
+        const binIndex = Math.floor((value - +this.min) / binWidth);
         histogram[binIndex]++;
       }
     });
 
     // Preparar datos para el histograma
-    const labels = Array.from({ length: numBins }, (_, i) =>
-      (this.min + i * binWidth).toFixed(2)
+    const labels = Array.from(
+      { length: numBins },
+      (_, i) => +(+this.min + i * binWidth).toFixed(2)
     );
+
+    console.log(labels, 'SALEBL');
     const data = histogram;
 
     // Crear un histograma con Chart.js (gráfico de barras)
