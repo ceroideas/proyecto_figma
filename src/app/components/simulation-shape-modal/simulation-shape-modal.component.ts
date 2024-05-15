@@ -37,6 +37,13 @@ export class SimulationShapeModalComponent implements OnInit {
   lamda: number = 0;
   trials: number = 0;
   probability: number = 0;
+  form: number = 0;
+  scale: number = 0;
+  alpha: number = 0;
+  beta: number = 0;
+  success: number = 0;
+
+  population = 0;
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {}
@@ -82,6 +89,29 @@ export class SimulationShapeModalComponent implements OnInit {
           ? shapeData?.__zone_symbol__value.probability
           : 0;
 
+        this.scale = shapeData?.__zone_symbol__value.scale
+          ? shapeData?.__zone_symbol__value.scale
+          : 0;
+
+        this.form = shapeData?.__zone_symbol__value.form
+          ? shapeData?.__zone_symbol__value.form
+          : 0;
+
+        this.alpha = shapeData?.__zone_symbol__value.alpha
+          ? shapeData?.__zone_symbol__value.alpha
+          : 0;
+
+        this.beta = shapeData?.__zone_symbol__value.beta
+          ? shapeData?.__zone_symbol__value.beta
+          : 0;
+        this.success = shapeData?.__zone_symbol__value.success
+          ? shapeData?.__zone_symbol__value.success
+          : 0;
+
+        this.population = shapeData?.__zone_symbol__value.population
+          ? shapeData?.__zone_symbol__value.population
+          : 0;
+
         if (this.shapeType.__zone_symbol__value.name === 'Normal') {
           if (this.chart) {
             this.chart.destroy();
@@ -123,6 +153,34 @@ export class SimulationShapeModalComponent implements OnInit {
           }
           this.binomialChart();
         }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Weibull') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.weibullChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Geometric') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.geometricalChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Beta') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.betaChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Hypergeometric') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.hypergeometricChart();
+        }
       });
     });
 
@@ -155,6 +213,12 @@ export class SimulationShapeModalComponent implements OnInit {
       lamda: this.lamda,
       trials: this.trials,
       probability: this.probability,
+      alpha: this.alpha,
+      beta: this.beta,
+      form: this.form,
+      success: this.success,
+      population: this.population,
+      scale: this.scale,
       name: this.shapeType.__zone_symbol__value.name,
       type: this.type,
     };
@@ -290,9 +354,6 @@ export class SimulationShapeModalComponent implements OnInit {
 
     // Definir parámetros de la distribución triangular
     const sampleSize = 1000;
-    const low = 3; // Valor mínimo
-    const mode = 5; // Valor modal
-    const high = 7; // Valor máximo
 
     // Generar números aleatorios con distribución triangular
     const triangularSamples = triangularDistribution(
@@ -305,19 +366,19 @@ export class SimulationShapeModalComponent implements OnInit {
 
     // Calcular el histograma
     const numBins = 20; // Número de bins para el histograma
-    const binWidth = (high - low) / numBins;
+    const binWidth = (this.max - this.min) / numBins;
     const histogram = new Array(numBins).fill(0);
 
     triangularSamples.forEach((value) => {
-      if (value >= low && value <= high) {
-        const binIndex = Math.floor((value - low) / binWidth);
+      if (value >= this.min && value <= this.max) {
+        const binIndex = Math.floor((value - this.min) / binWidth);
         histogram[binIndex]++;
       }
     });
 
     // Preparar datos para el histograma
     const labels = Array.from({ length: numBins }, (_, i) =>
-      (low + i * binWidth).toFixed(2)
+      (this.min + i * binWidth).toFixed(2)
     );
     const data = histogram;
 
@@ -365,7 +426,7 @@ export class SimulationShapeModalComponent implements OnInit {
       for (let i = 0; i < sampleSize; i++) {
         let L = Math.exp(-lambda);
         let k = 0;
-        let p = 1;
+        let p = 1.0;
         do {
           k++;
           p *= Math.random();
@@ -387,11 +448,23 @@ export class SimulationShapeModalComponent implements OnInit {
     const maxVal = Math.max(...poissonSamples);
     const minVal = Math.min(...poissonSamples);
     const numBins = maxVal - minVal + 1;
-    const histogram = new Array(numBins).fill(0);
+    /* const histogram = new Array(numBins).fill(0); */
 
-    poissonSamples.forEach((value) => {
+    /*     poissonSamples.forEach((value) => {
       histogram[value - minVal]++;
-    });
+    }); */
+
+    let histogram = new Array(14).fill(0);
+    for (let i = 0; i < poissonSamples.length; i++) {
+      histogram[
+        Math.min(Math.floor(poissonSamples[i]), histogram.length - 1)
+      ]++;
+    }
+
+    // Normaliza el histograma
+    for (let i = 0; i < histogram.length; i++) {
+      histogram[i] /= poissonSamples.length;
+    }
 
     // Preparar datos para el histograma
     const labels = Array.from({ length: numBins }, (_, i) => i + minVal);
@@ -402,11 +475,11 @@ export class SimulationShapeModalComponent implements OnInit {
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
-        labels: labels,
+        labels: Array.from({ length: histogram.length }, (_, i) => i + 1),
         datasets: [
           {
             label: 'Poisson Distribution',
-            data: data,
+            data: histogram,
             backgroundColor: '#8C64B1',
             borderColor: '#8C64B1',
             borderWidth: 1,
@@ -431,6 +504,228 @@ export class SimulationShapeModalComponent implements OnInit {
           },
         },
       },
+    });
+  }
+
+  geometricalChart() {
+    // Parámetros de la distribución geométrica
+    const p = this.probability == 0 ? 0.1 : this.probability; // Probabilidad de éxito en cada intento
+    const size = 10000; // Tamaño de la muestra
+
+    // Generar muestras de la distribución geométrica
+    const samples = Array.from({ length: size }, () => {
+      let attempts = 1;
+      while (Math.random() >= p) {
+        attempts++;
+      }
+      return attempts;
+    });
+
+    console.log(samples, 'SAMPES');
+
+    // Calcular el histograma de las muestras
+    const histogramData = samples.reduce((histogram: any, value: any) => {
+      histogram[value] = (histogram[value] || 0) + 1;
+      return histogram;
+    }, {});
+
+    // Convertir el histograma en un formato compatible con Chart.js
+    const chartData = {
+      labels: Object.keys(histogramData).map((bin) => parseInt(bin)),
+      datasets: [
+        {
+          label: 'Histograma',
+          data: Object.values(histogramData).map((count: any) => count / size),
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Configurar opciones del gráfico
+    const chartOptions = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Número de intentos hasta el primer éxito',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de barras usando Chart.js
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: chartData,
+      options: chartOptions,
+    });
+  }
+
+  betaChart() {
+    // Parámetros de la distribución beta
+    const alpha = this.alpha; // Parámetro de forma
+    const beta = this.beta; // Parámetro de forma
+    const size = 1000; // Tamaño de la muestra
+
+    // Generar muestras de la distribución beta
+    const samples = Array.from({ length: size }, () => {
+      return Math.random() ** alpha * (1 - Math.random()) ** beta;
+    });
+
+    // Histograma de las muestras generadas
+    const bins = 50;
+    const histogramData = Array.from({ length: bins }, (_, i) => {
+      const binStart = i / bins;
+      const binEnd = (i + 1) / bins;
+      return (
+        samples.filter((value) => value >= binStart && value < binEnd).length /
+        size
+      );
+    });
+
+    // Función de densidad de probabilidad de la distribución beta
+    function betaPDF(x: any, alpha: any, beta: any) {
+      return (
+        (Math.pow(x, alpha - 1) * Math.pow(1 - x, beta - 1)) /
+        (Math.pow(1, alpha - 1) * Math.pow(1, beta - 1))
+      );
+    }
+
+    // Datos para trazar la función de densidad de probabilidad
+    const pdfData = {
+      labels: [] as string[],
+      datasets: [
+        {
+          label: 'Distribución Beta',
+          data: [] as number[],
+          fill: false,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          tension: 0.1,
+        },
+      ],
+    };
+
+    // Generar puntos para la función de densidad de probabilidad
+    for (let i = 0; i <= 1; i += 0.01) {
+      pdfData.labels.push(i.toFixed(2)); // Redondeamos para evitar números largos
+      pdfData.datasets[0].data.push(betaPDF(i, alpha, beta));
+    }
+
+    // Configurar opciones del gráfico
+    const options = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Valor',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de línea para la función de densidad de probabilidad
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: pdfData,
+      options: options,
+    });
+
+    // Añadir el histograma como un gráfico de barras en la parte derecha
+    this.chart.data.datasets.push({
+      label: 'Histograma',
+      data: histogramData,
+      backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      borderWidth: 1,
+      type: 'bar',
+      yAxisID: 'histogram-axis',
+    });
+
+    // Ajustar las opciones del eje y para el histograma
+    this.chart.options.scales.yAxes.push({
+      id: 'histogram-axis',
+      display: false,
+      stacked: false,
+    });
+  }
+
+  hypergeometricChart() {
+    // Parámetros de la distribución hipergeométrica
+    const M = this.population; // Tamaño de la población
+    const n = this.success; // Número de éxitos en la población
+    const N = this.trials; // Tamaño de la muestra
+
+    // Generar muestras de la distribución hipergeométrica
+    const samples = Array.from({ length: 1000 }, () => {
+      let successCount = 0;
+      for (let i = 0; i < N; i++) {
+        if (Math.random() < n / M) {
+          successCount++;
+        }
+      }
+      return successCount;
+    });
+
+    // Calcular el histograma de las muestras generadas
+    const bins = Array.from(new Set(samples)).sort((a, b) => a - b);
+    const histogramData = bins.map(
+      (bin) => samples.filter((value) => value === bin).length / samples.length
+    );
+
+    // Configurar los datos para el gráfico
+    const data = {
+      labels: bins,
+      datasets: [
+        {
+          label: 'Distribución Hipergeométrica',
+          data: histogramData,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Configurar opciones del gráfico
+    const options = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Valor',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de barras usando Chart.js
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: data,
+      options: options,
     });
   }
 
@@ -486,8 +781,8 @@ export class SimulationShapeModalComponent implements OnInit {
           {
             label: 'Binomial Distribution',
             data: data,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
             borderWidth: 1,
           },
         ],
@@ -511,6 +806,49 @@ export class SimulationShapeModalComponent implements OnInit {
         },
       },
     });
+  }
+
+  weibullChart() {
+    // Tus códigos
+    var a = 5; // shape
+    var form = 1;
+    var s = Array.from({ length: 1000 }, () =>
+      Math.pow(-Math.log(Math.random()), this.form / this.scale)
+    );
+
+    // Función weibull
+    function weib(x: number, n: number, a: number) {
+      return (a / n) * Math.pow(x / n, a - 1) * Math.exp(-Math.pow(x / n, a));
+    }
+
+    // Crear la gráfica
+
+    var x = Array.from({ length: 100 }, (_, i) => (i + 1) / 50);
+    var y = x.map((val) => weib(val, this.form, this.scale));
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: x,
+        datasets: [
+          {
+            label: 'Weibull Distribution',
+            data: y,
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
+      },
+    });
+
+    console.log(s, 'ido');
   }
 
   uniformChart() {
@@ -674,6 +1012,34 @@ export class SimulationShapeModalComponent implements OnInit {
       this.chart.destroy();
     }
     this.uniformChart();
+  }
+
+  changeValueHypergeometric() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.hypergeometricChart();
+  }
+
+  changeValueGeometrica() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.geometricalChart();
+  }
+
+  changeValueBeta() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.betaChart();
+  }
+
+  changeValueWeibull() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.weibullChart();
   }
 
   changeValuePoisson() {
