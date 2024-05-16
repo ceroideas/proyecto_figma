@@ -171,7 +171,7 @@
                 onkeydown="return /[^a-zA-Z]/.test(event.key) || event.key === 'Backspace' || event.key === 'Tab'"
                 type="text"
                 [(ngModel)]="inputValue"
-                autofocus 
+                autofocus
               />
               <button (click)="addCustom()">Guardar</button>
             </div>
@@ -313,6 +313,87 @@
                 />
               </div>
             </div>
+
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Poisson'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Rate:</span>
+                <input
+                  disabled
+                  [(ngModel)]="lamda"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Binominal'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-5 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min"
+                  >Probabilidad:</span
+                >
+                <input
+                  disabled
+                  [(ngModel)]="probability"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min"
+                  >Trials:</span
+                >
+                <input
+                  disabled
+                  [(ngModel)]="trials"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Triangular'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Min:</span>
+                <input
+                  disabled
+                  [(ngModel)]="min"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Mode:</span>
+                <input
+                  disabled
+                  [(ngModel)]="mode"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Max:</span>
+                <input
+                  disabled
+                  [(ngModel)]="max"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+            </div>
             <div
               *ngIf="shapeData?.__zone_symbol__value.name == 'SyntaxError'"
               class="col-md-12 d-flex mt-4"
@@ -339,6 +420,23 @@
               </div>
             </div>
             <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Geometric'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-5 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min"
+                  >Probabilidad:</span
+                >
+                <input
+                  disabled
+                  [(ngModel)]="probability"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+            </div>
+            <div
               *ngIf="shapeData?.__zone_symbol__value.name == 'Uniforme'"
               class="col-md-12 d-flex mt-4"
             >
@@ -357,6 +455,97 @@
                 <input
                   disabled
                   [(ngModel)]="max"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="max"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Weibull'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Forma:</span>
+                <input
+                  disabled
+                  [(ngModel)]="form"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="max"
+                  >Escala:</span
+                >
+                <input
+                  disabled
+                  [(ngModel)]="scale"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="max"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Beta'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Alpha:</span>
+                <input
+                  disabled
+                  [(ngModel)]="alpha"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="max">Beta:</span>
+                <input
+                  disabled
+                  [(ngModel)]="beta"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="max"
+                />
+              </div>
+            </div>
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Hypergeometric'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Exito:</span>
+                <input
+                  disabled
+                  [(ngModel)]="success"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="max"
+                  >Muestra:</span
+                >
+                <input
+                  disabled
+                  [(ngModel)]="trials"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="max"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="max"
+                  >Poblacion:</span
+                >
+                <input
+                  disabled
+                  [(ngModel)]="population"
                   type="text"
                   class="form-control chart-inputs"
                   aria-describedby="max"

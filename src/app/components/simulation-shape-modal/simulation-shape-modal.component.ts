@@ -470,10 +470,6 @@ export class SimulationShapeModalComponent implements OnInit {
       histogram[i] /= poissonSamples.length;
     }
 
-    // Preparar datos para el histograma
-    const labels = Array.from({ length: numBins }, (_, i) => i + minVal);
-    const data = histogram;
-
     // Crear un histograma con Chart.js (gráfico de barras)
 
     this.chart = new Chart('chart', {
@@ -524,8 +520,6 @@ export class SimulationShapeModalComponent implements OnInit {
       }
       return attempts;
     });
-
-    console.log(samples, 'SAMPES');
 
     // Calcular el histograma de las muestras
     const histogramData = samples.reduce((histogram: any, value: any) => {
@@ -837,8 +831,8 @@ export class SimulationShapeModalComponent implements OnInit {
           {
             label: 'Weibull Distribution',
             data: y,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
             borderWidth: 1,
           },
         ],
