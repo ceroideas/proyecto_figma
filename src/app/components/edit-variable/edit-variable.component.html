@@ -513,6 +513,32 @@
                 />
               </div>
             </div>
+
+            <div
+              *ngIf="shapeData?.__zone_symbol__value.name == 'Lognormal'"
+              class="col-md-12 d-flex mt-4"
+            >
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="min">Mean:</span>
+                <input
+                  disabled
+                  [(ngModel)]="mean"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="min"
+                />
+              </div>
+              <div class="input-group col-md-4 input-group-sm mb-3">
+                <span class="input-group-text chart-span" id="max">StDev:</span>
+                <input
+                  disabled
+                  [(ngModel)]="stDev"
+                  type="text"
+                  class="form-control chart-inputs"
+                  aria-describedby="max"
+                />
+              </div>
+            </div>
             <div
               *ngIf="shapeData?.__zone_symbol__value.name == 'Hypergeometric'"
               class="col-md-12 d-flex mt-4"

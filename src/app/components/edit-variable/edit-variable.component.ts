@@ -337,6 +337,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
             case 'Hypergeometric':
               this.hypergeometricChart();
               break;
+            case 'Lognormal':
+              this.lognormalChart();
+              break;
             default:
               console.error(`Tipo de gráfico no reconocido: ${chartName}`);
           }
@@ -706,6 +709,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
               break;
             case 'Hypergeometric':
               this.hypergeometricChart();
+              break;
+            case 'Lognormal':
+              this.lognormalChart();
               break;
             default:
               console.error(`Tipo de gráfico no reconocido: ${chartName}`);
@@ -1125,6 +1131,74 @@ export class EditVariableComponent implements OnInit, OnChanges {
     });
 
     console.log(s, 'ido');
+  }
+
+  lognormalChart() {
+    // Parámetros de la distribución logarítmico normal
+    const mu = Math.log(70); // Media logarítmica
+    const sigma = 12 / 70; // Desviación estándar logarítmica
+
+    // Función de densidad de probabilidad (PDF) de la distribución logarítmica normal
+    function lognormalPDF(x: any) {
+      const coefficient = 1 / (x * sigma * Math.sqrt(2 * Math.PI));
+      const exponent = -((Math.log(x) - mu) ** 2) / (2 * sigma ** 2);
+      return coefficient * Math.exp(exponent);
+    }
+
+    // Datos para el gráfico
+    const labels = [];
+    const data = [];
+
+    // Calcular datos para el gráfico
+    const step = 2; // Mostrar cada 2 puntos en el eje x
+    for (let x = 1; x <= 200; x += 0.1 * step) {
+      const pdf = lognormalPDF(x);
+      if (pdf > 0.001) {
+        // Filtrar valores cercanos a cero
+        labels.push(x.toFixed(2));
+        data.push(pdf);
+      }
+    }
+    console.log(data);
+    // Configuración del gráfico
+
+    // Crear gráfico
+
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Distribución Logarítmico Normal',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            display: false,
+            title: {
+              display: false,
+              text: 'Valor',
+            },
+            ticks: {
+              stepSize: 20, // Mostrar cada 20 puntos en el eje x
+            },
+          },
+          y: {
+            title: {
+              display: false,
+              text: 'Densidad de probabilidad',
+            },
+          },
+        },
+      },
+    });
   }
 
   betaChart() {

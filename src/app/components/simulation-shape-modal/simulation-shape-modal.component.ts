@@ -181,6 +181,13 @@ export class SimulationShapeModalComponent implements OnInit {
           }
           this.hypergeometricChart();
         }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Lognormal') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.lognormalChart();
+        }
       });
     });
 
@@ -527,6 +534,8 @@ export class SimulationShapeModalComponent implements OnInit {
       return histogram;
     }, {});
 
+    console.log(histogramData, 'HITO');
+
     // Convertir el histograma en un formato compatible con Chart.js
     const chartData = {
       labels: Object.keys(histogramData).map((bin) => parseInt(bin)),
@@ -652,14 +661,6 @@ export class SimulationShapeModalComponent implements OnInit {
       backgroundColor: 'rgba(255, 99, 132, 0.6)',
       borderWidth: 1,
       type: 'bar',
-      yAxisID: 'histogram-axis',
-    });
-
-    // Ajustar las opciones del eje y para el histograma
-    this.chart.options.scales.yAxes.push({
-      id: 'histogram-axis',
-      display: false,
-      stacked: false,
     });
   }
 
@@ -849,6 +850,73 @@ export class SimulationShapeModalComponent implements OnInit {
     console.log(s, 'ido');
   }
 
+  lognormalChart() {
+    // Parámetros de la distribución logarítmico normal
+    const mu = Math.log(this.mean); // Media logarítmica
+    const sigma = this.stDev / this.mean; // Desviación estándar logarítmica
+
+    // Función de densidad de probabilidad (PDF) de la distribución logarítmica normal
+    function lognormalPDF(x: any) {
+      const coefficient = 1 / (x * sigma * Math.sqrt(2 * Math.PI));
+      const exponent = -((Math.log(x) - mu) ** 2) / (2 * sigma ** 2);
+      return coefficient * Math.exp(exponent);
+    }
+
+    // Datos para el gráfico
+    const labels = [];
+    const data = [];
+
+    // Calcular datos para el gráfico
+    const step = 2; // Mostrar cada 2 puntos en el eje x
+    for (let x = 1; x <= 200; x += 0.1 * step) {
+      const pdf = lognormalPDF(x);
+      if (pdf > 0.001) {
+        // Filtrar valores cercanos a cero
+        labels.push(x.toFixed(2));
+        data.push(pdf);
+      }
+    }
+    console.log(data);
+    // Configuración del gráfico
+
+    // Crear gráfico
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Distribución Logarítmico Normal',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Valor',
+            },
+            ticks: {
+              stepSize: 20, // Mostrar cada 20 puntos en el eje x
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Densidad de probabilidad',
+            },
+          },
+        },
+      },
+    });
+  }
+
   uniformChart() {
     if (this.min.toString().includes('%')) {
       const valueBase = parseFloat(this.min.replace('%', ''));
@@ -996,6 +1064,13 @@ export class SimulationShapeModalComponent implements OnInit {
       this.chart.destroy();
     }
     this.normalChart();
+  }
+
+  changeValueLognormal() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.lognormalChart();
   }
 
   changeValueExponential() {
