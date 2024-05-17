@@ -243,6 +243,167 @@ export class SimulateComponent implements OnInit {
                 csvData = { ...csvData, [node.name]: randomNumberExponential };
                 break;
 
+              case 'Triangular':
+                const triangularNumber = this.triangularOperation(
+                  node.distribution_shape[0].min,
+                  node.distribution_shape[0].mode,
+                  node.distribution_shape[0].max
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [triangularNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(triangularNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + triangularNumber + ')');
+                csvData = { ...csvData, [node.name]: triangularNumber };
+                break;
+
+              case 'Poisson':
+                const poissonNumber = this.poissonOperation(
+                  node.distribution_shape[0].lambda
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [poissonNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(poissonNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + poissonNumber + ')');
+                csvData = { ...csvData, [node.name]: poissonNumber };
+                break;
+
+              case 'Binominal':
+                const binomialNumber = this.binomialOperation(
+                  node.distribution_shape[0].trials,
+                  node.distribution_shape[0].probability
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [binomialNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(binomialNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + binomialNumber + ')');
+                csvData = { ...csvData, [node.name]: binomialNumber };
+                break;
+
+              case 'Lognormal':
+                const lognormalNumber = this.lognormalOperation(
+                  node.distribution_shape[0].mean,
+                  node.distribution_shape[0].stDev
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [lognormalNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(lognormalNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + lognormalNumber + ')');
+                csvData = { ...csvData, [node.name]: lognormalNumber };
+                break;
+
+              case 'Geometric':
+                const geometricNumber = this.lognormalOperation(
+                  node.distribution_shape[0].mean,
+                  node.distribution_shape[0].stDev
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [geometricNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(geometricNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + geometricNumber + ')');
+                csvData = { ...csvData, [node.name]: geometricNumber };
+                break;
+
+              case 'Weibull':
+                const weibullNumber = this.weibullOperation(
+                  node.distribution_shape[0].form,
+                  node.distribution_shape[0].scale
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [weibullNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(weibullNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + weibullNumber + ')');
+                csvData = { ...csvData, [node.name]: weibullNumber };
+                break;
+
+              case 'Beta':
+                const betaNumber = this.betaOperation(
+                  node.distribution_shape[0].alpha,
+                  node.distribution_shape[0].beta
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [betaNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(betaNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + betaNumber + ')');
+                csvData = { ...csvData, [node.name]: betaNumber };
+                break;
+
+              case 'Hypergeometric':
+                const hypergeometricNumber = this.hypergeometricOperation(
+                  node.distribution_shape[0].population,
+                  node.distribution_shape[0].success,
+                  node.distribution_shape[0].trials
+                );
+                aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                if (!aux) {
+                  this.valoresPorNodo.push({
+                    name: node.name,
+                    values: [hypergeometricNumber],
+                  });
+                } else {
+                  let values = aux.values;
+                  values.push(hypergeometricNumber);
+                  aux.values = values;
+                }
+                formula.push('(' + hypergeometricNumber + ')');
+                csvData = { ...csvData, [node.name]: hypergeometricNumber };
+                break;
+
               default:
                 break;
             }
@@ -336,6 +497,190 @@ export class SimulateComponent implements OnInit {
                   csvData[j] = {
                     ...csvData[j],
                     [node.name]: randomNumber,
+                  };
+                  break;
+
+                case 'Triangular':
+                  const triangularNumber = this.triangularOperation(
+                    node.distribution_shape[0].min,
+                    node.distribution_shape[0].mode,
+                    node.distribution_shape[0].max
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [triangularNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(triangularNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + triangularNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: triangularNumber,
+                  };
+                  break;
+
+                case 'Binominal':
+                  const binomialNumber = this.binomialOperation(
+                    node.distribution_shape[0].trials,
+                    node.distribution_shape[0].probability
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [binomialNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(binomialNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + binomialNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: binomialNumber,
+                  };
+                  break;
+
+                case 'Lognormal':
+                  const lognormalNumber = this.lognormalOperation(
+                    node.distribution_shape[0].mean,
+                    node.distribution_shape[0].stDev
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [lognormalNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(lognormalNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + lognormalNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: lognormalNumber,
+                  };
+                  break;
+
+                case 'Geometric':
+                  const geometricNumber = this.geometricalOperation(
+                    node.distribution_shape[0].probability
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [geometricNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(geometricNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + geometricNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: geometricNumber,
+                  };
+                  break;
+
+                case 'Weibull':
+                  const weibullNumber = this.weibullOperation(
+                    node.distribution_shape[0].form,
+                    node.distribution_shape[0].scale
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [weibullNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(weibullNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + weibullNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: weibullNumber,
+                  };
+                  break;
+
+                case 'Beta':
+                  const betaNumber = this.betaOperation(
+                    node.distribution_shape[0].alpha,
+                    node.distribution_shape[0].beta
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [betaNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(betaNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + betaNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: betaNumber,
+                  };
+                  break;
+
+                case 'Hypergeometric':
+                  const hypergeometricNumber = this.hypergeometricOperation(
+                    node.distribution_shape[0].population,
+                    node.distribution_shape[0].success,
+                    node.distribution_shape[0].trials
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [hypergeometricNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(hypergeometricNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + hypergeometricNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: hypergeometricNumber,
+                  };
+                  break;
+
+                case 'Poisson':
+                  const poissonNumber = this.poissonOperation(
+                    node.distribution_shape[0].lambda
+                  );
+                  aux = this.valoresPorNodo.find((x) => x.name == node.name);
+                  if (!aux) {
+                    this.valoresPorNodo.push({
+                      name: node.name,
+                      values: [poissonNumber],
+                    });
+                  } else {
+                    let values = aux.values;
+                    values.push(poissonNumber);
+                    aux.values = values;
+                  }
+                  formula.push('(' + poissonNumber + ')');
+                  csvData[j] = {
+                    ...csvData[j],
+                    [node.name]: poissonNumber,
                   };
                   break;
 
@@ -672,6 +1017,8 @@ export class SimulateComponent implements OnInit {
     // Crear bins para el histograma
     let bins = Array.from({ length: histogram.length }, (_, i) => i * binWidth);
 
+    console.log(bins[Math.floor(Math.random() * bins.length)], 'samples');
+
     return bins[Math.floor(Math.random() * bins.length)];
   }
 
@@ -710,9 +1057,7 @@ export class SimulateComponent implements OnInit {
       +mode,
       +max
     );
-    console.log(triangularSamples, 'SAMPLES');
 
-    // Crear un histograma con Chart.js (gráfico de barras)
     return triangularSamples[
       Math.floor(Math.random() * triangularSamples.length)
     ];
@@ -740,6 +1085,12 @@ export class SimulateComponent implements OnInit {
 
     // Generar números aleatorios con distribución de Poisson
     const poissonSamples = poissonDistribution(sampleSize, +lambda);
+
+    console.log(
+      poissonSamples[Math.floor(Math.random() * poissonSamples.length)],
+      'samples'
+    );
+
     return poissonSamples[Math.floor(Math.random() * poissonSamples.length)];
   }
 
@@ -769,6 +1120,11 @@ export class SimulateComponent implements OnInit {
       +probability
     );
 
+    console.log(
+      binomialSamples[Math.floor(Math.random() * binomialSamples.length)],
+      'samples'
+    );
+
     return binomialSamples[Math.floor(Math.random() * binomialSamples.length)];
   }
 
@@ -796,6 +1152,8 @@ export class SimulateComponent implements OnInit {
       data.push(pdf);
     }
 
+    console.log(data[Math.floor(Math.random() * data.length)], 'Samples');
+
     return data[Math.floor(Math.random() * data.length)];
   }
 
@@ -813,6 +1171,8 @@ export class SimulateComponent implements OnInit {
       return attempts;
     });
 
+    console.log(samples[Math.floor(Math.random() * samples.length)], 'samples');
+
     return samples[Math.floor(Math.random() * samples.length)];
   }
 
@@ -820,6 +1180,8 @@ export class SimulateComponent implements OnInit {
     var s = Array.from({ length: 1000 }, () =>
       Math.pow(-Math.log(Math.random()), +form / +scale)
     );
+
+    console.log(s[Math.floor(Math.random() * s.length)], 'Samples');
 
     return s[Math.floor(Math.random() * s.length)];
   }
@@ -834,6 +1196,8 @@ export class SimulateComponent implements OnInit {
     const samples = Array.from({ length: size }, () => {
       return Math.random() ** alpha * (1 - Math.random()) ** beta;
     });
+
+    console.log(samples[Math.floor(Math.random() * samples.length)], 'samples');
 
     return samples[Math.floor(Math.random() * samples.length)];
   }
@@ -854,6 +1218,8 @@ export class SimulateComponent implements OnInit {
       }
       return successCount;
     });
+
+    console.log(samples[Math.floor(Math.random() * samples.length)], 'SMAPLES');
 
     return samples[Math.floor(Math.random() * samples.length)];
   }
