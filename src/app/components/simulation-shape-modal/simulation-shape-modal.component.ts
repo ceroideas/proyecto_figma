@@ -192,7 +192,6 @@ export class SimulationShapeModalComponent implements OnInit {
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      console.log(this.route);
       const openButtonSave = document.querySelector('#exampleModalButton');
       const openButtoBack = document.querySelector('#shapeModalButton');
 
@@ -230,7 +229,7 @@ export class SimulationShapeModalComponent implements OnInit {
       type: this.type,
     };
     localStorage.setItem('shapeData', JSON.stringify(formShape));
-    console.log(formShape);
+
     this.route = 'save';
     this.min = 0;
     this.max = 0;
@@ -293,8 +292,6 @@ export class SimulationShapeModalComponent implements OnInit {
         Math.exp(-((+x - mu) ** 2) / (2 * sigma ** 2))
       );
     });
-
-    console.log(x);
 
     // Crear el gráfico
 
@@ -370,7 +367,6 @@ export class SimulationShapeModalComponent implements OnInit {
       +this.mode,
       +this.max
     );
-    console.log(triangularSamples, 'SAMPLES');
 
     // Calcular el histograma
     const numBins = 20; // Número de bins para el histograma
@@ -390,7 +386,6 @@ export class SimulationShapeModalComponent implements OnInit {
       (_, i) => +(+this.min + i * binWidth).toFixed(2)
     );
 
-    console.log(labels, 'SALEBL');
     const data = histogram;
 
     // Crear un histograma con Chart.js (gráfico de barras)
@@ -453,7 +448,6 @@ export class SimulationShapeModalComponent implements OnInit {
 
     // Generar números aleatorios con distribución de Poisson
     const poissonSamples = poissonDistribution(sampleSize, this.lamda);
-    console.log(poissonSamples);
 
     // Calcular el histograma
     const maxVal = Math.max(...poissonSamples);
@@ -533,8 +527,6 @@ export class SimulationShapeModalComponent implements OnInit {
       histogram[value] = (histogram[value] || 0) + 1;
       return histogram;
     }, {});
-
-    console.log(histogramData, 'HITO');
 
     // Convertir el histograma en un formato compatible con Chart.js
     const chartData = {
@@ -666,25 +658,39 @@ export class SimulationShapeModalComponent implements OnInit {
 
   hypergeometricChart() {
     // Parámetros de la distribución hipergeométrica
-    const M = this.population; // Tamaño de la población
-    const n = this.success; // Número de éxitos en la población
-    const N = this.trials; // Tamaño de la muestra
+    const M = +this.population; // Tamaño de la población
+    const n = +this.success; // Número de éxitos en la población
+    const N = +this.trials; // Tamaño de la muestra
 
     // Generar muestras de la distribución hipergeométrica
-    const samples = Array.from({ length: 1000 }, () => {
-      let successCount = 0;
-      for (let i = 0; i < N; i++) {
-        if (Math.random() < n / M) {
-          successCount++;
+    function generateHypergeometricSamples(
+      M: number,
+      n: number,
+      N: number,
+      size: number
+    ) {
+      const samples = [];
+      for (let i = 0; i < size; i++) {
+        let successes = 0;
+        let population = [...Array(M).keys()].map((x) => (x < n ? 1 : 0));
+        for (let j = 0; j < N; j++) {
+          const index = Math.floor(Math.random() * population.length);
+          successes += population[index];
+          population.splice(index, 1);
         }
+        samples.push(successes);
       }
-      return successCount;
-    });
+      return samples;
+    }
+
+    const samples = generateHypergeometricSamples(M, n, N, 1000);
 
     // Calcular el histograma de las muestras generadas
     const bins = Array.from(new Set(samples)).sort((a, b) => a - b);
     const histogramData = bins.map(
-      (bin) => samples.filter((value) => value === bin).length / samples.length
+      (bin) =>
+        samples.filter((value: unknown) => value === bin).length /
+        samples.length
     );
 
     // Configurar los datos para el gráfico
@@ -808,46 +814,98 @@ export class SimulationShapeModalComponent implements OnInit {
   }
 
   weibullChart() {
-    // Tus códigos
-    var a = 5; // shape
-    var form = 1;
-    var s = Array.from({ length: 1000 }, () =>
-      Math.pow(-Math.log(Math.random()), this.form / this.scale)
-    );
+    // Parámetros de la distribución de Weibull
+    const k = this.form; // Parámetro de forma
+    const lambda = this.scale; // Parámetro de escala
+    const sampleSize = 1000;
 
-    // Función weibull
-    function weib(x: number, n: number, a: number) {
-      return (a / n) * Math.pow(x / n, a - 1) * Math.exp(-Math.pow(x / n, a));
+    // Función para generar números aleatorios con distribución de Weibull
+    function generateWeibullSamples(k: number, lambda: number, size: number) {
+      const samples = [];
+      for (let i = 0; i < size; i++) {
+        const u = Math.random();
+        const sample = lambda * Math.pow(-Math.log(1 - u), 1 / k);
+        samples.push(sample);
+      }
+      return samples;
     }
 
-    // Crear la gráfica
+    // Generar los datos de Weibull
+    const weibullSamples = generateWeibullSamples(k, lambda, sampleSize);
 
-    var x = Array.from({ length: 100 }, (_, i) => (i + 1) / 50);
-    var y = x.map((val) => weib(val, this.form, this.scale));
-    this.chart = new Chart('chart', {
-      type: 'bar',
-      data: {
-        labels: x,
-        datasets: [
-          {
-            label: 'Weibull Distribution',
-            data: y,
-            backgroundColor: '#8C64B1',
-            borderColor: '#8C64B1',
-            borderWidth: 1,
+    // Crear bins para el histograma
+    function createHistogram(samples: any[], binCount: number) {
+      const max = Math.max(...samples);
+      const min = Math.min(...samples);
+      const binWidth = (max - min) / binCount;
+      const bins = Array(binCount).fill(0);
+      samples.forEach((sample: number) => {
+        const index = Math.min(
+          Math.floor((sample - min) / binWidth),
+          binCount - 1
+        );
+        bins[index]++;
+      });
+      return bins.map((count) => count / (samples.length * binWidth)); // Densidad de probabilidad
+    }
+
+    const binCount = 20;
+    const hist = createHistogram(weibullSamples, binCount);
+
+    // Calcular los puntos medios de los bins
+    const binEdges = Array.from(
+      { length: binCount + 1 },
+      (_, i) => i * (Math.max(...weibullSamples) / binCount)
+    );
+    const binMids = binEdges
+      .slice(0, -1)
+      .map((edge, index) => ((edge + binEdges[index + 1]) / 2).toFixed(2));
+
+    // Configurar los datos para Chart.js
+    const chartData = {
+      labels: binMids,
+      datasets: [
+        {
+          label: 'Densidad de Probabilidad',
+          data: hist,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Configurar las opciones del gráfico
+    const chartOptions = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Valor',
           },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de Probabilidad',
           },
         },
       },
-    });
+      plugins: {
+        title: {
+          display: true,
+          text: 'Histograma de Distribución de Weibull',
+        },
+      },
+    };
 
-    console.log(s, 'ido');
+    // Crear el gráfico
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: chartData,
+      options: chartOptions,
+    });
   }
 
   lognormalChart() {
@@ -876,7 +934,7 @@ export class SimulationShapeModalComponent implements OnInit {
         data.push(pdf);
       }
     }
-    console.log(data);
+
     // Configuración del gráfico
 
     // Crear gráfico
@@ -920,14 +978,13 @@ export class SimulationShapeModalComponent implements OnInit {
   uniformChart() {
     if (this.min.toString().includes('%')) {
       const valueBase = parseFloat(this.min.replace('%', ''));
-      console.log('min');
 
       this.min = +valueBase / 100;
     }
 
     if (this.max.toString().includes('%')) {
       const valueBase = parseFloat(this.max.replace('%', ''));
-      console.log('max');
+
       this.max = +valueBase / 100;
     }
 
@@ -941,7 +998,6 @@ export class SimulationShapeModalComponent implements OnInit {
     }
 
     // Verificar que todos los valores están dentro del intervalo dado
-    console.log(s.every((value) => value >= min && value < max));
 
     // Crear el histograma
     var histogram = new Array(15).fill(0);

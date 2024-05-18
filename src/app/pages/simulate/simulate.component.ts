@@ -66,7 +66,6 @@ export class SimulateComponent implements OnInit {
         this.simulations = res.reverse();
         if (this.simulations.length > 0) {
           this.selectSimulacion(this.simulations[0].id);
-          console.log('SIMULATION');
         }
       });
 
@@ -80,15 +79,12 @@ export class SimulateComponent implements OnInit {
   }
 
   getSelectedSimulation(id: any) {
-    this.simulationSvc.getSimulation(id).subscribe((res: any) => {
-      console.log(res, 'SELECTED SIMULATION');
-    });
+    this.simulationSvc.getSimulation(id).subscribe((res: any) => {});
   }
 
   toggleSelectAll() {
     var allNodes = this.nodes.filter((node: any) => node.type == 1);
 
-    console.log(this.nodes);
     allNodes.forEach((node) => (node.isActive = this.isSelectedAll));
     if (!this.isSelectedAll) {
       this.nodes.forEach((node) => (node.isActive = this.isSelectedAll));
@@ -266,7 +262,7 @@ export class SimulateComponent implements OnInit {
 
               case 'Poisson':
                 const poissonNumber = this.poissonOperation(
-                  node.distribution_shape[0].lambda
+                  node.distribution_shape[0].lamda
                 );
                 aux = this.valoresPorNodo.find((x) => x.name == node.name);
                 if (!aux) {
@@ -664,7 +660,7 @@ export class SimulateComponent implements OnInit {
 
                 case 'Poisson':
                   const poissonNumber = this.poissonOperation(
-                    node.distribution_shape[0].lambda
+                    node.distribution_shape[0].lamda
                   );
                   aux = this.valoresPorNodo.find((x) => x.name == node.name);
                   if (!aux) {
@@ -897,7 +893,6 @@ export class SimulateComponent implements OnInit {
                   this.simulations = res.reverse();
                   this.updateImageUrls();
                   this.cdRef.detectChanges();
-                  console.log(res);
                 });
             });
 
@@ -989,8 +984,6 @@ export class SimulateComponent implements OnInit {
       return histogram[i] > 0;
     });
 
-    console.log(x[Math.floor(Math.random() * x.length)], 'NORMAL');
-
     return x[Math.floor(Math.random() * x.length)];
   }
 
@@ -1016,8 +1009,6 @@ export class SimulateComponent implements OnInit {
 
     // Crear bins para el histograma
     let bins = Array.from({ length: histogram.length }, (_, i) => i * binWidth);
-
-    console.log(bins[Math.floor(Math.random() * bins.length)], 'samples');
 
     return bins[Math.floor(Math.random() * bins.length)];
   }
@@ -1086,11 +1077,6 @@ export class SimulateComponent implements OnInit {
     // Generar números aleatorios con distribución de Poisson
     const poissonSamples = poissonDistribution(sampleSize, +lambda);
 
-    console.log(
-      poissonSamples[Math.floor(Math.random() * poissonSamples.length)],
-      'samples'
-    );
-
     return poissonSamples[Math.floor(Math.random() * poissonSamples.length)];
   }
 
@@ -1120,11 +1106,6 @@ export class SimulateComponent implements OnInit {
       +probability
     );
 
-    console.log(
-      binomialSamples[Math.floor(Math.random() * binomialSamples.length)],
-      'samples'
-    );
-
     return binomialSamples[Math.floor(Math.random() * binomialSamples.length)];
   }
 
@@ -1152,8 +1133,6 @@ export class SimulateComponent implements OnInit {
       data.push(pdf);
     }
 
-    console.log(data[Math.floor(Math.random() * data.length)], 'Samples');
-
     return data[Math.floor(Math.random() * data.length)];
   }
 
@@ -1171,19 +1150,23 @@ export class SimulateComponent implements OnInit {
       return attempts;
     });
 
-    console.log(samples[Math.floor(Math.random() * samples.length)], 'samples');
-
     return samples[Math.floor(Math.random() * samples.length)];
   }
 
   weibullOperation(form: any, scale: any) {
-    var s = Array.from({ length: 1000 }, () =>
-      Math.pow(-Math.log(Math.random()), +form / +scale)
-    );
+    function generateWeibullSamples(k: number, lambda: number, size: number) {
+      const samples = [];
+      for (let i = 0; i < size; i++) {
+        const u = Math.random();
+        const sample = lambda * Math.pow(-Math.log(1 - u), 1 / k);
+        samples.push(sample);
+      }
+      return samples;
+    }
 
-    console.log(s[Math.floor(Math.random() * s.length)], 'Samples');
+    const samples = generateWeibullSamples(form, scale, 1000);
 
-    return s[Math.floor(Math.random() * s.length)];
+    return samples[Math.floor(Math.random() * samples.length)];
   }
 
   betaOperation(alpha1: any, beta1: any) {
@@ -1197,8 +1180,6 @@ export class SimulateComponent implements OnInit {
       return Math.random() ** alpha * (1 - Math.random()) ** beta;
     });
 
-    console.log(samples[Math.floor(Math.random() * samples.length)], 'samples');
-
     return samples[Math.floor(Math.random() * samples.length)];
   }
 
@@ -1209,17 +1190,27 @@ export class SimulateComponent implements OnInit {
     const N = +trials; // Tamaño de la muestra
 
     // Generar muestras de la distribución hipergeométrica
-    const samples = Array.from({ length: 1000 }, () => {
-      let successCount = 0;
-      for (let i = 0; i < N; i++) {
-        if (Math.random() < n / M) {
-          successCount++;
+    function generateHypergeometricSamples(
+      M: number,
+      n: number,
+      N: number,
+      size: number
+    ) {
+      const samples = [];
+      for (let i = 0; i < size; i++) {
+        let successes = 0;
+        let population = [...Array(M).keys()].map((x) => (x < n ? 1 : 0));
+        for (let j = 0; j < N; j++) {
+          const index = Math.floor(Math.random() * population.length);
+          successes += population[index];
+          population.splice(index, 1);
         }
+        samples.push(successes);
       }
-      return successCount;
-    });
+      return samples;
+    }
 
-    console.log(samples[Math.floor(Math.random() * samples.length)], 'SMAPLES');
+    const samples = generateHypergeometricSamples(M, n, N, 1000);
 
     return samples[Math.floor(Math.random() * samples.length)];
   }
@@ -1358,7 +1349,6 @@ export class SimulateComponent implements OnInit {
     } else {
       this.isSelectedAll = true;
     }
-    console.log(this.isSelectedAll);
   }
 
   elimateSimulation() {
