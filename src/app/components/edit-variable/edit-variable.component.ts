@@ -126,6 +126,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Output() deleteNode = new EventEmitter<any>();
   @Output() editDataEvent = new EventEmitter<any>();
   @Output() hiddenDataEvent = new EventEmitter<any>();
+  mode: number = 0;
+  lamda: number = 0;
+  trials: number = 0;
+  probability: number = 0;
+  scale: number = 0;
+  form: number = 0;
+  alpha: number = 0;
+  beta: number = 0;
+  success: number = 0;
+  population: number = 0;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
@@ -231,28 +241,68 @@ export class EditVariableComponent implements OnInit, OnChanges {
             ? this.shapeData.__zone_symbol__value.min
             : this.min;
 
+          this.max = this.shapeData.__zone_symbol__value.max
+            ? this.shapeData.__zone_symbol__value.max
+            : this.max;
+
           this.stDev = this.shapeData.__zone_symbol__value.stDev
             ? this.shapeData.__zone_symbol__value.stDev
             : this.stDev;
 
-          this.max = this.shapeData.__zone_symbol__value.max
-            ? this.shapeData.__zone_symbol__value.max
-            : this.max;
+          this.rate = this.shapeData.__zone_symbol__value.rate
+            ? this.shapeData.__zone_symbol__value.rate
+            : this.rate;
 
           this.mean = this.shapeData.__zone_symbol__value.mean
             ? this.shapeData.__zone_symbol__value.mean
             : this.mean;
 
-          this.rate = this.shapeData.__zone_symbol__value.rate
-            ? this.shapeData.__zone_symbol__value.rate
-            : this.rate;
+          this.mode = this.shapeData.__zone_symbol__value.mode
+            ? this.shapeData.__zone_symbol__value.mode
+            : this.mode;
+
+          this.lamda = this.shapeData.__zone_symbol__value.lamda
+            ? this.shapeData.__zone_symbol__value.lamda
+            : this.lamda;
+
+          this.trials = this.shapeData.__zone_symbol__value.trials
+            ? this.shapeData.__zone_symbol__value.trials
+            : this.trials;
+
+          this.probability = this.shapeData.__zone_symbol__value.probability
+            ? this.shapeData.__zone_symbol__value.probability
+            : this.probability;
+
+          this.scale = this.shapeData.__zone_symbol__value.scale
+            ? this.shapeData.__zone_symbol__value.scale
+            : this.scale;
+
+          this.form = this.shapeData.__zone_symbol__value.form
+            ? this.shapeData.__zone_symbol__value.form
+            : this.form;
+
+          this.alpha = this.shapeData.__zone_symbol__value.alpha
+            ? this.shapeData.__zone_symbol__value.alpha
+            : this.alpha;
+
+          this.beta = this.shapeData.__zone_symbol__value.beta
+            ? this.shapeData.__zone_symbol__value.beta
+            : this.beta;
+
+          this.success = this.shapeData.__zone_symbol__value.success
+            ? this.shapeData.__zone_symbol__value.success
+            : this.success;
+
+          this.population = this.shapeData.__zone_symbol__value.population
+            ? this.shapeData.__zone_symbol__value.population
+            : this.population;
 
           const chartName = this.shapeData.__zone_symbol__value.name;
 
           if (this.chart) {
             this.chart.destroy();
           }
-
+          console.log(chartName);
           switch (chartName) {
             case 'Normal':
               this.normalChart();
@@ -265,6 +315,30 @@ export class EditVariableComponent implements OnInit, OnChanges {
               break;
             case 'Exponencial':
               this.exponentialChart();
+              break;
+            case 'Triangular':
+              this.triangularChart();
+              break;
+            case 'Poisson':
+              this.poissonChart();
+              break;
+            case 'Binominal':
+              this.binomialChart();
+              break;
+            case 'Geometric':
+              this.geometricChart();
+              break;
+            case 'Weibull':
+              this.weibullChart();
+              break;
+            case 'Beta':
+              this.betaChart();
+              break;
+            case 'Hypergeometric':
+              this.hypergeometricChart();
+              break;
+            case 'Lognormal':
+              this.lognormalChart();
               break;
             default:
               console.error(`Tipo de gráfico no reconocido: ${chartName}`);
@@ -348,6 +422,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
           min: +this.min,
           rate: +this.rate,
           mean: +this.mean,
+          form: +this.form,
+          alpha: +this.alpha,
+          beta: +this.beta,
+          success: +this.success,
+          population: +this.population,
+          trials: +this.trials,
+          probability: +this.probability,
+          scale: +this.scale,
+          lamda: +this.lamda,
+          mode: +this.mode,
           type: this.shapeData.__zone_symbol__value.type,
         },
       ],
@@ -368,9 +452,19 @@ export class EditVariableComponent implements OnInit, OnChanges {
                 : 'Normal',
             max: +this.max,
             stDev: +this.stDev,
+            min: +this.min,
             rate: +this.rate,
             mean: +this.mean,
-            min: +this.min,
+            form: +this.form,
+            alpha: +this.alpha,
+            beta: +this.beta,
+            success: +this.success,
+            population: +this.population,
+            trials: +this.trials,
+            probability: +this.probability,
+            scale: +this.scale,
+            lamda: +this.lamda,
+            mode: +this.mode,
             type: this.shapeData.__zone_symbol__value.type,
           },
         ],
@@ -405,8 +499,18 @@ export class EditVariableComponent implements OnInit, OnChanges {
           max: +this.max,
           stDev: +this.stDev,
           min: +this.min,
-          mean: this.mean,
-          rate: this.rate,
+          rate: +this.rate,
+          mean: +this.mean,
+          form: +this.form,
+          alpha: +this.alpha,
+          beta: +this.beta,
+          success: +this.success,
+          population: +this.population,
+          trials: +this.trials,
+          probability: +this.probability,
+          scale: +this.scale,
+          lamda: +this.lamda,
+          mode: +this.mode,
           type: this.shapeData.__zone_symbol__value.type,
         },
       ],
@@ -517,23 +621,23 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
         // Si shapeData no existe, entonces lo establecemos
         if (!shapeDataExists) {
-          this.min = res.distribution_shape[0]?.min
-            ? res.distribution_shape[0]?.min
-            : this.min;
-          this.mean = res.distribution_shape[0]?.mean
-            ? res.distribution_shape[0]?.mean
-            : this.mean;
-
-          this.rate = res.distribution_shape[0]?.rate
-            ? res.distribution_shape[0]?.rate
-            : this.rate;
-
-          this.max = res.distribution_shape[0]?.max
-            ? res.distribution_shape[0]?.max
-            : this.max;
-          this.stDev = res.distribution_shape[0]?.stDev
-            ? res.distribution_shape[0]?.stDev
-            : this.stDev;
+          this.min = res.distribution_shape[0]?.min || this.min;
+          this.max = res.distribution_shape[0]?.max || this.max;
+          this.stDev = res.distribution_shape[0]?.stDev || this.stDev;
+          this.rate = res.distribution_shape[0]?.rate || this.rate;
+          this.mean = res.distribution_shape[0]?.mean || this.mean;
+          this.mode = res.distribution_shape[0]?.mode || this.mode;
+          this.lamda = res.distribution_shape[0]?.lamda || this.lamda;
+          this.trials = res.distribution_shape[0]?.trials || this.trials;
+          this.probability =
+            res.distribution_shape[0]?.probability || this.probability;
+          this.scale = res.distribution_shape[0]?.scale || this.scale;
+          this.form = res.distribution_shape[0]?.form || this.form;
+          this.alpha = res.distribution_shape[0]?.alpha || this.alpha;
+          this.beta = res.distribution_shape[0]?.beta || this.beta;
+          this.success = res.distribution_shape[0]?.success || this.success;
+          this.population =
+            res.distribution_shape[0]?.population || this.population;
 
           const formShape = {
             min: this.min,
@@ -541,6 +645,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
             max: this.max,
             rate: this.rate,
             mean: this.mean,
+            form: +this.form,
+            alpha: +this.alpha,
+            beta: +this.beta,
+            success: +this.success,
+            population: +this.population,
+            trials: +this.trials,
+            probability: +this.probability,
+            scale: +this.scale,
+            lamda: +this.lamda,
+            mode: +this.mode,
             name: res.distribution_shape[0]?.name
               ? res.distribution_shape[0]?.name
               : 'Normal',
@@ -558,6 +672,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
           if (this.chart) {
             this.chart.destroy();
           }
+          console.log(chartName);
 
           switch (chartName) {
             case 'Normal':
@@ -571,6 +686,32 @@ export class EditVariableComponent implements OnInit, OnChanges {
               break;
             case 'Exponencial':
               this.exponentialChart();
+              break;
+            case 'Triangular':
+              this.triangularChart();
+              break;
+            case 'Poisson':
+              this.poissonChart();
+              break;
+
+            case 'Binominal':
+              this.binomialChart();
+              break;
+
+            case 'Geometric':
+              this.geometricChart();
+              break;
+            case 'Weibull':
+              this.weibullChart();
+              break;
+            case 'Beta':
+              this.betaChart();
+              break;
+            case 'Hypergeometric':
+              this.hypergeometricChart();
+              break;
+            case 'Lognormal':
+              this.lognormalChart();
               break;
             default:
               console.error(`Tipo de gráfico no reconocido: ${chartName}`);
@@ -806,8 +947,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
   getItem(key: any) {
     return new Promise((resolve) => {
       const value = localStorage.getItem(key);
+
       const def =
-        '{"name":"Normal","min":"0","max":"0","stDev":"0","rate":"0","mean":"0","type":"static"}';
+        '{"name":"Normal","min":"0","max":"0","stDev":"0","rate":"0","mean":"0","type":"static","form":"0","alpha":"0","beta":"0","success":"0","population":"0","trials":"0","probability":"0","scale":"0","lamda":"0","mode":"0"}';
       resolve(JSON.parse(value || def));
     });
   }
@@ -838,6 +980,407 @@ export class EditVariableComponent implements OnInit, OnChanges {
           y: {
             // dragData: false // disables datapoint dragging for the entire axis
           },
+        },
+      },
+    });
+  }
+
+  triangularChart() {
+    this.chart = new Chart('myChart', {
+      type: 'line',
+      data: {
+        labels: ['-', '-', '-'],
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Triangular',
+            data: [1, 100, 1], // Modifica los datos para que tengan forma triangular
+            fill: true,
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          y: {},
+        },
+      },
+    });
+  }
+
+  poissonChart() {
+    // Función para calcular la distribución de Poisson
+    function poisson(k: any, lambda: any) {
+      return (Math.exp(-lambda) * Math.pow(lambda, k)) / factorial(k);
+    }
+
+    // Función para calcular el factorial
+    function factorial(n: any) {
+      let result = 1;
+      for (let i = 2; i <= n; i++) {
+        result *= i;
+      }
+      return result;
+    }
+
+    // Parámetros para la distribución de Poisson
+    const lambda = 5; // Parámetro lambda de la distribución de Poisson
+    const maxK = 10; // Valor máximo de k
+
+    // Generar los datos para la distribución de Poisson
+    const dataPoisson = [];
+    for (let k = 0; k <= maxK; k++) {
+      dataPoisson.push(poisson(k, lambda));
+    }
+
+    // Crear el gráfico de líneas con la distribución de Poisson
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: Array.from({ length: maxK + 1 }, (_, i) => ''),
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Poisson',
+            data: dataPoisson,
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          x: {
+            display: false, // Oculta las etiquetas del eje x
+          },
+          y: {},
+        },
+      },
+    });
+  }
+
+  binomialChart() {
+    // Valores aproximados para representar una distribución binomial
+    const dataBinomial = [
+      1, 0, 0, 2, 3, 1, 7, 9, 17, 31, 49, 69, 94, 119, 128, 141, 104, 79, 60,
+      46, 20, 14, 1, 4, 0, 1,
+    ]; // Ejemplo de valores aproximados
+
+    // Crear el gráfico de barras con la distribución binomial
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: Array.from({ length: dataBinomial.length }, () => ''),
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Binomial',
+            data: dataBinomial,
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          x: { display: false }, // Oculta las etiquetas del eje x
+        },
+      },
+    });
+  }
+
+  weibullChart() {
+    // Tus códigos
+    var a = 5; // shape
+    var form = 1;
+    var s = Array.from({ length: 1000 }, () =>
+      Math.pow(-Math.log(Math.random()), form / a)
+    );
+
+    // Función weibull
+    function weib(x: number, n: number, a: number) {
+      return (a / n) * Math.pow(x / n, a - 1) * Math.exp(-Math.pow(x / n, a));
+    }
+
+    // Crear la gráfica
+
+    var x = Array.from({ length: 100 }, (_, i) => (i + 1) / 50);
+    var y = x.map((val) => weib(val, form, a));
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: x,
+        datasets: [
+          {
+            label: 'Weibull Distribution',
+            data: y,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+          x: {
+            display: false,
+          },
+        },
+      },
+    });
+
+    console.log(s, 'ido');
+  }
+
+  lognormalChart() {
+    // Parámetros de la distribución logarítmico normal
+    const mu = Math.log(70); // Media logarítmica
+    const sigma = 12 / 70; // Desviación estándar logarítmica
+
+    // Función de densidad de probabilidad (PDF) de la distribución logarítmica normal
+    function lognormalPDF(x: any) {
+      const coefficient = 1 / (x * sigma * Math.sqrt(2 * Math.PI));
+      const exponent = -((Math.log(x) - mu) ** 2) / (2 * sigma ** 2);
+      return coefficient * Math.exp(exponent);
+    }
+
+    // Datos para el gráfico
+    const labels = [];
+    const data = [];
+
+    // Calcular datos para el gráfico
+    const step = 2; // Mostrar cada 2 puntos en el eje x
+    for (let x = 1; x <= 200; x += 0.1 * step) {
+      const pdf = lognormalPDF(x);
+      if (pdf > 0.001) {
+        // Filtrar valores cercanos a cero
+        labels.push(x.toFixed(2));
+        data.push(pdf);
+      }
+    }
+    console.log(data);
+    // Configuración del gráfico
+
+    // Crear gráfico
+
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Distribución Logarítmico Normal',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            display: false,
+            title: {
+              display: false,
+              text: 'Valor',
+            },
+            ticks: {
+              stepSize: 20, // Mostrar cada 20 puntos en el eje x
+            },
+          },
+          y: {
+            title: {
+              display: false,
+              text: 'Densidad de probabilidad',
+            },
+          },
+        },
+      },
+    });
+  }
+
+  betaChart() {
+    // Parámetros de la distribución beta
+    const alpha = 10; // Parámetro de forma
+    const beta = 2; // Parámetro de forma
+    const size = 1000; // Tamaño de la muestra
+
+    // Generar muestras de la distribución beta
+    const samples = Array.from({ length: size }, () => {
+      return Math.random() ** alpha * (1 - Math.random()) ** beta;
+    });
+
+    // Histograma de las muestras generadas
+    const bins = 50;
+    const histogramData = Array.from({ length: bins }, (_, i) => {
+      const binStart = i / bins;
+      const binEnd = (i + 1) / bins;
+      return (
+        samples.filter((value) => value >= binStart && value < binEnd).length /
+        size
+      );
+    });
+
+    // Función de densidad de probabilidad de la distribución beta
+    function betaPDF(x: any, alpha: any, beta: any) {
+      return (
+        (Math.pow(x, alpha - 1) * Math.pow(1 - x, beta - 1)) /
+        (Math.pow(1, alpha - 1) * Math.pow(1, beta - 1))
+      );
+    }
+
+    // Datos para trazar la función de densidad de probabilidad
+    const pdfData = {
+      labels: [] as string[],
+      datasets: [
+        {
+          label: 'Distribución Beta',
+          data: [] as number[],
+          fill: false,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          tension: 0.1,
+        },
+      ],
+    };
+
+    // Generar puntos para la función de densidad de probabilidad
+    for (let i = 0; i <= 1; i += 0.01) {
+      pdfData.labels.push(i.toFixed(2)); // Redondeamos para evitar números largos
+      pdfData.datasets[0].data.push(betaPDF(i, alpha, beta));
+    }
+
+    // Configurar opciones del gráfico
+    const options = {
+      scales: {
+        x: {
+          title: {
+            display: false,
+            text: 'Valor',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de línea para la función de densidad de probabilidad
+
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: pdfData,
+      options: options,
+    });
+
+    // Añadir el histograma como un gráfico de barras en la parte derecha
+    this.chart.data.datasets.push({
+      label: 'Histograma',
+      data: histogramData,
+      backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      borderWidth: 1,
+      type: 'bar',
+    });
+
+    // Ajustar las opciones del eje y para el histograma
+  }
+
+  hypergeometricChart() {
+    // Parámetros de la distribución hipergeométrica
+    const M = 40; // Tamaño de la población
+    const n = 30; // Número de éxitos en la población
+    const N = 20; // Tamaño de la muestra
+
+    // Generar muestras de la distribución hipergeométrica
+    const samples = Array.from({ length: 1000 }, () => {
+      let successCount = 0;
+      for (let i = 0; i < N; i++) {
+        if (Math.random() < n / M) {
+          successCount++;
+        }
+      }
+      return successCount;
+    });
+
+    // Calcular el histograma de las muestras generadas
+    const bins = Array.from(new Set(samples)).sort((a, b) => a - b);
+    const histogramData = bins.map(
+      (bin) => samples.filter((value) => value === bin).length / samples.length
+    );
+
+    // Configurar los datos para el gráfico
+    const data = {
+      labels: bins,
+      datasets: [
+        {
+          label: 'Distribución Hipergeométrica',
+          data: histogramData,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Configurar opciones del gráfico
+    const options = {
+      scales: {
+        x: {
+          display: false,
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de barras usando Chart.js
+
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: data,
+      options: options,
+    });
+  }
+
+  geometricChart() {
+    // Valores aproximados para representar una distribución binomial
+    const dataBinomial = [
+      0.0967, 0.0886, 0.0818, 0.0729, 0.0689, 0.0615, 0.0486, 0.0476, 0.0439,
+      0.0389, 0.0352, 0.0321, 0.0314, 0.028, 0.021, 0.0198, 0.0194, 0.0173,
+      0.013, 0.0144, 0.0132, 0.0087, 0.0091, 0.0088, 0.0062, 0.0074, 0.0067,
+      0.0049, 0.0049, 0.0042, 0.005, 0.0039, 0.0035, 0.0037, 0.0034, 0.003,
+      0.003, 0.0012, 0.0021, 0.0013, 0.001, 0.0014, 0.0013, 0.0008, 0.0011,
+      0.0011, 0.0011, 0.0006, 0.0005, 0.0005, 0.0005, 0.0008, 0.0003, 0.0004,
+      0.0004, 0.0005, 0.0006, 0.0004, 0.0001, 0.0002, 0.0001, 0.0001, 0.0001,
+      0.0001, 0.0002, 0.0002, 0.0001, 0.0001, 0.0001, 0.0001,
+    ]; // Ejemplo de valores aproximados
+
+    // Crear el gráfico de barras con la distribución binomial
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: Array.from({ length: dataBinomial.length }, () => ''),
+        datasets: [
+          {
+            backgroundColor: '#8C64B1',
+            label: 'Geometric',
+            data: dataBinomial,
+          },
+        ],
+      },
+      options: {
+        plugins: {},
+        scales: {
+          x: { display: false }, // Oculta las etiquetas del eje x
         },
       },
     });

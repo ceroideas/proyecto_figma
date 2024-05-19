@@ -27,12 +27,23 @@ export class SimulationShapeModalComponent implements OnInit {
   chart!: any;
   shapeType!: any;
   min: any = 0;
+  mode: any = 0;
   max: any = 0;
   stDev: number = 0;
   rate!: any;
   mean: number = 0;
   type: string = 'static';
   size: number = 100;
+  lamda: number = 0;
+  trials: number = 0;
+  probability: number = 0;
+  form: number = 0;
+  scale: number = 0;
+  alpha: number = 0;
+  beta: number = 0;
+  success: number = 0;
+
+  population = 0;
   constructor(private ngZone: NgZone) {}
 
   ngOnInit(): void {}
@@ -62,6 +73,45 @@ export class SimulationShapeModalComponent implements OnInit {
           ? shapeData?.__zone_symbol__value.mean
           : 0;
 
+        this.mode = shapeData?.__zone_symbol__value.mode
+          ? shapeData?.__zone_symbol__value.mode
+          : 0;
+
+        this.lamda = shapeData?.__zone_symbol__value.lamda
+          ? shapeData?.__zone_symbol__value.lamda
+          : 0;
+
+        this.trials = shapeData?.__zone_symbol__value.trials
+          ? shapeData?.__zone_symbol__value.trials
+          : 0;
+
+        this.probability = shapeData?.__zone_symbol__value.probability
+          ? shapeData?.__zone_symbol__value.probability
+          : 0;
+
+        this.scale = shapeData?.__zone_symbol__value.scale
+          ? shapeData?.__zone_symbol__value.scale
+          : 0;
+
+        this.form = shapeData?.__zone_symbol__value.form
+          ? shapeData?.__zone_symbol__value.form
+          : 0;
+
+        this.alpha = shapeData?.__zone_symbol__value.alpha
+          ? shapeData?.__zone_symbol__value.alpha
+          : 0;
+
+        this.beta = shapeData?.__zone_symbol__value.beta
+          ? shapeData?.__zone_symbol__value.beta
+          : 0;
+        this.success = shapeData?.__zone_symbol__value.success
+          ? shapeData?.__zone_symbol__value.success
+          : 0;
+
+        this.population = shapeData?.__zone_symbol__value.population
+          ? shapeData?.__zone_symbol__value.population
+          : 0;
+
         if (this.shapeType.__zone_symbol__value.name === 'Normal') {
           if (this.chart) {
             this.chart.destroy();
@@ -82,23 +132,76 @@ export class SimulationShapeModalComponent implements OnInit {
           }
           this.exponentialChart();
         }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Triangular') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.triangularChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Poisson') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.poissonChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Binominal') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.binomialChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Weibull') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.weibullChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Geometric') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.geometricalChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Beta') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.betaChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Hypergeometric') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.hypergeometricChart();
+        }
+
+        if (this.shapeType.__zone_symbol__value.name === 'Lognormal') {
+          if (this.chart) {
+            this.chart.destroy();
+          }
+          this.lognormalChart();
+        }
       });
     });
 
     modal._element.addEventListener('hidden.bs.modal', () => {
-      console.log(this.route);
       const openButtonSave = document.querySelector('#exampleModalButton');
       const openButtoBack = document.querySelector('#shapeModalButton');
 
       if (this.route === 'back') {
         if (openButtoBack) {
-          // Simula un clic en el botón para cerrar el modal
           (openButtoBack as HTMLElement).click();
         }
       } else if (this.route === 'save') {
         this.route = 'back';
         if (openButtonSave) {
-          // Simula un clic en el botón para cerrar el modal
           (openButtonSave as HTMLElement).click();
         }
       }
@@ -112,11 +215,21 @@ export class SimulationShapeModalComponent implements OnInit {
       rate: this.rate,
       stDev: this.stDev,
       max: this.max,
+      mode: this.mode,
+      lamda: this.lamda,
+      trials: this.trials,
+      probability: this.probability,
+      alpha: this.alpha,
+      beta: this.beta,
+      form: this.form,
+      success: this.success,
+      population: this.population,
+      scale: this.scale,
       name: this.shapeType.__zone_symbol__value.name,
       type: this.type,
     };
     localStorage.setItem('shapeData', JSON.stringify(formShape));
-    console.log(formShape);
+
     this.route = 'save';
     this.min = 0;
     this.max = 0;
@@ -180,8 +293,6 @@ export class SimulationShapeModalComponent implements OnInit {
       );
     });
 
-    console.log(x);
-
     // Crear el gráfico
 
     this.chart = new Chart('chart', {
@@ -220,17 +331,660 @@ export class SimulationShapeModalComponent implements OnInit {
     });
   }
 
+  triangularChart() {
+    console.log(this.min, this.max, this.mode, 'MODE');
+    // Función para generar números aleatorios con distribución triangular
+    function triangularDistribution(
+      sampleSize: any,
+      low: number,
+      mode: number,
+      high: number
+    ) {
+      const triangularSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        const u = Math.random();
+        const f = (mode - low) / (high - low);
+        if (u <= f) {
+          triangularSamples.push(
+            low + Math.sqrt(u * (high - low) * (mode - low))
+          );
+        } else {
+          triangularSamples.push(
+            high - Math.sqrt((1 - u) * (high - low) * (high - mode))
+          );
+        }
+      }
+      return triangularSamples;
+    }
+
+    // Definir parámetros de la distribución triangular
+    const sampleSize = 1000;
+
+    // Generar números aleatorios con distribución triangular
+    const triangularSamples = triangularDistribution(
+      sampleSize,
+      +this.min,
+      +this.mode,
+      +this.max
+    );
+
+    // Calcular el histograma
+    const numBins = 20; // Número de bins para el histograma
+    const binWidth = (+this.max - +this.min) / numBins;
+    const histogram = new Array(numBins).fill(0);
+
+    triangularSamples.forEach((value) => {
+      if (value >= +this.min && value <= +this.max) {
+        const binIndex = Math.floor((value - +this.min) / binWidth);
+        histogram[binIndex]++;
+      }
+    });
+
+    // Preparar datos para el histograma
+    const labels = Array.from(
+      { length: numBins },
+      (_, i) => +(+this.min + i * binWidth).toFixed(2)
+    );
+
+    const data = histogram;
+
+    // Crear un histograma con Chart.js (gráfico de barras)
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Triangular Distribution',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Value',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+            ticks: {},
+          },
+        },
+      },
+    });
+  }
+
+  poissonChart() {
+    // Función para generar números aleatorios con distribución de Poisson
+    function poissonDistribution(sampleSize: any, lambda: any) {
+      const poissonSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        let L = Math.exp(-lambda);
+        let k = 0;
+        let p = 1.0;
+        do {
+          k++;
+          p *= Math.random();
+        } while (p > L);
+        poissonSamples.push(k - 1);
+      }
+      return poissonSamples;
+    }
+
+    // Definir parámetros de la distribución de Poisson
+    const sampleSize = 1000;
+    const lambda = 8; // Parámetro lambda
+
+    // Generar números aleatorios con distribución de Poisson
+    const poissonSamples = poissonDistribution(sampleSize, this.lamda);
+
+    // Calcular el histograma
+    const maxVal = Math.max(...poissonSamples);
+    const minVal = Math.min(...poissonSamples);
+    const numBins = maxVal - minVal + 1;
+    /* const histogram = new Array(numBins).fill(0); */
+
+    /*     poissonSamples.forEach((value) => {
+      histogram[value - minVal]++;
+    }); */
+
+    let histogram = new Array(14).fill(0);
+    for (let i = 0; i < poissonSamples.length; i++) {
+      histogram[
+        Math.min(Math.floor(poissonSamples[i]), histogram.length - 1)
+      ]++;
+    }
+
+    // Normaliza el histograma
+    for (let i = 0; i < histogram.length; i++) {
+      histogram[i] /= poissonSamples.length;
+    }
+
+    // Crear un histograma con Chart.js (gráfico de barras)
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: Array.from({ length: histogram.length }, (_, i) => i + 1),
+        datasets: [
+          {
+            label: 'Poisson Distribution',
+            data: histogram,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Value',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+            ticks: {},
+          },
+        },
+      },
+    });
+  }
+
+  geometricalChart() {
+    // Parámetros de la distribución geométrica
+    const p = this.probability == 0 ? 0.1 : this.probability; // Probabilidad de éxito en cada intento
+    const size = 10000; // Tamaño de la muestra
+
+    // Generar muestras de la distribución geométrica
+    const samples = Array.from({ length: size }, () => {
+      let attempts = 1;
+      while (Math.random() >= p) {
+        attempts++;
+      }
+      return attempts;
+    });
+
+    // Calcular el histograma de las muestras
+    const histogramData = samples.reduce((histogram: any, value: any) => {
+      histogram[value] = (histogram[value] || 0) + 1;
+      return histogram;
+    }, {});
+
+    // Convertir el histograma en un formato compatible con Chart.js
+    const chartData = {
+      labels: Object.keys(histogramData).map((bin) => parseInt(bin)),
+      datasets: [
+        {
+          label: 'Histograma',
+          data: Object.values(histogramData).map((count: any) => count / size),
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Configurar opciones del gráfico
+    const chartOptions = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Número de intentos hasta el primer éxito',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de barras usando Chart.js
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: chartData,
+      options: chartOptions,
+    });
+  }
+
+  betaChart() {
+    // Parámetros de la distribución beta
+    const alpha = this.alpha; // Parámetro de forma
+    const beta = this.beta; // Parámetro de forma
+    const size = 1000; // Tamaño de la muestra
+
+    // Generar muestras de la distribución beta
+    const samples = Array.from({ length: size }, () => {
+      return Math.random() ** alpha * (1 - Math.random()) ** beta;
+    });
+
+    // Histograma de las muestras generadas
+    const bins = 50;
+    const histogramData = Array.from({ length: bins }, (_, i) => {
+      const binStart = i / bins;
+      const binEnd = (i + 1) / bins;
+      return (
+        samples.filter((value) => value >= binStart && value < binEnd).length /
+        size
+      );
+    });
+
+    // Función de densidad de probabilidad de la distribución beta
+    function betaPDF(x: any, alpha: any, beta: any) {
+      return (
+        (Math.pow(x, alpha - 1) * Math.pow(1 - x, beta - 1)) /
+        (Math.pow(1, alpha - 1) * Math.pow(1, beta - 1))
+      );
+    }
+
+    // Datos para trazar la función de densidad de probabilidad
+    const pdfData = {
+      labels: [] as string[],
+      datasets: [
+        {
+          label: 'Distribución Beta',
+          data: [] as number[],
+          fill: false,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          tension: 0.1,
+        },
+      ],
+    };
+
+    // Generar puntos para la función de densidad de probabilidad
+    for (let i = 0; i <= 1; i += 0.01) {
+      pdfData.labels.push(i.toFixed(2)); // Redondeamos para evitar números largos
+      pdfData.datasets[0].data.push(betaPDF(i, alpha, beta));
+    }
+
+    // Configurar opciones del gráfico
+    const options = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Valor',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de línea para la función de densidad de probabilidad
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: pdfData,
+      options: options,
+    });
+
+    // Añadir el histograma como un gráfico de barras en la parte derecha
+    this.chart.data.datasets.push({
+      label: 'Histograma',
+      data: histogramData,
+      backgroundColor: 'rgba(255, 99, 132, 0.6)',
+      borderWidth: 1,
+      type: 'bar',
+    });
+  }
+
+  hypergeometricChart() {
+    // Parámetros de la distribución hipergeométrica
+    const M = +this.population; // Tamaño de la población
+    const n = +this.success; // Número de éxitos en la población
+    const N = +this.trials; // Tamaño de la muestra
+
+    // Generar muestras de la distribución hipergeométrica
+    function generateHypergeometricSamples(
+      M: number,
+      n: number,
+      N: number,
+      size: number
+    ) {
+      const samples = [];
+      for (let i = 0; i < size; i++) {
+        let successes = 0;
+        let population = [...Array(M).keys()].map((x) => (x < n ? 1 : 0));
+        for (let j = 0; j < N; j++) {
+          const index = Math.floor(Math.random() * population.length);
+          successes += population[index];
+          population.splice(index, 1);
+        }
+        samples.push(successes);
+      }
+      return samples;
+    }
+
+    const samples = generateHypergeometricSamples(M, n, N, 1000);
+
+    // Calcular el histograma de las muestras generadas
+    const bins = Array.from(new Set(samples)).sort((a, b) => a - b);
+    const histogramData = bins.map(
+      (bin) =>
+        samples.filter((value: unknown) => value === bin).length /
+        samples.length
+    );
+
+    // Configurar los datos para el gráfico
+    const data = {
+      labels: bins,
+      datasets: [
+        {
+          label: 'Distribución Hipergeométrica',
+          data: histogramData,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Configurar opciones del gráfico
+    const options = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Valor',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de probabilidad',
+          },
+        },
+      },
+    };
+
+    // Crear el gráfico de barras usando Chart.js
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: data,
+      options: options,
+    });
+  }
+
+  binomialChart() {
+    // Función para generar números aleatorios con distribución binomial
+    function binomialDistribution(sampleSize: any, n: any, p: any) {
+      const binomialSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        let successes = 0;
+        for (let j = 0; j < n; j++) {
+          if (Math.random() < p) {
+            successes++;
+          }
+        }
+        binomialSamples.push(successes);
+      }
+      return binomialSamples;
+    }
+
+    // Definir parámetros de la distribución binomial
+    const sampleSize = 1000;
+    const n = 10; // Número de ensayos
+    const p = 0.5; // Probabilidad de éxito en cada ensayo
+
+    // Generar números aleatorios con distribución binomial
+    const binomialSamples = binomialDistribution(
+      sampleSize,
+      this.trials,
+      this.probability
+    );
+
+    // Calcular el histograma
+    const maxVal = Math.max(...binomialSamples);
+    const minVal = Math.min(...binomialSamples);
+    const numBins = maxVal - minVal + 1;
+    const histogram = new Array(numBins).fill(0);
+
+    binomialSamples.forEach((value) => {
+      histogram[value - minVal]++;
+    });
+
+    // Preparar datos para el histograma
+    const labels = Array.from({ length: numBins }, (_, i) => i + minVal);
+    const data = histogram;
+
+    // Crear un histograma con Chart.js (gráfico de barras)
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Binomial Distribution',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Number of Successes',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+            ticks: {},
+          },
+        },
+      },
+    });
+  }
+
+  weibullChart() {
+    // Parámetros de la distribución de Weibull
+    const k = this.form; // Parámetro de forma
+    const lambda = this.scale; // Parámetro de escala
+    const sampleSize = 1000;
+
+    // Función para generar números aleatorios con distribución de Weibull
+    function generateWeibullSamples(k: number, lambda: number, size: number) {
+      const samples = [];
+      for (let i = 0; i < size; i++) {
+        const u = Math.random();
+        const sample = lambda * Math.pow(-Math.log(1 - u), 1 / k);
+        samples.push(sample);
+      }
+      return samples;
+    }
+
+    // Generar los datos de Weibull
+    const weibullSamples = generateWeibullSamples(k, lambda, sampleSize);
+
+    // Crear bins para el histograma
+    function createHistogram(samples: any[], binCount: number) {
+      const max = Math.max(...samples);
+      const min = Math.min(...samples);
+      const binWidth = (max - min) / binCount;
+      const bins = Array(binCount).fill(0);
+      samples.forEach((sample: number) => {
+        const index = Math.min(
+          Math.floor((sample - min) / binWidth),
+          binCount - 1
+        );
+        bins[index]++;
+      });
+      return bins.map((count) => count / (samples.length * binWidth)); // Densidad de probabilidad
+    }
+
+    const binCount = 20;
+    const hist = createHistogram(weibullSamples, binCount);
+
+    // Calcular los puntos medios de los bins
+    const binEdges = Array.from(
+      { length: binCount + 1 },
+      (_, i) => i * (Math.max(...weibullSamples) / binCount)
+    );
+    const binMids = binEdges
+      .slice(0, -1)
+      .map((edge, index) => ((edge + binEdges[index + 1]) / 2).toFixed(2));
+
+    // Configurar los datos para Chart.js
+    const chartData = {
+      labels: binMids,
+      datasets: [
+        {
+          label: 'Densidad de Probabilidad',
+          data: hist,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Configurar las opciones del gráfico
+    const chartOptions = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Valor',
+          },
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de Probabilidad',
+          },
+        },
+      },
+      plugins: {
+        title: {
+          display: true,
+          text: 'Histograma de Distribución de Weibull',
+        },
+      },
+    };
+
+    // Crear el gráfico
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: chartData,
+      options: chartOptions,
+    });
+  }
+
+  lognormalChart() {
+    // Parámetros de la distribución logarítmico normal
+    const mu = Math.log(this.mean); // Media logarítmica
+    const sigma = this.stDev / this.mean; // Desviación estándar logarítmica
+
+    // Función de densidad de probabilidad (PDF) de la distribución logarítmica normal
+    function lognormalPDF(x: any) {
+      const coefficient = 1 / (x * sigma * Math.sqrt(2 * Math.PI));
+      const exponent = -((Math.log(x) - mu) ** 2) / (2 * sigma ** 2);
+      return coefficient * Math.exp(exponent);
+    }
+
+    // Datos para el gráfico
+    const labels = [];
+    const data = [];
+
+    // Calcular datos para el gráfico
+    const step = 2; // Mostrar cada 2 puntos en el eje x
+    for (let x = 1; x <= 200; x += 0.1 * step) {
+      const pdf = lognormalPDF(x);
+      if (pdf > 0.001) {
+        // Filtrar valores cercanos a cero
+        labels.push(x.toFixed(2));
+        data.push(pdf);
+      }
+    }
+
+    // Configuración del gráfico
+
+    // Crear gráfico
+
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Distribución Logarítmico Normal',
+            data: data,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Valor',
+            },
+            ticks: {
+              stepSize: 20, // Mostrar cada 20 puntos en el eje x
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Densidad de probabilidad',
+            },
+          },
+        },
+      },
+    });
+  }
+
   uniformChart() {
     if (this.min.toString().includes('%')) {
       const valueBase = parseFloat(this.min.replace('%', ''));
-      console.log('min');
 
       this.min = +valueBase / 100;
     }
 
     if (this.max.toString().includes('%')) {
       const valueBase = parseFloat(this.max.replace('%', ''));
-      console.log('max');
+
       this.max = +valueBase / 100;
     }
 
@@ -244,7 +998,6 @@ export class SimulationShapeModalComponent implements OnInit {
     }
 
     // Verificar que todos los valores están dentro del intervalo dado
-    console.log(s.every((value) => value >= min && value < max));
 
     // Crear el histograma
     var histogram = new Array(15).fill(0);
@@ -369,6 +1122,13 @@ export class SimulationShapeModalComponent implements OnInit {
     this.normalChart();
   }
 
+  changeValueLognormal() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.lognormalChart();
+  }
+
   changeValueExponential() {
     if (this.chart) {
       this.chart.destroy();
@@ -382,7 +1142,56 @@ export class SimulationShapeModalComponent implements OnInit {
     }
     this.uniformChart();
   }
-  generateNormalDistributionData(mean: number, stDev: number) {
+
+  changeValueHypergeometric() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.hypergeometricChart();
+  }
+
+  changeValueGeometrica() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.geometricalChart();
+  }
+
+  changeValueBeta() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.betaChart();
+  }
+
+  changeValueWeibull() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.weibullChart();
+  }
+
+  changeValuePoisson() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.poissonChart();
+  }
+
+  changeValueTriangular() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.triangularChart();
+  }
+
+  changeValueBinomial() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.binomialChart();
+  }
+  /*   generateNormalDistributionData(mean: number, stDev: number) {
     const labels = [];
     const values = [];
 
@@ -431,7 +1240,7 @@ export class SimulationShapeModalComponent implements OnInit {
     }
 
     return { labels, values };
-  }
+  } */
 
   uniformDistribution(x: number, min: number, max: number) {
     if (x >= min && x <= max) {

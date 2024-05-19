@@ -18,6 +18,45 @@ export class ShapeModalComponent {
       name: 'Exponencial',
       img: '../../../assets/img/rectangle_exponential.png',
     },
+    {
+      name: 'Triangular',
+      img: '../../../assets/img/triangular.png',
+    },
+    {
+      name: 'Poisson',
+      img: '../../../assets/img/poisson.png',
+    },
+    {
+      name: 'Binominal',
+      img: '../../../assets/img/binominal.png',
+    },
+
+    {
+      name: 'Lognormal',
+      img: '../../../assets/img/lognormal.png',
+    },
+    {
+      name: 'Geometric',
+      img: '../../../assets/img/geometric.png',
+    },
+
+    {
+      name: 'Weibull',
+      img: '../../../assets/img/weibull.png',
+    },
+
+    {
+      name: 'Beta',
+      img: '../../../assets/img/beta.png',
+    },
+    {
+      name: 'Hypergeometric',
+      img: '../../../assets/img/hypergeometric.png',
+    },
+    {
+      name: 'Custom',
+      img: '../../../assets/img/custom.png',
+    },
   ];
 
   route: string = 'back';

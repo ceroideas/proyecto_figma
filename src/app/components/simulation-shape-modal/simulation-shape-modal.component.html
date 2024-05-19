@@ -97,6 +97,256 @@
             />
           </div>
         </div>
+
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Geometric'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min"
+              >Probabilidad:</span
+            >
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="probability"
+              (ngModelChange)="changeValueGeometrica()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Lognormal'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Mean:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="mean"
+              (ngModelChange)="changeValueLognormal()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">stDev:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="stDev"
+              (ngModelChange)="changeValueLognormal()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Binominal'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min"
+              >Probabilidad:</span
+            >
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="probability"
+              (ngModelChange)="changeValueBinomial()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Trials:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="trials"
+              (ngModelChange)="changeValueBinomial()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Hypergeometric'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Exito:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="success"
+              (ngModelChange)="changeValueHypergeometric()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="trials"
+              >Muestra:</span
+            >
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="trials"
+              (ngModelChange)="changeValueHypergeometric()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="population"
+              >Poblacion:</span
+            >
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="population"
+              (ngModelChange)="changeValueHypergeometric()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Beta'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Alpha:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="alpha"
+              (ngModelChange)="changeValueBeta()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Beta:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="beta"
+              (ngModelChange)="changeValueBeta()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
+
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Weibull'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Forma:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="form"
+              (ngModelChange)="changeValueWeibull()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Escala:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="scale"
+              (ngModelChange)="changeValueWeibull()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Poisson'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Rate:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="lamda"
+              (ngModelChange)="changeValuePoisson()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
+        <div
+          *ngIf="shapeType?.__zone_symbol__value.name == 'Triangular'"
+          class="col-md-12 d-flex mt-4"
+        >
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Min:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="min"
+              (ngModelChange)="changeValueTriangular()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="mode">Mode:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="mode"
+              (ngModelChange)="changeValueTriangular()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="mode"
+            />
+          </div>
+
+          <div class="input-group col-md-4 input-group-sm">
+            <span class="input-group-text chart-span" id="min">Max:</span>
+            <input
+              onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+              [(ngModel)]="max"
+              (ngModelChange)="changeValueTriangular()"
+              style="background-color: #f6f3f9"
+              type="text"
+              class="form-control chart-inputs"
+              aria-describedby="min"
+            />
+          </div>
+        </div>
         <div
           *ngIf="shapeType?.__zone_symbol__value.name == 'Normal'"
           class="col-md-12 d-flex mt-4"
