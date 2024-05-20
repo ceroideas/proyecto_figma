@@ -252,6 +252,8 @@ export class InspectComponent implements OnInit {
         nodos.push(yearValues);
       }
 
+      console.log(nodos, 'NODOS');
+
       const otherValues: any[] = [];
 
       const diferencias = nodos
@@ -260,7 +262,7 @@ export class InspectComponent implements OnInit {
 
           if (par.type == 2) {
             var result = this.verificarOperadores(par.formula, nodos);
-            console.log(result);
+            console.log(result, 'RESULT');
             const sumaTotal = result?.interactions?.reduce(
               (acumulador: any, objeto: any) => {
                 console.log(acumulador, objeto.value, 'suma');
@@ -268,6 +270,20 @@ export class InspectComponent implements OnInit {
               },
               0
             );
+
+            if (result.directImpacts?.length > 0) {
+              for (let i = 0; i < result.directImpacts.length; i++) {
+                const element = result.directImpacts[i];
+
+                const other = {
+                  tier: par.tier,
+                  name: element.variableName + ' (Direct impact)',
+                  value: element.impact,
+                };
+
+                otherValues.push(other);
+              }
+            }
 
             console.log(sumaTotal, 'suma total');
 
@@ -401,9 +417,14 @@ export class InspectComponent implements OnInit {
         (acc, val, idx) => (idx === i ? acc : acc * val),
         1
       );
-      console.log(newValues[i], oldValues[i], multiplier, 'DIVICON');
+      const name = variableData[i]?.name;
+
       const directImpact = (newValues[i] - oldValues[i]) * multiplier;
-      directImpacts.push({ impact: directImpact, variables: [i + 1] });
+      directImpacts.push({
+        impact: directImpact,
+        variables: [i + 1],
+        variableName: name,
+      });
       totalImpact += directImpact;
     }
 
@@ -481,9 +502,13 @@ export class InspectComponent implements OnInit {
           idx === i ? acc : acc === undefined ? val : acc / val,
         undefined
       );
-      console.log(newValues[i], oldValues[i], multiplier, 'DIVICON');
+      const name = variableData[i]?.name;
       const directImpact = (newValues[i] - oldValues[i]) / multiplier;
-      directImpacts.push({ impact: directImpact, variables: [i + 1] });
+      directImpacts.push({
+        impact: directImpact,
+        variables: [i + 1],
+        variableName: name,
+      });
       totalImpact += directImpact;
     }
 
@@ -588,6 +613,7 @@ export class InspectComponent implements OnInit {
           arrayToSend.push(nodes.find((node: any) => node.id == element));
         }
       }
+      console.log(arrayToSend, 'tis end');
       const result = this.calculateImpactsMultiplie(arrayToSend);
 
       return result;
