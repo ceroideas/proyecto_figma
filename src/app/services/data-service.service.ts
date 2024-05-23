@@ -11,9 +11,19 @@ export class DataService {
   tierCero: any;
   tierCeroData: any[] = [];
 
+  nodes: any[] = [];
+
   constructor() {}
 
   deleteEsceneries(data: boolean) {
     this.dataSubject.next(data);
+  }
+
+  setNodes(nodes: any[]) {
+    this.nodes = nodes;
+  }
+
+  getNodes(): any[] {
+    return this.nodes;
   }
 }

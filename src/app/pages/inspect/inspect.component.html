@@ -7,7 +7,7 @@
   <div class="bar-container">
     <div
       *ngFor="let value of barData; let i = index"
-      class="bar"
+      class="bar mr-2"
       [style.height]="calculateHeight(value)"
       (mouseover)="showValue(i)"
       (mouseleave)="hideValue(i)"
@@ -38,6 +38,7 @@
           year: true,
           'year-selected': year.isSelect
         }"
+        class="mr-2"
         (click)="toggleActive(year, i)"
       >
         <div
@@ -62,10 +63,10 @@
   <div
     *ngFor="let data of datas; let i = index"
     [ngClass]="{
-      'inner-container-active': clickedElement === i
+      'inner-container-active': data.isActive
     }"
     class="inner-container ml-5 mt-4"
-    (click)="setClickedElement(i)"
+    (click)="setClickedElement(data)"
   >
     <div
       *ngIf="data.combination"
