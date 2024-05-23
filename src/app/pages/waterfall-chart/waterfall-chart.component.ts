@@ -3,6 +3,7 @@ import { InformationModalComponent } from 'src/app/components/information-modal/
 import { Location } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 import { DataService } from 'src/app/services/data-service.service';
+import { Router } from '@angular/router';
 Chart.register(...registerables);
 @Component({
   selector: 'app-waterfall-chart',
@@ -17,19 +18,34 @@ export class WaterfallChartComponent implements OnInit {
   dataTierCero: any[] = [];
   tierCeroValue: any;
   selectedNodes: any[] = [];
+  nodes: any[] = [];
 
-  constructor(private location: Location, private dataSvc: DataService) {}
+  constructor(
+    private location: Location,
+    private dataSvc: DataService,
+    private router: Router
+  ) {}
   goBack() {
     this.location.back();
   }
 
   ngOnInit(): void {
+    this.selectedNodes = this.dataSvc.getNodes();
+
+    this.selectedNodes = this.selectedNodes.map((nodes: any) => {
+      const node = {
+        name: nodes.description,
+        value: nodes.value,
+        tier: nodes.tier,
+      };
+      return node;
+    });
+
     this.data = this.dataSvc.dataNodes;
     this.dataTierCero = this.dataSvc.tierCeroData;
     this.tierCeroValue = this.dataSvc.tierCero;
-    console.log(this.data);
-
-    this.chart = new Chart('chart', {
+    this.renderchart();
+    /*     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
         labels: ['Brand A', 'Brand B', 'Brand C', 'Brand D', 'Brand D'],
@@ -66,14 +82,14 @@ export class WaterfallChartComponent implements OnInit {
           },
         },
       },
-    });
+    }); */
   }
 
   renderchart() {
     const label = [];
     const values = [];
     const backgroundColor = [];
-    console.log(this.dataTierCero);
+
     label.push(this.dataTierCero[0].year);
     values.push(+this.dataTierCero[0].value.toString().replace(/,/g, ''));
     backgroundColor.push('LightGray');
@@ -82,23 +98,18 @@ export class WaterfallChartComponent implements OnInit {
       const nodo = this.selectedNodes[i];
       label.push(nodo.name);
 
-      console.log(
-        parseFloat(
-          nodo.value.toString().replace(/,/g, '').toLocaleString('es-ES')
-        )
-      );
-      values.push(+nodo.value.toString().replace(/,/g, ''));
+      nodo.value.toString().replace('.', '');
+
+      values.push(nodo.value.toString().replace(/[,.]/g, ''));
       const color = +nodo.value < 0 ? '#ff3a58' : '#2cb02c';
       backgroundColor.push(color);
     }
 
     label.push(this.dataTierCero[1].year);
+
     values.push(this.dataTierCero[1].value.toString().replace(/,/g, ''));
     backgroundColor.push('LightGray');
 
-    console.log(label);
-    console.log(values);
-    console.log(backgroundColor);
     if (this.chart) {
       this.chart.destroy();
     }
@@ -132,8 +143,8 @@ export class WaterfallChartComponent implements OnInit {
   }
 
   receiveNodes(eventData: any) {
-    console.log('Evento recibido en el componente padre:', eventData);
     this.selectedNodes = eventData;
+
     this.renderchart();
   }
 }

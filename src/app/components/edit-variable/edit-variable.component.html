@@ -131,7 +131,7 @@
             <div *ngFor="let variable of variables">
               <div
                 style="cursor: pointer"
-                class="mr-1 p-3"
+                class="mr-1 p-1"
                 (click)="addVariable(variable, variable.id)"
                 *ngIf="editVariable ? variable.id !== +nodeId : true"
               >

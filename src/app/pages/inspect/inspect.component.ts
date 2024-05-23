@@ -369,11 +369,14 @@ export class InspectComponent implements OnInit {
   }
 
   goWaterfall() {
+    const selected = this.datas.filter((node: any) => node.isActive);
+    this.dataSvc.setNodes(selected);
     this.router.navigate(['/home/waterfall']);
   }
 
-  setClickedElement(index: number) {
-    this.clickedElement = index;
+  setClickedElement(node: any) {
+    /* this.clickedElement = index; */
+    node.isActive = !node.isActive;
   }
 
   calculateImpactsMultiplie(variableData: any[]): any {

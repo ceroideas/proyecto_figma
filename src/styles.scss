@@ -142,10 +142,21 @@ body {
   font-size: 12px;
   width: 24px;
   height: 24px;
-  padding: 4px;
+  padding: 0; /* Ajusta el padding para que la imagen ocupe todo el espacio */
+  display: flex;
+  justify-content: center; /* Centra horizontalmente */
+  align-items: center; /* Centra verticalmente */
   text-align: center;
   border-radius: 14px;
   margin: 0 auto;
+}
+
+.btn-edit img {
+  height: 19px;
+}
+
+.btn-hidden img {
+  height: 20px;
 }
 
 .full-box {
@@ -170,11 +181,11 @@ body {
 table {
   border-collapse: none !important;
 }
-.tier-icon {
+/* .tier-icon {
   position: relative;
   top: -35%;
   right: 35%;
-}
+} */
 .btn-hidden {
   background-color: #000f55 !important;
 }

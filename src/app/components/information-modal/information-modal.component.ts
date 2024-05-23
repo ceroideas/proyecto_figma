@@ -46,8 +46,6 @@ export class InformationModalComponent implements OnInit {
   save() {
     const selected = this.datas.filter((node: any) => node.isActive);
 
-    console.log(selected);
-
     this.sendNodes.emit(selected);
   }
 }
