@@ -5,6 +5,7 @@ import { Chart, registerables } from 'chart.js';
 import { DataService } from 'src/app/services/data-service.service';
 import { Router } from '@angular/router';
 Chart.register(...registerables);
+declare var Plotly: any;
 @Component({
   selector: 'app-waterfall-chart',
   standalone: true,
@@ -44,7 +45,58 @@ export class WaterfallChartComponent implements OnInit {
     this.data = this.dataSvc.dataNodes;
     this.dataTierCero = this.dataSvc.tierCeroData;
     this.tierCeroValue = this.dataSvc.tierCero;
-    this.renderchart();
+    /* this.renderchart(); */
+
+    const data = [
+      {
+        name: 'FY23',
+        type: 'waterfall',
+        orientation: 'v',
+        measure: [
+          'relative',
+          'relative',
+          'total',
+          'relative',
+          'relative',
+          'total',
+        ],
+        x: ['FY23', 'Impacto 1', 'Impacto 2', 'Impacto 3', 'Otros', 'FY24'],
+        textposition: 'outside',
+        text: ['-50', '85', '-26', '-18', '68', '59'],
+        y: [-50, 85, -26, -18, 68, 59],
+        connector: {
+          line: {
+            color: 'rgb(63, 63, 63)',
+          },
+        },
+        marker: {
+          color: [
+            '#d62728',
+            '#2ca02c',
+            '#d62728',
+            '#d62728',
+            '#2ca02c',
+            '#2ca02c',
+          ], // rojo para negativos, verde para positivos
+        },
+      },
+    ];
+
+    const layout = {
+      title: {
+        text: 'Waterfall Chart',
+      },
+      xaxis: {
+        type: 'category',
+      },
+      yaxis: {
+        type: 'linear',
+      },
+      autosize: true,
+      showlegend: true,
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
     /*     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
