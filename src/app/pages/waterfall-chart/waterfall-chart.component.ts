@@ -116,7 +116,6 @@ export class WaterfallChartComponent implements OnInit {
 
     // Convertir todos los elementos a números
     arr = arr.map(Number);
-    let arrString = arr.map(String);
 
     let ultimoValor: any = arr[arr.length - 1];
 
@@ -134,6 +133,9 @@ export class WaterfallChartComponent implements OnInit {
       label[arr.length - 2] = 'Otros';
       console.log('Array modificado:', arr);
     }
+
+    let arrString = arr.map(String);
+
     const data = [
       {
         name: 'FY23',
