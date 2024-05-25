@@ -45,58 +45,8 @@ export class WaterfallChartComponent implements OnInit {
     this.data = this.dataSvc.dataNodes;
     this.dataTierCero = this.dataSvc.tierCeroData;
     this.tierCeroValue = this.dataSvc.tierCero;
-    /* this.renderchart(); */
+    this.renderchart();
 
-    const data = [
-      {
-        name: 'FY23',
-        type: 'waterfall',
-        orientation: 'v',
-        measure: [
-          'relative',
-          'relative',
-          'total',
-          'relative',
-          'relative',
-          'total',
-        ],
-        x: ['FY23', 'Impacto 1', 'Impacto 2', 'Impacto 3', 'Otros', 'FY24'],
-        textposition: 'outside',
-        text: ['-50', '85', '-26', '-18', '68', '59'],
-        y: [-50, 85, -26, -18, 68, 59],
-        connector: {
-          line: {
-            color: 'rgb(63, 63, 63)',
-          },
-        },
-        marker: {
-          color: [
-            '#d62728',
-            '#2ca02c',
-            '#d62728',
-            '#d62728',
-            '#2ca02c',
-            '#2ca02c',
-          ], // rojo para negativos, verde para positivos
-        },
-      },
-    ];
-
-    const layout = {
-      title: {
-        text: 'Waterfall Chart',
-      },
-      xaxis: {
-        type: 'category',
-      },
-      yaxis: {
-        type: 'linear',
-      },
-      autosize: true,
-      showlegend: true,
-    };
-
-    Plotly.newPlot('myDiv', data, layout);
     /*     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
@@ -161,8 +111,64 @@ export class WaterfallChartComponent implements OnInit {
 
     values.push(this.dataTierCero[1].value.toString().replace(/,/g, ''));
     backgroundColor.push('LightGray');
+    console.log(label, 'label', values, 'values');
+    let arr = values;
 
-    if (this.chart) {
+    // Convertir todos los elementos a números
+    arr = arr.map(Number);
+    let arrString = arr.map(String);
+
+    let ultimoValor: any = arr[arr.length - 1];
+
+    let sumaSinUltimo: any = arr
+      .slice(0, -1)
+      .reduce((acc: any, val: any) => acc + val, 0);
+
+    if (sumaSinUltimo === ultimoValor) {
+      console.log(
+        'La suma de todos menos el último ya es igual al último valor.'
+      );
+    } else {
+      let diferencia: any = ultimoValor - sumaSinUltimo;
+      arr[arr.length - 2] += diferencia;
+      label[arr.length - 2] = 'Otros';
+      console.log('Array modificado:', arr);
+    }
+    const data = [
+      {
+        name: 'FY23',
+        type: 'waterfall',
+        orientation: 'v',
+        measure: [],
+        x: label,
+        textposition: 'outside',
+        text: arrString,
+        y: arr,
+        connector: {
+          line: {
+            color: 'rgb(63, 63, 63)',
+          },
+        },
+      },
+    ];
+
+    const layout = {
+      title: {
+        text: 'Waterfall Chart',
+      },
+      xaxis: {
+        type: 'category',
+      },
+      yaxis: {
+        type: 'linear',
+      },
+      autosize: true,
+      showlegend: true,
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
+
+    /*     if (this.chart) {
       this.chart.destroy();
     }
 
@@ -191,7 +197,7 @@ export class WaterfallChartComponent implements OnInit {
           },
         },
       },
-    });
+    }); */
   }
 
   receiveNodes(eventData: any) {
