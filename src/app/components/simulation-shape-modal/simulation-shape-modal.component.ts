@@ -752,25 +752,7 @@ export class SimulationShapeModalComponent implements OnInit {
     }
 
     // Configurar los datos para el gráfico
-    const histogramData = [];
-    const bins = [];
-    for (let i = 0; i <= N; i++) {
-      histogramData.push(pdfData[i]);
-      bins.push(i);
-    }
-
-    const data = {
-      labels: bins,
-      datasets: [
-        {
-          label: 'Distribución Hipergeométrica',
-          data: histogramData,
-          backgroundColor: '#8C64B1',
-          borderColor: '#8C64B1',
-          borderWidth: 1,
-        },
-      ],
-    };
+    const bins = Array.from({ length: N + 1 }, (_, i) => i);
 
     // Configurar opciones del gráfico
     const options = {
@@ -786,14 +768,37 @@ export class SimulationShapeModalComponent implements OnInit {
             display: true,
             text: 'Densidad de probabilidad',
           },
+          beginAtZero: true,
         },
       },
     };
 
     // Crear el gráfico de barras usando Chart.js
     this.chart = new Chart('chart', {
-      type: 'bar',
-      data: data,
+      data: {
+        labels: bins,
+        datasets: [
+          {
+            label: 'Histograma de Distribución Hipergeométrica',
+            data: pdfData,
+            backgroundColor: 'rgba(140, 100, 177, 0.6)',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
+            yAxisID: 'y',
+          },
+          {
+            label: 'PDF de Distribución Hipergeométrica',
+            data: pdfData,
+            borderColor: '#FF6347',
+            backgroundColor: '#FF6347',
+            borderWidth: 2,
+            type: 'line',
+            fill: false,
+            yAxisID: 'y',
+          },
+        ],
+      },
       options: options,
     });
   }
