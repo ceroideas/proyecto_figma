@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Chart, registerables } from 'chart.js';
+import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
 import { NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 Chart.register(...registerables);
@@ -386,21 +386,46 @@ export class SimulationShapeModalComponent implements OnInit {
       (_, i) => +(+this.min + i * binWidth).toFixed(2)
     );
 
-    const data = histogram;
+    const data = histogram.map((count) => count / sampleSize / binWidth);
 
-    // Crear un histograma con Chart.js (gráfico de barras)
+    // Calcular la PDF teórica
+    const pdf = labels.map((x) => {
+      if (x < +this.mode) {
+        return (
+          (2 * (x - +this.min)) /
+          ((+this.max - +this.min) * (+this.mode - +this.min))
+        );
+      } else {
+        return (
+          (2 * (+this.max - x)) /
+          ((+this.max - +this.min) * (+this.max - +this.mode))
+        );
+      }
+    });
 
+    // Crear un histograma con Chart.js (gráfico de barras) y agregar la PDF
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [
           {
+            label: 'PDF Teórica',
+            data: pdf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
+            yAxisID: 'y1',
+          },
+          {
             label: 'Triangular Distribution',
             data: data,
             backgroundColor: '#8C64B1',
             borderColor: '#8C64B1',
             borderWidth: 1,
+            type: 'bar',
+            yAxisID: 'y',
           },
         ],
       },
@@ -418,7 +443,18 @@ export class SimulationShapeModalComponent implements OnInit {
               display: true,
               text: 'Frequency',
             },
-            ticks: {},
+            position: 'left',
+          },
+          y1: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Probability Density',
+            },
+            position: 'right',
+            grid: {
+              drawOnChartArea: false,
+            },
           },
         },
       },
@@ -442,48 +478,69 @@ export class SimulationShapeModalComponent implements OnInit {
       return poissonSamples;
     }
 
+    // Función para calcular la PMF teórica de la distribución de Poisson
+    function poissonPMF(lambda: number, k: number) {
+      return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+    }
+
+    // Función para calcular el factorial de un número
+    function factorial(n: number): number {
+      if (n === 0 || n === 1) return 1;
+      let result = 1;
+      for (let i = 2; i <= n; i++) {
+        result *= i;
+      }
+      return result;
+    }
+
     // Definir parámetros de la distribución de Poisson
     const sampleSize = 1000;
-    const lambda = 8; // Parámetro lambda
+    const lambda = this.lamda; // Parámetro lambda
 
     // Generar números aleatorios con distribución de Poisson
-    const poissonSamples = poissonDistribution(sampleSize, this.lamda);
+    const poissonSamples = poissonDistribution(sampleSize, lambda);
 
     // Calcular el histograma
     const maxVal = Math.max(...poissonSamples);
     const minVal = Math.min(...poissonSamples);
     const numBins = maxVal - minVal + 1;
-    /* const histogram = new Array(numBins).fill(0); */
 
-    /*     poissonSamples.forEach((value) => {
-      histogram[value - minVal]++;
-    }); */
-
-    let histogram = new Array(14).fill(0);
+    let histogram = new Array(numBins).fill(0);
     for (let i = 0; i < poissonSamples.length; i++) {
-      histogram[
-        Math.min(Math.floor(poissonSamples[i]), histogram.length - 1)
-      ]++;
+      histogram[poissonSamples[i] - minVal]++;
     }
 
-    // Normaliza el histograma
+    // Normalizar el histograma
     for (let i = 0; i < histogram.length; i++) {
       histogram[i] /= poissonSamples.length;
     }
 
-    // Crear un histograma con Chart.js (gráfico de barras)
+    // Calcular la PMF teórica
+    const pmf = new Array(numBins)
+      .fill(0)
+      .map((_, i) => poissonPMF(lambda, i + minVal));
 
+    // Crear un histograma con Chart.js (gráfico de barras) y agregar la PMF
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
-        labels: Array.from({ length: histogram.length }, (_, i) => i + 1),
+        labels: Array.from({ length: histogram.length }, (_, i) => i + minVal),
         datasets: [
+          {
+            label: 'PMF Teórica',
+            data: pmf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
+          },
           {
             label: 'Poisson Distribution',
             data: histogram,
             backgroundColor: '#8C64B1',
             borderColor: '#8C64B1',
             borderWidth: 1,
+            type: 'bar',
           },
         ],
       },
@@ -501,7 +558,6 @@ export class SimulationShapeModalComponent implements OnInit {
               display: true,
               text: 'Frequency',
             },
-            ticks: {},
           },
         },
       },
@@ -529,43 +585,54 @@ export class SimulationShapeModalComponent implements OnInit {
     }, {});
 
     // Convertir el histograma en un formato compatible con Chart.js
-    const chartData = {
-      labels: Object.keys(histogramData).map((bin) => parseInt(bin)),
-      datasets: [
-        {
-          label: 'Histograma',
-          data: Object.values(histogramData).map((count: any) => count / size),
-          backgroundColor: '#8C64B1',
-          borderColor: '#8C64B1',
-          borderWidth: 1,
-        },
-      ],
-    };
+    const labels = Object.keys(histogramData).map((bin) => parseInt(bin));
+    const histogram = Object.values(histogramData).map(
+      (count: any) => count / size
+    );
 
-    // Configurar opciones del gráfico
-    const chartOptions = {
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: 'Número de intentos hasta el primer éxito',
+    // Calcular la PMF teórica
+    const pmf = labels.map((k) => p * Math.pow(1 - p, k - 1));
+
+    // Crear el gráfico de barras usando Chart.js y agregar la PMF
+    this.chart = new Chart('chart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'PMF Teórica',
+            data: pmf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
           },
-        },
-        y: {
-          title: {
-            display: true,
-            text: 'Probabilidad',
+          {
+            label: 'Histograma',
+            data: histogram,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Número de intentos hasta el primer éxito',
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Probabilidad',
+            },
           },
         },
       },
-    };
-
-    // Crear el gráfico de barras usando Chart.js
-
-    this.chart = new Chart('chart', {
-      type: 'bar',
-      data: chartData,
-      options: chartOptions,
     });
   }
 
@@ -662,50 +729,30 @@ export class SimulationShapeModalComponent implements OnInit {
     const n = +this.success; // Número de éxitos en la población
     const N = +this.trials; // Tamaño de la muestra
 
-    // Generar muestras de la distribución hipergeométrica
-    function generateHypergeometricSamples(
-      M: number,
-      n: number,
-      N: number,
-      size: number
-    ) {
-      const samples = [];
-      for (let i = 0; i < size; i++) {
-        let successes = 0;
-        let population = [...Array(M).keys()].map((x) => (x < n ? 1 : 0));
-        for (let j = 0; j < N; j++) {
-          const index = Math.floor(Math.random() * population.length);
-          successes += population[index];
-          population.splice(index, 1);
-        }
-        samples.push(successes);
-      }
-      return samples;
+    // Función de densidad de probabilidad de la distribución hipergeométrica
+    function hypergeometricPDF(k: number, M: number, n: number, N: number) {
+      const coef =
+        (binomialCoefficient(n, k) * binomialCoefficient(M - n, N - k)) /
+        binomialCoefficient(M, N);
+      return coef;
     }
 
-    const samples = generateHypergeometricSamples(M, n, N, 1000);
+    // Función para calcular el coeficiente binomial
+    function binomialCoefficient(n: number, k: number) {
+      let coeff = 1;
+      for (let x = n - k + 1; x <= n; x++) coeff *= x;
+      for (let x = 1; x <= k; x++) coeff /= x;
+      return coeff;
+    }
 
-    // Calcular el histograma de las muestras generadas
-    const bins = Array.from(new Set(samples)).sort((a, b) => a - b);
-    const histogramData = bins.map(
-      (bin) =>
-        samples.filter((value: unknown) => value === bin).length /
-        samples.length
-    );
+    // Calcular los valores para la función de densidad de probabilidad
+    const pdfData = [];
+    for (let k = 0; k <= N; k++) {
+      pdfData.push(hypergeometricPDF(k, M, n, N));
+    }
 
     // Configurar los datos para el gráfico
-    const data = {
-      labels: bins,
-      datasets: [
-        {
-          label: 'Distribución Hipergeométrica',
-          data: histogramData,
-          backgroundColor: '#8C64B1',
-          borderColor: '#8C64B1',
-          borderWidth: 1,
-        },
-      ],
-    };
+    const bins = Array.from({ length: N + 1 }, (_, i) => i);
 
     // Configurar opciones del gráfico
     const options = {
@@ -721,15 +768,37 @@ export class SimulationShapeModalComponent implements OnInit {
             display: true,
             text: 'Densidad de probabilidad',
           },
+          beginAtZero: true,
         },
       },
     };
 
     // Crear el gráfico de barras usando Chart.js
-
     this.chart = new Chart('chart', {
-      type: 'bar',
-      data: data,
+      data: {
+        labels: bins,
+        datasets: [
+          {
+            label: 'Histograma de Distribución Hipergeométrica',
+            data: pdfData,
+            backgroundColor: 'rgba(140, 100, 177, 0.6)',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
+            yAxisID: 'y',
+          },
+          {
+            label: 'PDF de Distribución Hipergeométrica',
+            data: pdfData,
+            borderColor: '#FF6347',
+            backgroundColor: '#FF6347',
+            borderWidth: 2,
+            type: 'line',
+            fill: false,
+            yAxisID: 'y',
+          },
+        ],
+      },
       options: options,
     });
   }
@@ -750,17 +819,26 @@ export class SimulationShapeModalComponent implements OnInit {
       return binomialSamples;
     }
 
+    // Función para calcular la PMF teórica de la distribución binomial
+    function binomialPMF(n: number, p: number, k: number) {
+      function factorial(x: number): number {
+        if (x === 0 || x === 1) return 1;
+        return x * factorial(x - 1);
+      }
+      return (
+        (factorial(n) / (factorial(k) * factorial(n - k))) *
+        Math.pow(p, k) *
+        Math.pow(1 - p, n - k)
+      );
+    }
+
     // Definir parámetros de la distribución binomial
     const sampleSize = 1000;
-    const n = 10; // Número de ensayos
-    const p = 0.5; // Probabilidad de éxito en cada ensayo
+    const n = this.trials; // Número de ensayos
+    const p = this.probability; // Probabilidad de éxito en cada ensayo
 
     // Generar números aleatorios con distribución binomial
-    const binomialSamples = binomialDistribution(
-      sampleSize,
-      this.trials,
-      this.probability
-    );
+    const binomialSamples = binomialDistribution(sampleSize, n, p);
 
     // Calcular el histograma
     const maxVal = Math.max(...binomialSamples);
@@ -772,23 +850,36 @@ export class SimulationShapeModalComponent implements OnInit {
       histogram[value - minVal]++;
     });
 
-    // Preparar datos para el histograma
+    // Normalizar el histograma
+    for (let i = 0; i < histogram.length; i++) {
+      histogram[i] /= binomialSamples.length;
+    }
+
+    // Calcular la PMF teórica
     const labels = Array.from({ length: numBins }, (_, i) => i + minVal);
-    const data = histogram;
+    const pmf = labels.map((k) => binomialPMF(n, p, k));
 
-    // Crear un histograma con Chart.js (gráfico de barras)
-
+    // Crear un histograma con Chart.js (gráfico de barras) y agregar la PMF
     this.chart = new Chart('chart', {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [
           {
+            label: 'PMF Teórica',
+            data: pmf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
+          },
+          {
             label: 'Binomial Distribution',
-            data: data,
+            data: histogram,
             backgroundColor: '#8C64B1',
             borderColor: '#8C64B1',
             borderWidth: 1,
+            type: 'bar',
           },
         ],
       },
@@ -804,9 +895,8 @@ export class SimulationShapeModalComponent implements OnInit {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Frequency',
+              text: 'Probability',
             },
-            ticks: {},
           },
         },
       },
@@ -821,7 +911,7 @@ export class SimulationShapeModalComponent implements OnInit {
 
     // Función para generar números aleatorios con distribución de Weibull
     function generateWeibullSamples(k: number, lambda: number, size: number) {
-      const samples = [];
+      const samples: number[] = [];
       for (let i = 0; i < size; i++) {
         const u = Math.random();
         const sample = lambda * Math.pow(-Math.log(1 - u), 1 / k);
@@ -834,7 +924,7 @@ export class SimulationShapeModalComponent implements OnInit {
     const weibullSamples = generateWeibullSamples(k, lambda, sampleSize);
 
     // Crear bins para el histograma
-    function createHistogram(samples: any[], binCount: number) {
+    function createHistogram(samples: number[], binCount: number) {
       const max = Math.max(...samples);
       const min = Math.min(...samples);
       const binWidth = (max - min) / binCount;
@@ -861,8 +951,20 @@ export class SimulationShapeModalComponent implements OnInit {
       .slice(0, -1)
       .map((edge, index) => ((edge + binEdges[index + 1]) / 2).toFixed(2));
 
+    // Función para calcular la PDF de Weibull
+    function weibullPDF(x: number, k: number, lambda: number) {
+      return (
+        (k / lambda) *
+        Math.pow(x / lambda, k - 1) *
+        Math.exp(-Math.pow(x / lambda, k))
+      );
+    }
+
+    // Calcular los valores de la PDF para los puntos medios de los bins
+    const pdfValues = binMids.map((x) => weibullPDF(parseFloat(x), k, lambda));
+
     // Configurar los datos para Chart.js
-    const chartData = {
+    const chartData: ChartData<'bar' | 'line', number[], string> = {
       labels: binMids,
       datasets: [
         {
@@ -872,11 +974,19 @@ export class SimulationShapeModalComponent implements OnInit {
           borderColor: '#8C64B1',
           borderWidth: 1,
         },
+        {
+          label: 'Función de Densidad de Probabilidad',
+          data: pdfValues,
+          type: 'line',
+          fill: false,
+          borderColor: '#FF5733',
+          borderWidth: 2,
+        },
       ],
     };
 
     // Configurar las opciones del gráfico
-    const chartOptions = {
+    const chartOptions: ChartOptions = {
       scales: {
         x: {
           title: {
@@ -894,13 +1004,12 @@ export class SimulationShapeModalComponent implements OnInit {
       plugins: {
         title: {
           display: true,
-          text: 'Histograma de Distribución de Weibull',
+          text: 'Histograma y Función de Densidad de Probabilidad de Distribución de Weibull',
         },
       },
     };
 
     // Crear el gráfico
-
     this.chart = new Chart('chart', {
       type: 'bar',
       data: chartData,
@@ -910,8 +1019,10 @@ export class SimulationShapeModalComponent implements OnInit {
 
   lognormalChart() {
     // Parámetros de la distribución logarítmico normal
-    const mu = Math.log(this.mean); // Media logarítmica
-    const sigma = this.stDev / this.mean; // Desviación estándar logarítmica
+    const mean = this.mean;
+    const stDev = this.stDev;
+    const mu = Math.log(mean ** 2 / Math.sqrt(stDev ** 2 + mean ** 2)); // Media logarítmica corregida
+    const sigma = Math.sqrt(Math.log(1 + stDev ** 2 / mean ** 2)); // Desviación estándar logarítmica corregida
 
     // Función de densidad de probabilidad (PDF) de la distribución logarítmica normal
     function lognormalPDF(x: any) {
@@ -935,21 +1046,19 @@ export class SimulationShapeModalComponent implements OnInit {
       }
     }
 
-    // Configuración del gráfico
-
     // Crear gráfico
-
     this.chart = new Chart('chart', {
-      type: 'bar',
+      type: 'line', // Cambiar a 'line' para representar correctamente la PDF
       data: {
         labels: labels,
         datasets: [
           {
             label: 'Distribución Logarítmico Normal',
             data: data,
-            backgroundColor: '#8C64B1',
+            backgroundColor: 'rgba(140, 100, 177, 0.2)', // Color con transparencia
             borderColor: '#8C64B1',
             borderWidth: 1,
+            fill: true, // Relleno bajo la curva
           },
         ],
       },
