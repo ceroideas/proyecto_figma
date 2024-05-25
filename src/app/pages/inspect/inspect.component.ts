@@ -281,7 +281,7 @@ export class InspectComponent implements OnInit {
                   value: element.impact,
                 };
 
-                otherValues.push(other);
+                /*   otherValues.push(other); */
               }
             }
 
@@ -294,7 +294,7 @@ export class InspectComponent implements OnInit {
                 value: sumaTotal,
               };
 
-              otherValues.push(other);
+              /* otherValues.push(other); */
             }
           }
           /*       if (par.tier == 'L0') {
