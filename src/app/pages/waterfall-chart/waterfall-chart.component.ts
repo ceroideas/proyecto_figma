@@ -111,7 +111,7 @@ export class WaterfallChartComponent implements OnInit {
 
     values.push(this.dataTierCero[1].value.toString().replace(/,/g, ''));
     backgroundColor.push('LightGray');
-    console.log(label, 'label', values, 'values');
+
     let arr = values;
 
     // Convertir todos los elementos a números
@@ -124,14 +124,10 @@ export class WaterfallChartComponent implements OnInit {
       .reduce((acc: any, val: any) => acc + val, 0);
 
     if (sumaSinUltimo === ultimoValor) {
-      console.log(
-        'La suma de todos menos el último ya es igual al último valor.'
-      );
     } else {
       let diferencia: any = ultimoValor - sumaSinUltimo;
       arr[arr.length - 2] += diferencia;
       label[arr.length - 2] = 'Otros';
-      console.log('Array modificado:', arr);
     }
 
     let arrString = arr.map(String);
