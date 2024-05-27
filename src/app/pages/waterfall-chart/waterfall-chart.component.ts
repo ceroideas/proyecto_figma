@@ -90,11 +90,10 @@ export class WaterfallChartComponent implements OnInit {
   renderchart() {
     const label = [];
     const values = [];
-    const backgroundColor = [];
 
     label.push(this.dataTierCero[0].year);
     values.push(+this.dataTierCero[0].value.toString().replace(/,/g, ''));
-    backgroundColor.push('LightGray');
+    console.log(this.dataTierCero, 'NODES');
 
     for (let i = 0; i < this.selectedNodes.length; i++) {
       const nodo = this.selectedNodes[i];
@@ -103,14 +102,11 @@ export class WaterfallChartComponent implements OnInit {
       nodo.value.toString().replace('.', '');
 
       values.push(nodo.value.toString().replace(/[,.]/g, ''));
-      const color = +nodo.value < 0 ? '#ff3a58' : '#2cb02c';
-      backgroundColor.push(color);
     }
 
     label.push(this.dataTierCero[1].year);
 
     values.push(this.dataTierCero[1].value.toString().replace(/,/g, ''));
-    backgroundColor.push('LightGray');
 
     let arr = values;
 
@@ -123,21 +119,31 @@ export class WaterfallChartComponent implements OnInit {
       .slice(0, -1)
       .reduce((acc: any, val: any) => acc + val, 0);
 
+    console.log(arr, 'NODES');
+
     if (sumaSinUltimo === ultimoValor) {
     } else {
       let diferencia: any = ultimoValor - sumaSinUltimo;
-      arr[arr.length - 2] += diferencia;
-      label[arr.length - 2] = 'Otros';
+
+      arr.splice(arr.length - 1, 0, +diferencia);
+
+      /* arr[arr.length - 2] += diferencia; */
+      /* label[arr.length - 2] = 'Otros'; */
+      label.splice(arr.length - 2, 0, 'Otros');
     }
 
     let arrString = arr.map(String);
+    const mean = new Array(arr.length).fill('');
+
+    // Asignar "total" al último elemento del nuevo array
+    mean[mean.length - 1] = 'total';
 
     const data = [
       {
-        name: 'FY23',
+        name: 'Waterfall',
         type: 'waterfall',
         orientation: 'v',
-        measure: [],
+        measure: mean,
         x: label,
         textposition: 'outside',
         text: arrString,
