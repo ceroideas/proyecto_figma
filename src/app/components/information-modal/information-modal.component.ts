@@ -13,17 +13,7 @@ export class InformationModalComponent implements OnInit {
   clickedElement: number = 0;
   @Output() sendNodes = new EventEmitter<string>();
 
-  /*   datas: any[] = [
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-    { tier: 'L0', value: '15.325.896', description: 'Lorem lorem lorem' },
-  ]; */
-
+  searchTerm: string = '';
   @Input() datas: any = [];
 
   @Input() tierCeroValue: any;
@@ -41,6 +31,12 @@ export class InformationModalComponent implements OnInit {
     this.datas.forEach((node: any) => {
       node.isActive = false;
     });
+  }
+
+  get filteredDatas() {
+    return this.datas.filter((data: { name: string }) =>
+      data.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
   }
 
   save() {

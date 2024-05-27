@@ -301,7 +301,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: x,
         datasets: [
           {
-            label: 'PDF',
+            label: 'Theoretical distribution',
             data: y,
             backgroundColor: 'rgba(255, 0, 0, 0.5)',
             borderColor: 'rgba(255, 0, 0, 1)',
@@ -410,7 +410,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: labels,
         datasets: [
           {
-            label: 'PDF Teórica',
+            label: 'Theoretical distribution',
             data: pdf,
             borderColor: '#FF6347',
             borderWidth: 2,
@@ -419,7 +419,7 @@ export class SimulationShapeModalComponent implements OnInit {
             yAxisID: 'y1',
           },
           {
-            label: 'Triangular Distribution',
+            label: 'Histogram',
             data: data,
             backgroundColor: '#8C64B1',
             borderColor: '#8C64B1',
@@ -527,7 +527,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: Array.from({ length: histogram.length }, (_, i) => i + minVal),
         datasets: [
           {
-            label: 'PMF Teórica',
+            label: 'Theoretical distribution',
             data: pmf,
             borderColor: '#FF6347',
             borderWidth: 2,
@@ -535,7 +535,7 @@ export class SimulationShapeModalComponent implements OnInit {
             type: 'line',
           },
           {
-            label: 'Poisson Distribution',
+            label: 'Histogram',
             data: histogram,
             backgroundColor: '#8C64B1',
             borderColor: '#8C64B1',
@@ -600,7 +600,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: labels,
         datasets: [
           {
-            label: 'PMF Teórica',
+            label: 'Theoretical distribution',
             data: pmf,
             borderColor: '#FF6347',
             borderWidth: 2,
@@ -608,7 +608,7 @@ export class SimulationShapeModalComponent implements OnInit {
             type: 'line',
           },
           {
-            label: 'Histograma',
+            label: 'Histogram',
             data: histogram,
             backgroundColor: '#8C64B1',
             borderColor: '#8C64B1',
@@ -671,7 +671,7 @@ export class SimulationShapeModalComponent implements OnInit {
       labels: [] as string[],
       datasets: [
         {
-          label: 'Distribución Beta',
+          label: 'Histogram',
           data: [] as number[],
           fill: false,
           backgroundColor: '#8C64B1',
@@ -779,7 +779,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: bins,
         datasets: [
           {
-            label: 'Histograma de Distribución Hipergeométrica',
+            label: 'Histogram',
             data: pdfData,
             backgroundColor: 'rgba(140, 100, 177, 0.6)',
             borderColor: '#8C64B1',
@@ -788,7 +788,7 @@ export class SimulationShapeModalComponent implements OnInit {
             yAxisID: 'y',
           },
           {
-            label: 'PDF de Distribución Hipergeométrica',
+            label: 'Theoretical distribution',
             data: pdfData,
             borderColor: '#FF6347',
             backgroundColor: '#FF6347',
@@ -866,7 +866,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: labels,
         datasets: [
           {
-            label: 'PMF Teórica',
+            label: 'Theoretical distribution',
             data: pmf,
             borderColor: '#FF6347',
             borderWidth: 2,
@@ -968,14 +968,14 @@ export class SimulationShapeModalComponent implements OnInit {
       labels: binMids,
       datasets: [
         {
-          label: 'Densidad de Probabilidad',
+          label: 'Histogram',
           data: hist,
           backgroundColor: '#8C64B1',
           borderColor: '#8C64B1',
           borderWidth: 1,
         },
         {
-          label: 'Función de Densidad de Probabilidad',
+          label: 'Theoretical distribution',
           data: pdfValues,
           type: 'line',
           fill: false,
@@ -1053,7 +1053,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: labels,
         datasets: [
           {
-            label: 'Distribución Logarítmico Normal',
+            label: 'Histogram',
             data: data,
             backgroundColor: 'rgba(140, 100, 177, 0.2)', // Color con transparencia
             borderColor: '#8C64B1',
@@ -1076,7 +1076,7 @@ export class SimulationShapeModalComponent implements OnInit {
           y: {
             title: {
               display: true,
-              text: 'Densidad de probabilidad',
+              text: 'Probability density',
             },
           },
         },
@@ -1131,7 +1131,7 @@ export class SimulationShapeModalComponent implements OnInit {
         datasets: [
           {
             type: 'line',
-            label: 'PDF',
+            label: 'Distribución teórica',
             fill: false,
             data: Array.from({ length: 15 }, () => 1),
             backgroundColor: 'rgba(255, 0, 0, 0.5)',
@@ -1194,7 +1194,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: bins,
         datasets: [
           {
-            label: 'PDF',
+            label: 'Distribución teórica',
             data: pdf,
             fill: false,
             borderColor: 'rgba(255, 0, 0, 1)',

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { some } from 'highcharts';
+import { MessageComponent } from 'src/app/components/message/message.component';
 import { SetPriceComponent } from 'src/app/components/set-price/set-price.component';
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { DataService } from 'src/app/services/data-service.service';
@@ -12,7 +13,7 @@ declare var bootstrap: any;
   selector: 'app-inspect',
   providers: [ProjectService],
   standalone: true,
-  imports: [CommonModule, FormsModule, PipesModule],
+  imports: [CommonModule, FormsModule, PipesModule, MessageComponent],
   templateUrl: './inspect.component.html',
   styleUrl: './inspect.component.scss',
 })
