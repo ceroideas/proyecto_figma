@@ -27,7 +27,8 @@
             type="text"
             class="form-control"
             placeholder="Buscar"
-            aria-label="Username"
+            aria-label="Buscar"
+            [(ngModel)]="searchTerm"
           />
         </div>
       </div>
@@ -35,7 +36,7 @@
       <div class="modal-body">
         <div class="ml-2">
           <div
-            *ngFor="let data of datas; let i = index"
+            *ngFor="let data of filteredDatas; let i = index"
             [ngClass]="{
               'inner-container-active': data.isActive
             }"
@@ -60,6 +61,7 @@
           </div>
         </div>
       </div>
+
       <div class="modal-footer">
         <div
           class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
