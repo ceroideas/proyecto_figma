@@ -87,13 +87,13 @@
 
       <div
         [ngClass]="{
-          'circle-active': clickedElement === i
+          'circle-active': data.isActive
         }"
         class="circle"
       >
         <div
           [ngClass]="{
-            'circle-content-active': clickedElement === i
+            'circle-content-active': data.isActive
           }"
           class="circle-content"
         >
@@ -105,25 +105,28 @@
     <div
       *ngIf="!data.combination"
       [ngClass]="{
-        'circle-active': clickedElement === i
+        'circle-active': data.isActive
       }"
       class="circle"
     >
       <div
         [ngClass]="{
-          'circle-content-active': clickedElement === i
+          'circle-content-active': data.isActive
         }"
         class="circle-content"
       >
         {{ data.tier }}
       </div>
     </div>
-    <div class="text-container mb-3">
-      <p class="main-text">{{ data.value }}€</p>
+    <div class="text-container mb-1">
+      <p class="main-text" style="margin-bottom: -5px !important">
+        {{ data.value }}€
+      </p>
       <div class="sub-text">
-        <p class="sub-text-item">of &nbsp; &nbsp; {{ tierCeroValue }} €</p>
-
-        <p>{{ data.description }}</p>
+        <p class="sub-text-item" style="margin-bottom: -3px !important">
+          of &nbsp; &nbsp; {{ tierCeroValue }} €
+        </p>
+        <p style="margin-bottom: -5px !important">{{ data.description }}</p>
       </div>
     </div>
   </div>
