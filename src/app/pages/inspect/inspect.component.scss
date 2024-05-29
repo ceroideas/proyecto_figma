@@ -7,6 +7,7 @@
 }
 .inner-container {
   padding: 1%;
+  height: 150px;
   border-radius: 15px;
   flex-direction: column;
   background: #f6f3f9;
@@ -58,7 +59,7 @@
   width: 44px;
   height: 43px;
   padding: 10px;
-  background: #8c64b1;
+  background: #8c64b1 !important;
   border-radius: 10px;
   justify-content: center;
   align-items: center;

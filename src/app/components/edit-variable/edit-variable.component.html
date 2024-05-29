@@ -156,7 +156,8 @@
           <div class="operator-box d-flex flex-wrap">
             <div
               (click)="togglePopover()"
-              style="cursor: pointer; padding: 10px"
+              style="cursor: pointer"
+              class="mr-1 p-1"
             >
               <img
                 class="user-icon"
@@ -177,7 +178,8 @@
             </div>
             <div
               *ngFor="let operator of operators"
-              style="cursor: pointer; padding: 10px"
+              style="cursor: pointer"
+              class="mr-1 p-1"
               (click)="addCalculo(operator)"
             >
               <img
@@ -200,7 +202,7 @@
             <div
               *ngFor="let calculo of calculos; let i = index"
               style="cursor: pointer"
-              class="mr-1 mb-3 p-1 operation-varible"
+              class="mr-2 mb-1 p-1 operation-varible"
               (mouseover)="seleccionarCalculo(calculo)"
               (mouseout)="deseleccionarCalculo()"
               (click)="eliminatedOperation(i)"

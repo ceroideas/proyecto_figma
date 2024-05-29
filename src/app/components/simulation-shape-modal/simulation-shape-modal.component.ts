@@ -311,8 +311,8 @@ export class SimulationShapeModalComponent implements OnInit {
             type: 'bar',
             label: 'Histogram',
             data: histogram,
-            backgroundColor: 'rgba(0, 0, 255, 0.5)',
-            borderColor: 'rgba(0, 0, 255, 1)',
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
             borderWidth: 1,
           },
         ],
@@ -1131,7 +1131,7 @@ export class SimulationShapeModalComponent implements OnInit {
         datasets: [
           {
             type: 'line',
-            label: 'Distribución teórica',
+            label: 'Theoretical distribution',
             fill: false,
             data: Array.from({ length: 15 }, () => 1),
             backgroundColor: 'rgba(255, 0, 0, 0.5)',
@@ -1141,8 +1141,8 @@ export class SimulationShapeModalComponent implements OnInit {
           {
             label: 'Histogram',
             data: histogram,
-            backgroundColor: 'rgba(0, 0, 255, 0.5)',
-            borderColor: 'rgba(0, 0, 255, 1)',
+            backgroundColor: '#8C64B1',
+            borderColor: '##8C64B1',
             borderWidth: 1,
           },
         ],
@@ -1194,7 +1194,7 @@ export class SimulationShapeModalComponent implements OnInit {
         labels: bins,
         datasets: [
           {
-            label: 'Distribución teórica',
+            label: 'Theoretical distribution',
             data: pdf,
             fill: false,
             borderColor: 'rgba(255, 0, 0, 1)',
@@ -1204,8 +1204,8 @@ export class SimulationShapeModalComponent implements OnInit {
           {
             label: 'Histogram',
             data: histogram,
-            backgroundColor: 'rgba(0, 0, 255, 0.5)',
-            borderColor: 'rgba(0, 0, 255, 1)',
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
             borderWidth: 1,
           },
         ],
