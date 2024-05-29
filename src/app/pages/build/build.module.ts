@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { BuildComponent } from './build.component';
@@ -33,5 +33,7 @@ import { PipesModule } from '../../pipes/pipes.module';
   ],
 
   exports: [BuildComponent],
+
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class BuildModule {}

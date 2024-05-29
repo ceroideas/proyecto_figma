@@ -28,7 +28,7 @@
               "src/styles.scss",
               "src/assets/plugins/fontawesome-free/css/all.min.css",
               "src/assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css",
-              "src/assets/dist/css/adminlte.min.css"
+              "src/assets/dist/css/adminlte.min.css",
             ],
             "scripts": [
               "src/assets/plugins/jquery/jquery.min.js",
