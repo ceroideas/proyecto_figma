@@ -66,6 +66,8 @@ export class BuildComponent implements OnInit {
 
   loadedCallBack = false;
 
+  cargando = true;
+
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService,
@@ -76,6 +78,7 @@ export class BuildComponent implements OnInit {
   }
 
   ngOnInit() {
+
     this.id = this.route.snapshot.params['id'];
 
     var _this = this;
@@ -192,6 +195,8 @@ export class BuildComponent implements OnInit {
       function eventClick(this: any, e: any) {
         e.stopPropagation();
 
+        console.log('event')
+
         _this.loadedCallBack = false;
 
         var floatingElement = this.querySelector('.floating') as HTMLElement;
@@ -226,6 +231,8 @@ export class BuildComponent implements OnInit {
         }
       }
 
+      let contador = 0;
+
       this.chart.draw(this.data, { allowHtml: true });
 
       const interval = setInterval(() => {
@@ -233,14 +240,23 @@ export class BuildComponent implements OnInit {
           '.google-visualization-orgchart-table'
         );
 
-        if (orgChartTables.length > 0) {
+        contador+=orgChartTables.length;
+
+        if (orgChartTables.length > 0 && contador > 1) {
           clearInterval(interval);
+          contador = -99;
 
           var rotateElements = document.querySelectorAll(
             '.google-visualization-orgchart-node'
           );
 
           if (!this.loadedCallBack) {
+            console.log('loadedCallBack');
+
+            setTimeout(()=>{
+              _this.cargando = false;
+            },10)
+            this.loadedCallBack = true;
             Array.prototype.forEach.call(
               rotateElements,
               function (rotateElement: HTMLElement) {
@@ -248,7 +264,6 @@ export class BuildComponent implements OnInit {
                 rotateElement.addEventListener('click', eventClick);
               }
             );
-            this.loadedCallBack = true;
           }
         }
       }, 1000);
@@ -259,6 +274,11 @@ export class BuildComponent implements OnInit {
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
 
     this.printAll();
+  }
+
+  setListeners()
+  {
+    console.log('set listeners')
   }
 
   refresher() {

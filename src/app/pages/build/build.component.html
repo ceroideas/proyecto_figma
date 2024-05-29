@@ -48,6 +48,7 @@
 <app-shape-modal></app-shape-modal>
 <app-simulation-shape-modal></app-simulation-shape-modal>
 <div
+  (click)="setListeners()"
   class="container-organigrama"
   style="
     margin-top: 30px;
@@ -65,6 +66,9 @@
     background-image: url('../../../assets/img/background.png');
   "
 >
+<div *ngIf="cargando" class="spinner-container">
+  <div class="spinner"></div>
+</div>
   <div class="custom-container-2" (click)="refresher()">
     <div class="icon-container">
       <img class="icon-img" src="../../../assets/icons/compress.svg" alt="" />
