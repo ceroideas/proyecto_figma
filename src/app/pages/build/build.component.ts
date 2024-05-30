@@ -66,7 +66,7 @@ export class BuildComponent implements OnInit {
 
   loadedCallBack = false;
 
-  cargando = true;
+  cargando = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -191,6 +191,8 @@ export class BuildComponent implements OnInit {
           }
         );
       });
+
+      this.cargando = true;
 
       function eventClick(this: any, e: any) {
         e.stopPropagation();

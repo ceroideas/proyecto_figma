@@ -295,3 +295,7 @@ table {
 .hidden {
   display: none !important;
 }
+
+div.swal2-container {
+  z-index: 10000 !important;
+}
