@@ -8,7 +8,7 @@
   data-bs-target="#exampleModal"
   (click)="newTree()"
 >
-  Crear nodo
+  Create node
 </button>
 <!-- <div
   style="
@@ -243,7 +243,7 @@
           word-wrap: break-word;
         "
       >
-        Resumen de variables ({{selected.length}} seleccionadas) <a href="javascript:;" (click)="hideSelected()">Ocultar seleccionadas</a> | <a href="javascript:;" (click)="showHidden()">Mostrar ocultos ({{selectedHidden.length}})</a> | <a href="javascript:;" (click)="exportCsv()">Exportar a CSV</a>
+        Variables summary ({{selected.length}} selected) <a href="javascript:;" (click)="hideSelected()">Hide selected</a> | <a href="javascript:;" (click)="showHidden()">Show hidden ({{selectedHidden.length}})</a> | <a href="javascript:;" (click)="exportCsv()">Export to CSV</a>
       </div>
       <div
         style="
@@ -285,7 +285,7 @@
             "
           ></div>
         </div> -->
-        <input type="text" class="form-control" style="border-radius: 15px; width: 300px;" placeholder="Buscar..." [(ngModel)]="query">
+        <input type="text" class="form-control" style="border-radius: 15px; width: 300px;" placeholder="Search..." [(ngModel)]="query">
         <select
           style="border-radius: 15px"
           class="form-select"

@@ -5,7 +5,7 @@
   data-bs-toggle="modal"
   data-bs-target="#createProjectModal"
 >
-  + Crear proyecto
+  + Create project
 </button>
 
 <!-- Modal -->
@@ -20,7 +20,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <p class="modal-title" id="createProjectModalLabel">Crear proyecto</p>
+        <p class="modal-title" id="createProjectModalLabel">Create project</p>
         <button
           type="button"
           class="btn-close"
@@ -32,7 +32,7 @@
       <div class="modal-body">
         <div class="mb-4 mt-3 ml-2">
           <label for="name" class="form-label color-theme"
-            >Nombre del proyecto</label
+            >Project name</label
           >
           <input
             type="text"
@@ -44,13 +44,13 @@
           />
         </div>
         <div class="mb-4 col-md-12 row d-flex">
-          <p>Media de escenarios</p>
+          <p>Average of scenarios</p>
           <select
             [(ngModel)]="yearFrom"
             (change)="onFromSelected(yearFrom)"
             class="form-select input-formula col-md-5 ml-4"
           >
-            <option selected value="#">Desde</option>
+            <option selected value="#">From</option>
             <option *ngFor="let year of years" [value]="year">
               {{ year }}
             </option>
@@ -62,7 +62,7 @@
             [(ngModel)]="yearTo"
             class="form-select input-formula col-md-5"
           >
-            <option selected value="#">Hasta</option>
+            <option selected value="#">To</option>
             <option *ngFor="let year of yearsTo" [value]="+year">
               {{ year }}
             </option>
@@ -70,7 +70,7 @@
         </div>
         <div class="mb-4 mt-3 ml-2">
           <div style="align-items: center" class="d-flex">
-            <p style="display: contents">Crear escenarios</p>
+            <p style="display: contents">Create scenarios</p>
             <button (click)="addInput()" class="unite-button ml-5 mr-2">
               <img src="../../../assets/icons/fi_plus.svg" alt="" />
             </button>
@@ -100,7 +100,7 @@
             class="btn btn-lg delete-variable-button col-md-5 mb-0"
             data-bs-dismiss="modal"
           >
-            Cancelar
+            Cancel
           </button>
 
           <button
@@ -108,7 +108,7 @@
             type="button"
             class="btn btn-lg save-variable-button col-md-5"
           >
-            Guardar
+            Create
           </button>
         </div>
       </div>

@@ -28,13 +28,13 @@
           class="text-dark font-weight-bold mb-3 mb-md-0"
           style="font-size: 14px"
         >
-          Porcentajes:
+          Percentages:
         </div>
         <div
           class="text-dark font-weight-bold mb-3 mb-md-0"
           style="font-size: 14px"
         >
-          Valores de pronóstico
+          Predicted values
         </div>
         <div
           *ngFor="let percentile of percentiles; let i = index"
@@ -54,7 +54,7 @@
         <div class="text-end" style="width: 100%;">
         <button (click)="exportToCsv()" 
         class="btn simulate-button" style="background-color: #28a745; width: auto !important;"
-        >Exportar datos a CSV</button>
+        >Export to CSV</button>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@
     <div class="container">
       <div class="p-4 bg-light rounded" style="max-width: 400px">
         <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="font-weight-bold">Editar variable</div>
+          <div class="font-weight-bold">Edit variable</div>
           <div class="d-flex">
             <div
               (click)="createSimualtion()"
@@ -121,7 +121,7 @@
         <div class="d-flex flex-column mb-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <div class="d-flex">
-              <div class="text-dark">Variables utilizadas</div>
+              <div class="text-dark">Used Variables</div>
               <div class="text-dark ml-2">({{ getNumberOfActiveNodes() }})</div>
             </div>
             <div
@@ -129,7 +129,7 @@
               data-bs-target="#exampleModal"
               class="see-more font-weight-bold"
             >
-              Ver mas
+              See more
             </div>
           </div>
           <!--           <div class="d-flex flex-wrap">
@@ -171,7 +171,7 @@
         </div>
         <hr class="my-4" />
         <div class="mb-4">
-          <div class="text-muted">Nombre de la simulacion</div>
+          <div class="text-muted">Simulation name</div>
           <div class="font-weight-bold">
             <div *ngIf="!editSimulation">
               {{ simulateName }}
@@ -188,7 +188,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <div class="text-muted">Número de pasos simulados</div>
+          <div class="text-muted">Number of simulated steps</div>
           <div class="font-weight-bold">
             <div *ngIf="!editSimulation">
               {{ simulationNumber }}
@@ -206,7 +206,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <div class="text-muted">Descripción</div>
+          <div class="text-muted">Description</div>
           <div class="font-weight-bold">
             <div *ngIf="!editSimulation">
               {{ simulateDescription }}
@@ -225,7 +225,7 @@
           </div>
         </div>
         <div class="mb-4">
-          <div class="text-muted">Selecciona el color de las barras</div>
+          <div class="text-muted">Select the bar color</div>
           <div class="d-flex">
             <div
               *ngFor="let color of colorsOption"
@@ -242,14 +242,14 @@
           *ngIf="!editSimulation"
           class="btn simulate-button"
         >
-          Simular
+          Simulate
         </div>
         <div
           (click)="saveSimulationData()"
           *ngIf="editSimulation"
           class="btn simulate-button"
         >
-          Guadar datos
+          Save data
         </div>
       </div>
     </div>
@@ -267,7 +267,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <p class="modal-title" id="variableModal">Variables a utilizar</p>
+        <p class="modal-title" id="variableModal">Variables to use</p>
         <button
           type="button"
           class="btn-close"
@@ -282,7 +282,7 @@
             <div class="text-dark ml-2">({{ getNumberOfActiveNodes() }})</div>
           </div>
           <div class="see-more font-weight-bold" (click)="toggleSelectAll()">
-            Seleccionar todo
+            Select all
           </div>
         </div>
         <div class="d-flex flex-wrap">
@@ -314,7 +314,7 @@
             type="button"
             class="btn btn-lg delete-variable-button col-md-5 mb-0"
           >
-            Volver
+            Back
           </button>
 
           <button
@@ -322,7 +322,7 @@
             type="button"
             class="btn btn-lg save-variable-button col-md-5"
           >
-            Guardar cambios
+            Save changes
           </button>
         </div>
       </div>

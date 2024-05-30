@@ -1270,7 +1270,7 @@ export class SimulateComponent implements OnInit {
         }),
         datasets: [
           {
-            label: 'Simulación Montecarlo',
+            label: 'Montecarlo Simulation',
             data: this.values,
             backgroundColor: 'rgba(' + this.colorBar + ', .5)',
             borderColor: 'rgba(' + this.colorBar + ', 1)',
@@ -1477,7 +1477,7 @@ export class SimulateComponent implements OnInit {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'valores simulados.csv'; // Nombre del archivo
+    link.download = 'simulated values.csv'; // Nombre del archivo
     link.click();
 
     // Liberar el objeto URL
