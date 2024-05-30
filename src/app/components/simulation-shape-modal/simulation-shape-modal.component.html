@@ -24,7 +24,7 @@
       <div class="modal-header d-block">
         <div class="d-flex">
           <p class="modal-title">
-            Distribución {{ shapeType?.__zone_symbol__value.name }}
+            Distribution {{ shapeType?.__zone_symbol__value.name }}
           </p>
           <button
             type="button"
@@ -37,7 +37,7 @@
 
       <div class="modal-body">
         <p style="font-weight: normal !important">
-          Simulación basada en el número de unidades vendidas.
+          Simulation based on the number of units sold.
         </p>
         <div class="d-flex">
           <canvas id="chart"></canvas>
@@ -104,7 +104,7 @@
         >
           <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="min"
-              >Probabilidad:</span
+              >Probability:</span
             >
             <input
               onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
@@ -153,7 +153,7 @@
         >
           <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="min"
-              >Probabilidad:</span
+              >Probability:</span
             >
             <input
               onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
@@ -198,7 +198,7 @@
 
           <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="trials"
-              >Muestra:</span
+              >Sample:</span
             >
             <input
               onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
@@ -213,7 +213,7 @@
 
           <div class="input-group col-md-4 input-group-sm">
             <span class="input-group-text chart-span" id="population"
-              >Poblacion:</span
+              >Population:</span
             >
             <input
               onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
@@ -406,7 +406,7 @@
             class="btn btn-lg delete-variable-button col-md-5 mb-0"
             data-bs-dismiss="modal"
           >
-            Atras
+            Back
           </button>
 
           <button
@@ -415,7 +415,7 @@
             (click)="save()"
             data-bs-dismiss="modal"
           >
-            Guardar
+            Save
           </button>
         </div>
       </div>

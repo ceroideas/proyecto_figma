@@ -128,8 +128,8 @@ export class WaterfallChartComponent implements OnInit {
       arr.splice(arr.length - 1, 0, +diferencia);
 
       /* arr[arr.length - 2] += diferencia; */
-      /* label[arr.length - 2] = 'Otros'; */
-      label.splice(arr.length - 2, 0, 'Otros');
+      /* label[arr.length - 2] = 'Other'; */
+      label.splice(arr.length - 2, 0, 'Other');
     }
 
     let arrString = arr.map(String);

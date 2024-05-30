@@ -27,7 +27,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <p class="modal-title" id="exampleModalLabel">
-          {{ editVariable ? "Editar variable " : "Crear variable" }}
+          {{ editVariable ? "Edit variable " : "Create variable" }}
         </p>
         <button
           (click)="deleteShapeData()"
@@ -47,7 +47,7 @@
             [value]="true"
             [(ngModel)]="constante"
           />
-          <label class="form-check-label" for="constante"> Constante </label>
+          <label class="form-check-label" for="constante"> Constant </label>
         </div>
         <div>
           <input
@@ -66,7 +66,7 @@
         <div
           class="mt-4 d-flex justify-content-between align-items-start w-100"
         >
-          <p class="mb-0">Nombre de la variable (*)</p>
+          <p class="mb-0">Variable name (*)</p>
         </div>
 
         <div class="col-md-11">
@@ -85,7 +85,7 @@
         <div
           class="mt-4 d-flex justify-content-between align-items-start w-100"
         >
-          <p class="mb-0">Descripcion</p>
+          <p class="mb-0">Description</p>
         </div>
         <div
           class="mt-3 d-flex justify-content-between align-items-start w-100"
@@ -124,7 +124,7 @@
           <div
             class="mt-4 d-flex justify-content-between align-items-start w-100"
           >
-            <p class="mb-0">Agregar variable</p>
+            <p class="mb-0">Add variable</p>
           </div>
 
           <div class="variable-box d-flex flex-wrap">
@@ -150,7 +150,7 @@
           <div
             class="mt-4 d-flex justify-content-between align-items-start w-100"
           >
-            <p class="mb-0">Agregar operadores</p>
+            <p class="mb-0">Add operators</p>
           </div>
 
           <div class="operator-box d-flex flex-wrap">
@@ -174,7 +174,7 @@
                 [(ngModel)]="inputValue"
                 autofocus
               />
-              <button (click)="addCustom()">Guardar</button>
+              <button (click)="addCustom()">Save</button>
             </div>
             <div
               *ngFor="let operator of operators"
@@ -195,7 +195,7 @@
           <div
             class="mt-4 d-flex justify-content-between align-items-start w-100"
           >
-            <p class="mb-0">Calculo</p>
+            <p class="mb-0">Calculation</p>
           </div>
 
           <div class="calculo-box d-flex flex-wrap">
@@ -240,7 +240,7 @@
 
         <div [class]="constante ? '' : 'hide'">
           <div>
-            <p class="mt-3">Editar Valores</p>
+            <p class="mt-3">Edit Values</p>
             <div
               class="d-flex justify-content-between align-items-start w-100 mb-3"
             >
@@ -337,7 +337,7 @@
             >
               <div class="input-group col-md-5 input-group-sm mb-3">
                 <span class="input-group-text chart-span" id="min"
-                  >Probabilidad:</span
+                  >Probability:</span
                 >
                 <input
                   disabled
@@ -427,7 +427,7 @@
             >
               <div class="input-group col-md-5 input-group-sm mb-3">
                 <span class="input-group-text chart-span" id="min"
-                  >Probabilidad:</span
+                  >Probability:</span
                 >
                 <input
                   disabled
@@ -479,7 +479,7 @@
               </div>
               <div class="input-group col-md-4 input-group-sm mb-3">
                 <span class="input-group-text chart-span" id="max"
-                  >Escala:</span
+                  >Scale:</span
                 >
                 <input
                   disabled
@@ -546,7 +546,7 @@
               class="col-md-12 d-flex mt-4"
             >
               <div class="input-group col-md-4 input-group-sm mb-3">
-                <span class="input-group-text chart-span" id="min">Exito:</span>
+                <span class="input-group-text chart-span" id="min">Success:</span>
                 <input
                   disabled
                   [(ngModel)]="success"
@@ -609,7 +609,7 @@
             class="btn btn-lg delete-variable-button col-md-5 mb-0"
             data-bs-dismiss="modal"
           >
-            Eliminar variable
+            Delete variable
           </button>
 
           <button
@@ -618,7 +618,7 @@
             class="btn btn-lg save-variable-button col-md-5"
             data-bs-dismiss="modal"
           >
-            Guardar cambios
+            Save changes
           </button>
         </div>
       </div>
