@@ -242,6 +242,8 @@ export class BuildComponent implements OnInit {
           '.google-visualization-orgchart-table'
         );
 
+        console.log('loadedCallBack',this.loadedCallBack)
+
         contador+=orgChartTables.length;
 
         if (orgChartTables.length > 0 && contador > 1) {
@@ -747,6 +749,7 @@ export class BuildComponent implements OnInit {
     this.isNewTree = true;
     this.editVariable = false;
     this.editModal.deleteShapeData();
+    this.loadedCallBack = false;
   }
 
   getContentToChart() {
