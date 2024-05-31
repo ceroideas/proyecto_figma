@@ -66,9 +66,9 @@
     background-image: url('../../../assets/img/background.png');
   "
 >
-<div *ngIf="cargando" class="spinner-container">
-  <div class="spinner"></div>
-</div>
+  <div *ngIf="cargando" class="spinner-container">
+    <div class="spinner"></div>
+  </div>
   <div class="custom-container-2" (click)="refresher()">
     <div class="icon-container">
       <img class="icon-img" src="../../../assets/icons/compress.svg" alt="" />
@@ -243,7 +243,12 @@
           word-wrap: break-word;
         "
       >
-        Variables summary ({{selected.length}} selected) <a href="javascript:;" (click)="hideSelected()">Hide selected</a> | <a href="javascript:;" (click)="showHidden()">Show hidden ({{selectedHidden.length}})</a> | <a href="javascript:;" (click)="exportCsv()">Export to CSV</a>
+        Variables summary ({{ selected.length }} selected)
+        <a href="javascript:;" (click)="hideSelected()">Hide selected</a> |
+        <a href="javascript:;" (click)="showHidden()"
+          >Show hidden ({{ selectedHidden.length }})</a
+        >
+        | <a href="javascript:;" (click)="exportCsv()">Export to CSV</a>
       </div>
       <div
         style="
@@ -285,7 +290,13 @@
             "
           ></div>
         </div> -->
-        <input type="text" class="form-control" style="border-radius: 15px; width: 300px;" placeholder="Search..." [(ngModel)]="query">
+        <input
+          type="text"
+          class="form-control"
+          style="border-radius: 15px; width: 300px"
+          placeholder="Search..."
+          [(ngModel)]="query"
+        />
         <select
           style="border-radius: 15px"
           class="form-select"
@@ -345,9 +356,12 @@
           </thead>
           <tbody>
             <tr
-              *ngFor="let tier of aux | search:query; index as i"
+              *ngFor="let tier of aux | search : query; index as i"
               [style]="tier.hidden == 0 ? '' : 'display: none-'"
-              [ngClass]="{'selected': selected | selected:tier, 'hidden': tier.hiddenTable == 1}"
+              [ngClass]="{
+                selected: selected | selected : tier,
+                hidden: tier.hiddenTable == 1
+              }"
               (click)="selectTr(tier)"
             >
               <td
@@ -382,10 +396,14 @@
                     : 'branch-noactive-name'
                 "
               >
-                <div
-                  class="d-flex"
-                >
-                  {{tier.sceneries[selectedScenery]['years'][years[currentYearIndex]] }}
+                <div class="d-flex">
+                  {{
+                    formatMonto(
+                      tier.sceneries[selectedScenery]["years"][
+                        years[currentYearIndex]
+                      ]
+                    )
+                  }}
                   <!-- {{years[currentYearIndex]+': '+tier.sceneries[selectedScenery]['years'][years[currentYearIndex]] }} -->
                 </div>
 
