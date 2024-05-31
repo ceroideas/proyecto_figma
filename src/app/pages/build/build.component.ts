@@ -78,7 +78,6 @@ export class BuildComponent implements OnInit {
   }
 
   ngOnInit() {
-
     this.id = this.route.snapshot.params['id'];
 
     var _this = this;
@@ -197,7 +196,7 @@ export class BuildComponent implements OnInit {
       function eventClick(this: any, e: any) {
         e.stopPropagation();
 
-        console.log('event')
+        console.log('event');
 
         _this.loadedCallBack = false;
 
@@ -242,9 +241,9 @@ export class BuildComponent implements OnInit {
           '.google-visualization-orgchart-table'
         );
 
-        console.log('loadedCallBack',this.loadedCallBack)
+        console.log('loadedCallBack', this.loadedCallBack);
 
-        contador+=orgChartTables.length;
+        contador += orgChartTables.length;
 
         if (orgChartTables.length > 0 && contador > 1) {
           clearInterval(interval);
@@ -257,9 +256,9 @@ export class BuildComponent implements OnInit {
           if (!this.loadedCallBack) {
             console.log('loadedCallBack');
 
-            setTimeout(()=>{
+            setTimeout(() => {
               _this.cargando = false;
-            },10)
+            }, 10);
             this.loadedCallBack = true;
             Array.prototype.forEach.call(
               rotateElements,
@@ -280,9 +279,8 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  setListeners()
-  {
-    console.log('set listeners')
+  setListeners() {
+    console.log('set listeners');
   }
 
   refresher() {
@@ -1073,6 +1071,10 @@ export class BuildComponent implements OnInit {
         });
     });
   } */
+
+  formatMonto(monto: any) {
+    return Number(monto).toFixed(2);
+  }
 
   deleteNode() {
     this.getContentToChart();
