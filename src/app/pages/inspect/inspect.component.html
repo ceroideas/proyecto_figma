@@ -38,7 +38,6 @@
           year: true,
           'year-selected': year.isSelect
         }"
-        style="margin-right: 22px"
         (click)="toggleActive(year, i)"
       >
         <div
@@ -55,7 +54,7 @@
   </div>
 </div>
 
-<div class="title-page mt-5 mb-3">Information</div>
+<div class="title-page mt-5 mb-3">Información</div>
 <app-message
   icon="../../../assets/icons/u_info-circle.svg"
   closeIcon="../../../assets/icons/fi_x.svg"
@@ -71,7 +70,7 @@
     [ngClass]="{
       'inner-container-active': data.isActive
     }"
-    class="inner-container ml-5 mt-4"
+    class="inner-container ml-2 mt-4"
     (click)="setClickedElement(data)"
   >
     <div
@@ -119,7 +118,7 @@
       </div>
     </div>
     <div class="text-container mb-1">
-      <p class="main-text" style="margin-bottom: -5px !important">
+      <p class="main-text" style="margin-bottom: -15px !important">
         {{ data.value }}€
       </p>
       <div class="sub-text">
@@ -152,7 +151,7 @@
       type="button"
       class="btn save-variable-button"
     >
-      Waterfall
+      Mostrar cascada
     </button>
   </a>
 </div>

@@ -828,12 +828,12 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   addCalculo(operation: string) {
-    if (this.sendOperations.length > 0) {
+    // if (this.sendOperations.length > 0) {
       this.calculos.push(operation);
       this.operations.push([{ name: operation }]);
 
       this.sendOperations.push(operation);
-    }
+    // }
 
     this.operationResult();
   }
