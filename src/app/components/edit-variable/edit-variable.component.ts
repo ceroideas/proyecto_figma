@@ -837,6 +837,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.operationResult();
   }
+  
   addCustom() {
     if (this.inputValue.toString().includes('%')) {
       const valueBase = parseFloat(this.inputValue.toString().replace('%', ''));
