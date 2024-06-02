@@ -273,8 +273,12 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  setListeners(event: any) {
+  setListeners(event: any):any {
     // Obtiene el elemento más cercano con la clase especificada
+    if (!event.target
+      .closest('.google-visualization-orgchart-node')) {
+      return false;
+    }
     const botones = event.target
       .closest('.google-visualization-orgchart-node')
       .querySelector('.floating');
@@ -285,13 +289,17 @@ export class BuildComponent implements OnInit {
     // Cierra todos los elementos abiertos
     document.querySelectorAll('.floating').forEach((el: any) => {
       el.style.display = 'none';
+    });
+
+    document.querySelectorAll('.google-visualization-orgchart-node').forEach((el: any) => {
       el.style.zIndex = '1';
     });
 
     // Si el elemento estaba cerrado, lo abre. Si estaba abierto, permanece cerrado.
     if (!estaAbierto) {
       botones.style.display = 'block';
-      botones.style.zIndex = '5';
+      event.target
+      .closest('.google-visualization-orgchart-node').style.zIndex = '5';
     }
   }
 
