@@ -33,29 +33,7 @@ export class InspectComponent implements OnInit {
 
   valueToShow: any[] = [];
   tierCeroValue: any = 0;
-  variableData = [
-    {
-      name: 'Número empleados equipo central',
-      oldValue: 6,
-      newValue: 7,
-    },
-    {
-      name: 'Coste por empleado equipo central',
-      oldValue: 7500,
-      newValue: 9000,
-    },
-
-    {
-      name: 'Seguridad social',
-      oldValue: 0.35,
-      newValue: 0.4,
-    },
-    {
-      name: 'Multiplicador mágico',
-      oldValue: 1,
-      newValue: 2,
-    },
-  ];
+  variableData = [];
 
   constructor(
     private router: Router,
@@ -136,10 +114,12 @@ export class InspectComponent implements OnInit {
       array.forEach((obj: any) => {
         this.valueToShow.push(obj.value);
 
-        const valueWithoutDecimals = obj.value.replace(/\.\d{2}$/, '');
+        const valueWithoutDecimals = obj.value
+          .toString()
+          .replace(/\.\d{2}$/, '');
 
         // Eliminar tanto los puntos como las comas del valor
-        const cleanValue = valueWithoutDecimals.replace(/[,.]/g, '');
+        const cleanValue = valueWithoutDecimals.toString().replace(/[,.]/g, '');
 
         // Convertir el valor a un número
         const numericValue = parseFloat(cleanValue);
@@ -216,6 +196,7 @@ export class InspectComponent implements OnInit {
       let nodos: any = [];
       for (let i = 0; i < this.nodes.length; i++) {
         const node = this.nodes[i];
+
         let yearValues: any = {};
         for (let i = 0; i < years.length; i++) {
           const year = years[i];
@@ -225,7 +206,7 @@ export class InspectComponent implements OnInit {
             );
             const yearValue = scenerie.years[`${year.year}`];
 
-            if (yearValues.oldValue) {
+            if (yearValues.oldValue || yearValues.oldValue == 0) {
               yearValues = { ...yearValues, newValue: yearValue };
             } else {
               yearValues = { ...yearValues, oldValue: yearValue };
@@ -236,7 +217,7 @@ export class InspectComponent implements OnInit {
             );
             const yearValue = scenerie.years[`${year.year}`];
 
-            if (yearValues.oldValue) {
+            if (yearValues.oldValue || yearValues.oldValue == 0) {
               yearValues = { ...yearValues, newValue: yearValue };
             } else {
               yearValues = { ...yearValues, oldValue: yearValue };
@@ -253,8 +234,6 @@ export class InspectComponent implements OnInit {
         nodos.push(yearValues);
       }
 
-      console.log(nodos, 'NODOS');
-
       const otherValues: any[] = [];
 
       const diferencias = nodos
@@ -263,10 +242,9 @@ export class InspectComponent implements OnInit {
 
           if (par.type == 2) {
             var result = this.verificarOperadores(par.formula, nodos);
-            console.log(result, 'RESULT');
+
             const sumaTotal = result?.interactions?.reduce(
               (acumulador: any, objeto: any) => {
-                console.log(acumulador, objeto.value, 'suma');
                 return acumulador + objeto.value;
               },
               0
@@ -285,8 +263,6 @@ export class InspectComponent implements OnInit {
                 /*   otherValues.push(other); */
               }
             }
-
-            console.log(sumaTotal, 'suma total');
 
             if (sumaTotal !== undefined && sumaTotal >= 1) {
               var other = {
@@ -364,8 +340,6 @@ export class InspectComponent implements OnInit {
       }
 
       this.datas.sort(ordenarPorTier);
-
-      console.log(this.datas, 'datas');
     }
   }
 
@@ -386,8 +360,9 @@ export class InspectComponent implements OnInit {
         typeof variable.oldValue === 'string' &&
         variable.oldValue.endsWith('.00')
       ) {
-        variable.oldValue.replace(',', '.');
+        variable.oldValue.toString().replace(',', '.');
         var numeroSinDecimales = variable.oldValue
+          .toString()
           .slice(0, -3)
           .replace(',', ''); // Elimina los últimos tres caracteres
 
@@ -403,6 +378,7 @@ export class InspectComponent implements OnInit {
       ) {
         variable.newValue.replace(',', '.');
         var numeroSinDecimales = variable.newValue
+          .toString()
           .slice(0, -3)
           .replace(',', ''); // Elimina los últimos tres caracteres
 
@@ -470,8 +446,9 @@ export class InspectComponent implements OnInit {
         typeof variable.oldValue === 'string' &&
         variable.oldValue.endsWith('.00')
       ) {
-        variable.oldValue.replace(',', '.');
+        variable.oldValue.toString().replace(',', '.');
         var numeroSinDecimales = variable.oldValue
+          .toString()
           .slice(0, -3)
           .replace(',', ''); // Elimina los últimos tres caracteres
 
@@ -485,8 +462,9 @@ export class InspectComponent implements OnInit {
         typeof variable.newValue === 'string' &&
         variable.newValue.endsWith('.00')
       ) {
-        variable.newValue.replace(',', '.');
+        variable.newValue.toString().replace(',', '.');
         var numeroSinDecimales = variable.newValue
+          .toString()
           .slice(0, -3)
           .replace(',', ''); // Elimina los últimos tres caracteres
 
@@ -584,7 +562,6 @@ export class InspectComponent implements OnInit {
         // Si es un número, sigue al siguiente elemento
         continue;
       } else {
-        console.log(elemento, 'cobinacion elementop');
         // Si encuentra un elemento que no es ni un número ni un operador, retorna 'Combinación'
         return 'combinacion';
       }
@@ -617,7 +594,7 @@ export class InspectComponent implements OnInit {
           arrayToSend.push(nodes.find((node: any) => node.id == element));
         }
       }
-      console.log(arrayToSend, 'tis end');
+
       const result = this.calculateImpactsMultiplie(arrayToSend);
 
       return result;

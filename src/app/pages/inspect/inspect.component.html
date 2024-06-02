@@ -6,19 +6,47 @@
 >
   <div class="bar-container">
     <div
-      *ngFor="let value of barData; let i = index"
-      class="bar mr-2"
-      [style.height]="calculateHeight(value)"
-      (mouseover)="showValue(i)"
-      (mouseleave)="hideValue(i)"
+      style="display: flex; justify-content: flex-start; align-items: flex-end"
     >
-      <div [id]="i" class="ventana-flotante" style="display: none">
-        <span class="texto-oculto">{{ valueToShow[i] }} </span>
+      <div
+        *ngFor="let value of barData; let i = index"
+        class="bar mr-2"
+        [style.height]="calculateHeight(value)"
+        (mouseover)="showValue(i)"
+        (mouseleave)="hideValue(i)"
+      >
+        <div [id]="i" class="ventana-flotante" style="display: none">
+          <span class="texto-oculto">{{ valueToShow[i] }} </span>
+        </div>
+      </div>
+    </div>
+
+    <div style="width: 100%; height: 100%">
+      <div style="gap: 2px">
+        <div
+          *ngFor="let year of years; let i = index"
+          [ngClass]="{
+            year: true,
+            'year-selected': year.isSelect
+          }"
+          class="mr-2"
+          (click)="toggleActive(year, i)"
+        >
+          <div
+            [ngClass]="{
+              'year-text': true,
+              'year-text-selected': year.isSelect
+            }"
+          >
+            {{ year.name }}
+            {{ year.year }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <div style="width: 100%; height: 100%; position: relative">
+  <!--   <div style="width: 100%; height: 100%; position: relative">
     <div
       style="
         width: 973px;
@@ -51,7 +79,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 
 <div class="title-page mt-5 mb-3">Información</div>
