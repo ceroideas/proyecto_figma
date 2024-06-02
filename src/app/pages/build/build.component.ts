@@ -273,20 +273,25 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  setListeners(event: any) {
-    // Cierra todos los elementos abiertos
-    document.querySelectorAll('.floating').forEach((el: any) => {
-      el.style.display = 'none';
-      el.style.zIndex = '1';
-    });
+  setListeners(event:any) {
+  // Obtiene el elemento más cercano con la clase especificada
+  const botones = event.target.closest('.google-visualization-orgchart-node').querySelector('.floating');
 
-    // Abre solo el elemento clickeado
-    const botones = event.target
-      .closest('.google-visualization-orgchart-node')
-      .querySelector('.floating');
+  // Verifica si el elemento ya está visible
+  const estaAbierto = botones.style.display === 'block';
+
+  // Cierra todos los elementos abiertos
+  document.querySelectorAll('.floating').forEach((el:any) => {
+    el.style.display = 'none';
+    el.style.zIndex = '1';
+  });
+
+  // Si el elemento estaba cerrado, lo abre. Si estaba abierto, permanece cerrado.
+  if (!estaAbierto) {
     botones.style.display = 'block';
     botones.style.zIndex = '5';
   }
+}
 
   refresher() {
     let rect: any = (
