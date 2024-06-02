@@ -252,7 +252,7 @@
                     class="form-control input-formula mb-0 input-margin"
                     placeholder="Unidades"
                     aria-describedby="basic-addon1"
-                    onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace'"
+                    onkeydown="return /[0-9%.\-]/.test(event.key) || event.key === 'Backspace'"
                     (change)="saveNewValue()"
                   />
                 </div>
@@ -478,9 +478,7 @@
                 />
               </div>
               <div class="input-group col-md-4 input-group-sm mb-3">
-                <span class="input-group-text chart-span" id="max"
-                  >Scale:</span
-                >
+                <span class="input-group-text chart-span" id="max">Scale:</span>
                 <input
                   disabled
                   [(ngModel)]="scale"
@@ -546,7 +544,9 @@
               class="col-md-12 d-flex mt-4"
             >
               <div class="input-group col-md-4 input-group-sm mb-3">
-                <span class="input-group-text chart-span" id="min">Success:</span>
+                <span class="input-group-text chart-span" id="min"
+                  >Success:</span
+                >
                 <input
                   disabled
                   [(ngModel)]="success"

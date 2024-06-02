@@ -115,7 +115,7 @@ export class SimulateComponent implements OnInit {
     if (this.disable() && this.editSimulation) {
       Swal.fire({
         title: 'Error',
-        text: 'Por favor, asegúrate de ingresar un nombre y un número de simulaciones válido (mayor a 0) para continuar.',
+        text: 'Please make sure to enter a valid name and number of simulations (greater than 0) to continue.',
         icon: 'error',
         iconColor: '#BC5800',
         customClass: {
@@ -129,8 +129,8 @@ export class SimulateComponent implements OnInit {
 
   resetData() {
     Swal.fire({
-      title: 'Estas seguro?',
-      text: '¿Estás seguro de que deseas borrar los datos actuales de los campos? ',
+      title: 'Are you sure?',
+      text: 'Are you sure you want to delete the current data from the fields?',
       icon: 'question',
       iconColor: '#BC5800',
       showCancelButton: true,
@@ -814,7 +814,7 @@ export class SimulateComponent implements OnInit {
     if (this.disable()) {
       Swal.fire({
         title: 'Error',
-        text: 'El nombre y numero (mayor a 0) de simulaciones son necesarios',
+        text: 'The name and number of simulations (greater than 0) are required.',
         icon: 'error',
         iconColor: '#BC5800',
         customClass: {
@@ -841,8 +841,8 @@ export class SimulateComponent implements OnInit {
               this.simulations = res.reverse();
             });
             Swal.fire({
-              title: 'Guardado!',
-              text: 'La simulacion fue guardada con exito!',
+              title: 'Saved!',
+              text: 'The simulation was successfully saved!',
               icon: 'success',
             });
           });
@@ -871,8 +871,8 @@ export class SimulateComponent implements OnInit {
         this.simulations = res.reverse();
       });
       Swal.fire({
-        title: 'Guardado!',
-        text: 'La simulacion fue guardada con exito!',
+        title: 'Saved!',
+        text: 'The simulation was successfully saved!',
         icon: 'success',
       });
     });
@@ -914,15 +914,15 @@ export class SimulateComponent implements OnInit {
             });
 
           Swal.fire({
-            title: 'Guardado!',
-            text: 'La simulacion fue guardada con exito!',
+            title: 'Saved!',
+            text: 'The simulation was successfully saved!',
             icon: 'success',
           });
         });
     } catch (error) {
       Swal.fire({
         title: 'Error',
-        text: 'No se pudo guardar la simulacion, verifique los datos',
+        text: 'The simulation could not be saved, please check the data.',
         icon: 'error',
         iconColor: '#BC5800',
         customClass: {
@@ -1370,8 +1370,8 @@ export class SimulateComponent implements OnInit {
 
   elimateSimulation() {
     Swal.fire({
-      title: 'Estas seguro?',
-      text: 'No podras revertir esta accion',
+      title: 'Are you sure?',
+      text: 'You will not be able to reverse this action.',
       icon: 'question',
       iconColor: '#BC5800',
       showCancelButton: true,
@@ -1396,8 +1396,8 @@ export class SimulateComponent implements OnInit {
             });
 
             Swal.fire({
-              title: 'Borrado!',
-              text: 'La simulacion fue borrada con exito!',
+              title: 'Deleted!',
+              text: 'The simulation was successfully deleted!',
               icon: 'success',
             });
           });

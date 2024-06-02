@@ -73,7 +73,7 @@ export class CreateProjectComponent {
     ) {
       Swal.fire({
         title: 'Error',
-        text: 'El nombre y los años son necesarios.',
+        text: 'The name and years are required.',
         icon: 'error',
         iconColor: '#BC5800',
         customClass: {
@@ -94,7 +94,7 @@ export class CreateProjectComponent {
     } else if (project.sceneries.length <= 0) {
       Swal.fire({
         title: 'Error',
-        text: 'Debe crear almenos 1 escenario.',
+        text: 'You must create at least one scenario.',
         icon: 'error',
         iconColor: '#BC5800',
         customClass: {

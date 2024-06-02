@@ -542,7 +542,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       if (this.disable()) {
         Swal.fire({
           title: 'Error',
-          text: 'El nombre y la descripción son necesarios.',
+          text: 'The name and description are required.',
           icon: 'error',
           iconColor: '#BC5800',
           customClass: {
@@ -568,7 +568,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       if (this.disable()) {
         Swal.fire({
           title: 'Error',
-          text: 'El nombre y la descripcion son necesarios.',
+          text: 'The name and description are required.',
           icon: 'error',
           iconColor: '#BC5800',
           customClass: {
@@ -829,15 +829,15 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   addCalculo(operation: string) {
     // if (this.sendOperations.length > 0) {
-      this.calculos.push(operation);
-      this.operations.push([{ name: operation }]);
+    this.calculos.push(operation);
+    this.operations.push([{ name: operation }]);
 
-      this.sendOperations.push(operation);
+    this.sendOperations.push(operation);
     // }
 
     this.operationResult();
   }
-  
+
   addCustom() {
     if (this.inputValue.toString().includes('%')) {
       const valueBase = parseFloat(this.inputValue.toString().replace('%', ''));
@@ -879,8 +879,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   elimateNode() {
     Swal.fire({
-      title: 'Estas seguro?',
-      text: 'No podras revertir esta accion',
+      title: 'Are you sure?',
+      text: 'You will not be able to reverse this action.',
       icon: 'question',
       iconColor: '#BC5800',
       showCancelButton: true,
@@ -895,8 +895,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.projectSvc.deleteNode(this.nodeId).subscribe((res: any) => {
           this.deleteNode.emit();
           Swal.fire({
-            title: 'Borrado!',
-            text: 'El nodo fue borrado con exito!',
+            title: 'Delete!',
+            text: 'The node was deleted successfully!',
             icon: 'success',
           });
           this.deleteShapeData();
@@ -929,8 +929,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       setTimeout(() => {
         if (this.oldType !== this.constante) {
           Swal.fire({
-            title: 'Estas seguro?',
-            text: 'Si cambias el tipo los datos asociados se perderan',
+            title: 'Are you sure?',
+            text: 'If you change the type, the associated data will be lost.',
             icon: 'question',
             iconColor: '#BC5800',
 

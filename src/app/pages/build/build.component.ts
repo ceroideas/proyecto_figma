@@ -273,14 +273,19 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  setListeners(event:any) {
+  setListeners(event: any) {
+    // Cierra todos los elementos abiertos
+    document.querySelectorAll('.floating').forEach((el: any) => {
+      el.style.display = 'none';
+      el.style.zIndex = '1';
+    });
 
-    const botones = event.target.closest('.google-visualization-orgchart-node').querySelector('.floating');
-
-    const style = botones.style.display === 'block';
-
-    botones.style.display = style ? 'none' : 'block';
-    botones.style.zIndex = style ? '1' : '5';
+    // Abre solo el elemento clickeado
+    const botones = event.target
+      .closest('.google-visualization-orgchart-node')
+      .querySelector('.floating');
+    botones.style.display = 'block';
+    botones.style.zIndex = '5';
   }
 
   refresher() {
