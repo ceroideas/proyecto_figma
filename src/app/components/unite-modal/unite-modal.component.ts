@@ -173,7 +173,7 @@ export class UniteModalComponent implements OnInit {
       if (this.renderChartVariable) this.renderChartVariable.destroy();
       this.values = undefined;
       this.escenarys = this.cleanEsceneries;
-      this.years = [this.escenarys[0].years];
+      this.years = [this.escenarys[0]?.years];
       this.selectedEscenary = '#';
       this.oldEscenarieId = undefined;
       this.model.name = '';
@@ -186,7 +186,7 @@ export class UniteModalComponent implements OnInit {
   }
 
   createModel() {
-    const keys = Object.keys(this.escenarys[0].years);
+    const keys = Object.keys(this.escenarys[0]?.years);
 
     const years: any = {};
     keys.forEach((clave: string) => {
@@ -204,7 +204,7 @@ export class UniteModalComponent implements OnInit {
 
   renderChart() {
     const years = Object.keys(
-      JSON.parse(JSON.stringify(this.escenarys[0].years))
+      JSON.parse(JSON.stringify(this.escenarys[0]?.years))
     );
 
     /*     const values = years.map(
@@ -353,7 +353,7 @@ export class UniteModalComponent implements OnInit {
   }
 
   createEscenaryChart() {
-    const years = Object.keys(this.escenarys[0].years);
+    const years = Object.keys(this.escenarys[0]?.years);
 
     if (!this.values)
       this.values = years.map((key) => (this.unite ? this.unite : 0));
@@ -470,7 +470,7 @@ export class UniteModalComponent implements OnInit {
       const element = this.escenario[i];
       this.escenarys.push({ name: element.name, years: this.yearsToSee });
     }
-    this.years = this.escenarys[0].years;
+    this.years = this.escenarys[0]?.years;
   }
 
   editScenarys() {
@@ -489,12 +489,12 @@ export class UniteModalComponent implements OnInit {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         this.escenarys = res.sceneries;
         this.unite = res.unite;
-        this.years = [this.escenarys[0].years];
+        this.years = [this.escenarys[0]?.years];
         console.log(res);
       });
     } else {
       this.escenarys = this.cleanEsceneries;
-      this.years = [this.escenarys[0].years];
+      this.years = [this.escenarys[0]?.years];
     }
   }
   changeLocked() {

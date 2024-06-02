@@ -433,15 +433,16 @@ export class SimulateComponent implements OnInit {
     const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
+    let operationError: boolean = false;
 
     let formula: any = [];
     let arrayToSee = [];
     let aux;
 
     let csvData: any = [];
-
     for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
+
       for (let i = 0; i < this.tierCero.formula.length; i++) {
         var nodeId = this.tierCero.formula[i];
 
@@ -759,6 +760,20 @@ export class SimulateComponent implements OnInit {
 
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
 
+      if (!operation) {
+        Swal.fire({
+          title: 'Error',
+          text: 'Please, check the first node of the project.',
+          icon: 'error',
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+          },
+        }).then((result) => {});
+        operationError = true;
+        break;
+      }
+
       // const operation = formula;
       csvData[j] = {
         ...csvData[j],
@@ -776,7 +791,9 @@ export class SimulateComponent implements OnInit {
       this.chart.destroy();
     }
     this.simulationChart();
-    this.updateSimulation();
+    if (!operationError) {
+      this.updateSimulation();
+    }
 
     for (let j in this.valoresPorNodo) {
       let values = this.valoresPorNodo[j].values;
