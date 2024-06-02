@@ -60,7 +60,7 @@ export class BuildComponent implements OnInit {
 
   loadedCallBack = false;
 
-  cargando = false;
+  // cargando = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -185,7 +185,9 @@ export class BuildComponent implements OnInit {
         );
       });
 
-      this.cargando = true;
+      this.chart.draw(this.data, { allowHtml: true });
+
+      /*this.cargando = true;
 
       function eventClick(this: any, e: any) {
         e.stopPropagation();
@@ -228,8 +230,6 @@ export class BuildComponent implements OnInit {
 
       let contador = 0;
 
-      this.chart.draw(this.data, { allowHtml: true });
-
       const interval = setInterval(() => {
         var orgChartTables = document.querySelectorAll(
           '.google-visualization-orgchart-table'
@@ -263,7 +263,7 @@ export class BuildComponent implements OnInit {
             );
           }
         }
-      }, 1000);
+      }, 1000);*/
     };
 
     google.charts.setOnLoadCallback(this.drawChart);
@@ -273,8 +273,14 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  setListeners() {
-    console.log('set listeners');
+  setListeners(event:any) {
+
+    const botones = event.target.closest('.google-visualization-orgchart-node').querySelector('.floating');
+
+    const style = botones.style.display === 'block';
+
+    botones.style.display = style ? 'none' : 'block';
+    botones.style.zIndex = style ? '1' : '5';
   }
 
   refresher() {
