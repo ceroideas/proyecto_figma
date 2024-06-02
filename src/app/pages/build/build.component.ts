@@ -273,8 +273,12 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  setListeners(event: any) {
+  setListeners(event: any):any {
     // Obtiene el elemento más cercano con la clase especificada
+    if (!event.target
+      .closest('.google-visualization-orgchart-node')) {
+      return false;
+    }
     const botones = event.target
       .closest('.google-visualization-orgchart-node')
       .querySelector('.floating');
