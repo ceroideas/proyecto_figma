@@ -137,6 +137,9 @@ export class WaterfallChartComponent implements OnInit {
 
     // Asignar "total" al último elemento del nuevo array
     mean[mean.length - 1] = 'total';
+    mean[0] = 'absolute';
+
+    console.log(mean);
 
     const data = [
       {
@@ -148,7 +151,7 @@ export class WaterfallChartComponent implements OnInit {
         textposition: 'outside',
         text: arrString,
         y: arr,
-        totals: { marker: { color: '#2cb02c' } },
+        totals: { marker: { color: 'gray' } },
         increasing: { marker: { color: '#2cb02c' } },
         connector: {
           line: {
@@ -199,6 +202,10 @@ export class WaterfallChartComponent implements OnInit {
     };
 
     Plotly.newPlot('myDiv', data, layout);
+
+    setTimeout(()=>{
+      Plotly.restyle('myDiv', {'marker.color':['blue']}, [0]);
+    },1000)
 
     /*     if (this.chart) {
       this.chart.destroy();
