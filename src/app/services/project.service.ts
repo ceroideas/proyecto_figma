@@ -42,21 +42,27 @@ export class ProjectService {
     return this.http.delete(`${this.url}/deleteNode/${id}`);
   }
 
-  savePosition(id: any,position: any) {
-    return this.http.put(`${this.url}/savePosition/${id}`, {position:position});
+  savePosition(id: any, position: any) {
+    return this.http.put(`${this.url}/savePosition/${id}`, {
+      position: position,
+    });
   }
-  saveZoom(id: any,zoom: any) {
-    return this.http.put(`${this.url}/saveZoom/${id}`, {zoom:zoom});
+  saveZoom(id: any, zoom: any) {
+    return this.http.put(`${this.url}/saveZoom/${id}`, { zoom: zoom });
   }
-  
+
   deleteProject(id: any) {
     return this.http.delete(`${this.url}/deleteProject/${id}`);
   }
 
   saveUnite(id: any, body: any) {
-    return this.http.put(`${this.url}/saveUnite/${id}`,body);
+    return this.http.put(`${this.url}/saveUnite/${id}`, body);
   }
   setHiddenTable(ids: any) {
-    return this.http.put(`${this.url}/setHiddenTable`,{ids:ids});
+    return this.http.put(`${this.url}/setHiddenTable`, { ids: ids });
+  }
+
+  getNodeData(formula: any) {
+    return this.http.post(`${this.url}/definitelyNotEval`, formula);
   }
 }

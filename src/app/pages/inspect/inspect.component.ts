@@ -2,9 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { some } from 'highcharts';
+
 import { MessageComponent } from 'src/app/components/message/message.component';
-import { SetPriceComponent } from 'src/app/components/set-price/set-price.component';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
+
 import { PipesModule } from 'src/app/pipes/pipes.module';
 import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
@@ -13,7 +14,13 @@ declare var bootstrap: any;
   selector: 'app-inspect',
   providers: [ProjectService],
   standalone: true,
-  imports: [CommonModule, FormsModule, PipesModule, MessageComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    PipesModule,
+    MessageComponent,
+    SpinnerComponent,
+  ],
   templateUrl: './inspect.component.html',
   styleUrl: './inspect.component.scss',
 })
@@ -26,7 +33,7 @@ export class InspectComponent implements OnInit {
   datas: any[] = [];
   maxBarHeight: number = 160;
   minBarWidth: number = 7;
-
+  isLoading: boolean = false;
   tierCero: any = {};
   years: any[] = [];
   yearIndex: any[] = [];
@@ -45,7 +52,7 @@ export class InspectComponent implements OnInit {
     this.valueToShow = [];
     const abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     this.id = this.route.snapshot.params['id'];
-
+    this.isLoading = true;
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.nodes = res.nodes.map((node: any) => {
         if (node.type === 2) {
@@ -134,6 +141,7 @@ export class InspectComponent implements OnInit {
       this.years = array;
 
       this.barData = valoresAños;
+      this.isLoading = false;
     });
   }
 
@@ -187,6 +195,7 @@ export class InspectComponent implements OnInit {
 
   calculatedNode() {
     if (this.yearIndex.length === 2) {
+      this.isLoading = true;
       const years = [
         this.years[this.yearIndex[0]],
         this.years[this.yearIndex[1]],
@@ -236,9 +245,32 @@ export class InspectComponent implements OnInit {
 
       const otherValues: any[] = [];
 
+      var formula = nodos.find((nodo: any) => nodo.tier == 'L0').formula;
+      var tierCeroValue = nodos.find((nodo: any) => nodo.tier == 'L0').oldValue;
+      const newOperation: any[] = [];
+
+      for (let i = 0; i < formula.length; i++) {
+        const element = formula[i];
+
+        if (Number.isInteger(element)) {
+          const year = nodos.find((nodo: any) => nodo.id == element).oldValue;
+          newOperation.push(+year);
+        } else {
+          newOperation.push(element);
+        }
+      }
+
+      const formulasArray: any[] = [];
+
       const diferencias = nodos
         .map((par: any) => {
-          /*  console.log(par, 'PAR'); */
+          const formulaCopy = [...newOperation];
+
+          const i = formula.indexOf(par.id);
+
+          formulaCopy[i] = +par.newValue;
+
+          formulasArray.push(formulaCopy.join(''));
 
           if (par.type == 2) {
             var result = this.verificarOperadores(par.formula, nodos);
@@ -260,7 +292,7 @@ export class InspectComponent implements OnInit {
                   value: element.impact,
                 };
 
-                /*   otherValues.push(other); */
+                /* otherValues.push(other); */
               }
             }
 
@@ -274,7 +306,7 @@ export class InspectComponent implements OnInit {
               /* otherValues.push(other); */
             }
           }
-          /*       if (par.tier == 'L0') {
+          /*           if (par.tier == 'L0') {
             var monto2 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
             var monto1 = parseFloat(par.newValue.toString().replace(/,/g, ''));
 
@@ -287,8 +319,8 @@ export class InspectComponent implements OnInit {
           } else {
             var monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
             var monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
-          } */
-
+          }
+ */
           var monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
           var monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
 
@@ -304,6 +336,8 @@ export class InspectComponent implements OnInit {
         })
         .reverse();
 
+      formulasArray.reverse().shift();
+
       this.dataSvc.dataNodes = diferencias;
       const tierCero = diferencias.shift();
 
@@ -312,15 +346,6 @@ export class InspectComponent implements OnInit {
       this.dataSvc.tierCero = this.tierCeroValue;
       otherValues.forEach((node: any) => {
         diferencias.push(node);
-      });
-
-      this.datas = diferencias.map((value: any) => {
-        return {
-          tier: value.tier,
-          value: value.value.toLocaleString('es-ES'),
-          description: value.name,
-          combination: value.combination,
-        };
       });
 
       function ordenarPorTier(a: any, b: any) {
@@ -333,13 +358,28 @@ export class InspectComponent implements OnInit {
         }
         return 0;
       }
+      console.log(formulasArray, 'foriumlas');
 
-      if (tierCero?.combination) {
-        tierCero.description = tierCero.name;
-        this.datas.push(tierCero);
-      }
+      this.projectSvc
+        .getNodeData({ expressions: formulasArray })
+        .subscribe((res: any) => {
+          this.datas = diferencias.map((value: any, i: number) => {
+            return {
+              tier: value.tier,
+              value: (res[i] - tierCeroValue).toLocaleString('es-ES'),
+              description: value.name,
+              combination: value.combination,
+            };
+          });
 
-      this.datas.sort(ordenarPorTier);
+          if (tierCero?.combination) {
+            tierCero.description = tierCero.name;
+            this.datas.push(tierCero);
+          }
+
+          this.datas.sort(ordenarPorTier);
+          this.isLoading = false;
+        });
     }
   }
 

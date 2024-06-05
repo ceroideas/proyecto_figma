@@ -9,6 +9,7 @@ import { SimulationService } from 'src/app/services/simulation.service';
 import { ChangeDetectorRef } from '@angular/core';
 
 import { PipesModule } from '../../pipes/pipes.module';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 Chart.register(...registerables);
 
@@ -16,7 +17,7 @@ Chart.register(...registerables);
   selector: 'app-simulate',
   providers: [ProjectService, SimulationService],
   standalone: true,
-  imports: [CommonModule, FormsModule, PipesModule],
+  imports: [CommonModule, FormsModule, PipesModule, SpinnerComponent],
   templateUrl: './simulate.component.html',
   styleUrl: './simulate.component.scss',
 })
@@ -31,6 +32,7 @@ export class SimulateComponent implements OnInit {
   editSimulation: boolean = false;
   tierCero: any;
   chart: any;
+  isLoading: boolean = false;
   arraySamples: any[] = [];
   percentiles: any[] = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
   values: any[] = [];
@@ -430,9 +432,8 @@ export class SimulateComponent implements OnInit {
 
   async generateSimulation() {
     this.valoresPorNodo = [];
-    const nodos = this.nodes
-      .filter((node) => node.isActive)
-      .map((node) => node.id);
+    this.isLoading = true;
+
     let operationError: boolean = false;
 
     let formula: any = [];
@@ -760,7 +761,7 @@ export class SimulateComponent implements OnInit {
 
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
 
-      if (!operation) {
+      if (this.tierCero.type != 2) {
         Swal.fire({
           title: 'Error',
           text: 'Please, check the first node of the project.',
@@ -793,6 +794,7 @@ export class SimulateComponent implements OnInit {
     this.simulationChart();
     if (!operationError) {
       this.updateSimulation();
+      this.isLoading = false;
     }
 
     for (let j in this.valoresPorNodo) {
