@@ -262,6 +262,43 @@ export class InspectComponent implements OnInit {
 
       const formulasArray: any[] = [];
 
+      function findNodes(nodo: any) {
+        const formula: any[] = [];
+
+        for (let i = 0; i < nodo.formula.length; i++) {
+          const element = nodo.formula[i];
+          if (Number.isInteger(element)) {
+            const year = nodos.find(
+              (nodo2: any) => nodo2.id == element
+            ).oldValue;
+            formula.push(+year);
+          } else {
+            formula.push(element);
+          }
+        }
+
+        for (let i = 0; i < formula.length; i++) {
+          const element = nodo.formula[i];
+
+          if (Number.isInteger(element)) {
+            const formula2 = [...formula];
+            const index = nodo.formula.indexOf(element);
+
+            const node = nodos.find((nodo: any) => nodo.id == element);
+
+            formula2[index] = node.newValue;
+
+            console.log(formula2.join(' '), nodo.oldValue, node.name);
+            otherValues.push({
+              id: node.id,
+              tier: node.tier,
+              name: node.name,
+              value: eval(formula2.join(' ')) - nodo.oldValue,
+            });
+          }
+        }
+      }
+
       const diferencias = nodos
         .map((par: any) => {
           const formulaCopy = [...newOperation];
@@ -273,6 +310,7 @@ export class InspectComponent implements OnInit {
           formulasArray.push(formulaCopy.join(''));
 
           if (par.type == 2) {
+            findNodes(par);
             var result = this.verificarOperadores(par.formula, nodos);
 
             const sumaTotal = result?.interactions?.reduce(
@@ -325,6 +363,7 @@ export class InspectComponent implements OnInit {
           var monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
 
           return {
+            id: par.id,
             tier: par.tier,
             name: par.name,
             value:
@@ -344,8 +383,13 @@ export class InspectComponent implements OnInit {
       this.tierCeroValue = tierCero.value.toLocaleString('es-ES');
 
       this.dataSvc.tierCero = this.tierCeroValue;
+
       otherValues.forEach((node: any) => {
-        diferencias.push(node);
+        const nodo = diferencias.find((node2: any) => node2.id == node.id);
+
+        if (nodo) {
+          nodo.value = node.value;
+        }
       });
 
       function ordenarPorTier(a: any, b: any) {
@@ -358,15 +402,17 @@ export class InspectComponent implements OnInit {
         }
         return 0;
       }
-      console.log(formulasArray, 'foriumlas');
 
       this.projectSvc
         .getNodeData({ expressions: formulasArray })
         .subscribe((res: any) => {
           this.datas = diferencias.map((value: any, i: number) => {
             return {
+              id: value.id,
               tier: value.tier,
-              value: (res[i] - tierCeroValue).toLocaleString('es-ES'),
+              value: Number(value.value).toLocaleString('de-DE', {
+                minimumFractionDigits: 0,
+              }),
               description: value.name,
               combination: value.combination,
             };
@@ -376,7 +422,7 @@ export class InspectComponent implements OnInit {
             tierCero.description = tierCero.name;
             this.datas.push(tierCero);
           }
-
+          console.log(this.datas);
           this.datas.sort(ordenarPorTier);
           this.isLoading = false;
         });
