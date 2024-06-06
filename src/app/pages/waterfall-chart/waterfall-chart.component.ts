@@ -92,24 +92,26 @@ export class WaterfallChartComponent implements OnInit {
     const values = [];
 
     label.push(this.dataTierCero[0].year);
-    values.push(+this.dataTierCero[0].value.toString().replace(/,/g, ''));
+    values.push(parseFloat(this.dataTierCero[0].value.toString().replace(',', '.')));
     console.log(this.dataTierCero, 'NODES');
 
     for (let i = 0; i < this.selectedNodes.length; i++) {
-      const nodo = this.selectedNodes[i];
+      let nodo = this.selectedNodes[i];
       label.push(nodo.name);
+      // nodo.value.toString().replace('.', '');
+      let str = parseFloat(nodo.value.replace(/\./g, '').replace(',', '.'));
 
-      nodo.value.toString().replace('.', '');
-
-      values.push(nodo.value.toString().replace(/[,.]/g, ''));
+      values.push(str);
     }
 
     label.push(this.dataTierCero[1].year);
 
-    values.push(this.dataTierCero[1].value.toString().replace(/,/g, ''));
+    let str2 = parseFloat(this.dataTierCero[1].value.toString().replace(',', '.'));
+
+    values.push(str2);
 
     let arr = values;
-    console.log(arr, 'NODES');
+
     // Convertir todos los elementos a números
     arr = arr.map(Number);
 
@@ -118,6 +120,8 @@ export class WaterfallChartComponent implements OnInit {
     let sumaSinUltimo: any = arr
       .slice(0, -1)
       .reduce((acc: any, val: any) => acc + val, 0);
+
+    console.log(arr, 'NODES');
 
     if (sumaSinUltimo === ultimoValor) {
     } else {
@@ -201,9 +205,9 @@ export class WaterfallChartComponent implements OnInit {
 
     Plotly.newPlot('myDiv', data, layout);
 
-    setTimeout(() => {
-      Plotly.restyle('myDiv', { 'marker.color': ['blue'] }, [0]);
-    }, 1000);
+    setTimeout(()=>{
+      Plotly.restyle('myDiv', {'marker.color':['blue']}, [0]);
+    },1000)
 
     /*     if (this.chart) {
       this.chart.destroy();
