@@ -109,7 +109,7 @@ export class WaterfallChartComponent implements OnInit {
     values.push(this.dataTierCero[1].value.toString().replace(/,/g, ''));
 
     let arr = values;
-
+    console.log(arr, 'NODES');
     // Convertir todos los elementos a números
     arr = arr.map(Number);
 
@@ -118,8 +118,6 @@ export class WaterfallChartComponent implements OnInit {
     let sumaSinUltimo: any = arr
       .slice(0, -1)
       .reduce((acc: any, val: any) => acc + val, 0);
-
-    console.log(arr, 'NODES');
 
     if (sumaSinUltimo === ultimoValor) {
     } else {
@@ -203,9 +201,9 @@ export class WaterfallChartComponent implements OnInit {
 
     Plotly.newPlot('myDiv', data, layout);
 
-    setTimeout(()=>{
-      Plotly.restyle('myDiv', {'marker.color':['blue']}, [0]);
-    },1000)
+    setTimeout(() => {
+      Plotly.restyle('myDiv', { 'marker.color': ['blue'] }, [0]);
+    }, 1000);
 
     /*     if (this.chart) {
       this.chart.destroy();

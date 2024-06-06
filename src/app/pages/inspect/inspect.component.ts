@@ -378,8 +378,9 @@ export class InspectComponent implements OnInit {
       formulasArray.reverse().shift();
 
       this.dataSvc.dataNodes = diferencias;
-      const tierCero = diferencias.shift();
 
+      const tierCero = diferencias.shift();
+      console.log(diferencias, 'diferencias');
       this.tierCeroValue = tierCero.value.toLocaleString('es-ES');
 
       this.dataSvc.tierCero = this.tierCeroValue;
@@ -422,7 +423,11 @@ export class InspectComponent implements OnInit {
             tierCero.description = tierCero.name;
             this.datas.push(tierCero);
           }
-          console.log(this.datas);
+
+          const l0 = this.datas.findIndex((obj) => obj.tier === 'L0');
+          if (l0 !== -1) {
+            this.datas.splice(l0, 1);
+          }
           this.datas.sort(ordenarPorTier);
           this.isLoading = false;
         });
