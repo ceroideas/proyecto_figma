@@ -92,21 +92,28 @@ export class WaterfallChartComponent implements OnInit {
     const values = [];
 
     label.push(this.dataTierCero[0].year);
-    values.push(parseFloat(this.dataTierCero[0].value.toString().replace(',', '.')));
+    values.push(
+      parseFloat(this.dataTierCero[0].value.toString().replace(',', '.'))
+    );
     console.log(this.dataTierCero, 'NODES');
 
     for (let i = 0; i < this.selectedNodes.length; i++) {
       let nodo = this.selectedNodes[i];
       label.push(nodo.name);
       // nodo.value.toString().replace('.', '');
-      let str = parseFloat(nodo.value.replace(/\./g, '').replace(',', '.'));
+      console.log(nodo, 'NODO');
+      let str = parseFloat(
+        `${nodo.value}`.replace(/\./g, '').replace(',', '.')
+      );
 
       values.push(str);
     }
 
     label.push(this.dataTierCero[1].year);
 
-    let str2 = parseFloat(this.dataTierCero[1].value.toString().replace(',', '.'));
+    let str2 = parseFloat(
+      this.dataTierCero[1].value.toString().replace(',', '.')
+    );
 
     values.push(str2);
 
@@ -205,9 +212,9 @@ export class WaterfallChartComponent implements OnInit {
 
     Plotly.newPlot('myDiv', data, layout);
 
-    setTimeout(()=>{
-      Plotly.restyle('myDiv', {'marker.color':['blue']}, [0]);
-    },1000)
+    setTimeout(() => {
+      Plotly.restyle('myDiv', { 'marker.color': ['blue'] }, [0]);
+    }, 1000);
 
     /*     if (this.chart) {
       this.chart.destroy();

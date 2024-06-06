@@ -38,15 +38,15 @@
           <div
             *ngFor="let data of filteredDatas; let i = index"
             [ngClass]="{
-              'inner-container-active': data.isActive
+              'inner-container-active2': data.isActive
             }"
-            class="inner-container size mr-3 mb-3"
+            class="inner-container2 size mr-3 mb-3"
             (click)="toggleActive(data)"
           >
             <div class="circle">
               <div class="circle-content">{{ data.tier }}</div>
             </div>
-            <div class="text-container">
+            <div class="text-container mb-2">
               <p class="main-text">
                 {{ data.value.toLocaleString("es-ES") }} €
               </p>
