@@ -54,93 +54,99 @@ export class InspectComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
     this.isLoading = true;
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
-      this.nodes = res.nodes.map((node: any) => {
-        if (node.type === 2) {
-          node.calculated = node.calculated.map((obj: any, i: number) => {
-            obj.newName = abc.charAt(i);
-            return obj;
-          });
-        } else {
-          node.sceneries = node.sceneries.map((obj: any, i: number) => {
-            obj.newName = abc.charAt(i);
-            return obj;
-          });
-        }
-        return node; // Importante: devolver el nodo modificado
-      });
+      if (res.nodes.length > 0) {
+        this.nodes = res.nodes.map((node: any) => {
+          if (node.type === 2) {
+            node.calculated = node.calculated.map((obj: any, i: number) => {
+              obj.newName = abc.charAt(i);
+              return obj;
+            });
+          } else {
+            node.sceneries = node.sceneries.map((obj: any, i: number) => {
+              obj.newName = abc.charAt(i);
+              return obj;
+            });
+          }
+          return node; // Importante: devolver el nodo modificado
+        });
 
-      const nodes = res.nodes.map((node: any) => {
-        return {
-          tier: 'L' + node.tier,
-          value: '0',
-          description: node.name,
-        };
-      });
-
-      this.datas = nodes.reverse();
-
-      const node = res.nodes.find((node: any) => node.tier == 0);
-
-      if (node?.type === 2) {
-        this.tierCero = res.nodes
-          .find((node: any) => node.tier == 0)
-          .calculated.map((obj: any, i: number) => {
-            obj.newName = abc.charAt(i);
-
-            return obj;
-          });
-      } else {
-        this.tierCero = res.nodes
-          .find((node: any) => node.tier == 0)
-          .sceneries.map((obj: any, i: number) => {
-            obj.newName = abc.charAt(i);
-
-            return obj;
-          });
-      }
-
-      let array: any[] = [];
-      const keys = Object.keys(this.tierCero[0].years);
-      for (let i = 0; i < keys.length; i++) {
-        const yearKey = keys[i];
-        for (let i = 0; i < this.tierCero.length; i++) {
-          const scenerie = this.tierCero[i];
-
-          const newObj = {
-            name: scenerie.newName,
-            year: yearKey,
-            value: scenerie.years[yearKey],
-            originalNAme: scenerie.name,
+        const nodes = res.nodes.map((node: any) => {
+          return {
+            tier: 'L' + node.tier,
+            value: '0',
+            description: node.name,
           };
-          array.push(newObj);
+        });
+
+        this.datas = nodes.reverse();
+
+        const node = res.nodes?.find((node: any) => node.tier == 0);
+
+        if (node?.type === 2) {
+          this.tierCero = res.nodes
+            .find((node: any) => node.tier == 0)
+            .calculated.map((obj: any, i: number) => {
+              obj.newName = abc.charAt(i);
+
+              return obj;
+            });
+        } else {
+          this.tierCero = res.nodes
+            .find((node: any) => node.tier == 0)
+            .sceneries.map((obj: any, i: number) => {
+              obj.newName = abc.charAt(i);
+
+              return obj;
+            });
         }
+
+        let array: any[] = [];
+        const keys = Object.keys(this.tierCero[0].years);
+        for (let i = 0; i < keys.length; i++) {
+          const yearKey = keys[i];
+          for (let i = 0; i < this.tierCero.length; i++) {
+            const scenerie = this.tierCero[i];
+
+            const newObj = {
+              name: scenerie.newName,
+              year: yearKey,
+              value: scenerie.years[yearKey],
+              originalNAme: scenerie.name,
+            };
+            array.push(newObj);
+          }
+        }
+
+        const valoresAños: any[] = [];
+
+        array.forEach((obj: any) => {
+          this.valueToShow.push(obj.value);
+
+          const valueWithoutDecimals = obj.value
+            .toString()
+            .replace(/\.\d{2}$/, '');
+
+          // Eliminar tanto los puntos como las comas del valor
+          const cleanValue = valueWithoutDecimals
+            .toString()
+            .replace(/[,.]/g, '');
+
+          // Convertir el valor a un número
+          const numericValue = parseFloat(cleanValue);
+
+          // Verificar si el valor es un número válido
+          if (!isNaN(numericValue)) {
+            valoresAños.push(numericValue);
+          } else {
+            console.log('Valor no válido:', obj.value);
+          }
+        });
+        this.years = array;
+
+        this.barData = valoresAños;
+        this.isLoading = false;
       }
 
-      const valoresAños: any[] = [];
-
-      array.forEach((obj: any) => {
-        this.valueToShow.push(obj.value);
-
-        const valueWithoutDecimals = obj.value
-          .toString()
-          .replace(/\.\d{2}$/, '');
-
-        // Eliminar tanto los puntos como las comas del valor
-        const cleanValue = valueWithoutDecimals.toString().replace(/[,.]/g, '');
-
-        // Convertir el valor a un número
-        const numericValue = parseFloat(cleanValue);
-
-        // Verificar si el valor es un número válido
-        if (!isNaN(numericValue)) {
-          valoresAños.push(numericValue);
-        } else {
-          console.log('Valor no válido:', obj.value);
-        }
-      });
-      this.years = array;
-
-      this.barData = valoresAños;
       this.isLoading = false;
     });
   }
@@ -682,7 +688,7 @@ export class InspectComponent implements OnInit {
         if (isNaN(element)) {
           continue;
         } else {
-          arrayToSend.push(nodes.find((node: any) => node.id == element));
+          arrayToSend.push(nodes?.find((node: any) => node.id == element));
         }
       }
 
@@ -703,7 +709,7 @@ export class InspectComponent implements OnInit {
         if (isNaN(element)) {
           continue;
         } else {
-          arrayToSend.push(nodes.find((node: any) => node.id == element));
+          arrayToSend.push(nodes?.find((node: any) => node.id == element));
         }
       }
       const result = this.calculateImpactsDivide(arrayToSend);

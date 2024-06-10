@@ -90,8 +90,8 @@ export class WaterfallChartComponent implements OnInit {
   renderchart() {
     const label = [];
     const values = [];
-
-    label.push(this.dataTierCero[0].year);
+    console.log(this.dataTierCero, 'CERO');
+    label.push(this.dataTierCero[0].name + this.dataTierCero[0].year);
     values.push(
       parseFloat(this.dataTierCero[0].value.toString().replace(',', '.'))
     );
@@ -109,7 +109,7 @@ export class WaterfallChartComponent implements OnInit {
       values.push(str);
     }
 
-    label.push(this.dataTierCero[1].year);
+    label.push(this.dataTierCero[1].name + this.dataTierCero[1].year);
 
     let str2 = parseFloat(
       this.dataTierCero[1].value.toString().replace(',', '.')
@@ -142,6 +142,8 @@ export class WaterfallChartComponent implements OnInit {
     }
 
     let arrString = arr.map(String);
+    arrString[0] = this.selectedNodes[0];
+
     const mean = new Array(arr.length).fill('');
 
     // Asignar "total" al último elemento del nuevo array
@@ -149,7 +151,7 @@ export class WaterfallChartComponent implements OnInit {
     mean[0] = 'absolute';
 
     console.log(mean);
-
+    console.log(arrString, label, 'DARTOS');
     const data = [
       {
         name: 'Waterfall',
