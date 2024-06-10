@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { ProjectService } from 'src/app/services/project.service';
 import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
+import html2canvas from 'html2canvas';
 
 declare var google: any;
 declare var bootstrap: any;
@@ -18,6 +19,7 @@ export class BuildComponent implements OnInit {
   @ViewChild('hideShow') hideShowModal!: ElementRef;
   @ViewChild('editModal', { static: false }) editModal!: EditVariableComponent;
   @ViewChild('zoomElement') zoomElement!: ElementRef;
+  @ViewChild('captureElement') captureElement!: ElementRef;
   rows: any = [];
   isDisabled: boolean = false;
   nextNode!: number;
@@ -273,10 +275,9 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
-  setListeners(event: any):any {
+  setListeners(event: any): any {
     // Obtiene el elemento más cercano con la clase especificada
-    if (!event.target
-      .closest('.google-visualization-orgchart-node')) {
+    if (!event.target.closest('.google-visualization-orgchart-node')) {
       return false;
     }
     const botones = event.target
@@ -291,15 +292,17 @@ export class BuildComponent implements OnInit {
       el.style.display = 'none';
     });
 
-    document.querySelectorAll('.google-visualization-orgchart-node').forEach((el: any) => {
-      el.style.zIndex = '1';
-    });
+    document
+      .querySelectorAll('.google-visualization-orgchart-node')
+      .forEach((el: any) => {
+        el.style.zIndex = '1';
+      });
 
     // Si el elemento estaba cerrado, lo abre. Si estaba abierto, permanece cerrado.
     if (!estaAbierto) {
       botones.style.display = 'block';
-      event.target
-      .closest('.google-visualization-orgchart-node').style.zIndex = '5';
+      event.target.closest('.google-visualization-orgchart-node').style.zIndex =
+        '5';
     }
   }
 
@@ -1119,5 +1122,41 @@ export class BuildComponent implements OnInit {
 
     console.log(csvString);
     // console.log(header,datos);
+  }
+
+  capture() {
+    const id: any = document.querySelector('#capture');
+    if (id !== null) {
+      html2canvas(id)
+        .then((canvas) => {
+          // Verificar el contenido del canvas
+          if (!canvas) {
+            console.error('Error: Canvas no generado correctamente');
+            return;
+          }
+
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
+                const base64data = reader.result as string;
+                console.log(base64data);
+                const newTab = window.open();
+                if (newTab) {
+                  newTab.document.body.innerHTML = `<img src="${base64data}" />`;
+                } else {
+                  alert('Permita las ventanas emergentes para esta página');
+                }
+              };
+              reader.readAsDataURL(blob);
+            } else {
+              console.error('Error: Blob es null');
+            }
+          }, 'image/png');
+        })
+        .catch((error) => {
+          console.error('Error capturando el canvas:', error);
+        });
+    }
   }
 }
