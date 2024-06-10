@@ -47,7 +47,9 @@
 </div> -->
 <app-shape-modal></app-shape-modal>
 <app-simulation-shape-modal></app-simulation-shape-modal>
+<button (click)="capture()">Capturar</button>
 <div
+  id="capture"
   (click)="setListeners($event)"
   class="container-organigrama"
   style="
