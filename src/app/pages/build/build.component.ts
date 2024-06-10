@@ -7,6 +7,8 @@ import { ProjectService } from 'src/app/services/project.service';
 import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
 import html2canvas from 'html2canvas';
 
+import domtoimage from 'dom-to-image-improved';
+
 declare var google: any;
 declare var bootstrap: any;
 @Component({
@@ -1125,7 +1127,25 @@ export class BuildComponent implements OnInit {
   }
 
   capture() {
+
     const id: any = document.querySelector('#capture');
+
+    /*domtoimage.toBlob(id)
+      .then((blob:any) => {
+      console.log(blob);
+    });*/
+
+    domtoimage.toPng(id)
+      .then((blob:any) => {
+      console.log();
+      const newTab = window.open();
+      if (newTab) {
+        newTab.document.body.innerHTML = `<img src="${blob}" />`;
+      }
+    });
+
+
+    /*
     if (id !== null) {
       html2canvas(id)
         .then((canvas) => {
@@ -1157,6 +1177,6 @@ export class BuildComponent implements OnInit {
         .catch((error) => {
           console.error('Error capturando el canvas:', error);
         });
-    }
+    }*/
   }
 }

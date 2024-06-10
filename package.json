@@ -24,6 +24,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "chart.js": "^4.4.1",
     "chartjs-plugin-dragdata": "^2.2.5",
+    "dom-to-image-improved": "^2.8.0",
     "highcharts": "^11.2.0",
     "highcharts-angular": "^4.0.0",
     "html2canvas": "^1.4.1",
