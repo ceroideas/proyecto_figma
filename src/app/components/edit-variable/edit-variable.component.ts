@@ -884,7 +884,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       icon: 'question',
       iconColor: '#BC5800',
       showCancelButton: true,
-      confirmButtonText: 'Si, borrar',
+      confirmButtonText: 'Yes, delete',
       cancelButtonText: 'Cancelar',
       customClass: {
         confirmButton: 'confirm',
