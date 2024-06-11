@@ -48,17 +48,19 @@
 <app-shape-modal></app-shape-modal>
 <app-simulation-shape-modal></app-simulation-shape-modal>
 <button (click)="capture()">Capturar</button>
+<div style="margin-left: 64px; width: calc(100% - 50px);">
 <div
   id="capture"
   (click)="setListeners($event)"
   class="container-organigrama"
   style="
-    margin-top: 30px;
-    width: calc(100% - 330px);
+/*    margin-top: 30px;*/
+/*    width: calc(100% - 330px);*/
+    width: 100%;
     height: 600px;
-    left: 330px;
-    top: 144px;
-    position: absolute;
+/*    left: 330px;*/
+/*    top: 144px;*/
+    position: relative;
     border-color: black;
     align-items: center;
     border-radius: 30px;
@@ -103,6 +105,7 @@
       <div id="chart_div"></div>
     </div>
   </div>
+</div>
 </div>
 
 <!-- Modal -->
