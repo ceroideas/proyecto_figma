@@ -77,6 +77,7 @@ export class ProjectsComponent {
 
   getProjects() {
     this.projectSvc.getProjects().subscribe((res: any) => {
+      console.log(res, 'RESPROYECT');
       this.projects = res;
     });
   }

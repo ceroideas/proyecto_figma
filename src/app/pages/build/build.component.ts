@@ -5,7 +5,6 @@ import { ActivatedRoute } from '@angular/router';
 
 import { ProjectService } from 'src/app/services/project.service';
 import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
-import html2canvas from 'html2canvas';
 
 import domtoimage from 'dom-to-image-improved';
 
@@ -369,8 +368,9 @@ export class BuildComponent implements OnInit {
       node_id: this.isNewTree ? null : this.nodeName,
       tier: this.isNewTree === false ? +this.tier + 1 : 0,
     };
-
+    this.capture();
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
+      this.capture();
       if (this.esceneries.length > 0 && dataToSave.unite == undefined) {
         res.sceneries.forEach((element: any, i: any) => {
           this.projectSvc
@@ -803,6 +803,7 @@ export class BuildComponent implements OnInit {
 
   deleteNode() {
     this.getContentToChart();
+    this.capture();
   }
 
   hideTier() {
@@ -1127,56 +1128,11 @@ export class BuildComponent implements OnInit {
   }
 
   capture() {
-
     const id: any = document.querySelector('#capture');
 
-    /*domtoimage.toBlob(id)
-      .then((blob:any) => {
-      console.log(blob);
-    });*/
-
-    domtoimage.toPng(id)
-      .then((blob:any) => {
-      console.log();
-      const newTab = window.open();
-      if (newTab) {
-        newTab.document.body.innerHTML = `<img src="${blob}" />`;
-      }
+    domtoimage.toPng(id).then((blob: any) => {
+      this.projectSvc.updateProject(this.id, { thumb: blob }).subscribe();
+      console.log('CAPTURA GUARDADA');
     });
-
-
-    /*
-    if (id !== null) {
-      html2canvas(id)
-        .then((canvas) => {
-          // Verificar el contenido del canvas
-          if (!canvas) {
-            console.error('Error: Canvas no generado correctamente');
-            return;
-          }
-
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const reader = new FileReader();
-              reader.onloadend = () => {
-                const base64data = reader.result as string;
-                console.log(base64data);
-                const newTab = window.open();
-                if (newTab) {
-                  newTab.document.body.innerHTML = `<img src="${base64data}" />`;
-                } else {
-                  alert('Permita las ventanas emergentes para esta página');
-                }
-              };
-              reader.readAsDataURL(blob);
-            } else {
-              console.error('Error: Blob es null');
-            }
-          }, 'image/png');
-        })
-        .catch((error) => {
-          console.error('Error capturando el canvas:', error);
-        });
-    }*/
   }
 }

@@ -51,6 +51,10 @@ export class ProjectService {
     return this.http.put(`${this.url}/saveZoom/${id}`, { zoom: zoom });
   }
 
+  updateProject(id: any, body: any) {
+    return this.http.put(`${this.url}/updateProject/${id}`, body);
+  }
+
   deleteProject(id: any) {
     return this.http.delete(`${this.url}/deleteProject/${id}`);
   }

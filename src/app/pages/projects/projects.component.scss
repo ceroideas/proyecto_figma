@@ -37,6 +37,7 @@
   padding: 5px; /* Puedes ajustar este valor según sea necesario */
   align-items: center;
   margin-left: 2%;
+  margin-top: 5%;
 }
 
 .icon {
@@ -60,6 +61,16 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.img-top {
+}
+
+.div-top {
+  height: 200px;
+  background-size: cover;
+  /*  background-size: 110%; */
+  background-position: center;
 }
 
 .button-down {

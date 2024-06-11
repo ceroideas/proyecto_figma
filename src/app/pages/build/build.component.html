@@ -47,65 +47,65 @@
 </div> -->
 <app-shape-modal></app-shape-modal>
 <app-simulation-shape-modal></app-simulation-shape-modal>
-<button (click)="capture()">Capturar</button>
-<div style="margin-left: 64px; width: calc(100% - 50px);">
-<div
-  id="capture"
-  (click)="setListeners($event)"
-  class="container-organigrama"
-  style="
-/*    margin-top: 30px;*/
-/*    width: calc(100% - 330px);*/
-    width: 100%;
-    height: 600px;
-/*    left: 330px;*/
-/*    top: 144px;*/
-    position: relative;
-    border-color: black;
-    align-items: center;
-    border-radius: 30px;
-    border: 1px solid;
-    display: flex;
-    overflow: hidden;
-    background-image: url('../../../assets/img/background.png');
-  "
->
-  <!-- <div *ngIf="cargando" class="spinner-container">
+
+<div style="width: calc(100% - 50px)">
+  <div
+    id="capture"
+    (click)="setListeners($event)"
+    class="container-organigrama"
+    style="
+      /*    margin-top: 30px;*/
+      /*    width: calc(100% - 330px);*/
+      width: 100%;
+      height: 600px;
+      /*    left: 330px;*/
+      /*    top: 144px;*/
+      position: relative;
+      border-color: black;
+      align-items: center;
+      border-radius: 30px;
+      border: 1px solid;
+      display: flex;
+      overflow: hidden;
+      background-image: url('../../../assets/img/background.png');
+    "
+  >
+    <!-- <div *ngIf="cargando" class="spinner-container">
     <div class="spinner"></div>
   </div> -->
-  <div class="custom-container-2" (click)="refresher()">
-    <div class="icon-container">
-      <img class="icon-img" src="../../../assets/icons/compress.svg" alt="" />
+    <div class="custom-container-2" (click)="refresher()">
+      <div class="icon-container">
+        <img class="icon-img" src="../../../assets/icons/compress.svg" alt="" />
+      </div>
+      <!-- <div class="text-container">Refrescar</div> -->
     </div>
-    <!-- <div class="text-container">Refrescar</div> -->
-  </div>
 
-  <div
-    data-bs-toggle="modal"
-    data-bs-target="#hide-show"
-    class="custom-container"
-  >
-    <div class="icon-container">
-      <img
-        class="icon-img"
-        src="../../../assets/icons/u_eye-slash.svg"
-        alt=""
-      />
+    <div
+      data-bs-toggle="modal"
+      data-bs-target="#hide-show"
+      class="custom-container"
+    >
+      <div class="icon-container">
+        <img
+          class="icon-img"
+          src="../../../assets/icons/u_eye-slash.svg"
+          alt=""
+        />
+      </div>
+      <div class="text-container">{{ countHidden }} Hidden branches</div>
     </div>
-    <div class="text-container">{{ countHidden }} Hidden branches</div>
-  </div>
 
-  <div
-    cdkDrag
-    (cdkDragEnded)="dragEnd($event)"
-    id="chart_container"
-    [cdkDragFreeDragPosition]="lastPosition"
-  >
-    <div #zoomElement (wheel)="onZoom($event)">
-      <div id="chart_div"></div>
+    <div
+      cdkDrag
+      (cdkDragEnded)="dragEnd($event)"
+      id="chart_container"
+      [cdkDragFreeDragPosition]="lastPosition"
+    >
+      <div #zoomElement (wheel)="onZoom($event)">
+        <div id="chart_div"></div>
+      </div>
     </div>
   </div>
-</div>
 </div>
 
 <!-- Modal -->
@@ -220,7 +220,7 @@
       margin-top: 30px;
       top: 765px;
       width: calc(100% - 330px);
-      left: 330px;
+
       position: absolute;
       flex-direction: column;
       justify-content: flex-start;
