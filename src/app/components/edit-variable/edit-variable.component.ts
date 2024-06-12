@@ -92,6 +92,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Input() nodeId!: any;
   @Input() projectId!: any;
   variables: any[] = [];
+  cargando: boolean = false;
   simbols: any[] = [
     '=',
     '(',
@@ -614,6 +615,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     ); */
 
     if (this.editVariable) {
+      this.cargando = true;
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
         this.variableUnidad = res.unite ? res.unite : undefined;
 
@@ -724,6 +726,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.calculos = res.new_formula ? res.new_formula : [];
         this.sendOperations = res.formula ? res.formula : [];
         this.showNewEscenario = res.calculated ? res.calculated : [];
+
+        this.cargando = false;
       });
     }
   }

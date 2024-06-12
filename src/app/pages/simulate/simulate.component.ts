@@ -65,6 +65,7 @@ export class SimulateComponent implements OnInit {
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
 
       this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
+        console.log(res, 'SIMUALTION');
         this.simulations = res.reverse();
         if (this.simulations.length > 0) {
           this.selectSimulacion(this.simulations[0].id);
@@ -441,6 +442,22 @@ export class SimulateComponent implements OnInit {
     let aux;
 
     let csvData: any = [];
+
+    if (!this.simulationId) {
+      Swal.fire({
+        title: 'Plase select or created a simulation',
+
+        icon: 'warning',
+        showCancelButton: false,
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+        },
+
+        confirmButtonText: 'ok',
+      });
+    }
+
     for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
@@ -1337,7 +1354,9 @@ export class SimulateComponent implements OnInit {
     this.editSimulation = false;
     this.simulateName = simulation.name;
     this.simulateDescription = simulation.description;
-    this.arraySamples = simulation.samples;
+    this.arraySamples = simulation.samples.map((sample: any) =>
+      sample !== 'NaN' ? sample : 0
+    );
     this.simulationNumber = simulation.steps;
     this.colorBar = simulation.color;
 

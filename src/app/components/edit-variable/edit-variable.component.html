@@ -25,6 +25,9 @@
     [ngClass]="constante !== true ? 'modal-lg' : ''"
   >
     <div class="modal-content">
+      <div *ngIf="cargando" class="spinner-container">
+        <div class="spinner"></div>
+      </div>
       <div class="modal-header">
         <p class="modal-title" id="exampleModalLabel">
           {{ editVariable ? "Edit variable " : "Create variable" }}
