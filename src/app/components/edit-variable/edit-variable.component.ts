@@ -159,6 +159,13 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
+    const modalElement = document.getElementById('exampleModal');
+    if (modalElement) {
+      modalElement.addEventListener('hidden.bs.modal', () => {
+        this.deleteShapeData();
+      });
+    }
+
     /*     setTimeout(() => {
       new Chart('myChart', {
         type: 'bar',
@@ -769,7 +776,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.calculos[this.calculos.length - 1];
 
-    this.operationResult();
+    /*  this.operationResult(); */
     this.sendOperations.push(id);
   }
   operationResult() {
@@ -833,13 +840,14 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   addCalculo(operation: string) {
     // if (this.sendOperations.length > 0) {
+    console.log(operation, 'OERATION');
     this.calculos.push(operation);
     this.operations.push([{ name: operation }]);
 
     this.sendOperations.push(operation);
     // }
 
-    this.operationResult();
+    /*   this.operationResult(); */
   }
 
   addCustom() {
@@ -851,8 +859,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.calculos.push(this.inputValue);
     this.operations.push([{ name: this.inputValue }]);
-
+    console.log(this.calculos, 'new_formula');
     this.sendOperations.push(this.inputValue);
+    console.log(this.sendOperations, 'formula');
     this.inputValue = '';
     this.mostrarPopover = false; //
   }

@@ -637,6 +637,7 @@ export class BuildComponent implements OnInit {
 
   getContentToChart() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      console.log(res, 'nodos');
       this.projectName = res.name;
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
