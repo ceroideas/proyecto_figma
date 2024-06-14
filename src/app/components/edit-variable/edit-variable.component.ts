@@ -13,6 +13,7 @@ import {
   SimpleChanges,
   ViewChild,
   HostListener,
+  Renderer2,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -137,12 +138,14 @@ export class EditVariableComponent implements OnInit, OnChanges {
   beta: number = 0;
   success: number = 0;
   population: number = 0;
+  private escKeyPressed = false;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
     private ngZone: NgZone,
     public events: EventsService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private renderer: Renderer2
   ) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['editVariable']) {
@@ -160,9 +163,23 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     const modalElement = document.getElementById('exampleModal');
+
     if (modalElement) {
-      modalElement.addEventListener('hidden.bs.modal', () => {
-        this.deleteShapeData();
+      // Listen for modal hidden event
+      this.renderer.listen(modalElement, 'hidden.bs.modal', () => {
+        if (this.escKeyPressed) {
+          this.deleteShapeData();
+          this.escKeyPressed = false; // Reset the flag
+        } else {
+          console.log('Modal closed by another action');
+        }
+      });
+
+      // Listen for keydown event on the document
+      this.renderer.listen('document', 'keydown', (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          this.escKeyPressed = true;
+        }
       });
     }
 
