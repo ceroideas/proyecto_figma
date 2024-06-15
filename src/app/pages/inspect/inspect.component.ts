@@ -294,12 +294,19 @@ export class InspectComponent implements OnInit {
 
             formula2[index] = node.newValue;
 
-            console.log(formula2.join(' '), nodo.oldValue, node.name);
+            formula2.push('-', tierCeroValue);
+
+            console.log(
+              formula2.join(' '),
+              tierCeroValue,
+              node.name,
+              eval(formula2.join(' ')) - tierCeroValue
+            );
             otherValues.push({
               id: node.id,
               tier: node.tier,
               name: node.name,
-              value: eval(formula2.join(' ')) - nodo.oldValue,
+              value: eval(formula2.join(' ')),
             });
           }
         }
