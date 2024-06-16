@@ -65,7 +65,7 @@ export class SimulateComponent implements OnInit {
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
 
       this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
-        console.log(res, 'SIMUALTION');
+       
         this.simulations = res.reverse();
         if (this.simulations.length > 0) {
           this.selectSimulacion(this.simulations[0].id);
@@ -411,7 +411,7 @@ export class SimulateComponent implements OnInit {
           // Utiliza await para esperar la resolución de la función recursiva
           const form = await this.recursiveCalculate(node);
           formula.push(await this.recursiveCalculate(node));
-          console.log(form.flat(5).join('').replaceAll(',', ''));
+       
           csvData = {
             ...csvData,
             [node.name]: eval(form.flat(5).join('').replaceAll(',', '')),
@@ -459,7 +459,7 @@ export class SimulateComponent implements OnInit {
       });
     }
 
-    console.log(this.nodes, 'nodes');
+
 
     /*     const nodos = this.nodes
       .filter((node) => node.isActive)
@@ -771,7 +771,7 @@ export class SimulateComponent implements OnInit {
             formula.push('(' + formula2 + ')');
 
             const data = this.temp;
-            console.log(formula2.flat(5).join('').replaceAll(',', ''));
+      
             csvData[j] = {
               ...csvData[j],
               [node.name]: eval(formula2.flat(5).join('').replaceAll(',', '')),
@@ -795,8 +795,7 @@ export class SimulateComponent implements OnInit {
       }
 
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
-      console.log(formula.flat(5).join('').replaceAll(',', ''));
-
+    
       if (this.tierCero.type != 2) {
         Swal.fire({
           title: 'Error',
