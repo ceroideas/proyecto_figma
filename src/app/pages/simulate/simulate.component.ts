@@ -411,6 +411,7 @@ export class SimulateComponent implements OnInit {
           // Utiliza await para esperar la resolución de la función recursiva
           const form = await this.recursiveCalculate(node);
           formula.push(await this.recursiveCalculate(node));
+          console.log(form.flat(5).join('').replaceAll(',', ''));
           csvData = {
             ...csvData,
             [node.name]: eval(form.flat(5).join('').replaceAll(',', '')),
@@ -457,6 +458,23 @@ export class SimulateComponent implements OnInit {
         confirmButtonText: 'ok',
       });
     }
+
+    console.log(this.nodes, 'nodes');
+
+    /*     const nodos = this.nodes
+      .filter((node) => node.isActive)
+      .map((node) => node.id);
+
+    const simulation = {
+      size: this.simulationNumber,
+      project_id: this.id,
+      nodes_active: nodos,
+      simulation_id: this.simulationId,
+    };
+
+    this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
+      console.log(res, 'simulacion creada');
+    }); */
 
     for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
@@ -753,7 +771,7 @@ export class SimulateComponent implements OnInit {
             formula.push('(' + formula2 + ')');
 
             const data = this.temp;
-
+            console.log(formula2.flat(5).join('').replaceAll(',', ''));
             csvData[j] = {
               ...csvData[j],
               [node.name]: eval(formula2.flat(5).join('').replaceAll(',', '')),
@@ -777,6 +795,7 @@ export class SimulateComponent implements OnInit {
       }
 
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
+      console.log(formula.flat(5).join('').replaceAll(',', ''));
 
       if (this.tierCero.type != 2) {
         Swal.fire({
@@ -802,16 +821,32 @@ export class SimulateComponent implements OnInit {
 
       formula = [];
     }
-    /*  console.log(csvData, 'DATA'); */
+
     this.csvData = csvData;
     this.arraySamples = arrayToSee;
     if (this.chart) {
       this.chart.destroy();
     }
-    this.simulationChart();
-    if (!operationError) {
-      this.updateSimulation();
+
+    if (this.arraySamples.includes('NaN')) {
+      Swal.fire({
+        title: 'please check the selected nodes',
+
+        icon: 'warning',
+        showCancelButton: false,
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+        },
+
+        confirmButtonText: 'ok',
+      });
       this.isLoading = false;
+    } else {
+      if (!operationError) {
+        this.updateSimulation();
+        this.isLoading = false;
+      }
     }
 
     for (let j in this.valoresPorNodo) {
@@ -821,6 +856,8 @@ export class SimulateComponent implements OnInit {
       let avg = sum / values.length;
       this.valoresPorNodo[j].values = avg;
     }
+
+    this.simulationChart();
   }
   chartetc() {
     if (this.chart) {
@@ -1283,6 +1320,7 @@ export class SimulateComponent implements OnInit {
 
     // Calcular los percentiles
     // const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+
     this.values = this.percentiles.map((percentil) => {
       const index = Math.floor((percentil / 100) * (muestras.length - 1));
       return muestras.sort((a, b) => a - b)[index];

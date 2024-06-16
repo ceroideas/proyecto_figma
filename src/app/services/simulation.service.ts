@@ -11,6 +11,10 @@ export class SimulationService {
   saveSimulation(simulation: any) {
     return this.http.post(`${this.url}/saveSimulation`, simulation);
   }
+
+  createSimulation(simulation: any) {
+    return this.http.post(`${this.url}/generateSimulation`, simulation);
+  }
   getSimulation(id: any) {
     return this.http.get(`${this.url}/getSimulation/${id}`);
   }
