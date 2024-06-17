@@ -410,7 +410,11 @@ export class SimulateComponent implements OnInit {
         } else {
           // Utiliza await para esperar la resolución de la función recursiva
           const form = await this.recursiveCalculate(node);
-          formula.push(await this.recursiveCalculate(node));
+          /*formula.push(await this.recursiveCalculate(node))*/;
+
+          formula.push('(' + form + ')')
+
+          
        
           csvData = {
             ...csvData,
@@ -426,6 +430,8 @@ export class SimulateComponent implements OnInit {
     } else {
       this.temp = { ...this.temp, ...csvData };
     }
+
+   
 
     return formula;
   }
@@ -768,6 +774,7 @@ export class SimulateComponent implements OnInit {
             }
           } else {
             let formula2 = await this.recursiveCalculate(node);
+
             formula.push('(' + formula2 + ')');
 
             const data = this.temp;
@@ -790,11 +797,18 @@ export class SimulateComponent implements OnInit {
             }
           }
         } else {
+
+          
           formula.push(nodeId);
         }
+
+      
       }
 
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
+
+     
+
     
       if (this.tierCero.type != 2) {
         Swal.fire({
