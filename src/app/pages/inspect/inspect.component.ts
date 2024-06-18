@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { async } from 'rxjs';
 
 import { MessageComponent } from 'src/app/components/message/message.component';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
@@ -199,7 +200,7 @@ export class InspectComponent implements OnInit {
     }
   }
 
-  calculatedNode() {
+  async calculatedNode() {
     if (this.yearIndex.length === 2) {
       this.isLoading = true;
       const years = [
@@ -249,6 +250,7 @@ export class InspectComponent implements OnInit {
         nodos.push(yearValues);
       }
 
+      var nodosNoEdit = [...nodos];
       const otherValues: any[] = [];
 
       var formula = nodos.find((nodo: any) => nodo.tier == 'L0').formula;
@@ -294,7 +296,6 @@ export class InspectComponent implements OnInit {
 
             formula2[index] = node.newValue;
 
-            console.log(formula2.join(' '), nodo.oldValue, node.name);
             otherValues.push({
               id: node.id,
               tier: node.tier,
@@ -305,8 +306,8 @@ export class InspectComponent implements OnInit {
         }
       }
 
-      const diferencias = nodos
-        .map((par: any) => {
+      /*      const diferencias = await nodos
+        .map(  (par: any) => {
           const formulaCopy = [...newOperation];
 
           const i = formula.indexOf(par.id);
@@ -336,7 +337,7 @@ export class InspectComponent implements OnInit {
                   value: element.impact,
                 };
 
-                /* otherValues.push(other); */
+                
               }
             }
 
@@ -347,57 +348,64 @@ export class InspectComponent implements OnInit {
                 value: sumaTotal,
               };
 
-              /* otherValues.push(other); */
+              
             }
           }
-          /*           if (par.tier == 'L0') {
-            var monto2 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
-            var monto1 = parseFloat(par.newValue.toString().replace(/,/g, ''));
-
-            console.log(
-              Math.abs(monto1 - monto2),
-              monto1,
-              monto2,
-              'SUMAAAAAAAAA'
-            );
-          } else {
-            var monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
-            var monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
-          }
- */
+    
           var monto1 = parseFloat(par.oldValue.toString().replace(/,/g, ''));
           var monto2 = parseFloat(par.newValue.toString().replace(/,/g, ''));
+
+            const value =  this.calculateNode(nodosNoEdit,par.id,tierCeroValue)
+
+           
+          return {
+            id: par.id,
+            tier: par.tier,
+            name: par.name,
+            value: value,
+            combination: result == 'combinacion' ? true : false,
+          };
+        })
+        .reverse();*/
+      const diferencias = await Promise.all(
+        nodos.map(async (par: any) => {
+          const value = await this.calculateNode(
+            nodosNoEdit,
+            par.id,
+            tierCeroValue
+          );
 
           return {
             id: par.id,
             tier: par.tier,
             name: par.name,
-            value:
-              result && result.totalImpact !== undefined
-                ? result.totalImpact
-                : +monto2 - +monto1,
-            combination: result == 'combinacion' ? true : false,
+            value: value,
+            /*combination: result == 'combinacion' ? true : false,*/
           };
         })
-        .reverse();
+      ).then((results) => results.reverse());
 
       formulasArray.reverse().shift();
 
       this.dataSvc.dataNodes = diferencias;
 
       const tierCero = diferencias.shift();
-      console.log(diferencias, 'diferencias');
-      this.tierCeroValue = tierCero.value.toLocaleString('es-ES');
+
+      const cero = nodos.find((nodo: any) => nodo.tier == 'L0');
+
+      this.tierCeroValue = (+cero.newValue - +cero.oldValue).toLocaleString(
+        'es-ES'
+      );
 
       this.dataSvc.tierCero = this.tierCeroValue;
 
-      otherValues.forEach((node: any) => {
+      /*      otherValues.forEach((node: any) => {
         const nodo = diferencias.find((node2: any) => node2.id == node.id);
 
         if (nodo) {
           nodo.value = node.value;
         }
-      });
+      });*/
 
       function ordenarPorTier(a: any, b: any) {
         // Comparar los valores de "tier" y devolver el resultado
@@ -718,5 +726,135 @@ export class InspectComponent implements OnInit {
     } else {
       return 'combinacion';
     }
+  }
+
+  async calculateNode(nodos: any, selectId: number, tierCeroValue: any) {
+    const formulaCero = this.nodes.find((node: any) => node.tier == 0);
+
+    let formula: any = [];
+
+    for (let i = 0; i < formulaCero.formula.length; i++) {
+      var nodeId = formulaCero.formula[i];
+
+      if (typeof nodeId === 'number' && nodeId != selectId) {
+        var node = nodos.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.oldValue;
+
+          formula.push(value);
+        } else {
+          let formula2 = await this.recursiveCalculateNode(
+            node,
+            nodos,
+            selectId
+          );
+          formula.push('(' + formula2 + ')');
+        }
+      } else if (typeof nodeId === 'number' && nodeId == selectId) {
+        var node = nodos.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.newValue;
+
+          formula.push(value);
+        } else {
+          let formula2 = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodos,
+            selectId
+          );
+          formula.push('(' + formula2 + ')');
+        }
+      } else {
+        formula.push(nodeId);
+      }
+    }
+
+    const operation =
+      eval(formula.flat(5).join('').replaceAll(',', '')) - tierCeroValue;
+
+    return operation;
+  }
+
+  async recursiveCalculateNode(_node: any, nodes: any, selectId: number) {
+    let formula: any = [];
+    let aux;
+    let csvData: any = {};
+
+    for (let i = 0; i < _node.formula.length; i++) {
+      var nodeId = _node.formula[i];
+
+      if (typeof nodeId === 'number' && nodeId != selectId) {
+        var node = nodes.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.oldValue;
+          formula.push(value);
+        } else {
+          // Utiliza await para esperar la resolución de la función recursiva
+          const form = await this.recursiveCalculateNode(node, nodes, selectId);
+          /*formula.push(await this.recursiveCalculate(node))*/ formula.push(
+            '(' + form + ')'
+          );
+        }
+      } else if (typeof nodeId === 'number' && nodeId == selectId) {
+        var node = nodes.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.newValue;
+
+          formula.push(value);
+        } else {
+          let formula2 = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodes,
+            selectId
+          );
+          formula.push('(' + formula2 + ')');
+        }
+      } else {
+        formula.push(nodeId);
+      }
+    }
+
+    return formula;
+  }
+
+  async recursiveCalculateNodeNewValue(
+    _node: any,
+    nodes: any,
+    selectId: number
+  ) {
+    let formula: any = [];
+    let aux;
+    let csvData: any = {};
+
+    for (let i = 0; i < _node.formula.length; i++) {
+      var nodeId = _node.formula[i];
+
+      if (typeof nodeId === 'number') {
+        var node = nodes.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.newValue;
+          formula.push(value);
+        } else {
+          // Utiliza await para esperar la resolución de la función recursiva
+          const form = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodes,
+            selectId
+          );
+          /*formula.push(await this.recursiveCalculate(node))*/ formula.push(
+            '(' + form + ')'
+          );
+        }
+      } else {
+        formula.push(nodeId);
+      }
+    }
+
+    return formula;
   }
 }

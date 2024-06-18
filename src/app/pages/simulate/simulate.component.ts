@@ -482,6 +482,8 @@ export class SimulateComponent implements OnInit {
       console.log(res, 'simulacion creada');
     }); */
 
+  
+
     for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
