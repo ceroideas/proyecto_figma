@@ -76,3 +76,68 @@ p {
   font-weight: 500 !important;
   font-size: 14px !important;
 }
+
+.create-project-button {
+  display: flex;
+  background-color: rgba(0, 15, 85, 1); 
+  width: 34px; height: 34px; 
+  padding: 4px; 
+  border-radius: 35px; 
+  gap: 10px; 
+  cursor: pointer;
+}
+
+.create-project-modal {
+  width: 680px;
+ /*  height: 799px; */
+ height: auto;
+  border-radius: 30px;
+}
+.modal-header {
+  align-items: center;
+  padding: 25px;
+}
+
+.modal-title {
+  font-size: 20px !important;
+} 
+
+/* .colorBorder {
+  border-radius: 10px;
+
+  border: 1px rgba(140, 100, 177, 1) solid;
+}
+ */
+
+ .colorBorder {
+  box-shadow: 0 0 0 3px #000f55 ; /* Cambia #000 por el color del borde que desees */
+}
+
+.color-circle {
+  width: 30px;
+  height: 30px;
+  position: relative;
+}
+.input-group {
+  display: flex;
+  align-items: center;
+  width: 300px; /* Ajusta el ancho del grupo de input */
+}
+
+
+
+.input-group-append {
+  height: 37.99px;
+/*   margin-left: 5px;
+  border-top-right-radius: 25px !important ; */
+}
+
+.text-danger {
+  color: red;
+  margin-top: 5px;
+}
+
+.input-group-text {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+}

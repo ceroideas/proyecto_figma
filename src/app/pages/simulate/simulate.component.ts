@@ -65,7 +65,6 @@ export class SimulateComponent implements OnInit {
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
 
       this.simulationSvc.getSimulations(this.id).subscribe((res: any) => {
-       
         this.simulations = res.reverse();
         if (this.simulations.length > 0) {
           this.selectSimulacion(this.simulations[0].id);
@@ -410,12 +409,10 @@ export class SimulateComponent implements OnInit {
         } else {
           // Utiliza await para esperar la resolución de la función recursiva
           const form = await this.recursiveCalculate(node);
-          /*formula.push(await this.recursiveCalculate(node))*/;
+          /*formula.push(await this.recursiveCalculate(node))*/ formula.push(
+            '(' + form + ')'
+          );
 
-          formula.push('(' + form + ')')
-
-          
-       
           csvData = {
             ...csvData,
             [node.name]: eval(form.flat(5).join('').replaceAll(',', '')),
@@ -430,8 +427,6 @@ export class SimulateComponent implements OnInit {
     } else {
       this.temp = { ...this.temp, ...csvData };
     }
-
-   
 
     return formula;
   }
@@ -465,9 +460,7 @@ export class SimulateComponent implements OnInit {
       });
     }
 
-
-
-    /*     const nodos = this.nodes
+    const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
 
@@ -478,13 +471,13 @@ export class SimulateComponent implements OnInit {
       simulation_id: this.simulationId,
     };
 
+    console.log(simulation, 'SIMUALKTIOM');
+
     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
       console.log(res, 'simulacion creada');
-    }); */
+    });
 
-  
-
-    for (let i = 0; i < +this.simulationNumber; i++) {
+    /*     for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -872,7 +865,7 @@ export class SimulateComponent implements OnInit {
       this.valoresPorNodo[j].values = avg;
     }
 
-    this.simulationChart();
+    this.simulationChart(); */
   }
   chartetc() {
     if (this.chart) {

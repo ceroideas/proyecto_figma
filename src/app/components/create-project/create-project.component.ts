@@ -23,6 +23,21 @@ export class CreateProjectComponent {
   @Output() createProjectEvent = new EventEmitter<any>();
   inputValues: { [key: string]: string } = {};
   nameProject!: any;
+  colorBar: any = '140, 100, 177';
+  colorsOption: any[] = [
+    '140, 100, 177',
+    '108, 117, 125',
+    '255, 193, 7',
+    '0, 123, 255',
+    '220, 53, 69',
+    '23, 162, 184',
+    '40, 167, 69 ',
+  ];
+
+  percentage!: number;
+  percentageError: boolean = false;
+
+
   constructor(private router: Router, private projectSvc: ProjectService) {
     this.getYears();
   }
@@ -127,6 +142,23 @@ export class CreateProjectComponent {
 
     if (closeButton) {
       (closeButton as HTMLElement).click();
+    }
+  }
+
+
+    selectColor(color: string, event: any) {
+      this.colorBar = color;
+  }
+
+    validatePercentage() {
+    if (this.percentage < 0) {
+      this.percentage = 0;
+      this.percentageError = true;
+    } else if (this.percentage > 100) {
+      this.percentage = 100;
+      this.percentageError = true;
+    } else {
+      this.percentageError = false;
     }
   }
 }
