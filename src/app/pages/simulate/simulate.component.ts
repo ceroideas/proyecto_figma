@@ -460,7 +460,7 @@ export class SimulateComponent implements OnInit {
       });
     }
 
-    const nodos = this.nodes
+    /*     const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
 
@@ -475,9 +475,9 @@ export class SimulateComponent implements OnInit {
 
     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
       console.log(res, 'simulacion creada');
-    });
+    }); */
 
-    /*     for (let i = 0; i < +this.simulationNumber; i++) {
+    for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -773,7 +773,7 @@ export class SimulateComponent implements OnInit {
             formula.push('(' + formula2 + ')');
 
             const data = this.temp;
-      
+
             csvData[j] = {
               ...csvData[j],
               [node.name]: eval(formula2.flat(5).join('').replaceAll(',', '')),
@@ -792,19 +792,12 @@ export class SimulateComponent implements OnInit {
             }
           }
         } else {
-
-          
           formula.push(nodeId);
         }
-
-      
       }
 
       const operation = eval(formula.flat(5).join('').replaceAll(',', ''));
 
-     
-
-    
       if (this.tierCero.type != 2) {
         Swal.fire({
           title: 'Error',
@@ -865,7 +858,7 @@ export class SimulateComponent implements OnInit {
       this.valoresPorNodo[j].values = avg;
     }
 
-    this.simulationChart(); */
+    this.simulationChart();
   }
   chartetc() {
     if (this.chart) {
