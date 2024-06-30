@@ -189,6 +189,12 @@ export class BuildComponent implements OnInit {
       });
 
       this.chart.draw(this.data, { allowHtml: true });
+      const lines = document.querySelectorAll(
+        '.google-visualization-orgchart-lineleft, .google-visualization-orgchart-lineright, .google-visualization-orgchart-linebottom'
+      );
+      lines.forEach((line: any) => {
+        line.style.borderColor = '#8c64b1';
+      });
 
       /*this.cargando = true;
 
@@ -405,11 +411,11 @@ export class BuildComponent implements OnInit {
 
   addRow() {
     this.rows = [];
-
+ 
     for (let i = 0; i < this.aux.length; i++) {
       const element = this.aux[i];
       if (element.hiddenNodeSon) {
-        element.data[0].f = element.f_alternative;
+        element.data[0].f = element.f_alternative(element.branches);
       } else {
         element.data[0].f = element.f_original;
       }
@@ -421,7 +427,7 @@ export class BuildComponent implements OnInit {
   findAndHideFatherNode() {
     /*     var floatingElement = document.querySelector('.floating') as HTMLElement;
     floatingElement.style.display = 'block'; */
-    console.log(this.aux);
+
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
@@ -452,8 +458,10 @@ export class BuildComponent implements OnInit {
         node.hidden = 1;
       });
     }); */
+    let branches = 0;
     const hideSons = (childNode: any) => {
       childNode.forEach((node: any) => {
+        branches++;
         node.hidden = 1;
 
         const sonNode = this.aux.filter(
@@ -465,7 +473,10 @@ export class BuildComponent implements OnInit {
         }
       });
     };
+
     hideSons(sonNode);
+    fatherNode[0].branches = branches + 1;
+    console.log(fatherNode, 'NODEPADRE');
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
@@ -660,6 +671,7 @@ export class BuildComponent implements OnInit {
       if (this.selectedScenery === '#') this.selectedScenery = '0';
 
       this.sceneriesNodes = [];
+
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
           if (element.hidden_table) {
@@ -743,7 +755,8 @@ export class BuildComponent implements OnInit {
             </span>
     
      </div>`,
-            f_alternative: `<div  class="rotate" >
+            f_alternative: (branches:any) => {
+              return `<div  class="rotate" >
             
             <span>
                    <div class="floating" style="display: none;">   
@@ -763,6 +776,14 @@ export class BuildComponent implements OnInit {
                          src="../../../assets/icons/u_eye-slash-icon.svg"
                          alt=""
                        /> </button>
+                        <button class="cstmbtn btn btn-xs btn-show ">
+
+                       <p style="color:white;">  ${branches ? branches : 0} </p>
+                        <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
                           </div>
                           <div class="full-box">
                                  
@@ -772,7 +793,9 @@ export class BuildComponent implements OnInit {
                    
             </span>
     
-     </div>`,
+     </div>`
+            }
+        ,
           };
           this.aux.push(data);
 
@@ -830,7 +853,6 @@ export class BuildComponent implements OnInit {
 
   hideTierAll() {
     this.loadedCallBack = false;
-    console.log('smkdsnm');
 
     if (this.selectedTierLv != '#') {
       const filterNodeTier = this.aux

@@ -55,7 +55,7 @@ body {
   ) !important;
 }
 
-.google-visualization-orgchart-lineleft {
+/* .google-visualization-orgchart-lineleft {
   border-left: 1px solid #8c64b1 !important;
 }
 
@@ -64,7 +64,7 @@ body {
 }
 .google-visualization-orgchart-linebottom {
   border-bottom: 1px solid #8c64b1 !important;
-}
+} */
 
 .google-visualization-orgchart-table {
   width: 1%;
@@ -100,6 +100,10 @@ body {
   background-color: white;
 }
 .btn-add {
+  background-color: #000f55 !important;
+}
+
+.btn-show {
   background-color: #000f55 !important;
 }
 
@@ -140,8 +144,8 @@ body {
 
 .flex-box button {
   font-size: 12px;
-  width: 24px;
-  height: 24px;
+/*   width: 24px;
+  height: 24px; */
   padding: 0; /* Ajusta el padding para que la imagen ocupe todo el espacio */
   display: flex;
   justify-content: center; /* Centra horizontalmente */
@@ -151,16 +155,46 @@ body {
   margin: 0 auto;
 }
 
-.btn-edit img {
-  height: 17px;
+.btn-edit  {
+  height: 24px;
+  width: 24px;
+  img{
+    width: 19px;
+    height: 19px;
+    padding-left: 3px;
+  }
 }
 
-.btn-add img {
-  height: 18px;
+.btn-add  {
+    height: 24px;
+    width: 24px;
+    img{
+    width: 20px;
+    height: 20px;
+    margin-left: 0.6px;
+  }
 }
 
-.btn-hidden img {
-  height: 17px;
+.btn-hidden  {
+  height: 24px;
+  width: 24px;
+  img{
+    width: 19px;
+    height: 19px;
+  }
+}
+.btn-show  {
+  height: 24px;
+  width: 40px;
+  align-items: unset;
+  img{
+    width: 19px;
+    height: 19px;
+
+  }
+  p{
+
+  }
 }
 
 .full-box {

@@ -460,7 +460,7 @@ export class SimulateComponent implements OnInit {
       });
     }
 
-    /*     const nodos = this.nodes
+    const nodos = this.nodes
       .filter((node) => node.isActive)
       .map((node) => node.id);
 
@@ -471,11 +471,9 @@ export class SimulateComponent implements OnInit {
       simulation_id: this.simulationId,
     };
 
-    console.log(simulation, 'SIMUALKTIOM');
-
-    this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
+    /*     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
       console.log(res, 'simulacion creada');
-    }); */
+    });  */
 
     for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
@@ -825,6 +823,8 @@ export class SimulateComponent implements OnInit {
 
     this.csvData = csvData;
     this.arraySamples = arrayToSee;
+
+    console.log(this.csvData, 'cvdataJs');
     if (this.chart) {
       this.chart.destroy();
     }

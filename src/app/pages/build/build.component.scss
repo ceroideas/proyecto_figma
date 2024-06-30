@@ -208,6 +208,19 @@
   animation: spin 1s infinite linear;
 }
 
+.create-project-button {
+  display: flex;
+  background-color: rgba(0, 15, 85, 1); 
+  width: 34px; height: 34px; 
+  padding: 4px; 
+  border-radius: 35px; 
+  gap: 10px; 
+  cursor: pointer;
+}
+
+
+
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);

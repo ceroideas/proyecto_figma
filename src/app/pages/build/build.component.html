@@ -1,4 +1,4 @@
-<p style="font-size: x-large; font-weight: bold">{{ projectName }}</p>
+<!-- <p style="font-size: x-large; font-weight: bold">{{ projectName }}</p>
 
 <button
   type="button"
@@ -9,7 +9,18 @@
   (click)="newTree()"
 >
   Create node
-</button>
+</button> -->
+<div  style="width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; ">
+<div>
+  <p class="mt-3" style="font-size: 20px; line-height: 30px; font-weight: 700; color: rgba(0, 6, 31, 1);">{{ projectName }}</p>
+</div>
+<div (click)="newTree()" class="create-project-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+
+  <img src="../../../assets/icons/u_plus.svg" alt="" />
+  
+</div>
+</div>
+
 <!-- <div
   style="
     padding: 20px;

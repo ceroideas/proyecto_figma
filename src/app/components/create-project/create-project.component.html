@@ -1,16 +1,7 @@
 <!-- Button trigger modal -->
 <div  style="width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; ">
-<!--   <button
-  style="float: right;"
-  type="button"
-  class="btn mb-5 create-button"
-  data-bs-toggle="modal"
-  data-bs-target="#createProjectModal"
->
-  + Create project
-</button> -->
 <div>
-  <p style="font-size: 20px; line-height: 30px; font-weight: 700; color: rgba(0, 6, 31, 1);">Your projects</p>
+  <p class="mt-3" style="font-size: 20px; line-height: 30px; font-weight: 700; color: rgba(0, 6, 31, 1);">Your projects</p>
 </div>
 <div class="create-project-button" data-bs-toggle="modal" data-bs-target="#createProjectModal">
 
@@ -81,6 +72,7 @@
           <select
             [(ngModel)]="yearTo"
             class="form-select input-formula"
+              (change)="defaultYear()"
             style="width: 300px;" 
           >
             <option selected value="#">Select an end year</option>
@@ -95,14 +87,14 @@
           <div >
           <label for="name" class="form-label color-theme"
             >Select a default year</label
-          >
+          > 
             <select
-            [(ngModel)]="yearTo"
+            [(ngModel)]="yearDefault"
             class="form-select input-formula"
              style="width: 300px;" 
           >
             <option selected value="#">Select a year</option>
-            <option *ngFor="let year of yearsTo" [value]="+year">
+            <option *ngFor="let year of yearsDefault" [value]="+year">
               {{ year }}
             </option>
           </select>
@@ -112,30 +104,28 @@
             >Select the number of scenarios</label
           >
             <select
-            [(ngModel)]="yearTo"
+            [(ngModel)]="selectedNumber"
             class="form-select input-formula"
-             style="width: 300px;" 
+            (change)="addInput()"
+            style="width: 300px;" 
           >
             <option selected value="#">Number of scenarios</option>
-            <option *ngFor="let year of yearsTo" [value]="+year">
-              {{ year }}
+            <option *ngFor="let number of selectNumber" [value]="+number">
+              {{ number }}
             </option>
           </select>
         </div>
         </div>
 
-        <div class="mb-4 mt-3 ml-2">
+        <div class="mb-4 mt-3 ml-2" *ngFor="let input of inputs; let i = index;">
           <div style="align-items: center" class="d-flex">
-            <p style="display: contents">Create scenarios</p>
-            <button (click)="addInput()" class="unite-button ml-5 mr-2">
+            <p style="display: contents">Scenario Name {{i + 1}}</p>
+<!--             <button (click)="addInput()" class="unite-button ml-5 mr-2">
               <img src="../../../assets/icons/fi_plus.svg" alt="" />
-            </button>
-            <button (click)="removeInput()" class="unite-button">
-              <img src="../../../assets/icons/minus.svg" alt="" />
-            </button>
+            </button> -->
           </div>
 
-          <div *ngFor="let input of inputs">
+          <div >
             <input
               type="text"
               [id]="input"
@@ -148,7 +138,7 @@
         </div>
 
 <div class="ml-2">
-  <p>Select the bar color</p>
+  <p>Select the color of the lines of the value tree</p>
   <div class="d-flex">
     <div
       *ngFor="let color of colorsOption"
@@ -160,7 +150,7 @@
   </div>
 </div>
 <div class="form-check ml-2  mb-4 mt-4 " >
-  <input style="width: 18px; height: 18px;" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+  <input  [(ngModel)]="growth" style="width: 18px; height: 18px;" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
 <!--   <label class="form-check-label" for="flexCheckDefault">
     Default growth
   </label> -->
@@ -170,14 +160,14 @@
 </div>
 
 
-<div class="ml-2">
-  <label class="form-label color-theme" for="percentage">Percentage:</label>
+<div *ngIf="growth" class="ml-2">
+  <label class="form-label color-theme" for="percentage">Set a default growth percentage:</label>
   <div class="input-group">
     <input
       type="number"
       id="percentage"
       name="percentage"
-      [(ngModel)]="percentage"
+      [(ngModel)]="growthPercentage"
       (input)="validatePercentage()"
       min="0"
       max="100"
