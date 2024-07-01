@@ -186,6 +186,21 @@ export class BuildComponent implements OnInit {
             });
           }
         );
+
+
+        var showElements = document.querySelectorAll('.btn-show');
+         Array.prototype.forEach.call(
+          showElements,
+          (showElements: HTMLElement) => {
+            showElements.addEventListener('click', (e) => {
+              e.stopPropagation();
+              /*this.hidden = true;*/
+              this.findAndShowFatherNode();
+            });
+          }
+        );
+
+
       });
 
       this.chart.draw(this.data, { allowHtml: true });
@@ -440,6 +455,11 @@ export class BuildComponent implements OnInit {
       (item: any) => item.data[1] === this.nodeName
     );
 
+
+
+
+
+
     if (fatherNode.length > 0) {
       const takeSonNode = this.aux.filter(
         (item: any) => item.data[1] === fatherNode[0].data[0].v
@@ -447,6 +467,19 @@ export class BuildComponent implements OnInit {
       const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
       fatherNode[0].hiddenNodeSon = haveHidden;
     }
+
+const initialCount = this.aux.filter(
+        (item: any) => item.data[1] === fatherNode[0].data[0].v && item.hidden == 1
+      ).length;
+
+    
+    let count = initialCount;
+
+
+    
+    
+  
+    
     node.hidden = 1;
     /*   sonNode.forEach((node: any) => {
       node.hidden = 1;
@@ -458,12 +491,17 @@ export class BuildComponent implements OnInit {
         node.hidden = 1;
       });
     }); */
-    let branches = 0;
+  
     const hideSons = (childNode: any) => {
-      childNode.forEach((node: any) => {
-        branches++;
-        node.hidden = 1;
 
+      childNode.forEach((node: any) => {
+      
+     
+        node.hidden = 1;
+        count++
+
+
+       
         const sonNode = this.aux.filter(
           (item: any) => item.data[1] === node.data[0].v
         );
@@ -471,12 +509,97 @@ export class BuildComponent implements OnInit {
         if (sonNode.length > 0) {
           hideSons(sonNode);
         }
+        
       });
     };
 
     hideSons(sonNode);
-    fatherNode[0].branches = branches + 1;
-    console.log(fatherNode, 'NODEPADRE');
+    
+    if(fatherNode[0])  fatherNode[0].branches = count;
+   
+    this.addRow();
+    this.chart.draw(this.data, { allowHtml: true });
+    google.charts.setOnLoadCallback(this.drawChart);
+    this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
+  }
+
+  findAndShowFatherNode() {
+
+
+    const node = this.aux.find((item: any) =>
+      item.data.some((subItem: any) => subItem.v === this.nodeName)
+    );
+    
+
+    const fatherNode = this.aux.filter(
+      (item: any) => item.data[0].v === node.data[1]
+    );
+
+    const sonNode = this.aux.filter(
+      (item: any) => item.data[1] === this.nodeName && item.hidden == 1
+    );
+    
+  if (fatherNode.length > 0) {
+      const takeSonNode = this.aux.filter(
+        (item: any) => item.data[1] === fatherNode[0].data[0].v
+      );
+      const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
+      fatherNode[0].hiddenNodeSon = haveHidden;
+    }
+    node.hidden = 0;
+    node.hiddenNodeSon = false;
+
+
+    
+
+    const hideSons = (childNode: any) => {
+      childNode.forEach((node: any) => {
+        
+        if(!node.hiddenNodeSon){
+
+
+       
+        node.hidden = 0;
+        node.hiddenNodeSon = false
+        const sonNode = this.aux.filter(
+          (item: any) => item.data[1] === node.data[0].v
+        );
+
+        if (sonNode.length > 0) {
+          hideSons(sonNode);
+        }
+        } else {
+          let count = 0;
+          
+          const countHiddenNodes = (nodes:any) => {
+
+            nodes.forEach((node:any) => {
+           const hiddenNodes = this.aux.filter((item: any) => item.data[1] === node.data[0].v && item.hidden == 1);
+          
+           count += hiddenNodes.length
+
+          if(hiddenNodes.length > 0){
+            countHiddenNodes(hiddenNodes)
+           }
+
+          }) 
+
+
+          }
+          
+          const nodoPass = [node]
+          countHiddenNodes(nodoPass)
+       
+          node.hidden = 0;
+          node.branches = count;
+        }
+
+      });
+    };
+
+    hideSons(sonNode);
+    node.branches = 0;
+ 
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
@@ -597,12 +720,18 @@ export class BuildComponent implements OnInit {
       const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
 
       fatherNode[0].hiddenNodeSon = haveHidden;
+      fatherNode[0].branches = this.aux.filter(
+        (item: any) => item.data[1] === fatherNode[0].data[0].v && item.hidden == 1
+      ).length;
     } else {
       const takeSonNode = this.aux.filter(
         (item: any) => item.data[1] === tier.data[0].v
       );
       const haveHidden = takeSonNode.some((item: any) => item.hidden === 1);
       tier.hiddenNodeSon = haveHidden;
+      tier.branches = this.aux.filter(
+        (item: any) => item.data[1] === tier.data[0].v && item.hidden == 1
+      ).length;
     }
 
     this.aux.forEach((element: any) => {
@@ -866,6 +995,8 @@ export class BuildComponent implements OnInit {
         .filter(function (element: any) {
           return element !== undefined;
         });
+
+        console.log(filterNodeTier, "FILE")
 
       for (let i = 0; i < filterNodeTier.length; i++) {
         const element = filterNodeTier[i];
@@ -1158,4 +1289,37 @@ export class BuildComponent implements OnInit {
       console.log('CAPTURA GUARDADA');
     });
   }
+
+ countHiddenNodes(node:any,aux:any) {
+  // Contador de nodos ocultos
+  let hiddenCount = 0;
+
+  // Función recursiva para contar nodos ocultos
+  function countHiddenRecursive(currentNode:any) {
+    // Filtra los nodos hijos ocultos del nodo actual
+
+   currentNode.forEach((node:any) => {
+       const hiddenChildren = aux.filter(
+      (item:any) =>  item.data[1] === currentNode[0].data[0].v && item.hidden == 1
+    );
+
+    // Incrementa el contador por los nodos hijos ocultos encontrados
+    hiddenCount += hiddenChildren.length;
+
+    // Llama recursivamente a la función para cada nodo hijo oculto
+    hiddenChildren.forEach((child:any) => {
+      countHiddenRecursive(child);
+    });
+   })
+
+  }
+
+  // Inicia el conteo recursivo desde el nodo padre proporcionado
+  countHiddenRecursive(node);
+
+  // Devuelve el conteo total de nodos ocultos
+  return hiddenCount;
 }
+
+}
+
