@@ -211,6 +211,26 @@ export class BuildComponent implements OnInit {
         line.style.borderColor = '#8c64b1';
       });
 
+
+      const tds = document.querySelectorAll('td');
+
+
+      tds.forEach(td => {
+      
+        const div = td.querySelector('div');
+        
+         
+          // Si el 'div' tiene el id '1', añadir la clase box-shadow-1
+        if (div && div.id === '1') {
+          td.classList.add('box-shadow-1');
+        }
+
+        // Si el 'div' tiene el id '2', añadir la clase box-shadow-2
+        if (div && div.id === '2') {
+          td.classList.add('box-shadow-2');
+        }
+      });
+
       /*this.cargando = true;
 
       function eventClick(this: any, e: any) {
@@ -295,7 +315,8 @@ export class BuildComponent implements OnInit {
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
 
     this.printAll();
-  }
+
+     }
 
   setListeners(event: any): any {
     // Obtiene el elemento más cercano con la clase especificada
@@ -803,6 +824,7 @@ const initialCount = this.aux.filter(
 
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
+         
           if (element.hidden_table) {
             this.selectedHidden.push(element.id);
           }
@@ -811,7 +833,7 @@ const initialCount = this.aux.filter(
             data: [
               {
                 v: `${element.id}`,
-                f: `<div  class="rotate" >
+                f: `<div id="${element.type}"  class="rotate" >
             
             <span>
                    <div class="floating" style="display: none;">   
@@ -854,7 +876,7 @@ const initialCount = this.aux.filter(
             tier: element.tier,
             sceneries:
               element.type == 1 ? element.sceneries : element.calculated,
-            f_original: `<div  class="rotate" >
+            f_original: `<div id="${element.type}"  class="rotate" >
             
             <span>
                    <div class="floating" style="display: none;">   
@@ -885,7 +907,7 @@ const initialCount = this.aux.filter(
     
      </div>`,
             f_alternative: (branches:any) => {
-              return `<div  class="rotate" >
+              return `<div id="${element.type}"  class="rotate" >
             
             <span>
                    <div class="floating" style="display: none;">   
