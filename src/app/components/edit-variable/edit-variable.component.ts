@@ -58,6 +58,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   variableDescription!: any;
   operationType: any = '+';
   closeToogle: boolean = false;
+  isConstante: boolean = true;
   tempObject = [
     {},
     {
@@ -1523,4 +1524,13 @@ export class EditVariableComponent implements OnInit, OnChanges {
       elem.dispatchEvent(evt);
     }, 100);
   }
+
+
+
+  toggleSwitch(option: boolean) {
+   /* this.isConstante = (option === 'constante');*/
+    this.constante = option;
+  }
+
+
 }

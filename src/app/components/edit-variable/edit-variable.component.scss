@@ -189,3 +189,37 @@ input-group-sm > .btn,
   border-left-color: #51bfc4;
   animation: spin 2s linear infinite;
 }
+.switch-container {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 6px;
+    user-select: none;
+    height: 44px;
+}
+.switch-option {
+    flex: 1;
+   
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+.switch-option.active {
+    background-color: rgba(229, 220, 237, 1);
+    
+    border-radius: 6px;
+    p{
+      color: rgba(56, 37, 74, 1);
+      margin-top: 3px;
+    }
+}
+.switch-option:not(.active) {
+    background-color: #f1f1f1;
+    
+    border-radius: 6px;
+    p{
+     color: rgba(100, 116, 139, 1); 
+     margin-top: 3px;
+    }
+}
