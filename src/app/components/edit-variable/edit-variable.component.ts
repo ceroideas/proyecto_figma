@@ -787,6 +787,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       }
     }
 
+    variable.isActive = true;
+
     this.calculos.push(variable.name);
     const variableTo =
       variable.type === 2 ? variable.calculated : variable.sceneries;
@@ -796,6 +798,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     /*  this.operationResult(); */
     this.sendOperations.push(id);
+
+    console.log(this.calculos, "CALCUJLOS")
   }
   operationResult() {
     type YearValue = {
@@ -895,6 +899,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos.splice(i, 1);
     this.operations.splice(i, 1);
     this.sendOperations.splice(i, 1);
+
+
+
   }
   submitEdit() {
     const editVariable = {
@@ -1531,6 +1538,12 @@ export class EditVariableComponent implements OnInit, OnChanges {
    /* this.isConstante = (option === 'constante');*/
     this.constante = option;
   }
+
+    toggleActive(node: any) {
+/*    node.isActive = !node.isActive;
+    this.getNumberOfActiveNodes();*/
+  }
+
 
 
 }

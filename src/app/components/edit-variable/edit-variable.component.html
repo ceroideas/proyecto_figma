@@ -136,10 +136,14 @@
           </div>
 
           <div class="variable-box d-flex flex-wrap">
-            <div *ngFor="let variable of variables">
+            <div style="height: 30px !important;" *ngFor="let variable of variables">
               <div
-                style="cursor: pointer"
+         
                 class="mr-1 p-1"
+                [ngClass]="{
+                'operation-varible2': true,
+                'operation-varible': variable.isActive
+              }"
                 (click)="addVariable(variable, variable.id)"
                 *ngIf="editVariable ? variable.id !== +nodeId : true"
               >
@@ -148,7 +152,10 @@
                   src="../../../assets/icons/database.svg"
                   alt="User Icon"
                 />
-                {{ variable.name }}
+                <label style="margin-top: 2px; margin-bottom: -1px;">
+                   {{ variable.name }}
+                </label>
+               
               </div>
             </div>
           </div>
@@ -161,22 +168,26 @@
             <p class="mb-0">Add operators</p>
           </div>
 
-          <div class="operator-box d-flex flex-wrap">
+          <div  class="operator-box d-flex flex-wrap">
             <div
               (click)="togglePopover()"
-              style="cursor: pointer"
+              style="cursor: pointer;border-radius: 10px; background-color: rgba(195, 206, 255, 1); height: 35px; width: auto; font-size: 15px; padding: 0px 5px 10px 5px; font-weight: bolder; color: rgba(0, 15, 85, 1);"
               class="mr-1 p-1"
             >
               <img
-                class="user-icon"
-                src="../../../assets/icons/database.svg"
+              style="width: 24px; height: 24px;"
+                class="user-icon mr-2"
+                src="../../../assets/icons/icon.svg"
                 alt="User Icon"
               />
+              <label class="mr-1">
               custom
+              </label>
+              
             </div>
             <div *ngIf="mostrarPopover" class="popover" #popover>
               <input
-                style="font-size: 20px"
+                style="font-size: 20px; cursor: pointer;border-radius: 10px; background-color: rgba(195, 206, 255, 1);gap: 4px;"
                 onkeydown="return /[^a-zA-Z]/.test(event.key) || event.key === 'Backspace' || event.key === 'Tab'"
                 type="text"
                 [(ngModel)]="inputValue"
@@ -185,17 +196,27 @@
               <button (click)="addCustom()">Save</button>
             </div>
             <div
+            
               *ngFor="let operator of operators"
-              style="cursor: pointer"
-              class="mr-1 p-1"
+        
+              class="mr-1  mb-2 operation-varible2"
               (click)="addCalculo(operator)"
             >
+            <div>
               <img
-                class="user-icon"
-                src="../../../assets/icons/database.svg"
+                class="user-icon mr-2"
+                style="width: 24px; height: 24px;"
+                src="../../../assets/icons/icon.svg"
                 alt="User Icon"
               />
-              {{ operator }}
+              <label class="mr-1">
+                 {{ operator }}
+              </label>
+
+            </div>
+
+             
+              
             </div>
           </div>
         </div>
@@ -220,7 +241,7 @@
                 src="../../../assets/icons/database.svg"
                 alt="User Icon"
               />
-              {{ calculo }}
+              {{ calculo.variable }}
 
               <!--           <a
                 (mouseover)="seleccionarCalculo(calculo)"
