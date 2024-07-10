@@ -87,6 +87,26 @@ export class EditVariableComponent implements OnInit, OnChanges {
     '&',
     '|',
   ];
+  operators_icon: any[] = [
+    { operator: '+', img: '../../../assets/icons/+_icon.svg' },
+    { operator: '-', img: '../../../assets/icons/-_icon.svg' },
+    { operator: '*', img: '../../../assets/icons/*_icon.svg' },
+    { operator: '/', img: '../../../assets/icons/lucide_slash.svg' },
+    { operator: '=', img: '../../../assets/icons/igual.svg' },
+    { operator: '(', img: '../../../assets/icons/tabler_parentheses.svg' },
+    { operator: ')', img: '../../../assets/icons/tabler_parentheses2.svg' },
+    { operator: '?', img: '../../../assets/icons/f7_question.svg' },
+    { operator: ':', img: '../../../assets/icons/:_icon.svg' },
+    { operator: '==', img: '' },
+    { operator: '!=', img: '' },
+    { operator: '>', img: '../../../assets/icons/fi_chevron-right.svg' },
+    { operator: '<', img: '../../../assets/icons/fi_chevron-left2.svg' },
+    { operator: '>=', img: '' },
+    { operator: '<=', img: '' },
+    { operator: '&', img: '../../../assets/icons/tabler_ampersand.svg' },
+    { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
+  ];
+
   @Input() isNewTree: boolean = false;
   calculos: any[] = [];
   disableSend: boolean = true;
@@ -437,6 +457,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       constante: this.constante,
       formula: this.sendOperations,
       unite: this.variableUnidad,
+      new_formula: this.calculos,
       distribution_shape: [
         {
           name:
@@ -516,6 +537,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       operation: !this.constante,
       constante: this.constante,
       unite: this.variableUnidad,
+      new_formula: this.calculos,
       distribution_shape: [
         {
           name:
@@ -789,7 +811,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     variable.isActive = true;
 
-    this.calculos.push(variable.name);
+    this.calculos.push({ name: variable.name, operator: false, id: id });
     const variableTo =
       variable.type === 2 ? variable.calculated : variable.sceneries;
     this.operations.push(variableTo);
@@ -799,7 +821,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     /*  this.operationResult(); */
     this.sendOperations.push(id);
 
-    console.log(this.calculos, "CALCUJLOS")
+    console.log(this.calculos, 'CALCUJLOS');
   }
   operationResult() {
     type YearValue = {
@@ -860,16 +882,23 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.showNewEscenario = newEscenario;
   }
 
-  addCalculo(operation: string) {
+  addCalculo(operation: any) {
     // if (this.sendOperations.length > 0) {
     console.log(operation, 'OERATION');
-    this.calculos.push(operation);
-    this.operations.push([{ name: operation }]);
+    this.calculos.push({
+      name: operation.operator,
+      img: operation.img,
+      operator: true,
+      id: operation.operator,
+    });
+    this.operations.push([{ name: operation.operator }]);
 
-    this.sendOperations.push(operation);
+    this.sendOperations.push(operation.operator);
     // }
 
     /*   this.operationResult(); */
+
+    console.log(this.sendOperations, 'S');
   }
 
   addCustom() {
@@ -879,9 +908,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.inputValue = (+valueBase / 100).toString();
     }
 
-    this.calculos.push(this.inputValue);
+    this.calculos.push({ name: this.inputValue, operator: false });
     this.operations.push([{ name: this.inputValue }]);
-    console.log(this.calculos, 'new_formula');
+
     this.sendOperations.push(this.inputValue);
     console.log(this.sendOperations, 'formula');
     this.inputValue = '';
@@ -899,15 +928,13 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos.splice(i, 1);
     this.operations.splice(i, 1);
     this.sendOperations.splice(i, 1);
-
-
-
   }
   submitEdit() {
     const editVariable = {
       name: this.variableName,
       description: this.variableDescription,
       formula: this.sendOperations,
+      new_formula: this.calculos,
     };
 
     this.projectSvc
@@ -1532,18 +1559,22 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }, 100);
   }
 
-
-
   toggleSwitch(option: boolean) {
-   /* this.isConstante = (option === 'constante');*/
+    /* this.isConstante = (option === 'constante');*/
     this.constante = option;
   }
 
-    toggleActive(node: any) {
-/*    node.isActive = !node.isActive;
+  toggleActive(node: any) {
+    /*    node.isActive = !node.isActive;
     this.getNumberOfActiveNodes();*/
   }
 
-
-
+  nodeInCalculo(id: any) {
+    const find = this.calculos.find((calculo: any) => calculo.id == id);
+    if (find) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
