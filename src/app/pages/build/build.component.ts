@@ -39,6 +39,7 @@ export class BuildComponent implements OnInit {
   editVariable: boolean = false;
   hidden: boolean = false;
   isNewTree: boolean = false;
+  isFullScreen: boolean = false;
   id!: any;
   cleanSceneries: any[] = [];
   esceneries: any[] = [];
@@ -63,8 +64,6 @@ export class BuildComponent implements OnInit {
 
   loadedCallBack = false;
 
-  // cargando = false;
-
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService,
@@ -76,8 +75,6 @@ export class BuildComponent implements OnInit {
 
   ngOnInit() {
     this.id = this.route.snapshot.params['id'];
-
-    var _this = this;
 
     google.charts.load('current', { packages: ['orgchart'] });
 
@@ -187,9 +184,8 @@ export class BuildComponent implements OnInit {
           }
         );
 
-
         var showElements = document.querySelectorAll('.btn-show');
-         Array.prototype.forEach.call(
+        Array.prototype.forEach.call(
           showElements,
           (showElements: HTMLElement) => {
             showElements.addEventListener('click', (e) => {
@@ -199,8 +195,6 @@ export class BuildComponent implements OnInit {
             });
           }
         );
-
-
       });
 
       this.chart.draw(this.data, { allowHtml: true });
@@ -211,103 +205,42 @@ export class BuildComponent implements OnInit {
         line.style.borderColor = '#8c64b1';
       });
 
+      const color = '140,100,177';
+
+      function lightenColor(rgb: any) {
+        let [r, g, b] = rgb.split(',').map(Number);
+
+        r = Math.min(Math.floor(r + (255 - r) * 0.8), 255);
+        g = Math.min(Math.floor(g + (255 - g) * 0.8), 255);
+        b = Math.min(Math.floor(b + (255 - b) * 0.8), 255);
+
+        //
+        return `${r},${g},${b}`;
+      }
 
       const tds = document.querySelectorAll('td');
 
-
-      tds.forEach(td => {
-      
+      tds.forEach((td) => {
         const div = td.querySelector('div');
-        
-         
-          // Si el 'div' tiene el id '1', añadir la clase box-shadow-1
+
         if (div && div.id === '1') {
-          td.classList.add('box-shadow-1');
+          const lightenedColor = lightenColor(color);
+          td.style.setProperty(
+            'background-color',
+            `rgb(${lightenedColor})`,
+            'important'
+          );
+          td.style.setProperty(
+            'box-shadow',
+            `0 0 0 1px rgb(${color}) inset`,
+            'important'
+          );
         }
 
-        // Si el 'div' tiene el id '2', añadir la clase box-shadow-2
         if (div && div.id === '2') {
           td.classList.add('box-shadow-2');
         }
       });
-
-      /*this.cargando = true;
-
-      function eventClick(this: any, e: any) {
-        e.stopPropagation();
-
-        console.log('event');
-
-        _this.loadedCallBack = false;
-
-        var floatingElement = this.querySelector('.floating') as HTMLElement;
-
-        if (floatingElement.style.display === 'block') {
-          var floatingElement2 = document.body.querySelectorAll('.floating');
-          var tds = document.body.querySelectorAll(
-            '.google-visualization-orgchart-node'
-          );
-          tds.forEach(function (element: any) {
-            element.style.zIndex = '1';
-          });
-
-          floatingElement2.forEach(function (element: any) {
-            element.style.display = 'none';
-          });
-        } else if (floatingElement.style.display === 'none') {
-          var floatingElement2 = document.body.querySelectorAll('.floating');
-
-          var tds = document.body.querySelectorAll(
-            '.google-visualization-orgchart-node'
-          );
-          tds.forEach(function (element: any) {
-            element.style.zIndex = '1';
-          });
-
-          floatingElement2.forEach(function (element: any) {
-            element.style.display = 'none';
-          });
-          floatingElement.style.display = 'block';
-          this.style.zIndex = '5';
-        }
-      }
-
-      let contador = 0;
-
-      const interval = setInterval(() => {
-        var orgChartTables = document.querySelectorAll(
-          '.google-visualization-orgchart-table'
-        );
-
-        console.log('loadedCallBack', this.loadedCallBack);
-
-        contador += orgChartTables.length;
-
-        if (orgChartTables.length > 0 && contador > 1) {
-          clearInterval(interval);
-          contador = -99;
-
-          var rotateElements = document.querySelectorAll(
-            '.google-visualization-orgchart-node'
-          );
-
-          if (!this.loadedCallBack) {
-            console.log('loadedCallBack');
-
-            setTimeout(() => {
-              _this.cargando = false;
-            }, 10);
-            this.loadedCallBack = true;
-            Array.prototype.forEach.call(
-              rotateElements,
-              function (rotateElement: HTMLElement) {
-                rotateElement.removeEventListener('click', eventClick);
-                rotateElement.addEventListener('click', eventClick);
-              }
-            );
-          }
-        }
-      }, 1000);*/
     };
 
     google.charts.setOnLoadCallback(this.drawChart);
@@ -315,8 +248,7 @@ export class BuildComponent implements OnInit {
     this.countHidden = this.aux.filter((obj: any) => obj.hidden === 1).length;
 
     this.printAll();
-
-     }
+  }
 
   setListeners(event: any): any {
     // Obtiene el elemento más cercano con la clase especificada
@@ -447,7 +379,7 @@ export class BuildComponent implements OnInit {
 
   addRow() {
     this.rows = [];
- 
+
     for (let i = 0; i < this.aux.length; i++) {
       const element = this.aux[i];
       if (element.hiddenNodeSon) {
@@ -476,11 +408,6 @@ export class BuildComponent implements OnInit {
       (item: any) => item.data[1] === this.nodeName
     );
 
-
-
-
-
-
     if (fatherNode.length > 0) {
       const takeSonNode = this.aux.filter(
         (item: any) => item.data[1] === fatherNode[0].data[0].v
@@ -489,18 +416,13 @@ export class BuildComponent implements OnInit {
       fatherNode[0].hiddenNodeSon = haveHidden;
     }
 
-const initialCount = this.aux.filter(
-        (item: any) => item.data[1] === fatherNode[0].data[0].v && item.hidden == 1
-      ).length;
+    const initialCount = this.aux.filter(
+      (item: any) =>
+        item.data[1] === fatherNode[0].data[0].v && item.hidden == 1
+    ).length;
 
-    
     let count = initialCount;
 
-
-    
-    
-  
-    
     node.hidden = 1;
     /*   sonNode.forEach((node: any) => {
       node.hidden = 1;
@@ -512,17 +434,12 @@ const initialCount = this.aux.filter(
         node.hidden = 1;
       });
     }); */
-  
+
     const hideSons = (childNode: any) => {
-
       childNode.forEach((node: any) => {
-      
-     
         node.hidden = 1;
-        count++
+        count++;
 
-
-       
         const sonNode = this.aux.filter(
           (item: any) => item.data[1] === node.data[0].v
         );
@@ -530,14 +447,13 @@ const initialCount = this.aux.filter(
         if (sonNode.length > 0) {
           hideSons(sonNode);
         }
-        
       });
     };
 
     hideSons(sonNode);
-    
-    if(fatherNode[0])  fatherNode[0].branches = count;
-   
+
+    if (fatherNode[0]) fatherNode[0].branches = count;
+
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
@@ -545,12 +461,9 @@ const initialCount = this.aux.filter(
   }
 
   findAndShowFatherNode() {
-
-
     const node = this.aux.find((item: any) =>
       item.data.some((subItem: any) => subItem.v === this.nodeName)
     );
-    
 
     const fatherNode = this.aux.filter(
       (item: any) => item.data[0].v === node.data[1]
@@ -559,8 +472,8 @@ const initialCount = this.aux.filter(
     const sonNode = this.aux.filter(
       (item: any) => item.data[1] === this.nodeName && item.hidden == 1
     );
-    
-  if (fatherNode.length > 0) {
+
+    if (fatherNode.length > 0) {
       const takeSonNode = this.aux.filter(
         (item: any) => item.data[1] === fatherNode[0].data[0].v
       );
@@ -570,57 +483,48 @@ const initialCount = this.aux.filter(
     node.hidden = 0;
     node.hiddenNodeSon = false;
 
-
-    
-
     const hideSons = (childNode: any) => {
       childNode.forEach((node: any) => {
-        
-        if(!node.hiddenNodeSon){
+        if (!node.hiddenNodeSon) {
+          node.hidden = 0;
+          node.hiddenNodeSon = false;
+          const sonNode = this.aux.filter(
+            (item: any) => item.data[1] === node.data[0].v
+          );
 
-
-       
-        node.hidden = 0;
-        node.hiddenNodeSon = false
-        const sonNode = this.aux.filter(
-          (item: any) => item.data[1] === node.data[0].v
-        );
-
-        if (sonNode.length > 0) {
-          hideSons(sonNode);
-        }
+          if (sonNode.length > 0) {
+            hideSons(sonNode);
+          }
         } else {
           let count = 0;
-          
-          const countHiddenNodes = (nodes:any) => {
 
-            nodes.forEach((node:any) => {
-           const hiddenNodes = this.aux.filter((item: any) => item.data[1] === node.data[0].v && item.hidden == 1);
-          
-           count += hiddenNodes.length
+          const countHiddenNodes = (nodes: any) => {
+            nodes.forEach((node: any) => {
+              const hiddenNodes = this.aux.filter(
+                (item: any) =>
+                  item.data[1] === node.data[0].v && item.hidden == 1
+              );
 
-          if(hiddenNodes.length > 0){
-            countHiddenNodes(hiddenNodes)
-           }
+              count += hiddenNodes.length;
 
-          }) 
+              if (hiddenNodes.length > 0) {
+                countHiddenNodes(hiddenNodes);
+              }
+            });
+          };
 
+          const nodoPass = [node];
+          countHiddenNodes(nodoPass);
 
-          }
-          
-          const nodoPass = [node]
-          countHiddenNodes(nodoPass)
-       
           node.hidden = 0;
           node.branches = count;
         }
-
       });
     };
 
     hideSons(sonNode);
     node.branches = 0;
- 
+
     this.addRow();
     this.chart.draw(this.data, { allowHtml: true });
     google.charts.setOnLoadCallback(this.drawChart);
@@ -742,7 +646,8 @@ const initialCount = this.aux.filter(
 
       fatherNode[0].hiddenNodeSon = haveHidden;
       fatherNode[0].branches = this.aux.filter(
-        (item: any) => item.data[1] === fatherNode[0].data[0].v && item.hidden == 1
+        (item: any) =>
+          item.data[1] === fatherNode[0].data[0].v && item.hidden == 1
       ).length;
     } else {
       const takeSonNode = this.aux.filter(
@@ -824,7 +729,6 @@ const initialCount = this.aux.filter(
 
       if (res.nodes?.length > 0) {
         res.nodes.forEach((element: any) => {
-         
           if (element.hidden_table) {
             this.selectedHidden.push(element.id);
           }
@@ -906,7 +810,7 @@ const initialCount = this.aux.filter(
             </span>
     
      </div>`,
-            f_alternative: (branches:any) => {
+            f_alternative: (branches: any) => {
               return `<div id="${element.type}"  class="rotate" >
             
             <span>
@@ -944,9 +848,8 @@ const initialCount = this.aux.filter(
                    
             </span>
     
-     </div>`
-            }
-        ,
+     </div>`;
+            },
           };
           this.aux.push(data);
 
@@ -1018,7 +921,7 @@ const initialCount = this.aux.filter(
           return element !== undefined;
         });
 
-        console.log(filterNodeTier, "FILE")
+      console.log(filterNodeTier, 'FILE');
 
       for (let i = 0; i < filterNodeTier.length; i++) {
         const element = filterNodeTier[i];
@@ -1206,6 +1109,44 @@ const initialCount = this.aux.filter(
     }
   }
 
+  zoom(delta: number) {
+    this.zoomLevel += delta;
+    if (this.zoomLevel < 0.5) {
+      this.zoomLevel = 0.5;
+    }
+    if (this.zoomLevel > 3) {
+      this.zoomLevel = 3;
+    }
+    this.zoomElement.nativeElement.style.transform = `scale(${this.zoomLevel})`;
+  }
+
+  zoomIn() {
+    this.zoom(0.1);
+  }
+
+  zoomOut() {
+    this.zoom(-0.1);
+  }
+
+  toggleFullScreen() {
+    const elem = this.captureElement.nativeElement;
+    if (!document.fullscreenElement) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen().catch((err: any) => {
+          console.error(
+            `Error attempting to enable full-screen mode: ${err.message} (${err.name})`
+          );
+        });
+      }
+    } else {
+      document.exitFullscreen().catch((err) => {
+        console.error(
+          `Error attempting to exit full-screen mode: ${err.message} (${err.name})`
+        );
+      });
+    }
+  }
+
   selectTr(node: any) {
     let id = node.data[0].v;
     console.log('selectTr', id);
@@ -1312,36 +1253,34 @@ const initialCount = this.aux.filter(
     });
   }
 
- countHiddenNodes(node:any,aux:any) {
-  // Contador de nodos ocultos
-  let hiddenCount = 0;
+  countHiddenNodes(node: any, aux: any) {
+    // Contador de nodos ocultos
+    let hiddenCount = 0;
 
-  // Función recursiva para contar nodos ocultos
-  function countHiddenRecursive(currentNode:any) {
-    // Filtra los nodos hijos ocultos del nodo actual
+    // Función recursiva para contar nodos ocultos
+    function countHiddenRecursive(currentNode: any) {
+      // Filtra los nodos hijos ocultos del nodo actual
 
-   currentNode.forEach((node:any) => {
-       const hiddenChildren = aux.filter(
-      (item:any) =>  item.data[1] === currentNode[0].data[0].v && item.hidden == 1
-    );
+      currentNode.forEach((node: any) => {
+        const hiddenChildren = aux.filter(
+          (item: any) =>
+            item.data[1] === currentNode[0].data[0].v && item.hidden == 1
+        );
 
-    // Incrementa el contador por los nodos hijos ocultos encontrados
-    hiddenCount += hiddenChildren.length;
+        // Incrementa el contador por los nodos hijos ocultos encontrados
+        hiddenCount += hiddenChildren.length;
 
-    // Llama recursivamente a la función para cada nodo hijo oculto
-    hiddenChildren.forEach((child:any) => {
-      countHiddenRecursive(child);
-    });
-   })
+        // Llama recursivamente a la función para cada nodo hijo oculto
+        hiddenChildren.forEach((child: any) => {
+          countHiddenRecursive(child);
+        });
+      });
+    }
 
+    // Inicia el conteo recursivo desde el nodo padre proporcionado
+    countHiddenRecursive(node);
+
+    // Devuelve el conteo total de nodos ocultos
+    return hiddenCount;
   }
-
-  // Inicia el conteo recursivo desde el nodo padre proporcionado
-  countHiddenRecursive(node);
-
-  // Devuelve el conteo total de nodos ocultos
-  return hiddenCount;
 }
-
-}
-
