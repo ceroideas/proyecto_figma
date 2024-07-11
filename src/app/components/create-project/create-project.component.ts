@@ -37,32 +37,30 @@ export class CreateProjectComponent {
 
   growthPercentage: number = 0;
   percentageError: boolean = false;
-  yearsDefault: number[] = []
+  yearsDefault: number[] = [];
   growth: boolean = false;
 
-
-  selectNumber: number[] = [1,2,3,4,5,6,7,8,9,10]
-  selectedNumber: any = "#";
+  selectNumber: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  selectedNumber: any = '#';
 
   constructor(private router: Router, private projectSvc: ProjectService) {
     this.getYears();
   }
 
   addInput() {
-/*    this.inputCount++;
+    /*    this.inputCount++;
     const inputKey = `scenary-${this.inputCount}`;
     this.inputs.push(inputKey);
     this.inputValues[inputKey] = ''; 
 */
 
-    this.inputs = []
+    this.inputs = [];
 
     for (var i = 0; i < this.selectedNumber; ++i) {
       const inputKey = `scenary-${i}`;
       this.inputs.push(inputKey);
       this.inputValues[inputKey] = ''; // Inicializa el valor del nuevo input
     }
-   
   }
 
   removeInput() {
@@ -86,38 +84,36 @@ export class CreateProjectComponent {
 
   onFromSelected(from: number) {
     this.yearsTo = this.years.filter((year) => year > from);
-    this.defaultYear()
+    this.defaultYear();
   }
 
-  defaultYear(){
-    if(this.yearFrom && this.yearTo){
-
+  defaultYear() {
+    if (this.yearFrom && this.yearTo) {
       for (let year = this.yearFrom; year <= this.yearTo; year++) {
-      this.yearsDefault.push(year);
-    }
-
-    console.log(this.yearsDefault, "DEFAULKT")
-
+        this.yearsDefault.push(year);
+      }
     }
   }
-
 
   createProject() {
-    const allValuesNonEmpty = (object:any) => {
-      return Object.values(object).every(value => value !== '' && value !== null && value !== undefined);
-      };
+    const allValuesNonEmpty = (object: any) => {
+      return Object.values(object).every(
+        (value) => value !== '' && value !== null && value !== undefined
+      );
+    };
 
     const project = {
       name: this.nameProject,
       year_from: this.yearFrom,
       year_to: this.yearTo,
       default_year: this.yearDefault,
-      growth:this.growth,
-      growthPercentage:this.growthPercentage,
+      default_growth: this.growth,
+      default_growth_percentage: this.growthPercentage,
       sceneries: Object.values(this.inputValues),
+      line_color: this.colorBar,
     };
     console.log(project);
-    console.log(this.inputValues, "VALUE")
+    console.log(this.inputValues, 'VALUE');
 
     if (
       this.nameProject === '' ||
@@ -139,9 +135,7 @@ export class CreateProjectComponent {
         if (result.isConfirmed) {
           const openButton = document.querySelector('#createProjectModal');
 
-          
           if (openButton) {
-            
             (openButton as HTMLElement).click();
           }
         }
@@ -188,15 +182,14 @@ export class CreateProjectComponent {
           }
         }
       });
-    }
-    else {
-     this.closeModal();
+    } else {
+      this.closeModal();
       this.projectSvc.saveProject(project).subscribe((res) => {
         this.createProjectEvent.emit();
       });
     }
 
-    this.router.navigate(['home/build'], { queryParams: project }); 
+    this.router.navigate(['home/build'], { queryParams: project });
   }
 
   closeModal() {
@@ -207,12 +200,11 @@ export class CreateProjectComponent {
     }
   }
 
-
-    selectColor(color: string, event: any) {
-      this.colorBar = color;
+  selectColor(color: string, event: any) {
+    this.colorBar = color;
   }
 
-    validatePercentage() {
+  validatePercentage() {
     if (this.growthPercentage < 0) {
       this.growthPercentage = 0;
       this.percentageError = true;

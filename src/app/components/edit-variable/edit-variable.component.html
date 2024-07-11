@@ -311,7 +311,7 @@
               <div
                 class="d-flex justify-content-between align-items-start w-100 mb-3"
               >
-                <div class="col-md-11">
+                <!--                 <div class="col-md-11">
                   <div class="input-group">
                     <input
                       style="width: 240px"
@@ -324,28 +324,33 @@
                       (change)="saveNewValue()"
                     />
                   </div>
+                </div> -->
+                <div class="input-group mb-3">
+                  <span
+                    style="background-color: rgba(207, 242, 248, 1) !important"
+                    class="input-group-text chart-span"
+                    id="min"
+                    >2015:</span
+                  >
+                  <input
+                    style="
+                      background-color: rgba(207, 242, 248, 1) !important;
+                      height: 39px;
+                      border-left: none;
+                      color: #000f55;
+                    "
+                    [(ngModel)]="variableUnidad"
+                    onkeydown="return /[0-9%.\-]/.test(event.key) || event.key === 'Backspace'"
+                    (change)="saveNewValue()"
+                    aria-describedby="basic-addon1"
+                    type="text"
+                    class="form-control chart-inputs"
+                    aria-describedby="min"
+                  />
                 </div>
               </div>
             </div>
-            <div
-              class="d-flex"
-              style="justify-content: space-between; width: 192px"
-            >
-              <div
-                style="
-                  width: 59px;
-                  height: 28px;
-                  border-radius: 10px;
-                  padding: 5px;
-                  gap: 10px;
-                  background-color: rgba(207, 242, 248, 1);
-                  margin-top: 5px;
-                  color: rgba(0, 15, 85, 1);
-                  font-weight: bolder;
-                "
-              >
-                2015:5
-              </div>
+            <div class="d-flex" style="justify-content: space-between">
               <label
                 (click)="setEvent()"
                 data-bs-toggle="modal"
@@ -359,6 +364,7 @@
                   margin-top: 11px;
                   margin-left: 10px;
                   cursor: pointer;
+                  margin-right: -10px;
                 "
               >
                 Ver todos los años
@@ -366,26 +372,6 @@
             </div>
           </div>
 
-          <!--          <div
-            class="d-flex justify-content-between align-items-start w-100 mb-3"
-            [class]="constante ? '' : 'mt-4'"
-          >
-            <div [class]="constante ? 'col-md-11' : 'w-100'">
-              <div class="input-group">
-                <input
-                  data-bs-toggle="modal"
-                  data-bs-target="#shapeModal"
-                  type="text"
-                  class="form-control mb-0 input-margin"
-                  [class]="
-                    constante ? 'input-formula' : 'input-formula-variable'
-                  "
-                  placeholder="Distribution shape"
-                  aria-describedby="basic-addon1"
-                />
-              </div>
-            </div>
-          </div> -->
           <div>
             <div
               class="d-flex mt-4"

@@ -61,6 +61,10 @@ export class BuildComponent implements OnInit {
 
   selected: number[] = [];
   selectedHidden: number[] = [];
+  defaultYear!: number;
+  constantColor!: string;
+  defaultGrowth!: any;
+  defaultGrowthPercentage!: number;
 
   loadedCallBack = false;
 
@@ -205,8 +209,6 @@ export class BuildComponent implements OnInit {
         line.style.borderColor = '#8c64b1';
       });
 
-      const color = '140,100,177';
-
       function lightenColor(rgb: any) {
         let [r, g, b] = rgb.split(',').map(Number);
 
@@ -219,12 +221,12 @@ export class BuildComponent implements OnInit {
       }
 
       const tds = document.querySelectorAll('td');
-
+      console.log(this.constantColor, 'COLOR');
       tds.forEach((td) => {
         const div = td.querySelector('div');
 
         if (div && div.id === '1') {
-          const lightenedColor = lightenColor(color);
+          const lightenedColor = lightenColor(this.constantColor);
           td.style.setProperty(
             'background-color',
             `rgb(${lightenedColor})`,
@@ -232,7 +234,7 @@ export class BuildComponent implements OnInit {
           );
           td.style.setProperty(
             'box-shadow',
-            `0 0 0 1px rgb(${color}) inset`,
+            `0 0 0 1px rgb(${this.constantColor}) inset`,
             'important'
           );
         }
@@ -708,6 +710,7 @@ export class BuildComponent implements OnInit {
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
       this.project = res;
+      this.constantColor = res.line_color;
       this.lastPosition = this.project.position
         ? JSON.parse(this.project.position)
         : { x: 0, y: 0 };

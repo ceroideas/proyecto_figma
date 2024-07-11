@@ -57,5 +57,10 @@
 .canvas-style {
   display: block;
   overflow: hidden;
-  height: 550px !important;
+  height: 450px !important;
+}
+input.input-formula:focus {
+  outline: none !important;
+  border-color: #ced4da !important;
+  background-color: rgba(207, 242, 248, 1) !important;
 }

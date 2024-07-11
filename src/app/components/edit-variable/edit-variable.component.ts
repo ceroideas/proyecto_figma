@@ -590,7 +590,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       if (this.disable()) {
         Swal.fire({
           title: 'Error',
-          text: 'The name and description are required.',
+          text: 'The name are required.',
           icon: 'error',
           iconColor: '#BC5800',
           customClass: {
@@ -616,7 +616,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       if (this.disable()) {
         Swal.fire({
           title: 'Error',
-          text: 'The name and description are required.',
+          text: 'The name  are required.',
           icon: 'error',
           iconColor: '#BC5800',
           customClass: {

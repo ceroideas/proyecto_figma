@@ -62,6 +62,7 @@ export class UniteModalComponent implements OnInit {
   deleteEsceneries: boolean = false;
   oldEscenarieId!: any;
   unite!: any;
+  nodeName!: string;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
@@ -260,7 +261,7 @@ export class UniteModalComponent implements OnInit {
         labels: years,
         datasets: [
           {
-            label: '# of Votes',
+            label: '#',
             data: this.values,
             fill: true,
             tension: 0.4,
@@ -397,7 +398,7 @@ export class UniteModalComponent implements OnInit {
         labels: years,
         datasets: [
           {
-            label: '# of Votes',
+            label: '#',
             data: this.values,
             fill: true,
             tension: 0.4,
@@ -487,6 +488,7 @@ export class UniteModalComponent implements OnInit {
 
     if (this.edit) {
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+        this.nodeName = res.name;
         this.escenarys = res.sceneries;
         this.unite = res.unite;
         this.years = [this.escenarys[0]?.years];
