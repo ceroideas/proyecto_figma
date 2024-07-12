@@ -62,5 +62,15 @@
 input.input-formula:focus {
   outline: none !important;
   border-color: #ced4da !important;
-  background-color: rgba(207, 242, 248, 1) !important;
+  /*   background-color: rgba(207, 242, 248, 1) !important; */
+}
+.create-scenario-button {
+  display: flex;
+  background-color: rgba(0, 15, 85, 1);
+  width: 34px;
+  height: 34px;
+  padding: 4px;
+  border-radius: 35px;
+  gap: 10px;
+  cursor: pointer;
 }

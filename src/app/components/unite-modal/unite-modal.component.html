@@ -72,7 +72,7 @@
             </button>
           </div>
           <div *ngIf="edit" class="col-md-1">
-            <button
+            <!--             <button
               (click)="addEscenary()"
               style="margin-top: 65px"
               class="unite-button"
@@ -85,7 +85,15 @@
                 "
                 alt=""
               />
-            </button>
+            </button> -->
+
+            <div
+              (click)="addEscenary()"
+              style="margin-top: 73px; margin-left: 40px"
+              class="create-scenario-button"
+            >
+              <img src="../../../assets/icons/u_plus.svg" alt="" />
+            </div>
           </div>
           <button
             type="button"
@@ -120,6 +128,7 @@
                 name="name"
                 [(ngModel)]="model.name"
                 class="form-control input-formula"
+                style="background-color: #fff !important"
               />
             </div>
             <div class="d-flex flex-wrap">
