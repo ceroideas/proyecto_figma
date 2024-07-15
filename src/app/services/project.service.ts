@@ -69,4 +69,11 @@ export class ProjectService {
   getNodeData(formula: any) {
     return this.http.post(`${this.url}/definitelyNotEval`, formula);
   }
+
+  uploadProject(file: File, id: any) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http.post(`${this.url}/uploadProject/${id}`, formData);
+  }
 }

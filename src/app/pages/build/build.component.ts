@@ -1307,4 +1307,31 @@ export class BuildComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['home/projects']);
   }
+
+  downloadProjectById(): void {
+    this.projectSvc.getProject(this.id).subscribe((project: any) => {
+      const projectJson = JSON.stringify(project);
+      const blob = new Blob([projectJson], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${project.name}.json`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.projectSvc.uploadProject(file, this.id).subscribe(
+        (response) => {
+          this.printAll();
+        },
+        (error) => {
+          console.error('Upload error:', error);
+        }
+      );
+    }
+  }
 }
