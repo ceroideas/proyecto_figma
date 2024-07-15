@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ProjectService } from 'src/app/services/project.service';
 import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
@@ -71,6 +71,7 @@ export class BuildComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService,
+    private router: Router,
 
     private el: ElementRef
   ) {
@@ -83,8 +84,6 @@ export class BuildComponent implements OnInit {
     google.charts.load('current', { packages: ['orgchart'] });
 
     this.drawChart = () => {
-      console.log('loaded');
-
       this.data = new google.visualization.DataTable();
       this.data.addColumn('string', 'Name');
       this.data.addColumn('string', 'Manager');
@@ -221,7 +220,7 @@ export class BuildComponent implements OnInit {
       }
 
       const tds = document.querySelectorAll('td');
-      console.log(this.constantColor, 'COLOR');
+
       tds.forEach((td) => {
         const div = td.querySelector('div');
 
@@ -709,8 +708,10 @@ export class BuildComponent implements OnInit {
       this.projectName = res.name;
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
+      this.defaultYear = res.default_year;
       this.project = res;
       this.constantColor = res.line_color;
+      this.defaultGrowthPercentage = res.default_growth_percentage;
       this.lastPosition = this.project.position
         ? JSON.parse(this.project.position)
         : { x: 0, y: 0 };
@@ -735,6 +736,8 @@ export class BuildComponent implements OnInit {
           if (element.hidden_table) {
             this.selectedHidden.push(element.id);
           }
+
+          const defaultYearValue = element.unite;
 
           const data = {
             data: [
@@ -765,8 +768,14 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                  <label class="ovf">${element.name}</label>
-                   
+                   <div class="d-flex">
+                  <label style="position: relative; top: ${
+                    element.type == 1 && defaultYearValue != null ? '-10px' : ''
+                  };" class="ovf">${element.name}</label>
+                  <label style="position: absolute; top: 10px;right: 80px;">${
+                    defaultYearValue == undefined ? '' : defaultYearValue
+                  }</label>
+                   </div>
             </span>
     
      </div>`,
@@ -808,7 +817,16 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                  <label class="ovf">${element.name}</label>
+                   <div class="d-flex">
+                  <label style="position: relative; top: ${
+                    element.type == 1 && defaultYearValue != undefined
+                      ? '-10px'
+                      : ''
+                  };" class="ovf">${element.name}</label>
+                  <label style="position: absolute; top: 10px;right: 80px;" >
+                  ${defaultYearValue == undefined ? '' : defaultYearValue}
+                  </label>
+                   </div>
                    
             </span>
     
@@ -847,7 +865,15 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                 ${this.pointNode}<label class="ovf">${element.name}</label>
+                  <div class="d-flex">
+                 ${this.pointNode}<label style="position: relative; top: ${
+                element.type == 1 && defaultYearValue != null ? '-10px' : ''
+              };"  class="ovf">${element.name}</label>
+                 <label style="position: absolute; top: 10px;right: 80px;">${
+                   defaultYearValue == undefined ? '' : defaultYearValue
+                 }</label>
+                   </div>
+                 
                    
             </span>
     
@@ -898,8 +924,6 @@ export class BuildComponent implements OnInit {
     this.tierLv.sort(function (a, b) {
       return a - b;
     });
-
-    console.log(this.tierLv);
   }
 
   onSceneryChange() {
@@ -923,8 +947,6 @@ export class BuildComponent implements OnInit {
         .filter(function (element: any) {
           return element !== undefined;
         });
-
-      console.log(filterNodeTier, 'FILE');
 
       for (let i = 0; i < filterNodeTier.length; i++) {
         const element = filterNodeTier[i];
@@ -990,7 +1012,7 @@ export class BuildComponent implements OnInit {
 
   private updateZoom(save = true): void {
     const element = this.zoomElement.nativeElement;
-    console.log(this.zoomLevel);
+
     const elements = this.el.nativeElement.querySelectorAll('.ovf');
     const container = document.querySelector('#chart_container') as HTMLElement;
 
@@ -1152,7 +1174,7 @@ export class BuildComponent implements OnInit {
 
   selectTr(node: any) {
     let id = node.data[0].v;
-    console.log('selectTr', id);
+
     let el = this.selected.findIndex((x) => x == id);
 
     if (el != -1) {
@@ -1160,8 +1182,6 @@ export class BuildComponent implements OnInit {
     } else {
       this.selected.push(id);
     }
-
-    console.log(this.selected);
   }
 
   hideSelected() {
@@ -1171,7 +1191,6 @@ export class BuildComponent implements OnInit {
       );
 
       this.selectedHidden.push(i);
-      console.log((node.hiddenTable = 1));
     }
 
     this.projectSvc.setHiddenTable(this.selected).subscribe((data) => {
@@ -1243,7 +1262,6 @@ export class BuildComponent implements OnInit {
     // Liberar el objeto URL
     URL.revokeObjectURL(url);
 
-    console.log(csvString);
     // console.log(header,datos);
   }
 
@@ -1252,7 +1270,6 @@ export class BuildComponent implements OnInit {
 
     domtoimage.toPng(id).then((blob: any) => {
       this.projectSvc.updateProject(this.id, { thumb: blob }).subscribe();
-      console.log('CAPTURA GUARDADA');
     });
   }
 
@@ -1285,5 +1302,9 @@ export class BuildComponent implements OnInit {
 
     // Devuelve el conteo total de nodos ocultos
     return hiddenCount;
+  }
+
+  goBack(): void {
+    this.router.navigate(['home/projects']);
   }
 }

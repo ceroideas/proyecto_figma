@@ -18,10 +18,7 @@
   aria-hidden="true"
   data-bs-backdrop="static"
 >
-  <div
-    class="modal-dialog modal-dialog-scrollable"
-    [ngClass]="constante !== true ? 'modal-lg' : ''"
-  >
+  <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
       <div *ngIf="cargando" class="spinner-container">
         <div class="spinner"></div>
@@ -86,16 +83,24 @@
           <p class="mb-0">Variable name (*)</p>
         </div>
 
-        <div class="col-md-11">
+        <div class="">
           <div class="input-group">
-            <input
+            <!--             <input
               [(ngModel)]="variableName"
               (click)="editVariableAll()"
               type="text"
               class="form-control input-formula mb-0 input-margin"
               placeholder="Nombre"
               aria-describedby="basic-addon1"
-            />
+            /> -->
+            <p
+              [attr.contenteditable]="true"
+              class="mb-2 editable w-100 mt-3"
+              style="width: 95% !important"
+              (input)="onInputChange($event, 'variable')"
+            >
+              {{ variableName == "" ? "Insert a variable name" : variableName }}
+            </p>
           </div>
         </div>
 
@@ -108,11 +113,16 @@
           class="mt-3 d-flex justify-content-between align-items-start w-100"
         >
           <p
-            *ngIf="!editVariableDescription"
-            class="mb-2"
+            [attr.contenteditable]="true"
+            class="mb-2 editable"
             style="width: 95% !important"
+            (input)="onInputChange($event, 'descripcion')"
           >
-            {{ variableDescription }}
+            {{
+              variableDescription == ""
+                ? "Insert a description"
+                : variableDescription
+            }}
           </p>
           <div *ngIf="editVariableDescription" class="col-md-11">
             <div class="input-group">
@@ -126,7 +136,7 @@
               ></textarea>
             </div>
           </div>
-          <img
+          <!--           <img
             (click)="editVariableDescriptionClick()"
             class="user-icon"
             [src]="
@@ -135,7 +145,7 @@
                 : '../../../assets/icons/fi_edit-3.svg'
             "
             alt="User Icon"
-          />
+          /> -->
         </div>
         <div [class]="constante ? 'hide' : ''">
           <div
@@ -330,8 +340,10 @@
                     style="background-color: rgba(207, 242, 248, 1) !important"
                     class="input-group-text chart-span"
                     id="min"
-                    >2015:</span
                   >
+                    {{ defaultYear + " " + ":" }}
+                  </span>
+
                   <input
                     style="
                       background-color: rgba(207, 242, 248, 1) !important;

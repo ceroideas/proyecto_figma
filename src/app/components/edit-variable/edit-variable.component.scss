@@ -80,7 +80,7 @@ p {
   border: 2px solid rgb(199, 199, 199); /* Color y grosor del borde */
   padding: 20px; /* Espaciado interno del contenido con respecto al borde */
   overflow: auto; /* Agrega una barra de desplazamiento si el contenido es demasiado grande */
-  height: 100px; /* Altura inicial */
+  height: 150px; /* Altura inicial */
   min-height: 110px; /* Altura mínima */
 }
 .calculo-box {
@@ -219,16 +219,18 @@ input-group-sm > .btn,
 .switch-option.active {
   background-color: rgba(229, 220, 237, 1);
 
-  border-radius: 6px;
+  border-radius: 10px;
   p {
     color: rgba(56, 37, 74, 1);
     margin-top: 3px;
   }
 }
 .switch-option:not(.active) {
-  background-color: #f1f1f1;
+  /*  background-color: #f1f1f1; */
 
-  border-radius: 6px;
+  background-color: white;
+
+  border-radius: 10px;
   p {
     color: rgba(100, 116, 139, 1);
     margin-top: 3px;
@@ -238,4 +240,12 @@ input-group-sm > .btn,
 input.chart-inputs:focus {
   outline: none !important;
   border-color: #ced4da !important;
+}
+.modal-footer {
+  height: 100px !important;
+}
+
+[contenteditable="true"]:focus {
+  outline: none;
+  border: none;
 }

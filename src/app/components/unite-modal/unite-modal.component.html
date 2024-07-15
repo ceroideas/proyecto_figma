@@ -318,16 +318,22 @@
               Default growth
             </label>
             <input
-              value="4%"
-              disabled
+              [(ngModel)]="percentageGrowth"
+              (input)="onInput($event)"
               class="form-control input-formula"
               style="
                 background-color: rgba(246, 243, 249, 1);
                 color: #000f55;
                 width: 80px;
               "
+              type="number"
+              min="0"
+              max="100"
+              step="10"
             />
+
             <button
+              (click)="applyGrowth()"
               style="
                 width: 74px;
                 height: 36px;

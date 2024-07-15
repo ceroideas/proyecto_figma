@@ -5,6 +5,7 @@ import { InspectComponent } from './pages/inspect/inspect.component';
 import { WaterfallChartComponent } from './pages/waterfall-chart/waterfall-chart.component';
 import { SimulateComponent } from './pages/simulate/simulate.component';
 import { BuildComponent } from './pages/build/build.component';
+import { ScenarioCalculationComponent } from './pages/scenario-calculation/scenario-calculation.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home/projects', pathMatch: 'full' },
@@ -20,6 +21,10 @@ export const routes: Routes = [
       { path: 'waterfall', component: WaterfallChartComponent },
       { path: 'simulate/:id', component: SimulateComponent },
       { path: 'build/:id', component: BuildComponent },
+      {
+        path: 'scenario_calculation/:id',
+        component: ScenarioCalculationComponent,
+      },
     ],
   },
   // Otras rutas aquí...

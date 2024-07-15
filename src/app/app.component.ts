@@ -25,5 +25,5 @@ import { BuildModule } from './pages/build/build.module';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  title = 'figma';
+  title = 'Ztris';
 }

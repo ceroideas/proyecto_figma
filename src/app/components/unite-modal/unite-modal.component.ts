@@ -63,6 +63,10 @@ export class UniteModalComponent implements OnInit {
   oldEscenarieId!: any;
   unite!: any;
   nodeName!: string;
+  percentageGrowth!: any;
+  nodeData!: any;
+
+  @Input() defaultYear: number = 0;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
@@ -143,6 +147,12 @@ export class UniteModalComponent implements OnInit {
       if (openButton) {
         (openButton as HTMLElement).click();
       }
+
+      this.projectSvc
+        .updateNode(this.nodeId, {
+          default_growth_percentage: this.percentageGrowth,
+        })
+        .subscribe((res: any) => {});
     });
   }
   submitEscenario(escenarioForm: any) {
@@ -213,6 +223,7 @@ export class UniteModalComponent implements OnInit {
     ); */
 
     const values = Object.values(this.escenarys[this.selectedEscenary].years);
+    console.log(values);
 
     if (!this.values) {
       this.values = values;
@@ -492,7 +503,8 @@ export class UniteModalComponent implements OnInit {
         this.escenarys = res.sceneries;
         this.unite = res.unite;
         this.years = [this.escenarys[0]?.years];
-        console.log(res);
+        this.nodeData = res;
+        this.percentageGrowth = res.default_growth_percentage;
       });
     } else {
       this.escenarys = this.cleanEsceneries;
@@ -566,6 +578,42 @@ export class UniteModalComponent implements OnInit {
 
     if (!allowedChars.test(event.key) && event.key !== 'Backspace') {
       event.preventDefault();
+    }
+  }
+
+  applyGrowth() {
+    let decimalPercentage = parseFloat(this.percentageGrowth) / 100;
+
+    let years: any = this.model.years[0];
+
+    let defaultValue = parseFloat(years[this.defaultYear]);
+
+    for (let year in years) {
+      console.log(parseInt(year), this.defaultYear);
+      if (parseInt(year) > this.defaultYear) {
+        years[year] = (defaultValue * (1 + decimalPercentage)).toFixed(0);
+      }
+    }
+    const values = Object.values(years);
+    /*   this.years[0] = years; */
+    this.values = values;
+    this.renderChartVariable.destroy();
+    this.renderChart();
+  }
+
+  onInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    let value = parseFloat(input.value);
+
+    if (isNaN(value)) {
+      this.percentageGrowth = 0;
+    } else if (value > 100) {
+      this.percentageGrowth = 100;
+      input.value = '100'; // Opcional: para que el campo muestre 100
+    } else if (value < 0) {
+      this.percentageGrowth = 0;
+    } else {
+      this.percentageGrowth = value;
     }
   }
 }

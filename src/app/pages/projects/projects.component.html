@@ -1,40 +1,56 @@
 <app-create-project (createProjectEvent)="getProjects()"></app-create-project>
 
-
 <div class="d-flex flex-wrap justify-content-start">
- 
-<div
-  *ngFor="let project of projects; let i = index"
-  class="card mr-5 mb-5 p-1"
-  style="width: 18rem;"
-  (click)="onDivClick(i)"
->
-  <div *ngIf="selectedProjectIndex === i" class="overlay-custom" style="" >
-
-    <div >
+  <div
+    *ngFor="let project of projects; let i = index"
+    class="card mr-5 mb-5 p-1"
+    style="width: 18rem"
+    (click)="onDivClick(i)"
+  >
+    <div *ngIf="selectedProjectIndex === i" class="overlay-custom">
+      <div>
         <p class="select-title">{{ project.name }}</p>
-    </div>
-    <div style="margin-left: 28%;" class="d-flex mb-3" >
-      <div class="left-button" (click)="redirect($event, 'inspect', project.id)">
-        <img style="width: 30px; margin-left: 20%;" src="../../../assets/icons/presentation-chart-bar.svg">
       </div>
-      <div class="right-button" (click)="redirect($event, 'build', project.id)">
-        <img style="width: 30px; margin-left: 20%;" src="../../../assets/icons/fi_eye.svg">
+      <div style="margin-left: 28%" class="d-flex mb-3">
+        <div
+          class="left-button"
+          (click)="redirect($event, 'inspect', project.id)"
+        >
+          <img
+            style="width: 30px; margin-left: 20%"
+            src="../../../assets/icons/presentation-chart-bar.svg"
+          />
+        </div>
+        <div
+          class="right-button"
+          (click)="redirect($event, 'build', project.id)"
+        >
+          <img
+            style="width: 30px; margin-left: 20%"
+            src="../../../assets/icons/fi_eye.svg"
+          />
+        </div>
       </div>
-    </div>
-    <div style="margin-left: 28%;" class="d-flex" >
-      <div class="left-button" (click)="redirect($event, 'simulate', project.id)">
-        <img style="width: 30px; margin-left: 20%;" src="../../../assets/icons/chart-square-bar.svg">
-      </div>
-      <div class="right-button" (click)="deleteProject(project.id)">
-        <img style="width: 30px; margin-left: 20%;" src="../../../assets/icons/fi_trash-2.svg">
+      <div style="margin-left: 28%" class="d-flex">
+        <div
+          class="left-button"
+          (click)="redirect($event, 'simulate', project.id)"
+        >
+          <img
+            style="width: 30px; margin-left: 20%"
+            src="../../../assets/icons/chart-square-bar.svg"
+          />
+        </div>
+        <div class="right-button" (click)="deleteProject(project.id)">
+          <img
+            style="width: 30px; margin-left: 20%"
+            src="../../../assets/icons/fi_trash-2.svg"
+          />
+        </div>
       </div>
     </div>
 
-  </div>
-  
-
-<!--     <div *ngIf="selectedProjectIndex === i" class="buttons-container">
+    <!--     <div *ngIf="selectedProjectIndex === i" class="buttons-container">
    
       <button (click)="redirect($event, 'build', project.id)" class="button-up">
         <img src="../../../assets/icons/bar_chart_menu.svg" alt="" />
@@ -89,22 +105,21 @@
           alt="User Icon"
         />
         <div class="user-info">
-          <p class="user-name">Fernando Alcantara 
-            <img src="../../../assets/icons/verified-badge-fill.svg" alt="" /></p>
+          <p class="user-name">
+            Fernando Alcantara
+            <img src="../../../assets/icons/verified-badge-fill.svg" alt="" />
+          </p>
           <p class="card-text">Owner</p>
-
-
         </div>
-
       </div>
-        <div style="grid-gap: 5px" class="d-flex mt-2">
-          <div class="popular-div">
-            <p >Popular</p>
-          </div>
-          <div class="new-div">
-            <p >New</p>
-          </div>
-         </div>
+      <div style="grid-gap: 5px" class="d-flex mt-2">
+        <div class="popular-div">
+          <p>Popular</p>
+        </div>
+        <div class="new-div">
+          <p>New</p>
+        </div>
+      </div>
     </div>
-  
-</div></div>
+  </div>
+</div>

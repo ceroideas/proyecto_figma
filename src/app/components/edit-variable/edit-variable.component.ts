@@ -58,6 +58,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   variableDescription!: any;
   operationType: any = '+';
   closeToogle: boolean = false;
+  @Input() defaultYear!: number;
   isConstante: boolean = true;
   tempObject = [
     {},
@@ -483,41 +484,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         },
       ],
     });
-    console.log(
-      {
-        name: this.variableName,
-        description: this.variableDescription,
-        operation: !this.constante,
-        constante: this.constante,
-        formula: this.sendOperations,
-        unite: this.variableUnidad,
-        distribution_shape: [
-          {
-            name:
-              this.shapeData.__zone_symbol__value.name !== 'SyntaxError'
-                ? this.shapeData.__zone_symbol__value.name
-                : 'Normal',
-            max: +this.max,
-            stDev: +this.stDev,
-            min: +this.min,
-            rate: +this.rate,
-            mean: +this.mean,
-            form: +this.form,
-            alpha: +this.alpha,
-            beta: +this.beta,
-            success: +this.success,
-            population: +this.population,
-            trials: +this.trials,
-            probability: +this.probability,
-            scale: +this.scale,
-            lamda: +this.lamda,
-            mode: +this.mode,
-            type: this.shapeData.__zone_symbol__value.type,
-          },
-        ],
-      },
-      'DATA SENDIADA'
-    );
+
     this.cerrarModal();
     this.sendOperations = [];
     this.tempObject.push({
@@ -582,6 +549,15 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (closeButton) {
       // Simula un clic en el botón para cerrar el modal
       (closeButton as HTMLElement).click();
+    }
+  }
+
+  onInputChange(event: Event, field: string) {
+    const target = event.target as HTMLElement;
+    if (field === 'variable') {
+      this.variableName = target.innerText;
+    } else if (field === 'descripcion') {
+      this.variableDescription = target.innerText;
     }
   }
 

@@ -1,0 +1,95 @@
+<div style="align-items: center; padding-left: 10px" class="d-flex">
+  <img
+    style="width: 30px; height: 30px; cursor: pointer"
+    src="../../../assets/icons/fi_chevron-left.svg"
+    alt="arrow"
+  />
+  <label
+    style="
+      padding-left: 10px;
+      color: rgba(0, 6, 31, 1);
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 30px;
+    "
+    class="mt-2"
+    >New scenario keeping the calculation</label
+  >
+</div>
+
+<div class="container-scenario">
+  <div class="input-group">
+    <label for="scenario-name">Name</label>
+    <input
+      class="input-formula"
+      type="text"
+      id="scenario-name"
+      placeholder="(Name of scenario)"
+      [(ngModel)]="scenarioName"
+    />
+  </div>
+
+  <div class="slider-container">
+    <label for="num-employees">Núm. Empleados</label>
+    <div class="slider-value"><span>2024:</span> 2</div>
+    <input
+      type="range"
+      id="num-employees"
+      class="slider"
+      min="1"
+      max="10"
+      [(ngModel)]="numEmployees"
+      (input)="updateValues()"
+    />
+    <div class="slider-value">
+      {{ numEmployees }} ({{ getPercentageChange(numEmployees, 2) }}%)
+    </div>
+  </div>
+
+  <div class="slider-container">
+    <label for="salary-per-employee">Salario por empleado</label>
+    <div class="slider-value"><span>2024:</span> 22,000</div>
+    <input
+      type="range"
+      id="salary-per-employee"
+      class="slider"
+      min="20000"
+      max="200000"
+      [(ngModel)]="salaryPerEmployee"
+      (input)="updateValues()"
+    />
+    <div class="slider-value">
+      {{ salaryPerEmployee | currency : "USD" : "symbol" : "1.0-0" }} ({{
+        getPercentageChange(salaryPerEmployee, 22000)
+      }}%)
+    </div>
+  </div>
+
+  <div class="slider-container">
+    <label for="sales">Ventas</label>
+    <div class="slider-value"><span>2024:</span> 130,000.00</div>
+    <input
+      type="range"
+      id="sales"
+      class="slider"
+      min="100000"
+      max="200000"
+      [(ngModel)]="sales"
+      (input)="updateValues()"
+    />
+    <div class="slider-value">
+      {{ sales | currency : "USD" : "symbol" : "1.0-0" }} ({{
+        getPercentageChange(sales, 130000)
+      }}%)
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="preview-button" (click)="previewImpact()">
+      Preview impact
+    </button>
+    <button class="create-button" (click)="createScenario()">
+      Create scenario
+    </button>
+  </div>
+</div>
