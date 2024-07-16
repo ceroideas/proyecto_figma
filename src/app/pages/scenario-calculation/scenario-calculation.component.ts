@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-scenario-calculation',
@@ -15,7 +16,7 @@ export class ScenarioCalculationComponent {
   salaryPerEmployee: number = 22000;
   sales: number = 130000;
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   updateValues() {
     // Logic to update values if needed
@@ -36,5 +37,8 @@ export class ScenarioCalculationComponent {
   createScenario() {
     // Logic to create scenario
     console.log('Create scenario');
+  }
+  goBack(): void {
+    this.router.navigate(['home/projects']);
   }
 }

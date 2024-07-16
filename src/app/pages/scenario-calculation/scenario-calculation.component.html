@@ -1,5 +1,6 @@
 <div style="align-items: center; padding-left: 10px" class="d-flex">
   <img
+    (click)="goBack()"
     style="width: 30px; height: 30px; cursor: pointer"
     src="../../../assets/icons/fi_chevron-left.svg"
     alt="arrow"
@@ -51,16 +52,28 @@
         [(ngModel)]="numEmployees"
         (input)="updateValues()"
       />
-      <div class="slider-value">
-        {{ numEmployees }} ({{ getPercentageChange(numEmployees, 2) }}%)
-      </div>
+      <div class="slider-point"></div>
     </div>
   </div>
 
   <div class="slider-container">
-    <label for="salary-per-employee">Salario por empleado</label>
+    <div style="justify-content: space-between; width: auto" class="d-flex">
+      <label for="salary-per-employee">Salario por empleado</label>
+      <div class="d-flex amount-box">
+        <label>{{
+          salaryPerEmployee | currency : "USD" : "symbol" : "1.0-0"
+        }}</label>
+        <p style="margin-top: -9px; margin-bottom: -1px">
+          ({{ getPercentageChange(salaryPerEmployee, 22000) }}%)
+        </p>
+      </div>
+    </div>
+
     <div class="slider-wrapper">
-      <div class="slider-value"><span>2024:</span> 22,000</div>
+      <div class="slider-value">
+        <span>2024:</span>
+        {{ salaryPerEmployee | currency : "USD" : "symbol" : "1.0-0" }}
+      </div>
       <input
         type="range"
         id="salary-per-employee"
@@ -70,18 +83,25 @@
         [(ngModel)]="salaryPerEmployee"
         (input)="updateValues()"
       />
-      <div class="slider-value">
-        {{ salaryPerEmployee | currency : "USD" : "symbol" : "1.0-0" }} ({{
-          getPercentageChange(salaryPerEmployee, 22000)
-        }}%)
-      </div>
+      <div class="slider-point"></div>
     </div>
   </div>
 
   <div class="slider-container">
-    <label for="sales">Ventas</label>
+    <div style="justify-content: space-between; width: auto" class="d-flex">
+      <label for="sales">Ventas</label>
+      <div class="d-flex amount-box">
+        <label>{{ sales | currency : "USD" : "symbol" : "1.0-0" }}</label>
+        <p style="margin-top: -9px; margin-bottom: -1px">
+          ({{ getPercentageChange(sales, 130000) }}%)
+        </p>
+      </div>
+    </div>
+
     <div class="slider-wrapper">
-      <div class="slider-value"><span>2024:</span> 130,000.00</div>
+      <div class="slider-value">
+        <span>2024:</span> {{ sales | currency : "USD" : "symbol" : "1.0-0" }}
+      </div>
       <input
         type="range"
         id="sales"
@@ -91,11 +111,7 @@
         [(ngModel)]="sales"
         (input)="updateValues()"
       />
-      <div class="slider-value">
-        {{ sales | currency : "USD" : "symbol" : "1.0-0" }} ({{
-          getPercentageChange(sales, 130000)
-        }}%)
-      </div>
+      <div class="slider-point"></div>
     </div>
   </div>
 
