@@ -6,25 +6,30 @@
   word-wrap: break-word;
 }
 .inner-container {
-  padding: 1%;
-  height: 150px;
+  padding: 10px 15px;
+  min-height: 75px;
+  height: auto;
+  width: 195px;
+
   border-radius: 15px;
   flex-direction: column;
   background: #f6f3f9;
-  justify-content: flex-start;
-  align-items: flex-end;
-  gap: 15px;
+  word-wrap: break-word;
+  gap: 10px;
   display: inline-flex;
   border: 2px solid #f6f3f9;
 }
 .inner-container-active {
-  padding: 1%;
+  padding: 10px 15px;
+  min-height: 75px;
+  height: auto;
+  width: 195px;
+
   border-radius: 15px;
   flex-direction: column;
   background: #f6f3f9;
-  justify-content: flex-start;
-  align-items: flex-end;
-  gap: 15px;
+  word-wrap: break-word;
+  gap: 10px;
   display: inline-flex;
   border: 2px solid rgba(140, 100, 177, 0.5);
 }
@@ -35,7 +40,6 @@
 }
 
 .bar {
-  width: 50px;
   border-top-left-radius: 2px;
   border-top-right-radius: 2px;
   overflow: hidden;
@@ -112,9 +116,12 @@
 .save-variable-button {
   background-color: #000f55;
   font-weight: bold;
-  border-radius: 25px;
+  border-radius: 15px;
   font-size: medium;
   color: white;
+  width: 194px;
+  height: 42px;
+  padding: 9px 17px;
 }
 
 .year {
@@ -136,26 +143,21 @@
 }
 
 .year-selected {
-  padding-left: 3px;
-  padding-right: 3px;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  background: #000f55;
+  /*   background: #000f55;
   border-radius: 15px;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-right: 10px;
-  display: inline-flex;
+  height: 23px;
+  padding: 4px 8px; */
 }
 
 .year-text-selected {
   color: #f6f8fc;
   font-size: 12px;
-
+  border-radius: 15px;
+  height: 23px;
+  padding: 4px 8px;
   font-weight: 400;
   word-wrap: break-word;
+  background: #000f55;
 }
 .ventana-flotante {
   position: absolute;
@@ -176,4 +178,12 @@
   display: block;
   color: #333;
   font-size: 14px;
+}
+/* inspect.component.css */
+.text-success {
+  color: rgba(44, 176, 44, 1);
+}
+
+.text-danger {
+  color: red;
 }

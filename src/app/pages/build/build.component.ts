@@ -736,8 +736,17 @@ export class BuildComponent implements OnInit {
           if (element.hidden_table) {
             this.selectedHidden.push(element.id);
           }
-
-          const defaultYearValue = element.unite;
+          console.log(
+            element.sceneries[this.selectedScenery].years[this.defaultYear],
+            element.calculated[this.selectedScenery].years[this.defaultYear],
+            'ELE'
+          );
+          const defaultYearValue =
+            element.type == 1
+              ? element.sceneries[this.selectedScenery].years[this.defaultYear]
+              : element.calculated[this.selectedScenery].years[
+                  this.defaultYear
+                ];
 
           const data = {
             data: [
@@ -769,12 +778,8 @@ export class BuildComponent implements OnInit {
                           </div> 
                    </div>
                    <div class="d-flex">
-                  <label style="position: relative; top: ${
-                    element.type == 1 && defaultYearValue != null ? '-10px' : ''
-                  };" class="ovf">${element.name}</label>
-                  <label style="position: absolute; top: 10px;right: 80px;">${
-                    defaultYearValue == undefined ? '' : defaultYearValue
-                  }</label>
+                  <label style="position: relative; top: -10px;" class="ovf">${element.name}</label>
+                  <label style="position: absolute; top: 10px;right: 80px;">${defaultYearValue}</label>
                    </div>
             </span>
     
@@ -818,13 +823,9 @@ export class BuildComponent implements OnInit {
                           </div> 
                    </div>
                    <div class="d-flex">
-                  <label style="position: relative; top: ${
-                    element.type == 1 && defaultYearValue != undefined
-                      ? '-10px'
-                      : ''
-                  };" class="ovf">${element.name}</label>
+                  <label style="position: relative; top:-10px" class="ovf">${element.name}</label>
                   <label style="position: absolute; top: 10px;right: 80px;" >
-                  ${defaultYearValue == undefined ? '' : defaultYearValue}
+                  ${defaultYearValue}
                   </label>
                    </div>
                    
@@ -869,9 +870,7 @@ export class BuildComponent implements OnInit {
                  ${this.pointNode}<label style="position: relative; top: ${
                 element.type == 1 && defaultYearValue != null ? '-10px' : ''
               };"  class="ovf">${element.name}</label>
-                 <label style="position: absolute; top: 10px;right: 80px;">${
-                   defaultYearValue == undefined ? '' : defaultYearValue
-                 }</label>
+                 <label style="position: absolute; top: 10px;right: 80px;">${defaultYearValue}</label>
                    </div>
                  
                    
@@ -929,6 +928,7 @@ export class BuildComponent implements OnInit {
   onSceneryChange() {
     if (this.selectedScenery !== undefined) {
       this.getSceneries(this.selectedScenery);
+      this.getContentToChart();
     }
   }
 

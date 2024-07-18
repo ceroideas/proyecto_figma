@@ -38,6 +38,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
   @Input() editVariable: boolean = false;
   @Input() aux: any;
   @Input() tier: any;
+  @ViewChild('editableContent', { static: true }) editableContent!: ElementRef;
+  @ViewChild('editableConstante', { static: true })
+  editableConstante!: ElementRef;
   @ViewChild('exampleModal') miModal!: ElementRef;
   editVariableName: boolean = false;
   editVariableDescription: boolean = false;
@@ -60,6 +63,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   closeToogle: boolean = false;
   @Input() defaultYear!: number;
   isConstante: boolean = true;
+  private cursorPosition: number = 0;
   tempObject = [
     {},
     {
@@ -552,12 +556,17 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
   }
 
-  onInputChange(event: Event, field: string) {
+  onInputChange(event: any, field: string) {
     const target = event.target as HTMLElement;
     if (field === 'variable') {
       this.variableName = target.innerText;
+      this.saveCursorPosition(event.target);
+
+      this.restoreCursorPosition(event.target);
     } else if (field === 'descripcion') {
+      this.saveCursorPosition(event.target);
       this.variableDescription = target.innerText;
+      this.restoreCursorPosition(event.target);
     }
   }
 
@@ -749,7 +758,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.calculos = res.new_formula ? res.new_formula : [];
         this.sendOperations = res.formula ? res.formula : [];
         this.showNewEscenario = res.calculated ? res.calculated : [];
+        this.editableContent.nativeElement.innerText =
+          this.variableDescription || 'Insert a description';
 
+        this.editableConstante.nativeElement.innerText =
+          this.variableName || 'Insert a name';
         this.cargando = false;
       });
     }
@@ -1551,6 +1564,33 @@ export class EditVariableComponent implements OnInit, OnChanges {
       return true;
     } else {
       return false;
+    }
+  }
+
+  saveCursorPosition(element: any) {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(element);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      this.cursorPosition = preCaretRange.toString().length;
+    }
+  }
+
+  restoreCursorPosition(element: any) {
+    const selection = window.getSelection();
+    if (selection && element.childNodes.length > 0) {
+      const range = document.createRange();
+      const textNode = element.childNodes[0];
+      const position = Math.min(
+        this.cursorPosition,
+        textNode.textContent?.length ?? 0
+      );
+      range.setStart(textNode, position);
+      range.setEnd(textNode, position);
+      selection.removeAllRanges();
+      selection.addRange(range);
     }
   }
 }

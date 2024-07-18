@@ -6,11 +6,17 @@
 >
   <div class="bar-container">
     <div
-      style="display: flex; justify-content: flex-start; align-items: flex-end"
+      style="
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-end;
+        width: 100%;
+      "
     >
       <div
         *ngFor="let value of barData; let i = index"
         class="bar mr-2"
+        [style.width]="100 / barData.length + '%'"
         [style.height]="calculateHeight(value)"
         (mouseover)="showValue(i)"
         (mouseleave)="hideValue(i)"
@@ -21,26 +27,33 @@
       </div>
     </div>
 
-    <div style="width: 100%; height: 100%">
-      <div style="gap: 2px">
+    <div
+      class="mt-1"
+      style="
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-end;
+        width: 100%;
+      "
+    >
+      <div
+        [style.width]="100 / barData.length - 0.1 + '%'"
+        *ngFor="let year of years; let i = index"
+        [ngClass]="{
+          year: true,
+          'year-selected': year.isSelect
+        }"
+        class="mr-2"
+        (click)="toggleActive(year, i)"
+      >
         <div
-          *ngFor="let year of years; let i = index"
           [ngClass]="{
-            year: true,
-            'year-selected': year.isSelect
+            'year-text': true,
+            'year-text-selected': year.isSelect
           }"
-          class="mr-2"
-          (click)="toggleActive(year, i)"
         >
-          <div
-            [ngClass]="{
-              'year-text': true,
-              'year-text-selected': year.isSelect
-            }"
-          >
-            {{ year.name }}
-            {{ year.year }}
-          </div>
+          {{ year.name }}
+          {{ year.year }}
         </div>
       </div>
     </div>
@@ -82,7 +95,7 @@
   </div> -->
 </div>
 
-<div class="title-page mt-5 mb-3">Información</div>
+<div class="title-page mt-5 mb-3">Information</div>
 <app-message
   icon="../../../assets/icons/u_info-circle.svg"
   closeIcon="../../../assets/icons/fi_x.svg"
@@ -101,7 +114,7 @@
     class="inner-container ml-2 mt-4"
     (click)="setClickedElement(data)"
   >
-    <div
+    <!--     <div
       *ngIf="data.combination"
       style="
         display: flex;
@@ -127,9 +140,9 @@
           {{ data.tier }}
         </div>
       </div>
-    </div>
+    </div> -->
 
-    <div
+    <!--     <div
       *ngIf="!data.combination"
       [ngClass]="{
         'circle-active': data.isActive
@@ -144,8 +157,8 @@
       >
         {{ data.tier }}
       </div>
-    </div>
-    <div class="text-container mb-1">
+    </div> -->
+    <!--     <div class="text-container">
       <p class="main-text" style="margin-bottom: -15px !important">
         {{ data.value }}€
       </p>
@@ -155,7 +168,34 @@
         </p>
         <p style="margin-bottom: -5px !important">{{ data.description }}</p>
       </div>
+    </div> -->
+    <div
+      class="d-flex"
+      style="justify-content: space-between; justify-items: center"
+    >
+      <label> {{ data.value }}€</label>
+      <div
+        style="font-weight: 600"
+        [ngClass]="{
+          'text-success': getRoundedPercentage(+data.value, +tierCeroValue) > 0,
+          'text-danger': getRoundedPercentage(+data.value, +tierCeroValue) < 0
+        }"
+      >
+        {{
+          "(" + getRoundedPercentage(+data.value, +tierCeroValue) + "%" + ")"
+        }}
+      </div>
     </div>
+    <p
+      style="
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 17.5px;
+        color: rgba(0, 6, 31, 1);
+      "
+    >
+      {{ data.description }}
+    </p>
   </div>
 </div>
 <!-- <div
@@ -179,8 +219,8 @@
       type="button"
       class="btn save-variable-button"
     >
-      Mostrar cascada
+      Show waterfall chart
     </button>
   </a>
 </div>
-<br>
+<br />
