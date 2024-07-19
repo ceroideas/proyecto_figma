@@ -34,6 +34,7 @@ declare var bootstrap: any;
 })
 export class EditVariableComponent implements OnInit, OnChanges {
   @Input() variableId: any;
+  @Input() scenerieId: any;
   @Input() variableFather: any;
   @Input() editVariable: boolean = false;
   @Input() aux: any;
@@ -649,7 +650,12 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (this.editVariable) {
       this.cargando = true;
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-        this.variableUnidad = res.unite ? res.unite : undefined;
+        console.log(res.sceneries, 'ESCENARIES');
+        this.variableUnidad = res.sceneries[this.scenerieId].years[
+          this.defaultYear
+        ]
+          ? res.sceneries[this.scenerieId].years[this.defaultYear]
+          : undefined;
 
         const shapeDataExists = localStorage.getItem('shapeData') !== null;
 
@@ -1543,7 +1549,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       var elem = document.getElementById(
         'escenarios-select'
       ) as HTMLSelectElement;
-      elem.selectedIndex = 1;
+      elem.selectedIndex = +this.scenerieId + 1;
       elem.dispatchEvent(evt);
     }, 100);
   }

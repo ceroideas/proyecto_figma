@@ -777,10 +777,14 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                   <div class="d-flex">
-                  <label style="position: relative; top: -10px;" class="ovf">${element.name}</label>
-                  <label style="position: absolute; top: 10px;right: 80px;">${defaultYearValue}</label>
-                   </div>
+                      <div style="top: -10px" class="custom-div">
+                        <label class="ovf" style="margin-bottom: -10px;">
+                          ${element.name}
+                        </label>
+                        <label class="ovf-amount" style="margin-bottom: -25px;">
+                          ${this.formatMonto(defaultYearValue)}
+                        </label>
+                      </div>
             </span>
     
      </div>`,
@@ -822,12 +826,14 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                   <div class="d-flex">
-                  <label style="position: relative; top:-10px" class="ovf">${element.name}</label>
-                  <label style="position: absolute; top: 10px;right: 80px;" >
-                  ${defaultYearValue}
-                  </label>
-                   </div>
+                      <div style="top: -10px" class="custom-div">
+                        <label class="ovf" style="margin-bottom: -10px;">
+                          ${element.name}
+                        </label>
+                        <label class="ovf-amount" style="margin-bottom: -25px;">
+                          ${this.formatMonto(defaultYearValue)}
+                        </label>
+                      </div>
                    
             </span>
     
@@ -866,12 +872,18 @@ export class BuildComponent implements OnInit {
                                  
                           </div> 
                    </div>
-                  <div class="d-flex">
-                 ${this.pointNode}<label style="position: relative; top: ${
-                element.type == 1 && defaultYearValue != null ? '-10px' : ''
-              };"  class="ovf">${element.name}</label>
-                 <label style="position: absolute; top: 10px;right: 80px;">${defaultYearValue}</label>
-                   </div>
+
+
+                    <div style="top: -10px" class="custom-div">
+                        <label class="ovf" style="margin-bottom: -10px; align-items: center; display:flex;">
+                         ${this.pointNode}
+                          ${element.name}
+                        </label>
+                        <label class="ovf-amount" style="margin-bottom: -25px;">
+                          ${this.formatMonto(defaultYearValue)}
+                        </label>
+                      </div>
+
                  
                    
             </span>
@@ -903,8 +915,11 @@ export class BuildComponent implements OnInit {
     });
   }
 
-  formatMonto(monto: any) {
-    return Number(monto).toFixed(2);
+  formatMonto(monto: any): string {
+    return Number(monto).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
 
   deleteNode() {

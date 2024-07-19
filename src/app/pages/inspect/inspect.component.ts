@@ -859,7 +859,6 @@ export class InspectComponent implements OnInit {
   }
 
   getRoundedPercentage(value: number, total: number): number {
-    console.log(value, total, 'TOAL VALUE');
     const result = Math.round((value / total) * 100);
 
     return Number.isNaN(result) ? 0 : result;

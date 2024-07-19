@@ -230,6 +230,13 @@ table {
   background-color: #000f55 !important;
 }
 
+.custom-div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
 .ovf {
   font-weight: 50 !important;
   text-overflow: ellipsis;
@@ -238,6 +245,41 @@ table {
   overflow: hidden;
   font-size: 14px;
   height: 25px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ovf-amount {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+  overflow: hidden;
+  font-size: 14px;
+  height: 25px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.label-with-dot {
+  display: flex;
+  align-items: center; /* Alinea verticalmente el punto azul y el texto */
+  font-weight: 50 !important;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 150px;
+  overflow: hidden;
+  font-size: 14px;
+  height: 25px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  background: #30c7e1;
+  border-radius: 9999px;
+  margin-right: 5px; /* Espacio entre el punto azul y el texto */
 }
 
 .ovf-mod .ovf {

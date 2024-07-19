@@ -115,6 +115,11 @@ export class UniteModalComponent implements OnInit {
     modal._element.addEventListener('shown.bs.modal', () => {});
 
     modal._element.addEventListener('hidden.bs.modal', () => {
+      console.log(
+        'years',
+        this.escenarys[+this.selectedEscenary].id,
+        this.model.years[0]
+      );
       this.oldEscenarieId = undefined;
       if (this.createEscenaryChartVariable)
         this.createEscenaryChartVariable.destroy();
