@@ -113,6 +113,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
   ];
 
+  scenarioId!: number;
+
   @Input() isNewTree: boolean = false;
   calculos: any[] = [];
   disableSend: boolean = true;
@@ -166,6 +168,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   success: number = 0;
   population: number = 0;
   private escKeyPressed = false;
+  scenarioYears!: any;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
@@ -536,6 +539,16 @@ export class EditVariableComponent implements OnInit, OnChanges {
       ],
     });
 
+
+
+    this.scenarioYears[this.defaultYear] = this.variableUnidad;
+
+    console.log(this.scenarioYears, 'SCES');
+
+    this.projectSvc
+      .updateScenery(this.scenarioId, { years: this.scenarioYears })
+      .subscribe();
+
     this.cerrarModal();
 
     this.tempObject[this.variableId] = {
@@ -650,12 +663,15 @@ export class EditVariableComponent implements OnInit, OnChanges {
     if (this.editVariable) {
       this.cargando = true;
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-        console.log(res.sceneries, 'ESCENARIES');
         this.variableUnidad = res.sceneries[this.scenerieId].years[
           this.defaultYear
         ]
           ? res.sceneries[this.scenerieId].years[this.defaultYear]
           : undefined;
+
+        this.scenarioId = res.sceneries[this.scenerieId].id ?? undefined;
+        console.log(this.scenarioId, 'S');
+        this.scenarioYears = res.sceneries[this.scenerieId].years;
 
         const shapeDataExists = localStorage.getItem('shapeData') !== null;
 
@@ -931,6 +947,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       formula: this.sendOperations,
       new_formula: this.calculos,
     };
+
 
     this.projectSvc
       .updateNode(this.nodeId, editVariable)
@@ -1516,6 +1533,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.variableSelect1 = '';
     this.variableSelect2 = '';
     this.variableDescription = '';
+    this.editableContent.nativeElement.innerText = '';
+    this.editableConstante.nativeElement.innerText = '';
     this.variableUnidad = undefined;
     this.variableName = '';
     this.editVariableName = false;
