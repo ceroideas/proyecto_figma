@@ -221,3 +221,63 @@ input[type="range"]::-ms-thumb {
   font-weight: 500;
   margin-bottom: 10px;
 }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+th,
+td {
+  padding: 8px 12px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+th {
+  background-color: #f0f0f0;
+}
+td.red {
+  color: red !important;
+}
+.vpn,
+.frequency-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.vpn {
+  color: rgba(0, 6, 31, 1);
+  font-weight: 600;
+}
+.frequency-selector input {
+  width: 100%;
+  margin: 0 10px;
+}
+
+.table-custom {
+  border-radius: 15px;
+
+  td,
+  th {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 16px;
+    color: rgba(0, 6, 31, 1);
+  }
+  th {
+    text-align: initial;
+  }
+}
+
+.vpn-button {
+  width: 136px;
+  height: 42px;
+  border-radius: 15px !important;
+  padding: 9px, 17px, 9px, 17px;
+  background-color: rgba(0, 15, 85, 1);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
+}

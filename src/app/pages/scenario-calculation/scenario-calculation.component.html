@@ -124,3 +124,109 @@
     </button>
   </div>
 </div>
+
+<table class="table-custom">
+  <tr>
+    <!-- <th rowspan="1">Inversión</th> -->
+    <th
+      style="
+        background: white;
+        border-top-color: white;
+        border-left-color: white;
+        color: white;
+      "
+      colspan="2"
+    ></th>
+    <th colspan="4">% Ocupación</th>
+    <th
+      style="
+        color: rgba(140, 100, 177, 1);
+        cursor: pointer;
+        font-size: 12px !important;
+      "
+      colspan="1"
+    >
+      See more constants
+    </th>
+    <!-- <th rowspan="2">See more constants</th> -->
+  </tr>
+  <tr>
+    <!-- <th></th> -->
+    <th rowspan="6" style="">Inversion</th>
+    <th></th>
+    <th>60%</th>
+    <th>65%</th>
+    <th>70%</th>
+    <th>75%</th>
+    <th>80%</th>
+  </tr>
+  <tr>
+    <td>$ 150</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+  </tr>
+  <tr>
+    <td>$ 160</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+  </tr>
+  <tr>
+    <td>$ 170</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+  </tr>
+  <tr>
+    <td>$ 180</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+  </tr>
+  <tr>
+    <td>$ 190</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td>$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+    <td class="red">$ 234,435,435.00</td>
+  </tr>
+</table>
+
+<div class="vpn">
+  <span>VPN:</span>
+  <span>$ 235,000,000.00</span>
+</div>
+
+<div class="frequency-selector">
+  <label for="frequency">Selector de frecuencia:</label>
+  <input
+    type="range"
+    id="num-employees"
+    class="slider"
+    min="1"
+    max="10"
+    [(ngModel)]="numEmployees"
+    (input)="updateValues()"
+  />
+
+  <div class="d-flex amount-box">
+    <label>{{ numEmployees }}</label>
+    <p style="margin-top: -9px; margin-bottom: -1px">
+      ({{ getPercentageChange(numEmployees, 2) }}%)
+    </p>
+  </div>
+</div>
+
+<div class="buttons mb-4">
+  <button class="vpn-button" (click)="createScenario()">Create scenario</button>
+</div>
