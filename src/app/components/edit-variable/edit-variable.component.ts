@@ -511,7 +511,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       formula: this.sendOperations ? this.sendOperations : null,
       operation: !this.constante,
       constante: this.constante,
-      unite: this.variableUnidad,
+      unite: this.variableUnidad ?? 0,
       new_formula: this.calculos,
       distribution_shape: [
         {
@@ -538,8 +538,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
         },
       ],
     });
-
-
 
     this.scenarioYears[this.defaultYear] = this.variableUnidad;
 
@@ -947,7 +945,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       formula: this.sendOperations,
       new_formula: this.calculos,
     };
-
 
     this.projectSvc
       .updateNode(this.nodeId, editVariable)

@@ -151,6 +151,7 @@
                     [id]="year.key"
                     [(ngModel)]="model.years[0][year.key]"
                     class="form-control input-formula"
+                    onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key === 'Tab'"
                   />
                 </div>
               </div>
@@ -217,7 +218,7 @@
                     "
                     [id]="year.key.toString()"
                     [(ngModel)]="model.years[0][year.key]"
-                    onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
+                    onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key === 'Tab'"
                     class="form-control input-formula"
                     style="
                       background-color: rgba(246, 243, 249, 1);
