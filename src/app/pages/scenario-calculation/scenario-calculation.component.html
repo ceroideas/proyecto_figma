@@ -34,7 +34,7 @@
     <div style="justify-content: space-between; width: auto" class="d-flex">
       <label for="num-employees">Núm. Empleados</label>
       <div class="d-flex amount-box">
-        <label>{{ numEmployees }}</label>
+        <label>{{ formatMonto(numEmployees) }}</label>
         <p style="margin-top: -9px; margin-bottom: -1px">
           ({{ getPercentageChange(numEmployees, 2) }}%)
         </p>
@@ -42,13 +42,13 @@
     </div>
 
     <div class="slider-wrapper">
-      <div class="slider-value"><span>2024:</span> 2</div>
+      <div class="slider-value"><span>2024:</span> {{ formatMonto(100) }}</div>
       <input
         type="range"
         id="num-employees"
         class="slider"
         min="1"
-        max="10"
+        max="200"
         [(ngModel)]="numEmployees"
         (input)="updateValues()"
       />
@@ -72,13 +72,13 @@
     <div class="slider-wrapper">
       <div class="slider-value">
         <span>2024:</span>
-        {{ salaryPerEmployee | currency : "USD" : "symbol" : "1.0-0" }}
+        {{ formatMonto(100000) }}
       </div>
       <input
         type="range"
         id="salary-per-employee"
         class="slider"
-        min="20000"
+        min="1"
         max="200000"
         [(ngModel)]="salaryPerEmployee"
         (input)="updateValues()"
@@ -100,14 +100,14 @@
 
     <div class="slider-wrapper">
       <div class="slider-value">
-        <span>2024:</span> {{ sales | currency : "USD" : "symbol" : "1.0-0" }}
+        <span>2024:</span> {{ formatMonto(150000) }}
       </div>
       <input
         type="range"
         id="sales"
         class="slider"
-        min="100000"
-        max="200000"
+        min="1"
+        max="300000"
         [(ngModel)]="sales"
         (input)="updateValues()"
       />
@@ -125,6 +125,28 @@
   </div>
 </div>
 
+<div
+  data-bs-toggle="modal"
+  data-bs-target="#exampleModal"
+  class="d-flex justify-content-end gap-2 align-items-center mb-3"
+>
+  <div
+    style="
+      color: rgba(140, 100, 177, 1);
+      cursor: pointer;
+      font-size: 12px !important;
+      font-weight: bolder;
+    "
+  >
+    See more constants
+  </div>
+  <img
+    style="cursor: pointer"
+    src="../../../assets/icons/settings.svg"
+    alt=""
+  />
+</div>
+
 <table class="table-custom">
   <tr>
     <!-- <th rowspan="1">Inversión</th> -->
@@ -137,8 +159,8 @@
       "
       colspan="2"
     ></th>
-    <th colspan="4">% Ocupación</th>
-    <th
+    <th class="table-title" colspan="5">% Ocupación</th>
+    <!--     <th
       style="
         color: rgba(140, 100, 177, 1);
         cursor: pointer;
@@ -147,12 +169,10 @@
       colspan="1"
     >
       See more constants
-    </th>
-    <!-- <th rowspan="2">See more constants</th> -->
+    </th> -->
   </tr>
   <tr>
-    <!-- <th></th> -->
-    <th rowspan="6" style="">Inversion</th>
+    <th rowspan="6">Inversion</th>
     <th></th>
     <th>60%</th>
     <th>65%</th>
@@ -162,7 +182,9 @@
   </tr>
   <tr>
     <td>$ 150</td>
-    <td>$ 234,435,435.00</td>
+    <td (click)="selectedTd()" style="padding: 0px">
+      <div (click)="selectedDiv()" class="selected-td">$ 234,435,435.00</div>
+    </td>
     <td>$ 234,435,435.00</td>
     <td>$ 234,435,435.00</td>
     <td class="red">$ 234,435,435.00</td>
@@ -214,13 +236,13 @@
     id="num-employees"
     class="slider"
     min="1"
-    max="10"
+    max="200"
     [(ngModel)]="numEmployees"
     (input)="updateValues()"
   />
 
   <div class="d-flex amount-box">
-    <label>{{ numEmployees }}</label>
+    <label>{{ formatMonto(numEmployees) }}</label>
     <p style="margin-top: -9px; margin-bottom: -1px">
       ({{ getPercentageChange(numEmployees, 2) }}%)
     </p>
@@ -229,4 +251,93 @@
 
 <div class="buttons mb-4">
   <button class="vpn-button" (click)="createScenario()">Create scenario</button>
+</div>
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  aria-labelledby="variableModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div style="height: 930px" class="modal-content">
+      <div class="modal-header">
+        <p
+          class="modal-title"
+          style="color: #00061f; font-weight: 700"
+          id="variableModal"
+        >
+          Constants
+        </p>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <div class="modal-body">
+        <div style="flex-wrap: nowrap !important" class="input-group mt-3">
+          <span class="input-group-text">
+            <img
+              class="mr-2"
+              src="../../../assets/icons/search.svg"
+              alt="searc"
+            />
+          </span>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search variable names or o levels"
+            aria-label="search"
+          />
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <app-message
+            icon="../../../assets/icons/u_info-circle.svg"
+            closeIcon="../../../assets/icons/fi_x.svg"
+            content="Select at least two constants to view the simulation preview."
+            color="#147D8F"
+            background="#EFFBFD"
+          ></app-message>
+        </div>
+        <div
+          style="justify-content: space-between; gap: 12px"
+          class="d-flex flex-wrap"
+        >
+          <div class="constant-body selected-constant">
+            this Is A Very Long Constant Name For Testing Purposes
+          </div>
+          <div class="constant-body">constant 2</div>
+          <div class="constant-body">constant 3</div>
+          <div class="constant-body">constant 4</div>
+          <div class="constant-body">constant 5</div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div
+          class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
+        >
+          <button
+            data-bs-dismiss="modal"
+            type="button"
+            class="btn btn-lg delete-variable-button col-md-5 mb-0"
+          >
+            Back
+          </button>
+
+          <button
+            data-bs-dismiss="modal"
+            type="button"
+            class="btn btn-lg save-variable-button col-md-5"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

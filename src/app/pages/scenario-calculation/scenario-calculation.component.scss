@@ -265,9 +265,6 @@ td.red {
     line-height: 16px;
     color: rgba(0, 6, 31, 1);
   }
-  th {
-    text-align: initial;
-  }
 }
 
 .vpn-button {
@@ -280,4 +277,107 @@ td.red {
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
+}
+
+.table-title {
+  text-align: initial;
+}
+.selected-th {
+  border-color: #38254a;
+  background-color: #e5dced;
+}
+.save-variable-button {
+  background-color: #000f55;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+  color: white;
+}
+.delete-variable-button {
+  border-color: rgb(199, 199, 199) !important;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+}
+.modal-title {
+  font-weight: bold;
+  font-size: large !important;
+}
+
+.font {
+  font-weight: 500;
+}
+.input-formula {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+  background-color: #f6f3f9;
+}
+p {
+  font-weight: bold;
+  color: #00061f;
+}
+.delete-variable-button {
+  border-color: rgb(199, 199, 199) !important;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+}
+.save-variable-button {
+  background-color: #000f55;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+  color: white;
+}
+.asterisk {
+  height: 15px;
+  width: 15px;
+}
+.input-group {
+  /* flex-wrap: nowrap !important; */
+  .form-control {
+    border-top-right-radius: 25px !important;
+    border-bottom-right-radius: 25px !important;
+    border-left: #ede9fe !important;
+  }
+  .input-group-text {
+    border-top-left-radius: 25px !important;
+    border-bottom-left-radius: 25px !important;
+    background-color: white !important;
+    border-right-color: white !important;
+  }
+}
+
+.form-control:focus {
+  border-color: rgb(211, 209, 209);
+  box-shadow: none;
+}
+
+.search {
+  width: 473px;
+}
+.constant-body {
+  width: 210px;
+  height: 38px;
+  border-radius: 15px;
+  padding: 10px 15px;
+  gap: 10px;
+  background-color: #f6f3f9;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 17.5px;
+  color: #00061f;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.selected-constant {
+}
+.selected-td {
+  padding: 8px 12px;
+
+  background-color: #e5dced;
+  border: 2px solid #38254a;
 }
