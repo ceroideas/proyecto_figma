@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 
 import { CdkDragEnd } from '@angular/cdk/drag-drop';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -58,7 +65,7 @@ export class BuildComponent implements OnInit {
 
   lastPosition: any = {};
   tierLv: number[] = [];
-
+  @Output() saveCompleteEvent = new EventEmitter<void>();
   selected: number[] = [];
   selectedHidden: number[] = [];
   defaultYear!: number;
@@ -831,7 +838,7 @@ export class BuildComponent implements OnInit {
                           ${element.name}
                         </label>
                         <label class="ovf-amount" style="margin-bottom: -25px;">
-                          ${this.formatMonto(defaultYearValue)}
+                          ${this.formatMonto(+defaultYearValue)}
                         </label>
                       </div>
                    
@@ -880,7 +887,7 @@ export class BuildComponent implements OnInit {
                           ${element.name}
                         </label>
                         <label class="ovf-amount" style="margin-bottom: -25px;">
-                          ${this.formatMonto(defaultYearValue)}
+                          ${this.formatMonto(+defaultYearValue)}
                         </label>
                       </div>
 
@@ -1338,6 +1345,7 @@ export class BuildComponent implements OnInit {
 
   onFileSelected(event: any): void {
     const file: File = event.target.files[0];
+    console.log(file, 'FILE');
     if (file) {
       this.projectSvc.uploadProject(file, this.id).subscribe(
         (response) => {
@@ -1348,5 +1356,219 @@ export class BuildComponent implements OnInit {
         }
       );
     }
+  }
+
+  getContentToChart2() {
+    this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      console.log(res, 'nodos');
+      this.projectName = res.name;
+      this.cleanSceneries = res.clean_sceneries;
+      this.years = res.years;
+      this.defaultYear = res.default_year;
+      this.project = res;
+      this.constantColor = res.line_color;
+      this.defaultGrowthPercentage = res.default_growth_percentage;
+      this.lastPosition = this.project.position
+        ? JSON.parse(this.project.position)
+        : { x: 0, y: 0 };
+
+      this.zoomLevel = parseFloat(this.project.zoom);
+
+      this.updateZoom(false);
+
+      const currentYear = new Date().getFullYear();
+      const position = this.years.indexOf(currentYear);
+
+      this.aux = [];
+      this.currentYearIndex = position !== -1 ? position : 0;
+
+      this.sceneries = res.sceneries;
+      if (this.selectedScenery === '#') this.selectedScenery = '0';
+
+      this.sceneriesNodes = [];
+
+      if (res.nodes?.length > 0) {
+        res.nodes.forEach((element: any) => {
+          if (element.hidden_table) {
+            this.selectedHidden.push(element.id);
+          }
+          console.log(
+            element.sceneries[this.selectedScenery].years[this.defaultYear],
+            element.calculated[this.selectedScenery].years[this.defaultYear],
+            'ELE'
+          );
+          const defaultYearValue =
+            element.type == 1
+              ? element.sceneries[this.selectedScenery].years[this.defaultYear]
+              : element.calculated[this.selectedScenery].years[
+                  this.defaultYear
+                ];
+
+          const data = {
+            data: [
+              {
+                v: `${element.id}`,
+                f: `<div id="${element.type}"  class="rotate" >
+            
+            <span>
+                   <div class="floating" style="display: none;">   
+                          <div class="flex-box">   
+                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                           class="tier-icon " 
+                          src="../../../assets/icons/u_plus.svg"
+                          alt=""
+                        /></button>
+                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/pencil.svg"
+                         alt=""
+                       /></button>
+                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                          </div>
+                          <div class="full-box">
+                                 
+                          </div> 
+                   </div>
+                      <div style="top: -10px" class="custom-div">
+                        <label class="ovf" style="margin-bottom: -10px;">
+                          ${element.name}
+                        </label>
+                        <label class="ovf-amount" style="margin-bottom: -25px;">
+                          ${this.formatMonto(defaultYearValue)}
+                        </label>
+                      </div>
+            </span>
+    
+     </div>`,
+              },
+              `${element.node_id ? element.node_id : ''}`,
+              `${
+                element.description ? element.description : 'Sin descripción'
+              }`,
+            ],
+            hidden: 0,
+            hiddenNodeSon: false,
+            hiddenTable: element.hidden_table,
+            name: element.name,
+            tier: element.tier,
+            sceneries:
+              element.type == 1 ? element.sceneries : element.calculated,
+            f_original: `<div id="${element.type}"  class="rotate" >
+            
+            <span>
+                   <div class="floating" style="display: none;">   
+                          <div class="flex-box">   
+                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                           class="tier-icon " 
+                          src="../../../assets/icons/u_plus.svg"
+                          alt=""
+                        /></button>
+                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/pencil.svg"
+                         alt=""
+                       /></button>
+                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                          </div>
+                          <div class="full-box">
+                                 
+                          </div> 
+                   </div>
+                      <div style="top: -10px" class="custom-div">
+                        <label class="ovf" style="margin-bottom: -10px;">
+                          ${element.name}
+                        </label>
+                        <label class="ovf-amount" style="margin-bottom: -25px;">
+                          ${this.formatMonto(+defaultYearValue)}
+                        </label>
+                      </div>
+                   
+            </span>
+    
+     </div>`,
+            f_alternative: (branches: any) => {
+              return `<div id="${element.type}"  class="rotate" >
+            
+            <span>
+                   <div class="floating" style="display: none;">   
+                          <div class="flex-box">   
+                          <button id="1"  class="cstmbtn btn-add btn btn-xs "><img
+                           class="tier-icon " 
+                          src="../../../assets/icons/u_plus.svg"
+                          alt=""
+                        /></button>
+                          <button class="cstmbtn  btn btn-xs btn-edit "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/pencil.svg"
+                         alt=""
+                       /></button>
+                          <button class="cstmbtn btn btn-xs btn-hidden "> <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                        <button class="cstmbtn btn btn-xs btn-show ">
+
+                       <p style="color:white;">  ${branches ? branches : 0} </p>
+                        <img
+                          class="tier-icon " 
+                         src="../../../assets/icons/u_eye-slash-icon.svg"
+                         alt=""
+                       /> </button>
+                          </div>
+                          <div class="full-box">
+                                 
+                          </div> 
+                   </div>
+
+
+                    <div style="top: -10px" class="custom-div">
+                        <label class="ovf" style="margin-bottom: -10px; align-items: center; display:flex;">
+                         ${this.pointNode}
+                          ${element.name}
+                        </label>
+                        <label class="ovf-amount" style="margin-bottom: -25px;">
+                          ${this.formatMonto(+defaultYearValue)}
+                        </label>
+                      </div>
+
+                 
+                   
+            </span>
+    
+     </div>`;
+            },
+          };
+          this.aux.push(data);
+
+          this.sceneriesNodes.push(
+            element.type === 2 ? element.calculated : element.sceneries
+          );
+        });
+        this.addRow();
+        if (this.chart) {
+          this.chart.draw(this.data, { allowHtml: true });
+        }
+
+        google.charts.setOnLoadCallback(this.drawChart);
+        this.getSceneries(this.selectedScenery);
+      } else {
+        this.addRow();
+        this.chart.draw(this.data, { allowHtml: true });
+        google.charts.setOnLoadCallback(this.drawChart);
+      }
+
+      this.getSceneries(this.selectedScenery);
+      this.hideTier();
+      /* this.editModal.onSaveComplete(); */
+    });
   }
 }

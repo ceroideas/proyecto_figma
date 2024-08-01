@@ -73,7 +73,7 @@ export class ProjectService {
   uploadProject(file: File, id: any) {
     const formData = new FormData();
     formData.append('file', file);
-
+    console.log(file, 'FILE2');
     return this.http.post(`${this.url}/uploadProject/${id}`, formData);
   }
 }

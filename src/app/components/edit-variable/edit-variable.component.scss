@@ -198,7 +198,16 @@ input-group-sm > .btn,
   height: 36px;
   border-radius: 50%;
   border-left-color: #51bfc4;
-  animation: spin 2s linear infinite;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .switch-container {
   display: flex;

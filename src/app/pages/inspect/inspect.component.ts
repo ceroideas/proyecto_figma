@@ -874,4 +874,8 @@ export class InspectComponent implements OnInit {
       maximumFractionDigits: 2,
     });
   }
+
+  calculatePercentage(base: number, quantity: number): number {
+    return (quantity / base) * 100;
+  }
 }

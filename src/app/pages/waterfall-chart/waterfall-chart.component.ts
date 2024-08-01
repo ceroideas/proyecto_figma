@@ -200,7 +200,7 @@ export class WaterfallChartComponent implements OnInit {
       }]; */
     const layout = {
       title: {
-        text: 'Waterfall Chart',
+        text: '',
       },
       xaxis: {
         type: 'category',
@@ -209,7 +209,7 @@ export class WaterfallChartComponent implements OnInit {
         type: 'linear',
       },
       autosize: true,
-      showlegend: true,
+      showlegend: false,
     };
 
     Plotly.newPlot('myDiv', data, layout);

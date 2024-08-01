@@ -1560,14 +1560,58 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   setEvent() {
-    setTimeout(() => {
-      var evt = new Event('change');
-      var elem = document.getElementById(
-        'escenarios-select'
-      ) as HTMLSelectElement;
-      elem.selectedIndex = +this.scenerieId + 1;
-      elem.dispatchEvent(evt);
-    }, 100);
+    this.openUnite();
+  }
+
+  openUnite() {
+    this.cargando = true;
+    if (this.editVariable) {
+      this.editDataEvent.emit({
+        id: this.nodeId,
+
+        unite: this.variableUnidad ?? 0,
+      });
+
+      this.scenarioYears[this.defaultYear] = this.variableUnidad;
+
+      console.log(this.scenarioYears, 'SCES');
+
+      this.projectSvc
+        .updateScenery(this.scenarioId, { years: this.scenarioYears })
+        .subscribe((res: any) => {
+          const openButton = document.querySelector('#uniteModalButton');
+
+          if (openButton) {
+            (openButton as HTMLElement).click();
+            this.cargando = false;
+            /*             setTimeout(() => {
+              var evt = new Event('change');
+              var elem = document.getElementById(
+                'escenarios-select'
+              ) as HTMLSelectElement;
+              elem.selectedIndex = +this.scenerieId + 1;
+              elem.dispatchEvent(evt);
+            }, 300); */
+          }
+        });
+
+      /* this.cerrarModal(); */
+    } else {
+      const openButton = document.querySelector('#uniteModalButton');
+
+      if (openButton) {
+        (openButton as HTMLElement).click();
+        this.cargando = false;
+        setTimeout(() => {
+          var evt = new Event('change');
+          var elem = document.getElementById(
+            'escenarios-select'
+          ) as HTMLSelectElement;
+          elem.selectedIndex = +this.scenerieId + 1;
+          elem.dispatchEvent(evt);
+        }, 300);
+      }
+    }
   }
 
   toggleSwitch(option: boolean) {

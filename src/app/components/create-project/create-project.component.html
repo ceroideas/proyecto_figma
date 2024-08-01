@@ -1,30 +1,53 @@
 <!-- Button trigger modal -->
-<div  style="width: 100%; height: 80px; display: flex; align-items: center; justify-content: space-between; ">
-<div>
-  <p class="mt-3" style="font-size: 20px; line-height: 30px; font-weight: 700; color: rgba(0, 6, 31, 1);">Your projects</p>
+<div
+  style="
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  "
+>
+  <div>
+    <p
+      class="mt-3"
+      style="
+        font-size: 20px;
+        line-height: 30px;
+        font-weight: 700;
+        color: rgba(0, 6, 31, 1);
+      "
+    >
+      Your projects
+    </p>
+  </div>
+  <div
+    class="create-project-button"
+    data-bs-toggle="modal"
+    data-bs-target="#createProjectModal"
+  >
+    <img src="../../../assets/icons/u_plus.svg" alt="" />
+  </div>
 </div>
-<div class="create-project-button" data-bs-toggle="modal" data-bs-target="#createProjectModal">
-
-  <img src="../../../assets/icons/u_plus.svg" alt="" />
-  
-</div>
-</div>
-
 
 <!-- Modal -->
 <div
   #createProjectModal
-  class="modal  fade modal-font-color"
+  class="modal fade modal-font-color"
   id="createProjectModal"
   tabindex="-1"
   aria-labelledby="createProjectModalLabel"
   aria-hidden="true"
-
 >
-  <div class="modal-dialog" style="    flex-wrap: wrap;
-    display: flex;
-    align-content: center;
-    justify-content: center;">
+  <div
+    class="modal-dialog"
+    style="
+      flex-wrap: wrap;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+    "
+  >
     <div class="modal-content create-project-modal">
       <div class="modal-header">
         <p class="modal-title" id="createProjectModalLabel">Create project</p>
@@ -38,9 +61,7 @@
 
       <div class="modal-body">
         <div class="mb-4 mt-3 ml-2">
-          <label for="name" class="form-label color-theme"
-            >Project name</label
-          >
+          <label for="name" class="form-label color-theme">Project name</label>
           <input
             type="text"
             id="name"
@@ -51,81 +72,89 @@
             placeholder="Type here the name of the project"
           />
         </div>
-        <div  class=" ml-2 mb-4 row d-flex">
-          <p style="padding-left: 0 !important;">Average of scenarios</p>
-          <div style="align-items: center; justify-content: space-between; padding-left: 0 " class="d-flex"> 
-          <select
-            [(ngModel)]="yearFrom"
-            (change)="onFromSelected(yearFrom)"
-            class="form-select input-formula  "
-            style="width: 300px;" 
-          
+        <div class="ml-2 mb-4 row d-flex">
+          <p style="padding-left: 0 !important">Average of scenarios</p>
+          <div
+            style="
+              align-items: center;
+              justify-content: space-between;
+              padding-left: 0;
+            "
+            class="d-flex"
           >
-            <option selected value="#">Select a starting year</option>
-            <option *ngFor="let year of years" [value]="year">
-              {{ year }}
-            </option>
-          </select>
-          <div>
-            <img src="../../../assets/icons/minus.svg" alt="" />
-          </div>
-          <select
-            [(ngModel)]="yearTo"
-            class="form-select input-formula"
+            <select
+              [(ngModel)]="yearFrom"
+              (change)="onFromSelected(yearFrom)"
+              class="form-select input-formula"
+              style="width: 300px"
+            >
+              <option selected value="#">Select a starting year</option>
+              <option *ngFor="let year of years" [value]="year">
+                {{ year }}
+              </option>
+            </select>
+            <div>
+              <img src="../../../assets/icons/minus.svg" alt="" />
+            </div>
+            <select
+              [(ngModel)]="yearTo"
+              class="form-select input-formula"
               (change)="defaultYear()"
-            style="width: 300px;" 
-          >
-            <option selected value="#">Select an end year</option>
-            <option *ngFor="let year of yearsTo" [value]="+year">
-              {{ year }}
-            </option>
-          </select>
+              style="width: 300px"
+            >
+              <option selected value="#">Select an end year</option>
+              <option *ngFor="let year of yearsTo" [value]="+year">
+                {{ year }}
+              </option>
+            </select>
           </div>
-
         </div>
-        <div style="align-items: center; justify-content: space-between;" class=" ml-2  mb-4 mt-3 d-flex">
-          <div >
-          <label for="name" class="form-label color-theme"
-            >Select a default year</label
-          > 
+        <div
+          style="align-items: center; justify-content: space-between"
+          class="ml-2 mb-4 mt-3 d-flex"
+        >
+          <div>
+            <label for="name" class="form-label color-theme"
+              >Select a default year</label
+            >
             <select
-            [(ngModel)]="yearDefault"
-            class="form-select input-formula"
-             style="width: 300px;" 
-          >
-            <option selected value="#">Select a year</option>
-            <option *ngFor="let year of yearsDefault" [value]="+year">
-              {{ year }}
-            </option>
-          </select>
-        </div >
-        <div>
-          <label for="name" class="form-label color-theme"
-            >Select the number of scenarios</label
-          >
+              [(ngModel)]="yearDefault"
+              class="form-select input-formula"
+              style="width: 300px"
+            >
+              <option selected value="#">Select a year</option>
+              <option *ngFor="let year of yearsDefault" [value]="+year">
+                {{ year }}
+              </option>
+            </select>
+          </div>
+          <div>
+            <label for="name" class="form-label color-theme"
+              >Select the number of scenarios</label
+            >
             <select
-            [(ngModel)]="selectedNumber"
-            class="form-select input-formula"
-            (change)="addInput()"
-            style="width: 300px;" 
-          >
-            <option selected value="#">Number of scenarios</option>
-            <option *ngFor="let number of selectNumber" [value]="+number">
-              {{ number }}
-            </option>
-          </select>
-        </div>
+              [(ngModel)]="selectedNumber"
+              class="form-select input-formula"
+              (change)="addInput()"
+              style="width: 300px"
+            >
+              <option selected value="#">Number of scenarios</option>
+              <option *ngFor="let number of selectNumber" [value]="+number">
+                {{ number }}
+              </option>
+            </select>
+          </div>
         </div>
 
-        <div class="mb-4 mt-3 ml-2" *ngFor="let input of inputs; let i = index;">
+        <div class="mb-4 mt-3 ml-2" *ngFor="let input of inputs; let i = index">
           <div style="align-items: center" class="d-flex">
-            <p style="display: contents">Scenario Name {{i + 1}}</p>
-<!--             <button (click)="addInput()" class="unite-button ml-5 mr-2">
+            <p style="display: contents">Scenario Name {{ i + 1 }}</p>
+            <!--             <button (click)="addInput()" class="unite-button ml-5 mr-2">
               <img src="../../../assets/icons/fi_plus.svg" alt="" />
             </button> -->
           </div>
 
-          <div >
+          <div>
             <input
               type="text"
               [id]="input"
@@ -137,54 +166,44 @@
           </div>
         </div>
 
-<div class="ml-2">
-  <p>Select the color of the lines of the value tree</p>
-  <div class="d-flex">
-    <div
-      *ngFor="let color of colorsOption"
-      class="rounded-circle mr-2 color-circle"
-      [style.background-color]="'rgb(' + color + ')'"
-      [class.colorBorder]="colorBar === color"
-      (click)="selectColor(color, $event)"
-    ></div>
-  </div>
-</div>
-<div class="form-check ml-2  mb-4 mt-4 " >
+        <div class="ml-2">
+          <p>Select the color of the lines of the value tree</p>
+          <div class="d-flex">
+            <div
+              *ngFor="let color of colorsOption"
+              class="rounded-circle mr-2 color-circle"
+              [style.background-color]="'rgb(' + color + ')'"
+              [class.colorBorder]="colorBar === color"
+              (click)="selectColor(color, $event)"
+            ></div>
+          </div>
+        </div>
+        <!-- <div class="form-check ml-2  mb-4 mt-4 " >
   <input  [(ngModel)]="growth" style="width: 18px; height: 18px;" class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-<!--   <label class="form-check-label" for="flexCheckDefault">
-    Default growth
-  </label> -->
   <p>
   Default growth
   </p>
-</div>
+</div> -->
 
-
-<div *ngIf="growth" class="ml-2">
-  <label class="form-label color-theme" for="percentage">Set a default growth percentage:</label>
-  <div class="input-group">
-    <input
-      type="number"
-      id="percentage"
-      name="percentage"
-      [(ngModel)]="growthPercentage"
-      (input)="validatePercentage()"
-      min="0"
-      max="100"
-      step="0.01"
-      class="form-control input-formula"
-      placeholder="Growth percentage"
-    />
-    <div class="input-group-append">
-      <span class="input-group-text">%</span>
-    </div>
-  </div>
-  <div *ngIf="percentageError" class="text-danger">
-    Please enter a value between 0 and 100.
-  </div>
-</div>
-
-</div>
+        <div class="ml-2 mt-4">
+          <label class="form-label color-theme" for="percentage"
+            >Set a default growth percentage:</label
+          >
+          <div class="input-group">
+            <input
+              type="number"
+              id="percentage"
+              name="percentage"
+              [(ngModel)]="growthPercentage"
+              class="form-control input-formula"
+              placeholder="Growth percentage"
+            />
+            <div class="input-group-append">
+              <span class="input-group-text">%</span>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="modal-footer">
         <div
           class="col-md-12 d-flex justify-content-between align-items-start w-100 mb-0"
