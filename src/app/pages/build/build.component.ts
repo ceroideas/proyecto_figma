@@ -72,7 +72,7 @@ export class BuildComponent implements OnInit {
   constantColor!: string;
   defaultGrowth!: any;
   defaultGrowthPercentage!: number;
-
+  fileJson!:any
   loadedCallBack = false;
 
   constructor(
@@ -1344,10 +1344,14 @@ export class BuildComponent implements OnInit {
   }
 
   onFileSelected(event: any): void {
-    const file: File = event.target.files[0];
-    console.log(file, 'FILE');
-    if (file) {
-      this.projectSvc.uploadProject(file, this.id).subscribe(
+    this.fileJson = event.target.files[0];
+ 
+
+  }
+
+  uploadJson(){
+    if (this.fileJson) {
+      this.projectSvc.uploadProject(this.fileJson, this.id).subscribe(
         (response) => {
           this.printAll();
         },

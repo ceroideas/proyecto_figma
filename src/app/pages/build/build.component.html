@@ -43,7 +43,7 @@
   <button (click)="downloadProjectById()">Download Project</button>
   <div>
     <input type="file" (change)="onFileSelected($event)" accept=".json" />
-    <button>Upload Project</button>
+    <button (click)="uploadJson()">Upload Project</button>
   </div>
 </div>
 
