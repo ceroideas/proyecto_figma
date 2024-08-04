@@ -95,9 +95,9 @@ export class ShapeModalComponent {
         }
       } else if (this.route === 'next') {
         this.route = 'back';
-        if (openButtonNext) {
+        if (openButtonBack) {
           // Simula un clic en el botón para cerrar el modal
-          (openButtonNext as HTMLElement).click();
+          (openButtonBack as HTMLElement).click();
         }
       }
     });
@@ -107,12 +107,37 @@ export class ShapeModalComponent {
     this.clickedElement = index;
   }
 
+  /*   next() {
+    this.route = 'next';
+      localStorage.setItem(
+        'shapetype',
+        JSON.stringify(this.shapes[this.clickedElement])
+      );
+      
+  } */
+
   next() {
     this.route = 'next';
-    localStorage.setItem(
-      'shapetype',
-      JSON.stringify(this.shapes[this.clickedElement])
-    );
+    const formShape = {
+      min: 0,
+      mean: 0,
+      rate: 0,
+      stDev: 0,
+      max: 0,
+      mode: 0,
+      lamda: 0,
+      trials: 0,
+      probability: 0,
+      alpha: 0,
+      beta: 0,
+      form: 0,
+      success: 0,
+      population: 0,
+      scale: 0,
+      name: this.shapes[this.clickedElement].name,
+      type: 'static',
+    };
+    localStorage.setItem('shapeData', JSON.stringify(formShape));
   }
 
   getItem(key: any) {

@@ -86,9 +86,7 @@ export class UniteModalComponent implements OnInit {
       if (this.edit) {
         this.projectSvc
           .saveUnite(this.nodeId, { unite: a })
-          .subscribe((data) => {
-            //console.log('guardado');
-          });
+          .subscribe((data) => {});
       }
     });
   }
@@ -114,7 +112,16 @@ export class UniteModalComponent implements OnInit {
   ngAfterViewInit() {
     this.bootstrapModal = new bootstrap.Modal(this.miModal.nativeElement);
 
-    this.bootstrapModal._element.addEventListener('shown.bs.modal', () => {});
+    this.bootstrapModal._element.addEventListener('shown.bs.modal', () => {
+      setTimeout(() => {
+        var evt = new Event('change');
+        var elem = document.getElementById(
+          'escenarios-select'
+        ) as HTMLSelectElement;
+        elem.selectedIndex = 1;
+        elem.dispatchEvent(evt);
+      }, 1000);
+    });
 
     this.bootstrapModal._element.addEventListener(
       'hide.bs.modal',
@@ -202,7 +209,12 @@ export class UniteModalComponent implements OnInit {
 
   updateSceneryIfRequired() {
     const selectedEscenary = this.escenarys[+this.selectedEscenary];
-    if (selectedEscenary.id != undefined && !this.showForm) {
+
+    if (
+      selectedEscenary &&
+      selectedEscenary.id != undefined &&
+      !this.showForm
+    ) {
       this.projectSvc
         .updateScenery(selectedEscenary.id, { years: this.model.years[0] })
         .subscribe(() => {
@@ -430,7 +442,6 @@ export class UniteModalComponent implements OnInit {
     this.calcularMontoConIncremento();
   }
   onSelectChange() {
-    console.log('CHANGE');
     if (this.oldEscenarieId && this.oldEscenarieId !== '#') {
       this.projectSvc
         .updateScenery(this.oldEscenarieId, {
@@ -689,7 +700,6 @@ export class UniteModalComponent implements OnInit {
     let defaultValue = parseFloat(years[this.defaultYear]);
 
     for (let year in years) {
-      /* console.log(parseInt(year), this.defaultYear); */
       if (parseInt(year) > this.defaultYear) {
         years[year] = (defaultValue * (1 + decimalPercentage)).toFixed(0);
         defaultValue = parseFloat(years[year]);

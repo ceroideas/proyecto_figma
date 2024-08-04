@@ -72,7 +72,7 @@ export class BuildComponent implements OnInit {
   constantColor!: string;
   defaultGrowth!: any;
   defaultGrowthPercentage!: number;
-  fileJson!:any
+  fileJson!: any;
   loadedCallBack = false;
 
   constructor(
@@ -788,9 +788,13 @@ export class BuildComponent implements OnInit {
                         <label class="ovf" style="margin-bottom: -10px;">
                           ${element.name}
                         </label>
-                        <label class="ovf-amount" style="margin-bottom: -25px;">
+                        <div>
+                         <label class="ovf-amount" style="margin-bottom: -25px;">
                           ${this.formatMonto(defaultYearValue)}
                         </label>
+                        
+                        </div>
+     
                       </div>
             </span>
     
@@ -837,6 +841,7 @@ export class BuildComponent implements OnInit {
                         <label class="ovf" style="margin-bottom: -10px;">
                           ${element.name}
                         </label>
+                        
                         <label class="ovf-amount" style="margin-bottom: -25px;">
                           ${this.formatMonto(+defaultYearValue)}
                         </label>
@@ -1345,11 +1350,9 @@ export class BuildComponent implements OnInit {
 
   onFileSelected(event: any): void {
     this.fileJson = event.target.files[0];
- 
-
   }
 
-  uploadJson(){
+  uploadJson() {
     if (this.fileJson) {
       this.projectSvc.uploadProject(this.fileJson, this.id).subscribe(
         (response) => {

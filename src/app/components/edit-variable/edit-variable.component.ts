@@ -48,9 +48,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
   editVariableUnidad: boolean = false;
   variableOperation: any;
   mean: number = 0;
-  rate: number = 0;
-  min: number = 0;
-  max: number = 0;
+  rate: any = 0;
+  min: any = 0;
+  max: any = 0;
   stDev: number = 0;
   variableSelect1: any = '#';
   variableSelect2: any = '#';
@@ -195,13 +195,21 @@ export class EditVariableComponent implements OnInit, OnChanges {
     const modalElement = document.getElementById('exampleModal');
 
     if (modalElement) {
-      // Listen for modal hidden event
       this.renderer.listen(modalElement, 'hidden.bs.modal', () => {
         if (this.escKeyPressed) {
           this.deleteShapeData();
           this.escKeyPressed = false; // Reset the flag
         } else {
           console.log('Modal closed by another action');
+        }
+      });
+      this.renderer.listen(modalElement, 'shown.bs.modal', () => {
+        if (this.editVariable && this.scenarioId) {
+          this.cargando = true;
+          this.projectSvc.getScenery(this.scenarioId).subscribe((res: any) => {
+            this.variableUnidad = res.years[this.defaultYear];
+            this.cargando = false;
+          });
         }
       });
 
@@ -718,10 +726,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
           };
           localStorage.setItem('shapeData', JSON.stringify(formShape));
           this.shapeData = this.getItem('shapeData');
+          console.log(this.shapeData, 'SHAPE DAT');
 
           const chartName = res.distribution_shape[0]?.name
             ? res.distribution_shape[0]?.name
-            : 'ANormal';
+            : 'Normal';
 
           if (this.chart) {
             this.chart.destroy();
@@ -1030,67 +1039,261 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   normalChart() {
+    // Definir la media y la desviación estándar
+    if (this.mean.toString().includes('%')) {
+      const valueBase = parseFloat(this.mean.toString().replace('%', ''));
+
+      this.mean = +valueBase / 100;
+    }
+
+    if (this.stDev.toString().includes('%')) {
+      const valueBase = parseFloat(this.stDev.toString().replace('%', ''));
+
+      this.stDev = +valueBase / 100;
+    }
+    var mu = +this.mean,
+      sigma = +this.stDev,
+      samples = 1000;
+
+    // Generar una distribución normal
+    // Generar una distribución normal
+    var s = [];
+    for (var i = 0; i < samples; i++) {
+      s.push(
+        mu +
+          sigma *
+            Math.sqrt(-2.0 * Math.log(Math.random())) *
+            Math.cos(2.0 * Math.PI * Math.random())
+      );
+    }
+    // Crear el histograma
+    var histogram = new Array(samples).fill(0);
+    for (var i = 0; i < s.length; i++) {
+      histogram[Math.floor(((s[i] - mu + 5 * sigma) / (10 * sigma)) * 100)]++;
+    }
+
+    var binWidth = (10 * sigma) / 100;
+    histogram = histogram.map(function (value) {
+      return value / (binWidth * s.length);
+    });
+
+    // Crear la curva de la función de densidad de probabilidad
+    var x = Array.from({ length: 100 }, (_, i) =>
+      (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
+    );
+    var y = x.map(function (x) {
+      return (
+        (1 / (sigma * Math.sqrt(2 * Math.PI))) *
+        Math.exp(-((+x - mu) ** 2) / (2 * sigma ** 2))
+      );
+    });
+
+    // Crear el gráfico
+
     this.chart = new Chart('myChart', {
       type: 'line',
       data: {
-        labels: ['-', '-', '-', '-', '-'],
+        labels: x,
         datasets: [
           {
-            backgroundColor: '#8C64B1',
-            label: 'Normal',
-            data: [0, 10, 19, 10, 0],
-            fill: true,
-            tension: 0.4,
+            label: 'Theoretical distribution',
+            data: y,
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+            borderColor: 'rgba(255, 0, 0, 1)',
             borderWidth: 1,
-            pointHitRadius: 25, // for improved touch support
-            // dragData: false // prohibit dragging this dataset
-            // same as returning `false` in the onDragStart callback
-            // for this datsets index position
+          },
+          {
+            type: 'bar',
+            label: 'Normal',
+            data: histogram,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
           },
         ],
       },
       options: {
-        plugins: {},
         scales: {
+          yAxes: {
+            beginAtZero: true,
+            ticks: {},
+          },
           y: {
-            // dragData: false // disables datapoint dragging for the entire axis
+            display: false,
           },
         },
       },
     });
+  }
+
+  changeValueNormal() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.normalChart();
   }
 
   triangularChart() {
+    console.log(this.min, this.max, this.mode, 'MODE');
+    // Función para generar números aleatorios con distribución triangular
+    function triangularDistribution(
+      sampleSize: any,
+      low: number,
+      mode: number,
+      high: number
+    ) {
+      const triangularSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        const u = Math.random();
+        const f = (mode - low) / (high - low);
+        if (u <= f) {
+          triangularSamples.push(
+            low + Math.sqrt(u * (high - low) * (mode - low))
+          );
+        } else {
+          triangularSamples.push(
+            high - Math.sqrt((1 - u) * (high - low) * (high - mode))
+          );
+        }
+      }
+      return triangularSamples;
+    }
+
+    // Definir parámetros de la distribución triangular
+    const sampleSize = 1000;
+
+    // Generar números aleatorios con distribución triangular
+    const triangularSamples = triangularDistribution(
+      sampleSize,
+      +this.min,
+      +this.mode,
+      +this.max
+    );
+
+    // Calcular el histograma
+    const numBins = 20; // Número de bins para el histograma
+    const binWidth = (+this.max - +this.min) / numBins;
+    const histogram = new Array(numBins).fill(0);
+
+    triangularSamples.forEach((value) => {
+      if (value >= +this.min && value <= +this.max) {
+        const binIndex = Math.floor((value - +this.min) / binWidth);
+        histogram[binIndex]++;
+      }
+    });
+
+    // Preparar datos para el histograma
+    const labels = Array.from(
+      { length: numBins },
+      (_, i) => +(+this.min + i * binWidth).toFixed(2)
+    );
+
+    const data = histogram.map((count) => count / sampleSize / binWidth);
+
+    // Calcular la PDF teórica
+    const pdf = labels.map((x) => {
+      if (x < +this.mode) {
+        return (
+          (2 * (x - +this.min)) /
+          ((+this.max - +this.min) * (+this.mode - +this.min))
+        );
+      } else {
+        return (
+          (2 * (+this.max - x)) /
+          ((+this.max - +this.min) * (+this.max - +this.mode))
+        );
+      }
+    });
+
+    // Crear un histograma con Chart.js (gráfico de barras) y agregar la PDF
     this.chart = new Chart('myChart', {
-      type: 'line',
+      type: 'bar',
       data: {
-        labels: ['-', '-', '-'],
+        labels: labels,
         datasets: [
           {
+            label: 'Theoretical distribution',
+            data: pdf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
+            yAxisID: 'y1',
+          },
+          {
+            label: 'Histogram',
+            data: data,
             backgroundColor: '#8C64B1',
-            label: 'Triangular',
-            data: [1, 100, 1], // Modifica los datos para que tengan forma triangular
-            fill: true,
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
+            yAxisID: 'y',
           },
         ],
       },
       options: {
-        plugins: {},
         scales: {
-          y: {},
+          x: {
+            title: {
+              display: true,
+              text: 'Value',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+            position: 'left',
+          },
+          y1: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Probability Density',
+            },
+            position: 'right',
+            grid: {
+              drawOnChartArea: false,
+            },
+          },
         },
       },
     });
   }
+  changeValueTriangular() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.triangularChart();
+  }
 
   poissonChart() {
-    // Función para calcular la distribución de Poisson
-    function poisson(k: any, lambda: any) {
-      return (Math.exp(-lambda) * Math.pow(lambda, k)) / factorial(k);
+    // Función para generar números aleatorios con distribución de Poisson
+    function poissonDistribution(sampleSize: any, lambda: any) {
+      const poissonSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        let L = Math.exp(-lambda);
+        let k = 0;
+        let p = 1.0;
+        do {
+          k++;
+          p *= Math.random();
+        } while (p > L);
+        poissonSamples.push(k - 1);
+      }
+      return poissonSamples;
     }
 
-    // Función para calcular el factorial
-    function factorial(n: any) {
+    // Función para calcular la PMF teórica de la distribución de Poisson
+    function poissonPMF(lambda: number, k: number) {
+      return (Math.pow(lambda, k) * Math.exp(-lambda)) / factorial(k);
+    }
+
+    // Función para calcular el factorial de un número
+    function factorial(n: number): number {
+      if (n === 0 || n === 1) return 1;
       let result = 1;
       for (let i = 2; i <= n; i++) {
         result *= i;
@@ -1098,68 +1301,188 @@ export class EditVariableComponent implements OnInit, OnChanges {
       return result;
     }
 
-    // Parámetros para la distribución de Poisson
-    const lambda = 5; // Parámetro lambda de la distribución de Poisson
-    const maxK = 10; // Valor máximo de k
+    // Definir parámetros de la distribución de Poisson
+    const sampleSize = 1000;
+    const lambda = this.lamda; // Parámetro lambda
 
-    // Generar los datos para la distribución de Poisson
-    const dataPoisson = [];
-    for (let k = 0; k <= maxK; k++) {
-      dataPoisson.push(poisson(k, lambda));
+    // Generar números aleatorios con distribución de Poisson
+    const poissonSamples = poissonDistribution(sampleSize, lambda);
+
+    // Calcular el histograma
+    const maxVal = Math.max(...poissonSamples);
+    const minVal = Math.min(...poissonSamples);
+    const numBins = maxVal - minVal + 1;
+
+    let histogram = new Array(numBins).fill(0);
+    for (let i = 0; i < poissonSamples.length; i++) {
+      histogram[poissonSamples[i] - minVal]++;
     }
 
-    // Crear el gráfico de líneas con la distribución de Poisson
+    // Normalizar el histograma
+    for (let i = 0; i < histogram.length; i++) {
+      histogram[i] /= poissonSamples.length;
+    }
+
+    // Calcular la PMF teórica
+    const pmf = new Array(numBins)
+      .fill(0)
+      .map((_, i) => poissonPMF(lambda, i + minVal));
+
+    // Crear un histograma con Chart.js (gráfico de barras) y agregar la PMF
     this.chart = new Chart('myChart', {
       type: 'bar',
       data: {
-        labels: Array.from({ length: maxK + 1 }, (_, i) => ''),
+        labels: Array.from({ length: histogram.length }, (_, i) => i + minVal),
         datasets: [
           {
+            label: 'Theoretical distribution',
+            data: pmf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
+          },
+          {
+            label: 'Histogram',
+            data: histogram,
             backgroundColor: '#8C64B1',
-            label: 'Poisson',
-            data: dataPoisson,
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
           },
         ],
       },
       options: {
-        plugins: {},
         scales: {
           x: {
-            display: false, // Oculta las etiquetas del eje x
+            title: {
+              display: true,
+              text: 'Value',
+            },
           },
-          y: {},
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Frequency',
+            },
+          },
+        },
+      },
+    });
+  }
+  changeValuePoisson() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.poissonChart();
+  }
+
+  binomialChart() {
+    // Función para generar números aleatorios con distribución binomial
+    function binomialDistribution(sampleSize: any, n: any, p: any) {
+      const binomialSamples = [];
+      for (let i = 0; i < sampleSize; i++) {
+        let successes = 0;
+        for (let j = 0; j < n; j++) {
+          if (Math.random() < p) {
+            successes++;
+          }
+        }
+        binomialSamples.push(successes);
+      }
+      return binomialSamples;
+    }
+
+    // Función para calcular la PMF teórica de la distribución binomial
+    function binomialPMF(n: number, p: number, k: number) {
+      function factorial(x: number): number {
+        if (x === 0 || x === 1) return 1;
+        return x * factorial(x - 1);
+      }
+      return (
+        (factorial(n) / (factorial(k) * factorial(n - k))) *
+        Math.pow(p, k) *
+        Math.pow(1 - p, n - k)
+      );
+    }
+
+    // Definir parámetros de la distribución binomial
+    const sampleSize = 1000;
+    const n = this.trials > 0 ? this.trials : 1; // Número de ensayos
+    const p = this.probability; // Probabilidad de éxito en cada ensayo
+
+    // Generar números aleatorios con distribución binomial
+    const binomialSamples = binomialDistribution(sampleSize, n, p);
+
+    // Calcular el histograma
+    const maxVal = Math.max(...binomialSamples);
+    const minVal = Math.min(...binomialSamples);
+    const numBins = maxVal - minVal + 1;
+    const histogram = new Array(numBins).fill(0);
+
+    binomialSamples.forEach((value) => {
+      histogram[value - minVal]++;
+    });
+
+    // Normalizar el histograma
+    for (let i = 0; i < histogram.length; i++) {
+      histogram[i] /= binomialSamples.length;
+    }
+
+    // Calcular la PMF teórica
+    const labels = Array.from({ length: numBins }, (_, i) => i + minVal);
+    const pmf = labels.map((k) => binomialPMF(n, p, k));
+
+    // Crear un histograma con Chart.js (gráfico de barras) y agregar la PMF
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Theoretical distribution',
+            data: pmf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
+          },
+          {
+            label: 'Binomial',
+            data: histogram,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
+          },
+        ],
+      },
+      options: {
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Number of Successes',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Probability',
+            },
+          },
         },
       },
     });
   }
 
-  binomialChart() {
-    // Valores aproximados para representar una distribución binomial
-    const dataBinomial = [
-      1, 0, 0, 2, 3, 1, 7, 9, 17, 31, 49, 69, 94, 119, 128, 141, 104, 79, 60,
-      46, 20, 14, 1, 4, 0, 1,
-    ]; // Ejemplo de valores aproximados
-
-    // Crear el gráfico de barras con la distribución binomial
-    this.chart = new Chart('myChart', {
-      type: 'bar',
-      data: {
-        labels: Array.from({ length: dataBinomial.length }, () => ''),
-        datasets: [
-          {
-            backgroundColor: '#8C64B1',
-            label: 'Binomial',
-            data: dataBinomial,
-          },
-        ],
-      },
-      options: {
-        plugins: {},
-        scales: {
-          x: { display: false }, // Oculta las etiquetas del eje x
-        },
-      },
-    });
+  changeValueBinomial() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.binomialChart();
   }
 
   weibullChart() {
@@ -1462,65 +1785,158 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   uniformChart() {
+    if (this.min.toString().includes('%')) {
+      const valueBase = parseFloat(this.min.replace('%', ''));
+
+      this.min = +valueBase / 100;
+    }
+
+    if (this.max.toString().includes('%')) {
+      const valueBase = parseFloat(this.max.replace('%', ''));
+
+      this.max = +valueBase / 100;
+    }
+
+    var min = +this.min;
+    var max = +this.max;
+
+    // Generar muestras de la distribución
+    var s = [];
+    for (var i = 0; i < 1000; i++) {
+      s.push(min + Math.random() * (max - min));
+    }
+
+    // Verificar que todos los valores están dentro del intervalo dado
+
+    // Crear el histograma
+    var histogram = new Array(15).fill(0);
+    for (var i = 0; i < s.length; i++) {
+      histogram[Math.floor((s[i] - min) / ((max - min) / 15))]++;
+    }
+
+    // Normalizar el histograma
+    var binWidth = (max - min) / 15;
+    histogram = histogram.map(function (value) {
+      return value / (binWidth * s.length);
+    });
+
+    // Crear el gráfico
+
     this.chart = new Chart('myChart', {
-      type: 'line',
+      type: 'bar',
       data: {
-        labels: ['-', '-', '-', '-', '-'],
+        labels: Array.from({ length: 15 }, (_, i) =>
+          (min + i * binWidth).toFixed(2)
+        ),
         datasets: [
           {
+            type: 'line',
+            label: 'Theoretical distribution',
+            fill: false,
+            data: Array.from({ length: 15 }, () => 1),
+            backgroundColor: 'rgba(255, 0, 0, 0.5)',
+            borderColor: 'rgba(255, 0, 0, 1)',
+            borderWidth: 2,
+          },
+          {
+            label: 'Unirform',
+            data: histogram,
             backgroundColor: '#8C64B1',
-            label: 'Uniforme',
-            data: [19, 19, 19, 19, 19],
-            fill: true,
-            tension: 0.4,
+            borderColor: '##8C64B1',
             borderWidth: 1,
-            pointHitRadius: 25, // for improved touch support
-            // dragData: false // prohibit dragging this dataset
-            // same as returning `false` in the onDragStart callback
-            // for this datsets index position
           },
         ],
       },
       options: {
-        plugins: {},
+        scales: {},
+      },
+    });
+  }
+  changeValueUniforme() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.uniformChart();
+  }
+
+  exponentialChart() {
+    // Escala de la distribución exponencial
+    console.log(this.rate, 'RATE');
+    this.rate = `${this.rate}`;
+
+    if (this.rate.includes('%')) {
+      const valueBase = parseFloat(this.rate.replace('%', ''));
+
+      this.rate = +valueBase / 100;
+    }
+    let rate = +this.rate; // Cambia este valor para ajustar la escala
+
+    // Dibujar muestras de la distribución exponencial
+    let s = [];
+    for (let i = 0; i < 1000; i++) {
+      s.push(-rate * Math.log(1.0 - Math.random()));
+    }
+
+    // Crear el histograma
+    let histogram = new Array(50).fill(0);
+    for (let i = 0; i < s.length; i++) {
+      histogram[Math.min(Math.floor(s[i] / (10 / 50)), histogram.length - 1)]++;
+    }
+
+    // Normalizar el histograma
+    let binWidth = 10 / 50;
+    histogram = histogram.map((value) => value / (binWidth * s.length));
+
+    // Crear bins para el histograma
+    let bins = Array.from({ length: histogram.length }, (_, i) =>
+      (i * binWidth).toFixed(2)
+    );
+
+    // Crear PDF de la distribución exponencial
+    let pdf = bins.map((bin) => Math.exp(-bin));
+
+    // Crear el gráfico con Chart.js
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: {
+        labels: bins,
+        datasets: [
+          {
+            label: 'Theoretical distribution',
+            data: pdf,
+            fill: false,
+            borderColor: 'rgba(255, 0, 0, 1)',
+            borderWidth: 1,
+            type: 'line',
+          },
+          {
+            label: 'Exponential',
+            data: histogram,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+          },
+        ],
+      },
+      options: {
         scales: {
           y: {
-            // dragData: false // disables datapoint dragging for the entire axis
+            display: false,
+          },
+          yAxes: {
+            beginAtZero: true,
+            ticks: {},
           },
         },
       },
     });
   }
 
-  exponentialChart() {
-    this.chart = new Chart('myChart', {
-      type: 'line',
-      data: {
-        labels: ['-', '-', '-', '-', '-'],
-        datasets: [
-          {
-            backgroundColor: '#8C64B1',
-            label: 'Exponencial',
-            data: [19, 12, 7, 2, 0],
-            fill: true,
-            tension: 0.4,
-            borderWidth: 1,
-            pointHitRadius: 25, // for improved touch support
-            // dragData: false // prohibit dragging this dataset
-            // same as returning `false` in the onDragStart callback
-            // for this datsets index position
-          },
-        ],
-      },
-      options: {
-        plugins: {},
-        scales: {
-          y: {
-            // dragData: false // disables datapoint dragging for the entire axis
-          },
-        },
-      },
-    });
+  changeValueExponential() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.exponentialChart();
   }
 
   deleteShapeData() {
@@ -1591,7 +2007,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
               ) as HTMLSelectElement;
               elem.selectedIndex = +this.scenerieId + 1;
               elem.dispatchEvent(evt);
-            }, 300); */
+            }, 1000); */
           }
         });
 

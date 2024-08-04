@@ -239,23 +239,30 @@ table {
   font-weight: 50 !important;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 150px;
+
   overflow: hidden;
   font-size: 14px;
   height: 25px;
-  max-width: 100%;
+  max-width: 150px;
   overflow: hidden;
+  margin-top: -4px !important;
 }
 
 .ovf-amount {
+  padding: 1px 5px !important;
+  align-self: center;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 150px;
   overflow: hidden;
-  font-size: 14px;
-  height: 25px;
-  max-width: 100%;
+  font-size: 12px;
+  height: 18px;
+  max-width: 150px;
   overflow: hidden;
+  background-color: #f6f3f9;
+  margin-top: 6px !important;
+  border-radius: 15px !important;
+  width: auto;
 }
 
 .label-with-dot {
