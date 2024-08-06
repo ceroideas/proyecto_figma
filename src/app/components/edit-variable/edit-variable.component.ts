@@ -17,7 +17,12 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { Chart, registerables } from 'node_modules/chart.js';
+import {
+  Chart,
+  ChartData,
+  ChartOptions,
+  registerables,
+} from 'node_modules/chart.js';
 import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { EventsService } from 'src/app/services/events.service';
@@ -1486,55 +1491,132 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   weibullChart() {
-    // Tus códigos
-    var a = 5; // shape
-    var form = 1;
-    var s = Array.from({ length: 1000 }, () =>
-      Math.pow(-Math.log(Math.random()), form / a)
-    );
+    // Parámetros de la distribución de Weibull
+    const k = this.form; // Parámetro de forma
+    const lambda = this.scale; // Parámetro de escala
+    const sampleSize = 1000;
 
-    // Función weibull
-    function weib(x: number, n: number, a: number) {
-      return (a / n) * Math.pow(x / n, a - 1) * Math.exp(-Math.pow(x / n, a));
+    // Función para generar números aleatorios con distribución de Weibull
+    function generateWeibullSamples(k: number, lambda: number, size: number) {
+      const samples: number[] = [];
+      for (let i = 0; i < size; i++) {
+        const u = Math.random();
+        const sample = lambda * Math.pow(-Math.log(1 - u), 1 / k);
+        samples.push(sample);
+      }
+      return samples;
     }
 
-    // Crear la gráfica
+    // Generar los datos de Weibull
+    const weibullSamples = generateWeibullSamples(k, lambda, sampleSize);
 
-    var x = Array.from({ length: 100 }, (_, i) => (i + 1) / 50);
-    var y = x.map((val) => weib(val, form, a));
-    this.chart = new Chart('myChart', {
-      type: 'bar',
-      data: {
-        labels: x,
-        datasets: [
-          {
-            label: 'Weibull Distribution',
-            data: y,
-            backgroundColor: '#8C64B1',
-            borderColor: '#8C64B1',
-            borderWidth: 1,
+    // Crear bins para el histograma
+    function createHistogram(samples: number[], binCount: number) {
+      const max = Math.max(...samples);
+      const min = Math.min(...samples);
+      const binWidth = (max - min) / binCount;
+      const bins = Array(binCount).fill(0);
+      samples.forEach((sample: number) => {
+        const index = Math.min(
+          Math.floor((sample - min) / binWidth),
+          binCount - 1
+        );
+        bins[index]++;
+      });
+      return bins.map((count) => count / (samples.length * binWidth)); // Densidad de probabilidad
+    }
+
+    const binCount = 20;
+    const hist = createHistogram(weibullSamples, binCount);
+
+    // Calcular los puntos medios de los bins
+    const binEdges = Array.from(
+      { length: binCount + 1 },
+      (_, i) => i * (Math.max(...weibullSamples) / binCount)
+    );
+    const binMids = binEdges
+      .slice(0, -1)
+      .map((edge, index) => ((edge + binEdges[index + 1]) / 2).toFixed(2));
+
+    // Función para calcular la PDF de Weibull
+    function weibullPDF(x: number, k: number, lambda: number) {
+      return (
+        (k / lambda) *
+        Math.pow(x / lambda, k - 1) *
+        Math.exp(-Math.pow(x / lambda, k))
+      );
+    }
+
+    // Calcular los valores de la PDF para los puntos medios de los bins
+    const pdfValues = binMids.map((x) => weibullPDF(parseFloat(x), k, lambda));
+
+    // Configurar los datos para Chart.js
+    const chartData: ChartData<'bar' | 'line', number[], string> = {
+      labels: binMids,
+      datasets: [
+        {
+          label: 'Weibull',
+          data: hist,
+          backgroundColor: '#8C64B1',
+          borderColor: '#8C64B1',
+          borderWidth: 1,
+        },
+        {
+          label: 'Theoretical distribution',
+          data: pdfValues,
+          type: 'line',
+          fill: false,
+          borderColor: '#FF5733',
+          borderWidth: 2,
+        },
+      ],
+    };
+
+    // Configurar las opciones del gráfico
+    const chartOptions: ChartOptions = {
+      scales: {
+        x: {
+          title: {
+            display: true,
+            text: 'Valor',
           },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-          x: {
-            display: false,
+        },
+        y: {
+          title: {
+            display: true,
+            text: 'Densidad de Probabilidad',
           },
         },
       },
-    });
+      plugins: {
+        title: {
+          display: true,
+          text: 'Histograma y Función de Densidad de Probabilidad de Distribución de Weibull',
+        },
+      },
+    };
 
-    console.log(s, 'ido');
+    // Crear el gráfico
+    this.chart = new Chart('myChart', {
+      type: 'bar',
+      data: chartData,
+      options: chartOptions,
+    });
+  }
+
+  changeValueWeibull() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.weibullChart();
   }
 
   lognormalChart() {
     // Parámetros de la distribución logarítmico normal
-    const mu = Math.log(70); // Media logarítmica
-    const sigma = 12 / 70; // Desviación estándar logarítmica
+    const mean = this.mean;
+    const stDev = this.stDev;
+    const mu = Math.log(mean ** 2 / Math.sqrt(stDev ** 2 + mean ** 2)); // Media logarítmica corregida
+    const sigma = Math.sqrt(Math.log(1 + stDev ** 2 / mean ** 2)); // Desviación estándar logarítmica corregida
 
     // Función de densidad de probabilidad (PDF) de la distribución logarítmica normal
     function lognormalPDF(x: any) {
@@ -1557,20 +1639,17 @@ export class EditVariableComponent implements OnInit, OnChanges {
         data.push(pdf);
       }
     }
-    console.log(data);
-    // Configuración del gráfico
 
     // Crear gráfico
-
     this.chart = new Chart('myChart', {
-      type: 'bar',
+      type: 'bar', // Cambiar a 'line' para representar correctamente la PDF
       data: {
         labels: labels,
         datasets: [
           {
-            label: 'Distribución Logarítmico Normal',
+            label: 'Lognormal',
             data: data,
-            backgroundColor: '#8C64B1',
+            backgroundColor: 'rgba(140, 100, 177, 0.2)', // Color con transparencia
             borderColor: '#8C64B1',
             borderWidth: 1,
           },
@@ -1579,9 +1658,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       options: {
         scales: {
           x: {
-            display: false,
             title: {
-              display: false,
+              display: true,
               text: 'Valor',
             },
             ticks: {
@@ -1590,8 +1668,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
           },
           y: {
             title: {
-              display: false,
-              text: 'Densidad de probabilidad',
+              display: true,
+              text: 'Probability density',
             },
           },
         },
@@ -1599,10 +1677,17 @@ export class EditVariableComponent implements OnInit, OnChanges {
     });
   }
 
+  changeValueLognormal() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.lognormalChart();
+  }
+
   betaChart() {
     // Parámetros de la distribución beta
-    const alpha = 10; // Parámetro de forma
-    const beta = 2; // Parámetro de forma
+    const alpha = this.alpha; // Parámetro de forma
+    const beta = this.beta; // Parámetro de forma
     const size = 1000; // Tamaño de la muestra
 
     // Generar muestras de la distribución beta
@@ -1634,7 +1719,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       labels: [] as string[],
       datasets: [
         {
-          label: 'Distribución Beta',
+          label: 'Beta',
           data: [] as number[],
           fill: false,
           backgroundColor: '#8C64B1',
@@ -1656,7 +1741,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
         x: {
           title: {
             display: false,
-            text: 'Valor',
           },
         },
         y: {
@@ -1684,104 +1768,179 @@ export class EditVariableComponent implements OnInit, OnChanges {
       borderWidth: 1,
       type: 'bar',
     });
+  }
 
-    // Ajustar las opciones del eje y para el histograma
+  changeValueBeta() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.betaChart();
   }
 
   hypergeometricChart() {
     // Parámetros de la distribución hipergeométrica
-    const M = 40; // Tamaño de la población
-    const n = 30; // Número de éxitos en la población
-    const N = 20; // Tamaño de la muestra
+    const M = +this.population; // Tamaño de la población
+    const n = +this.success; // Número de éxitos en la población
+    const N = +this.trials; // Tamaño de la muestra
 
-    // Generar muestras de la distribución hipergeométrica
-    const samples = Array.from({ length: 1000 }, () => {
-      let successCount = 0;
-      for (let i = 0; i < N; i++) {
-        if (Math.random() < n / M) {
-          successCount++;
-        }
-      }
-      return successCount;
-    });
+    // Función de densidad de probabilidad de la distribución hipergeométrica
+    function hypergeometricPDF(k: number, M: number, n: number, N: number) {
+      const coef =
+        (binomialCoefficient(n, k) * binomialCoefficient(M - n, N - k)) /
+        binomialCoefficient(M, N);
+      return coef;
+    }
 
-    // Calcular el histograma de las muestras generadas
-    const bins = Array.from(new Set(samples)).sort((a, b) => a - b);
-    const histogramData = bins.map(
-      (bin) => samples.filter((value) => value === bin).length / samples.length
-    );
+    // Función para calcular el coeficiente binomial
+    function binomialCoefficient(n: number, k: number) {
+      let coeff = 1;
+      for (let x = n - k + 1; x <= n; x++) coeff *= x;
+      for (let x = 1; x <= k; x++) coeff /= x;
+      return coeff;
+    }
+
+    // Calcular los valores para la función de densidad de probabilidad
+    const pdfData = [];
+    for (let k = 0; k <= N; k++) {
+      pdfData.push(hypergeometricPDF(k, M, n, N));
+    }
 
     // Configurar los datos para el gráfico
-    const data = {
-      labels: bins,
-      datasets: [
-        {
-          label: 'Distribución Hipergeométrica',
-          data: histogramData,
-          backgroundColor: '#8C64B1',
-          borderColor: '#8C64B1',
-          borderWidth: 1,
-        },
-      ],
-    };
+    const bins = Array.from({ length: N + 1 }, (_, i) => i);
 
     // Configurar opciones del gráfico
     const options = {
       scales: {
         x: {
-          display: false,
+          title: {
+            display: true,
+            text: 'Valor',
+          },
         },
         y: {
           title: {
             display: true,
             text: 'Densidad de probabilidad',
           },
+          beginAtZero: true,
         },
       },
     };
 
     // Crear el gráfico de barras usando Chart.js
-
     this.chart = new Chart('myChart', {
-      type: 'bar',
-      data: data,
+      data: {
+        labels: bins,
+        datasets: [
+          {
+            label: 'Hypergeometric',
+            data: pdfData,
+            backgroundColor: 'rgba(140, 100, 177, 0.6)',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
+            yAxisID: 'y',
+          },
+          {
+            label: 'Theoretical distribution',
+            data: pdfData,
+            borderColor: '#FF6347',
+            backgroundColor: '#FF6347',
+            borderWidth: 2,
+            type: 'line',
+            fill: false,
+            yAxisID: 'y',
+          },
+        ],
+      },
       options: options,
     });
   }
 
-  geometricChart() {
-    // Valores aproximados para representar una distribución binomial
-    const dataBinomial = [
-      0.0967, 0.0886, 0.0818, 0.0729, 0.0689, 0.0615, 0.0486, 0.0476, 0.0439,
-      0.0389, 0.0352, 0.0321, 0.0314, 0.028, 0.021, 0.0198, 0.0194, 0.0173,
-      0.013, 0.0144, 0.0132, 0.0087, 0.0091, 0.0088, 0.0062, 0.0074, 0.0067,
-      0.0049, 0.0049, 0.0042, 0.005, 0.0039, 0.0035, 0.0037, 0.0034, 0.003,
-      0.003, 0.0012, 0.0021, 0.0013, 0.001, 0.0014, 0.0013, 0.0008, 0.0011,
-      0.0011, 0.0011, 0.0006, 0.0005, 0.0005, 0.0005, 0.0008, 0.0003, 0.0004,
-      0.0004, 0.0005, 0.0006, 0.0004, 0.0001, 0.0002, 0.0001, 0.0001, 0.0001,
-      0.0001, 0.0002, 0.0002, 0.0001, 0.0001, 0.0001, 0.0001,
-    ]; // Ejemplo de valores aproximados
+  changeValueHypergeometric() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.hypergeometricChart();
+  }
 
-    // Crear el gráfico de barras con la distribución binomial
+  geometricChart() {
+    // Parámetros de la distribución geométrica
+    const p = this.probability == 0 ? 0.1 : this.probability; // Probabilidad de éxito en cada intento
+    const size = 10000; // Tamaño de la muestra
+
+    // Generar muestras de la distribución geométrica
+    const samples = Array.from({ length: size }, () => {
+      let attempts = 1;
+      while (Math.random() >= p) {
+        attempts++;
+      }
+      return attempts;
+    });
+
+    // Calcular el histograma de las muestras
+    const histogramData = samples.reduce((histogram: any, value: any) => {
+      histogram[value] = (histogram[value] || 0) + 1;
+      return histogram;
+    }, {});
+
+    // Convertir el histograma en un formato compatible con Chart.js
+    const labels = Object.keys(histogramData).map((bin) => parseInt(bin));
+    const histogram = Object.values(histogramData).map(
+      (count: any) => count / size
+    );
+
+    // Calcular la PMF teórica
+    const pmf = labels.map((k) => p * Math.pow(1 - p, k - 1));
+
+    // Crear el gráfico de barras usando Chart.js y agregar la PMF
     this.chart = new Chart('myChart', {
       type: 'bar',
       data: {
-        labels: Array.from({ length: dataBinomial.length }, () => ''),
+        labels: labels,
         datasets: [
           {
-            backgroundColor: '#8C64B1',
             label: 'Geometric',
-            data: dataBinomial,
+            data: pmf,
+            borderColor: '#FF6347',
+            borderWidth: 2,
+            fill: false,
+            type: 'line',
+          },
+          {
+            label: 'Histogram',
+            data: histogram,
+            backgroundColor: '#8C64B1',
+            borderColor: '#8C64B1',
+            borderWidth: 1,
+            type: 'bar',
           },
         ],
       },
       options: {
-        plugins: {},
         scales: {
-          x: { display: false }, // Oculta las etiquetas del eje x
+          x: {
+            title: {
+              display: false,
+              text: 'Número de intentos hasta el primer éxito',
+            },
+          },
+          y: {
+            title: {
+              display: false,
+              text: 'Probabilidad',
+            },
+          },
         },
       },
     });
+  }
+
+  changeValueGeometrica() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.geometricChart();
   }
 
   uniformChart() {
