@@ -120,7 +120,7 @@
 
     <div
       data-bs-toggle="modal"
-      data-bs-target="#hide-show"
+      [attr.data-bs-target]="!fullScreen ? '#hide-show' : '#null'"
       class="custom-container"
     >
       <div class="icon-container">

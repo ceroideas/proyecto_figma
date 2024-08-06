@@ -141,7 +141,10 @@ export class WaterfallChartComponent implements OnInit {
       label.splice(arr.length - 2, 0, 'Other');
     }
 
+    console.log(arr, 'problema');
+
     let arrString = arr.map(String);
+    let showAmount = [...arrString];
     arrString[0] = this.selectedNodes[0];
 
     const mean = new Array(arr.length).fill('');
@@ -150,8 +153,6 @@ export class WaterfallChartComponent implements OnInit {
     mean[mean.length - 1] = 'total';
     mean[0] = 'absolute';
 
-    console.log(mean);
-    console.log(arrString, label, 'DARTOS');
     const data = [
       {
         name: 'Waterfall',
@@ -160,7 +161,7 @@ export class WaterfallChartComponent implements OnInit {
         measure: mean,
         x: label,
         textposition: 'outside',
-        text: arrString,
+        text: showAmount,
         y: arr,
         totals: { marker: { color: 'gray' } },
         increasing: { marker: { color: '#2cb02c' } },
@@ -171,33 +172,7 @@ export class WaterfallChartComponent implements OnInit {
         },
       },
     ];
-    /*     var data = [
 
-      {
-  
-        type: "waterfall",
-  
-        x: [
-  
-          ["2016", "2017", "2017", "2017", "2017", "2018", "2018", "2018", "2018"],
-  
-          ["initial", "q1", "q2", "q3", "total", "q1", "q2", "q3", "total" ]
-  
-        ],
-  
-        measure: ["absolute", "relative", "relative", "relative", "total", "relative", "relative", "relative", "total"],
-  
-        y: [10, 20, 30, -10, null, 10, 20, -40, null],
-  
-        base: 300,
-  
-      decreasing: { marker: { color: "Maroon" , line:{color : "red", width :2}}},
-  
-      increasing: { marker: { color: "Teal"} },
-  
-      totals: { marker: { color: "deep sky blue", line:{color:'blue',width:3}} }
-  
-      }]; */
     const layout = {
       title: {
         text: '',

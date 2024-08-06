@@ -190,8 +190,10 @@ body {
     width: 19px;
     height: 19px;
   }
-  p {
-  }
+}
+
+.js-plotly-plot .plotly .modebar {
+  display: none !important;
 }
 
 .full-box {
@@ -237,13 +239,13 @@ table {
 
 .ovf {
   font-weight: 50 !important;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 
   overflow: hidden;
   font-size: 14px;
   height: 25px;
-  max-width: 150px;
+  width: 150px;
   overflow: hidden;
   margin-top: -4px !important;
 }
@@ -253,15 +255,15 @@ table {
   align-self: center;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: 150px;
+  width: 150px !important;
   overflow: hidden;
   font-size: 12px;
   height: 18px;
-  max-width: 150px;
+
   overflow: hidden;
   background-color: #f6f3f9;
   margin-top: 6px !important;
-  border-radius: 15px !important;
+  border-radius: 10px !important;
   width: auto;
 }
 

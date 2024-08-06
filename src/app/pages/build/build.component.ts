@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -23,7 +24,7 @@ declare var bootstrap: any;
   templateUrl: './build.component.html',
   styleUrl: './build.component.scss',
 })
-export class BuildComponent implements OnInit {
+export class BuildComponent implements OnInit, AfterViewInit {
   @ViewChild('hideShow') hideShowModal!: ElementRef;
   @ViewChild('editModal', { static: false }) editModal!: EditVariableComponent;
   @ViewChild('zoomElement') zoomElement!: ElementRef;
@@ -74,7 +75,7 @@ export class BuildComponent implements OnInit {
   defaultGrowthPercentage!: number;
   fileJson!: any;
   loadedCallBack = false;
-
+  fullScreen: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private projectSvc: ProjectService,
@@ -258,34 +259,41 @@ export class BuildComponent implements OnInit {
     this.printAll();
   }
 
+  ngAfterViewInit() {
+    document.addEventListener('fullscreenchange', this.onFullScreenChange);
+  }
+
   setListeners(event: any): any {
-    // Obtiene el elemento más cercano con la clase especificada
-    if (!event.target.closest('.google-visualization-orgchart-node')) {
-      return false;
-    }
-    const botones = event.target
-      .closest('.google-visualization-orgchart-node')
-      .querySelector('.floating');
+    if (!this.fullScreen) {
+      // Obtiene el elemento más cercano con la clase especificada
+      if (!event.target.closest('.google-visualization-orgchart-node')) {
+        return false;
+      }
+      const botones = event.target
+        .closest('.google-visualization-orgchart-node')
+        .querySelector('.floating');
 
-    // Verifica si el elemento ya está visible
-    const estaAbierto = botones.style.display === 'block';
+      // Verifica si el elemento ya está visible
+      const estaAbierto = botones.style.display === 'block';
 
-    // Cierra todos los elementos abiertos
-    document.querySelectorAll('.floating').forEach((el: any) => {
-      el.style.display = 'none';
-    });
-
-    document
-      .querySelectorAll('.google-visualization-orgchart-node')
-      .forEach((el: any) => {
-        el.style.zIndex = '1';
+      // Cierra todos los elementos abiertos
+      document.querySelectorAll('.floating').forEach((el: any) => {
+        el.style.display = 'none';
       });
 
-    // Si el elemento estaba cerrado, lo abre. Si estaba abierto, permanece cerrado.
-    if (!estaAbierto) {
-      botones.style.display = 'block';
-      event.target.closest('.google-visualization-orgchart-node').style.zIndex =
-        '5';
+      document
+        .querySelectorAll('.google-visualization-orgchart-node')
+        .forEach((el: any) => {
+          el.style.zIndex = '1';
+        });
+
+      // Si el elemento estaba cerrado, lo abre. Si estaba abierto, permanece cerrado.
+      if (!estaAbierto) {
+        botones.style.display = 'block';
+        event.target.closest(
+          '.google-visualization-orgchart-node'
+        ).style.zIndex = '5';
+      }
     }
   }
 
@@ -1578,4 +1586,14 @@ export class BuildComponent implements OnInit {
       /* this.editModal.onSaveComplete(); */
     });
   }
+
+  onFullScreenChange = () => {
+    if (!document.fullscreenElement) {
+      console.log('Exited full-screen mode');
+      this.fullScreen = false;
+    } else {
+      console.log('Entered full-screen mode');
+      this.fullScreen = true;
+    }
+  };
 }
