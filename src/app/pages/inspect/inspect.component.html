@@ -173,12 +173,12 @@
       class="d-flex"
       style="justify-content: space-between; justify-items: center"
     >
-      <label> {{ formatMonto(data.value) }}€</label>
+      <label>{{ formatMonto(+data.value) }}€</label>
       <div
         style="font-weight: 600"
         [ngClass]="{
-          'text-success': getRoundedPercentage(+data.value, +tierCeroValue) > 0,
-          'text-danger': getRoundedPercentage(+data.value, +tierCeroValue) < 0
+          'text-success': getRoundedPercentage(data.value, +tierCeroValue) > 0,
+          'text-danger': getRoundedPercentage(data.value, +tierCeroValue) < 0
         }"
       >
         {{

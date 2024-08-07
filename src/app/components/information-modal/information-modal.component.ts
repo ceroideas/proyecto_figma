@@ -44,4 +44,21 @@ export class InformationModalComponent implements OnInit {
 
     this.sendNodes.emit(selected);
   }
+
+  formatMonto(monto: any): string {
+    const numero = Number(monto);
+    if (isNaN(numero)) {
+      return '0.00';
+    }
+    return numero.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  getRoundedPercentage(value: number, total: number): number {
+    const result = Math.round((value / total) * 100);
+    console.log(value, total);
+    return Number.isNaN(result) ? 0 : result;
+  }
 }

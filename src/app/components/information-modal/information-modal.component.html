@@ -40,12 +40,9 @@
             [ngClass]="{
               'inner-container-active2': data.isActive
             }"
-            class="inner-container2 size mr-3 mb-3"
+            class="inner-container ml-2 mt-4"
             (click)="toggleActive(data)"
           >
-            <div class="circle">
-              <div class="circle-content">{{ data.tier }}</div>
-            </div>
             <div class="text-container mb-2">
               <p class="main-text">
                 {{ data.value.toLocaleString("es-ES") }} €
@@ -58,6 +55,47 @@
                 <p>{{ data.name }}</p>
               </div>
             </div>
+          </div>
+          <div
+            *ngFor="let data of filteredDatas; let i = index"
+            [ngClass]="{
+              'inner-container-active': data.isActive
+            }"
+            class="inner-container ml-2 mt-4"
+            (click)="toggleActive(data)"
+          >
+            <div
+              class="d-flex"
+              style="justify-content: space-between; justify-items: center"
+            >
+              <label class="mr-1">{{ formatMonto(+data.value) }}€</label>
+              <div
+                style="font-weight: 600"
+                [ngClass]="{
+                  'text-success':
+                    getRoundedPercentage(+data.value, +tierCeroValue) > 0,
+                  'text-danger':
+                    getRoundedPercentage(+data.value, +tierCeroValue) < 0
+                }"
+              >
+                {{
+                  "(" +
+                    getRoundedPercentage(+data.value, +tierCeroValue) +
+                    "%" +
+                    ")"
+                }}
+              </div>
+            </div>
+            <p
+              style="
+                font-weight: 700;
+                font-size: 14px;
+                line-height: 17.5px;
+                color: rgba(0, 6, 31, 1);
+              "
+            >
+              {{ data.name }}
+            </p>
           </div>
         </div>
       </div>

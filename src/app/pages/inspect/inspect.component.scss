@@ -9,7 +9,8 @@
   padding: 10px 15px;
   min-height: 75px;
   height: auto;
-  width: 195px;
+  min-width: 195px;
+  width: auto;
 
   border-radius: 15px;
   flex-direction: column;
@@ -23,7 +24,8 @@
   padding: 10px 15px;
   min-height: 75px;
   height: auto;
-  width: 195px;
+  min-width: 195px;
+  width: auto;
 
   border-radius: 15px;
   flex-direction: column;

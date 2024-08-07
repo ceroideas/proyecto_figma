@@ -425,9 +425,7 @@ export class InspectComponent implements OnInit {
             return {
               id: value.id,
               tier: value.tier,
-              value: Number(value.value).toLocaleString('de-DE', {
-                minimumFractionDigits: 0,
-              }),
+              value: Number(value.value),
               description: value.name,
               combination: value.combination,
             };
@@ -450,6 +448,7 @@ export class InspectComponent implements OnInit {
 
   goWaterfall() {
     const selected = this.datas.filter((node: any) => node.isActive);
+    console.log('SELECTED', selected);
     this.dataSvc.setNodes(selected);
     this.router.navigate(['/home/waterfall']);
   }
@@ -858,9 +857,15 @@ export class InspectComponent implements OnInit {
     return formula;
   }
 
-  getRoundedPercentage(value: number, total: number): number {
-    const result = Math.round((value / total) * 100);
-
+  getRoundedPercentage(value: any, total: any): number {
+    const value2 = this.parseNumber(value);
+    const result = Math.round((value2 / this.parseNumber(total)) * 100);
+    console.log(
+      value2,
+      this.parseNumber(value),
+      total,
+      this.parseNumber(total)
+    );
     return Number.isNaN(result) ? 0 : result;
   }
 
@@ -875,7 +880,16 @@ export class InspectComponent implements OnInit {
     });
   }
 
-  calculatePercentage(base: number, quantity: number): number {
-    return (quantity / base) * 100;
+  parseNumber(value: any) {
+    if (typeof value === 'string') {
+      // Reemplaza los puntos por nada (eliminarlos) y luego reemplaza las comas por puntos
+      return parseFloat(value.replace('.', ''));
+    } else if (typeof value === 'number') {
+      // Convierte el número a una cadena, procesa y luego convierte de nuevo a número
+      return parseFloat(value.toString().replace('.', ''));
+    } else {
+      // Si no es ni cadena ni número, retorna NaN (Not a Number)
+      return NaN;
+    }
   }
 }
