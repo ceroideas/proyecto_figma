@@ -1357,6 +1357,14 @@ export class BuildComponent implements OnInit, AfterViewInit {
   }
 
   onFileSelected(event: any): void {
+    const fileInput = event.target;
+    const fileNameSpan = document.getElementById('fileName');
+
+    if (fileInput.files.length > 0) {
+      if (fileNameSpan) fileNameSpan.textContent = fileInput.files[0].name;
+    } else {
+      if (fileNameSpan) fileNameSpan.textContent = 'No file selected';
+    }
     this.fileJson = event.target.files[0];
   }
 
@@ -1365,6 +1373,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
       this.projectSvc.uploadProject(this.fileJson, this.id).subscribe(
         (response) => {
           this.printAll();
+          window.location.reload();
         },
         (error) => {
           console.error('Upload error:', error);
