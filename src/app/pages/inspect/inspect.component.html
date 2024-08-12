@@ -177,13 +177,11 @@
       <div
         style="font-weight: 600"
         [ngClass]="{
-          'text-success': getRoundedPercentage(data.value, +tierCeroValue) > 0,
-          'text-danger': getRoundedPercentage(data.value, +tierCeroValue) < 0
+          'text-success': getRoundedPercentage(data.value, tierCeroValue) > 0,
+          'text-danger': getRoundedPercentage(data.value, tierCeroValue) < 0
         }"
       >
-        {{
-          "(" + getRoundedPercentage(+data.value, +tierCeroValue) + "%" + ")"
-        }}
+        {{ "(" + getRoundedPercentage(data.value, tierCeroValue) + "%" + ")" }}
       </div>
     </div>
     <p

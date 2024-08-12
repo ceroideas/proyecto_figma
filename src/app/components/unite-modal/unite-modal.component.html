@@ -146,6 +146,7 @@
                 </div>
                 <div class="">
                   <input
+                    [attr.title]="model.years[0][year.key]"
                     (ngModelChange)="changeValue(i, $event)"
                     [name]="year.key"
                     [disabled]="
@@ -214,6 +215,7 @@
                     {{ year.key.toString() }}
                   </label>
                   <input
+                    [attr.title]="model.years[0][year.key]"
                     (ngModelChange)="changeValue2(i, $event, year.key)"
                     [name]="year.key.toString()"
                     [disabled]="

@@ -128,7 +128,7 @@ body {
 
 .floating {
   position: absolute;
-  top: -42px;
+  top: -55px;
   width: 100%;
   display: none;
   transition: all 500ms;
@@ -201,8 +201,8 @@ body {
   height: 20px;
 }
 .google-visualization-orgchart-node {
-  padding-left: 20px !important;
-  padding-right: 20px !important;
+  padding-left: 30px !important;
+  padding-right: 30px !important;
   padding-top: 10px !important;
   padding-bottom: 10px !important;
   z-index: unset;
@@ -247,22 +247,22 @@ table {
   height: 25px;
   width: 150px;
   overflow: hidden;
-  margin-top: -4px !important;
+  margin-top: -10px !important;
 }
 
 .ovf-amount {
-  padding: 1px 5px !important;
+  padding: 5px 5px !important;
   align-self: center;
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 150px !important;
   overflow: hidden;
   font-size: 12px;
-  height: 18px;
+  height: 25px;
 
   overflow: hidden;
   background-color: #f6f3f9;
-  margin-top: 6px !important;
+  margin-top: 10px !important;
   border-radius: 10px !important;
   width: auto;
 }

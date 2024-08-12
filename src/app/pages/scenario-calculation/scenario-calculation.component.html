@@ -30,85 +30,37 @@
     />
   </div>
 
-  <div class="slider-container">
+  <div class="slider-container" *ngFor="let node of nodes; let i = index">
     <div style="justify-content: space-between; width: auto" class="d-flex">
-      <label for="num-employees">Núm. Empleados</label>
+      <label for="num-employees">{{ node.name }}</label>
       <div class="d-flex amount-box">
-        <label>{{ formatMonto(numEmployees) }}</label>
+        <label
+          #labelValue
+          (keydown)="preventNonNumericInput($event)"
+          (input)="changeValue($event, i)"
+          [attr.contenteditable]="true"
+          (focus)="onFocus($event, i)"
+          (blur)="onBlur($event, i)"
+          >{{ formatMonto(nodes[i].value) }}</label
+        >
         <p style="margin-top: -9px; margin-bottom: -1px">
-          ({{ getPercentageChange(numEmployees, 2) }}%)
+          ({{ getPercentageChange(nodes[i].value, node.valuePercentage) }}%)
         </p>
       </div>
     </div>
 
     <div class="slider-wrapper">
-      <div class="slider-value"><span>2024:</span> {{ formatMonto(100) }}</div>
+      <div class="slider-value">
+        <span> {{ defaultYear + ":" + " " }}</span>
+        {{ formatMonto(node.value) }}
+      </div>
       <input
         type="range"
         id="num-employees"
         class="slider"
-        min="1"
-        max="200"
-        [(ngModel)]="numEmployees"
-        (input)="updateValues()"
-      />
-      <div class="slider-point"></div>
-    </div>
-  </div>
-
-  <div class="slider-container">
-    <div style="justify-content: space-between; width: auto" class="d-flex">
-      <label for="salary-per-employee">Salario por empleado</label>
-      <div class="d-flex amount-box">
-        <label>{{
-          salaryPerEmployee | currency : "USD" : "symbol" : "1.0-0"
-        }}</label>
-        <p style="margin-top: -9px; margin-bottom: -1px">
-          ({{ getPercentageChange(salaryPerEmployee, 22000) }}%)
-        </p>
-      </div>
-    </div>
-
-    <div class="slider-wrapper">
-      <div class="slider-value">
-        <span>2024:</span>
-        {{ formatMonto(100000) }}
-      </div>
-      <input
-        type="range"
-        id="salary-per-employee"
-        class="slider"
-        min="1"
-        max="200000"
-        [(ngModel)]="salaryPerEmployee"
-        (input)="updateValues()"
-      />
-      <div class="slider-point"></div>
-    </div>
-  </div>
-
-  <div class="slider-container">
-    <div style="justify-content: space-between; width: auto" class="d-flex">
-      <label for="sales">Ventas</label>
-      <div class="d-flex amount-box">
-        <label>{{ sales | currency : "USD" : "symbol" : "1.0-0" }}</label>
-        <p style="margin-top: -9px; margin-bottom: -1px">
-          ({{ getPercentageChange(sales, 130000) }}%)
-        </p>
-      </div>
-    </div>
-
-    <div class="slider-wrapper">
-      <div class="slider-value">
-        <span>2024:</span> {{ formatMonto(150000) }}
-      </div>
-      <input
-        type="range"
-        id="sales"
-        class="slider"
-        min="1"
-        max="300000"
-        [(ngModel)]="sales"
+        min="0"
+        [max]="node.maxValue"
+        [(ngModel)]="nodes[i].value"
         (input)="updateValues()"
       />
       <div class="slider-point"></div>

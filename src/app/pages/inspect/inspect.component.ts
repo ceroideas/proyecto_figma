@@ -393,9 +393,7 @@ export class InspectComponent implements OnInit {
 
       const cero = nodos.find((nodo: any) => nodo.tier == 'L0');
 
-      this.tierCeroValue = (+cero.newValue - +cero.oldValue).toLocaleString(
-        'es-ES'
-      );
+      this.tierCeroValue = +cero.newValue - +cero.oldValue;
 
       this.dataSvc.tierCero = this.tierCeroValue;
 
@@ -858,14 +856,10 @@ export class InspectComponent implements OnInit {
   }
 
   getRoundedPercentage(value: any, total: any): number {
-    const value2 = this.parseNumber(value);
-    const result = Math.round((value2 / this.parseNumber(total)) * 100);
-    console.log(
-      value2,
-      this.parseNumber(value),
-      total,
-      this.parseNumber(total)
-    );
+    const value2 = +value;
+    const result = Math.round((+value2 / +total) * 100);
+    console.log(+value, +total);
+
     return Number.isNaN(result) ? 0 : result;
   }
 

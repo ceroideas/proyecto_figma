@@ -719,7 +719,6 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
   getContentToChart() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
-      console.log(res, 'nodos');
       this.projectName = res.name;
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
@@ -895,9 +894,13 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
 
                     <div style="top: -10px" class="custom-div">
-                        <label class="ovf" style="margin-bottom: -10px; align-items: center; display:flex;">
+                        <label class="ovf" style="margin-bottom: -10px; align-items: center; display:flex; justify-content: center;">
                          ${this.pointNode}
-                          ${element.name}
+
+                         <div>
+                             ${element.name}
+                         </div>
+                      
                         </label>
                         <label class="ovf-amount" style="margin-bottom: -25px;">
                           ${this.formatMonto(+defaultYearValue)}
@@ -1555,9 +1558,11 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
 
                     <div style="top: -10px" class="custom-div">
-                        <label class="ovf" style="margin-bottom: -10px; align-items: center; display:flex;">
+                        <label class="ovf" style="margin-bottom: -10px; align-items: center; display:flex; justify-content: center;">
                          ${this.pointNode}
-                          ${element.name}
+                            <div>
+                             ${element.name}
+                         </div>
                         </label>
                         <label class="ovf-amount" style="margin-bottom: -25px;">
                           ${this.formatMonto(+defaultYearValue)}
@@ -1605,4 +1610,16 @@ export class BuildComponent implements OnInit, AfterViewInit {
       this.fullScreen = true;
     }
   };
+
+
+
+  redirect() {
+ 
+    if (this.id) {
+      this.router.navigate([`home/scenario_calculation/${this.id}`]);
+    }
+  }
+
+
+
 }

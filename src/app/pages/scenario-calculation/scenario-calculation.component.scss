@@ -373,11 +373,14 @@ p {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.selected-constant {
-}
+
 .selected-td {
   padding: 8px 12px;
 
   background-color: #e5dced;
   border: 2px solid #38254a;
+}
+[contenteditable="true"]:focus {
+  outline: none;
+  border: none;
 }

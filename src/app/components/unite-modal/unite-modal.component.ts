@@ -701,7 +701,7 @@ export class UniteModalComponent implements OnInit {
 
     for (let year in years) {
       if (parseInt(year) > this.defaultYear) {
-        years[year] = (defaultValue * (1 + decimalPercentage)).toFixed(0);
+        years[year] = defaultValue * (1 + decimalPercentage);
         defaultValue = parseFloat(years[year]);
       }
     }
