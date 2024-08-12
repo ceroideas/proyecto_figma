@@ -2126,7 +2126,22 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   saveNewValue() {
+    if (this.variableUnidad.includes('%')) {
+      const valueBase = parseFloat(this.variableUnidad.replace('%', ''));
+
+      this.variableUnidad = +valueBase / 100;
+    }
     this.events.publish('changeEditUnite', this.variableUnidad);
+  }
+
+    changePercentage(){
+
+      if (this.variableUnidad.includes('%')) {
+        const valueBase = parseFloat(this.variableUnidad.replace('%', ''));
+  
+        this.variableUnidad = +valueBase / 100;
+      }
+    
   }
 
   removeStorage() {

@@ -352,6 +352,7 @@
                     [(ngModel)]="variableUnidad"
                     onkeydown="return /[0-9%.\-]/.test(event.key) || event.key === 'Backspace'"
                     (change)="saveNewValue()"
+                    (ngModelChange)="changePercentage()"
                     aria-describedby="basic-addon1"
                     type="text"
                     class="form-control chart-inputs"
