@@ -719,6 +719,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
   getContentToChart() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      console.log(res, 'RES');
       this.projectName = res.name;
       this.cleanSceneries = res.clean_sceneries;
       this.years = res.years;
@@ -1611,15 +1612,9 @@ export class BuildComponent implements OnInit, AfterViewInit {
     }
   };
 
-
-
   redirect() {
- 
     if (this.id) {
       this.router.navigate([`home/scenario_calculation/${this.id}`]);
     }
   }
-
-
-
 }

@@ -27,6 +27,15 @@ h1 {
 
 .slider-container {
   margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid white;
+}
+
+.slider-container-active {
+  border: 1px solid #38254a;
+
+  padding: 10px;
+  border-radius: 20px;
 }
 
 .slider-container label {
@@ -36,6 +45,7 @@ h1 {
   font-weight: 600;
   font-size: 16px;
   color: rgba(0, 6, 31, 1);
+  cursor: pointer;
 }
 
 .slider-wrapper {
@@ -105,6 +115,11 @@ h1 {
   font-weight: 700;
   font-size: 16px;
   line-height: 24px;
+}
+
+.create-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .info {

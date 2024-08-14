@@ -34,6 +34,10 @@ export class ProjectService {
   saveScenery(body: any) {
     return this.http.post(`${this.url}/saveScenery`, body);
   }
+
+  saveSceneryNoPropagation(body: any) {
+    return this.http.post(`${this.url}/saveSceneryNoPropagation`, body);
+  }
   updateNode(id: any, body: any) {
     return this.http.put(`${this.url}/updateNode/${id}`, body);
   }

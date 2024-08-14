@@ -22,7 +22,7 @@
   <div class="input-group">
     <label for="scenario-name">Name</label>
     <input
-      class="input-formula"
+      class="input-formula mb-3"
       type="text"
       id="scenario-name"
       placeholder="(Name of scenario)"
@@ -30,9 +30,15 @@
     />
   </div>
 
-  <div class="slider-container" *ngFor="let node of nodes; let i = index">
+  <div
+    class="slider-container"
+    *ngFor="let node of nodes; let i = index; trackBy: trackByNodeId"
+    [ngClass]="{ 'slider-container-active': node.isSelect }"
+  >
     <div style="justify-content: space-between; width: auto" class="d-flex">
-      <label for="num-employees">{{ node.name }}</label>
+      <label (click)="toggleActive(node, i)" for="num-employees">{{
+        node.name
+      }}</label>
       <div class="d-flex amount-box">
         <label
           #labelValue
@@ -52,7 +58,7 @@
     <div class="slider-wrapper">
       <div class="slider-value">
         <span> {{ defaultYear + ":" + " " }}</span>
-        {{ formatMonto(node.value) }}
+        {{ formatMonto(node.staticValue) }}
       </div>
       <input
         type="range"
@@ -71,13 +77,17 @@
     <button class="preview-button" (click)="previewImpact()">
       Preview impact
     </button>
-    <button class="create-button" (click)="createScenario()">
+    <button
+      [disabled]="!scenarioName"
+      class="create-button"
+      (click)="createScenario()"
+    >
       Create scenario
     </button>
   </div>
 </div>
 
-<div
+<!-- <div
   data-bs-toggle="modal"
   data-bs-target="#exampleModal"
   class="d-flex justify-content-end gap-2 align-items-center mb-3"
@@ -97,113 +107,101 @@
     src="../../../assets/icons/settings.svg"
     alt=""
   />
-</div>
+</div> -->
 
-<table class="table-custom">
-  <tr>
-    <!-- <th rowspan="1">Inversión</th> -->
-    <th
-      style="
-        background: white;
-        border-top-color: white;
-        border-left-color: white;
-        color: white;
-      "
-      colspan="2"
-    ></th>
-    <th class="table-title" colspan="5">% Ocupación</th>
-    <!--     <th
-      style="
-        color: rgba(140, 100, 177, 1);
-        cursor: pointer;
-        font-size: 12px !important;
-      "
-      colspan="1"
-    >
-      See more constants
-    </th> -->
-  </tr>
-  <tr>
-    <th rowspan="6">Inversion</th>
-    <th></th>
-    <th>60%</th>
-    <th>65%</th>
-    <th>70%</th>
-    <th>75%</th>
-    <th>80%</th>
-  </tr>
-  <tr>
-    <td>$ 150</td>
-    <td (click)="selectedTd()" style="padding: 0px">
-      <div (click)="selectedDiv()" class="selected-td">$ 234,435,435.00</div>
-    </td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-  </tr>
-  <tr>
-    <td>$ 160</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-  </tr>
-  <tr>
-    <td>$ 170</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-  </tr>
-  <tr>
-    <td>$ 180</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-  </tr>
-  <tr>
-    <td>$ 190</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td>$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-    <td class="red">$ 234,435,435.00</td>
-  </tr>
-</table>
+<div *ngIf="nodeIndex.length == 2">
+  <table class="table-custom">
+    <tr>
+      <th
+        style="
+          background: white;
+          border-top-color: white;
+          border-left-color: white;
+          color: white;
+        "
+        colspan="2"
+      ></th>
+      <th class="table-title" colspan="5">% Ocupación</th>
+    </tr>
+    <tr>
+      <th rowspan="6">Inversion</th>
+      <th></th>
+      <th>60%</th>
+      <th>65%</th>
+      <th>70%</th>
+      <th>75%</th>
+      <th>80%</th>
+    </tr>
+    <tr>
+      <td>$ 150</td>
+      <td (click)="selectedTd()" style="padding: 0px">
+        <div (click)="selectedDiv()" class="selected-td">$ 234,435,435.00</div>
+      </td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+    </tr>
+    <tr>
+      <td>$ 160</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+    </tr>
+    <tr>
+      <td>$ 170</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+    </tr>
+    <tr>
+      <td>$ 180</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+    </tr>
+    <tr>
+      <td>$ 190</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td>$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+      <td class="red">$ 234,435,435.00</td>
+    </tr>
+  </table>
 
-<div class="vpn">
-  <span>VPN:</span>
-  <span>$ 235,000,000.00</span>
-</div>
+  <div class="vpn">
+    <span>VPN:</span>
+    <span>$ 235,000,000.00</span>
+  </div>
 
-<div class="frequency-selector">
-  <label for="frequency">Selector de frecuencia:</label>
-  <input
-    type="range"
-    id="num-employees"
-    class="slider"
-    min="1"
-    max="200"
-    [(ngModel)]="numEmployees"
-    (input)="updateValues()"
-  />
+  <div class="frequency-selector">
+    <label for="frequency">Selector de frecuencia:</label>
+    <input
+      type="range"
+      id="num-employees"
+      class="slider"
+      min="1"
+      max="200"
+      [(ngModel)]="numEmployees"
+      (input)="updateValues()"
+    />
 
-  <div class="d-flex amount-box">
-    <label>{{ formatMonto(numEmployees) }}</label>
-    <p style="margin-top: -9px; margin-bottom: -1px">
-      ({{ getPercentageChange(numEmployees, 2) }}%)
-    </p>
+    <div class="d-flex amount-box">
+      <label>{{ formatMonto(numEmployees) }}</label>
+      <p style="margin-top: -9px; margin-bottom: -1px">
+        ({{ getPercentageChange(numEmployees, 2) }}%)
+      </p>
+    </div>
   </div>
 </div>
 
-<div class="buttons mb-4">
-  <button class="vpn-button" (click)="createScenario()">Create scenario</button>
-</div>
 <!-- Modal -->
 <div
   class="modal fade"

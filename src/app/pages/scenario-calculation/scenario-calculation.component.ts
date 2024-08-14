@@ -24,6 +24,9 @@ export class ScenarioCalculationComponent implements OnInit {
   nodes: any[] = [];
   defaultYear!: any;
   actualTarget!: any;
+  scenarioYears: any = {};
+  nodeIndex: any[] = [];
+  selectedNodes: any[] = [];
   private cursorPosition: number = 0;
   constructor(
     private router: Router,
@@ -37,21 +40,31 @@ export class ScenarioCalculationComponent implements OnInit {
   ngOnInit(): void {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.defaultYear = res.default_year;
+      this.scenarioYears = res.clean_sceneries[0].years;
+      console.log(this.scenarioYears);
       const constants = res.nodes.filter((node: any) => node.type === 1);
-
+      console.log(res);
       this.nodes = constants.map((node: any, i: number) => {
         return {
+          id: node.id,
           name: node.name,
           value: node.sceneries[0].years[this.defaultYear],
-          maxValue:
+          staticValue: node.sceneries[0].years[this.defaultYear],
+          maxValue: Math.round(
             +node.sceneries[0].years[this.defaultYear] +
-            +node.sceneries[0].years[this.defaultYear],
+              +node.sceneries[0].years[this.defaultYear]
+          ),
+
           valuePercentage: node.sceneries[0].years[this.defaultYear],
         };
       });
 
       console.log(this.nodes);
     });
+  }
+
+  trackByNodeId(index: number, node: any): any {
+    return node.id; // o cualquier otra propiedad única del nodo
   }
 
   updateValues() {
@@ -71,8 +84,34 @@ export class ScenarioCalculationComponent implements OnInit {
   }
 
   createScenario() {
-    // Logic to create scenario
-    console.log('Create scenario');
+    const newScenarios: any[] = [];
+    for (let i = 0; i < this.nodes.length; i++) {
+      const element = this.nodes[i];
+
+      // Crear una copia del objeto scenarioYears
+      const scenarioYearsCopy = { ...this.scenarioYears };
+
+      for (const year in scenarioYearsCopy) {
+        if (scenarioYearsCopy.hasOwnProperty(year)) {
+          scenarioYearsCopy[year] = element.value;
+        }
+      }
+
+      const newScenario = {
+        node_id: element.id,
+        name: this.scenarioName,
+        years: scenarioYearsCopy, // Usar la copia aquí
+        status: 1,
+      };
+
+      newScenarios.push(newScenario);
+    }
+    console.log(newScenarios);
+    this.projectSvc
+      .saveSceneryNoPropagation(newScenarios)
+      .subscribe((res: any) => {
+        this.router.navigate([`home/build/${this.id}`]);
+      });
   }
   goBack(): void {
     this.router.navigate(['home/projects']);
@@ -109,7 +148,7 @@ export class ScenarioCalculationComponent implements OnInit {
         newValue = newValue.slice(0, -3);
       }
 
-      this.nodes[i].value = newValue;
+      this.nodes[i].value = +newValue;
 
       // Actualiza el contenido editable
       this.actualTarget = target;
@@ -159,19 +198,19 @@ export class ScenarioCalculationComponent implements OnInit {
     }
   }
   preventNonNumericInput(event: KeyboardEvent): void {
-    // Permitir solo números (teclas 0-9), retroceso (backspace), suprimir (delete), y teclas de navegación
+    // Permitir solo números (teclas 0-9), retroceso (backspace), suprimir (delete), teclas de navegación y punto decimal
     if (
       (event.key < '0' || event.key > '9') &&
       event.key !== 'Backspace' &&
       event.key !== 'Delete' &&
       event.key !== 'ArrowLeft' &&
       event.key !== 'ArrowRight' &&
-      event.key !== 'Tab'
+      event.key !== 'Tab' &&
+      event.key !== '.'
     ) {
       event.preventDefault();
     }
   }
-
   onFocus(event: Event, i: number): void {
     const target = event.target as HTMLElement;
     target.innerText = target.innerText.split(',').join('');
@@ -179,20 +218,88 @@ export class ScenarioCalculationComponent implements OnInit {
       target.innerText = target.innerText.slice(0, -3);
     }
     console.log(target.innerText);
-    // Aquí puedes manejar cualquier lógica cuando se haga focus en el label
   }
 
   onBlur(event: Event, i: number): void {
     const target = event.target as HTMLElement;
     target.innerText = this.formatMonto(this.nodes[i].value);
-    this.updateNodes();
+    const nodes = [...this.nodes];
+
+    this.nodes = [];
+    setTimeout(() => {
+      this.nodes = nodes;
+    }, 0);
   }
 
-  updateNodes(): void {
-    this.ngZone.run(() => {
-      this.nodes = [...this.nodes];
-    });
+  toggleActive(node: any, i: any) {
+    let nodeCount = 0;
 
-    console.log(this.nodes);
+    for (let i = 0; i < this.nodes.length; i++) {
+      const element = this.nodes[i];
+
+      if (element?.isSelect) {
+        nodeCount++;
+
+        if (nodeCount === 2) {
+          this.nodes[this.nodeIndex[0]].isSelect = false;
+          this.nodeIndex.shift();
+          break;
+        }
+      }
+    }
+
+    if (!node.isSelect) {
+      this.nodeIndex.push(i);
+      node.isSelect = !node.isSelect;
+    }
+    this.calculatedNode();
+  }
+
+  calculatedNode() {
+    if (this.nodeIndex.length === 2) {
+      const nodes = [
+        this.nodes[this.nodeIndex[0]],
+        this.nodes[this.nodeIndex[1]],
+      ];
+
+      for (let i = 0; i < nodes.length; i++) {
+        const element = nodes[i];
+        let decimalPercentage = parseFloat('10') / 100;
+
+        let years: any = { ...this.scenarioYears };
+        const keys = Object.keys(this.scenarioYears);
+        const index = keys.indexOf(`${this.defaultYear}`);
+        let indexNegative = -index;
+
+        let defaultValue = +element.value;
+
+        for (let year in years) {
+          console.log(defaultValue, decimalPercentage, indexNegative);
+          years[year] =
+            defaultValue + defaultValue * (decimalPercentage * indexNegative);
+
+          ++indexNegative;
+        }
+
+        const values = Object.values(years);
+        console.log(values);
+      }
+    }
+  }
+
+  applyGrowth() {
+    let decimalPercentage = parseFloat('10') / 100;
+
+    let years: any = [...this.scenarioYears];
+
+    let defaultValue = parseFloat(years[this.defaultYear]);
+
+    for (let year in years) {
+      if (parseInt(year) > this.defaultYear) {
+        years[year] = defaultValue * (1 + decimalPercentage);
+        defaultValue = parseFloat(years[year]);
+      }
+    }
+    const values = Object.values(years);
   }
 }
