@@ -108,7 +108,7 @@ export class ScenarioCalculationComponent implements OnInit {
     }
     console.log(newScenarios);
     this.projectSvc
-      .saveSceneryNoPropagation(newScenarios)
+      .saveSceneryNoPropagation({ data: newScenarios })
       .subscribe((res: any) => {
         this.router.navigate([`home/build/${this.id}`]);
       });
