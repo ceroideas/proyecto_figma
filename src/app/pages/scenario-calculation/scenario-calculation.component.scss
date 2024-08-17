@@ -122,6 +122,10 @@ h1 {
   cursor: not-allowed;
 }
 
+.preview-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .info {
   color: #17a2b8;
 }
@@ -215,6 +219,23 @@ input[type="range"]::-ms-thumb {
   padding: 6px 10px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.amount-box2 {
+  min-width: 136px;
+  width: auto;
+  height: 55px;
+  height: auto;
+  border: solid;
+  border-width: 1px;
+  border-radius: 15px;
+  background-color: rgba(229, 220, 237, 1);
+  color: rgba(56, 37, 74, 1);
+  padding: 6px 10px;
+  display: flex;
+
   justify-content: center;
   align-items: center;
 }

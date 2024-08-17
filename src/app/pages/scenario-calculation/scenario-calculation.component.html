@@ -74,7 +74,11 @@
   </div>
 
   <div class="buttons">
-    <button class="preview-button" (click)="previewImpact()">
+    <button
+      [disabled]="nodeIndex.length != 2"
+      class="preview-button"
+      (click)="previewImpact()"
+    >
       Preview impact
     </button>
     <button
@@ -109,7 +113,7 @@
   />
 </div> -->
 
-<div *ngIf="nodeIndex.length == 2">
+<div *ngIf="showPreview">
   <table class="table-custom">
     <tr>
       <th
@@ -121,58 +125,30 @@
         "
         colspan="2"
       ></th>
-      <th class="table-title" colspan="5">% Ocupación</th>
+      <th
+        class="table-title"
+        [attr.colspan]="showNodes[0].newValues.length + 1"
+      >
+        {{ showNodes[0].name }}
+      </th>
     </tr>
     <tr>
-      <th rowspan="6">Inversion</th>
+      <th [attr.rowspan]="showNodes[1].newValues.length + 1">
+        {{ showNodes[1].name }}
+      </th>
       <th></th>
-      <th>60%</th>
-      <th>65%</th>
-      <th>70%</th>
-      <th>75%</th>
-      <th>80%</th>
+      <th *ngFor="let value of showNodes[0].newValues">{{ value }}</th>
     </tr>
-    <tr>
-      <td>$ 150</td>
+    <!--     <tr>
       <td (click)="selectedTd()" style="padding: 0px">
-        <div (click)="selectedDiv()" class="selected-td">$ 234,435,435.00</div>
+        <div (click)="selectedDiv()" class="selected-td">$ 150</div>
       </td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-    </tr>
-    <tr>
-      <td>$ 160</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-    </tr>
-    <tr>
-      <td>$ 170</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
-    </tr>
-    <tr>
-      <td>$ 180</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
-    </tr>
-    <tr>
-      <td>$ 190</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td>$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
-      <td class="red">$ 234,435,435.00</td>
+    </tr> -->
+    <tr *ngFor="let value2 of showNodes[1].newValues; let i = index">
+      <td>{{ value2 }}</td>
+      <td *ngFor="let operationValue of calculation[i]">
+        {{ operationValue }}
+      </td>
     </tr>
   </table>
 
@@ -187,17 +163,21 @@
       type="range"
       id="num-employees"
       class="slider"
-      min="1"
-      max="200"
-      [(ngModel)]="numEmployees"
+      min="0"
+      max="100"
+      [(ngModel)]="percentageGrow"
       (input)="updateValues()"
     />
 
-    <div class="d-flex amount-box">
-      <label>{{ formatMonto(numEmployees) }}</label>
-      <p style="margin-top: -9px; margin-bottom: -1px">
-        ({{ getPercentageChange(numEmployees, 2) }}%)
-      </p>
+    <div class="d-flex amount-box2">
+      <label
+        #labelValue
+        (keydown)="preventNonNumericInput($event)"
+        (input)="changePercentage($event)"
+        [attr.contenteditable]="true"
+        >{{ percentageGrow }}</label
+      >
+      <label>%</label>
     </div>
   </div>
 </div>

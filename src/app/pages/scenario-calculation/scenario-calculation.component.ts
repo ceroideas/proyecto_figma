@@ -17,16 +17,22 @@ import { NgZone } from '@angular/core';
 })
 export class ScenarioCalculationComponent implements OnInit {
   scenarioName: string = '';
-  numEmployees: number = 100;
+  numEmployees: number = 0;
   salaryPerEmployee: number = 100000;
   sales: number = 150000;
   id!: any;
+  tierCero!: any;
   nodes: any[] = [];
   defaultYear!: any;
   actualTarget!: any;
   scenarioYears: any = {};
   nodeIndex: any[] = [];
   selectedNodes: any[] = [];
+  showNodes: any = [];
+  percentageGrow: any = 0;
+  allNodes: any = [];
+  calculation: any[] = [];
+  showPreview: boolean = false;
   private cursorPosition: number = 0;
   constructor(
     private router: Router,
@@ -39,6 +45,7 @@ export class ScenarioCalculationComponent implements OnInit {
   }
   ngOnInit(): void {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
+      this.allNodes = [...res.nodes];
       this.defaultYear = res.default_year;
       this.scenarioYears = res.clean_sceneries[0].years;
       console.log(this.scenarioYears);
@@ -58,8 +65,8 @@ export class ScenarioCalculationComponent implements OnInit {
           valuePercentage: node.sceneries[0].years[this.defaultYear],
         };
       });
-
-      console.log(this.nodes);
+      this.tierCero = res.nodes.find((node: any) => node.tier == 0);
+      console.log(this.tierCero, 'CERO');
     });
   }
 
@@ -79,8 +86,9 @@ export class ScenarioCalculationComponent implements OnInit {
   }
 
   previewImpact() {
-    // Logic to preview impact
-    console.log('Preview impact');
+    this.showPreview = this.showPreview ? false : this.showPreview;
+    this.calculatedNode();
+    this.showPreview = true;
   }
 
   createScenario() {
@@ -171,6 +179,11 @@ export class ScenarioCalculationComponent implements OnInit {
     }
   }
 
+  changePercentage(event: Event) {
+    const target = event.target as HTMLElement;
+    this.percentageGrow = target.innerText;
+  }
+
   saveCursorPosition(element: any) {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0) {
@@ -252,19 +265,19 @@ export class ScenarioCalculationComponent implements OnInit {
       this.nodeIndex.push(i);
       node.isSelect = !node.isSelect;
     }
-    this.calculatedNode();
   }
 
   calculatedNode() {
     if (this.nodeIndex.length === 2) {
-      const nodes = [
+      this.showNodes = [
         this.nodes[this.nodeIndex[0]],
         this.nodes[this.nodeIndex[1]],
       ];
 
-      for (let i = 0; i < nodes.length; i++) {
-        const element = nodes[i];
-        let decimalPercentage = parseFloat('10') / 100;
+      for (let i = 0; i < this.showNodes.length; i++) {
+        const element = this.showNodes[i];
+        let decimalPercentage =
+          parseFloat(this.percentageGrow ? this.percentageGrow : 0) / 100;
 
         let years: any = { ...this.scenarioYears };
         const keys = Object.keys(this.scenarioYears);
@@ -274,7 +287,6 @@ export class ScenarioCalculationComponent implements OnInit {
         let defaultValue = +element.value;
 
         for (let year in years) {
-          console.log(defaultValue, decimalPercentage, indexNegative);
           years[year] =
             defaultValue + defaultValue * (decimalPercentage * indexNegative);
 
@@ -282,8 +294,14 @@ export class ScenarioCalculationComponent implements OnInit {
         }
 
         const values = Object.values(years);
-        console.log(values);
+        this.showNodes[i].newValues = values;
       }
+
+      var formula = this.tierCero.formula;
+      const newOperation: any[] = [];
+
+      console.log(this.showNodes, 'NODES');
+      this.test();
     }
   }
 
@@ -301,5 +319,171 @@ export class ScenarioCalculationComponent implements OnInit {
       }
     }
     const values = Object.values(years);
+  }
+
+  async recursiveCalculateNodeNewValue(
+    _node: any,
+    nodes: any,
+    selectId: number
+  ) {
+    let formula: any = [];
+    let aux;
+    let csvData: any = {};
+
+    for (let i = 0; i < _node.formula.length; i++) {
+      var nodeId = _node.formula[i];
+
+      if (typeof nodeId === 'number') {
+        var node = nodes.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.newValue;
+          formula.push(value);
+        } else {
+          // Utiliza await para esperar la resolución de la función recursiva
+          const form = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodes,
+            selectId
+          );
+          formula.push('(' + form + ')');
+        }
+      } else {
+        formula.push(nodeId);
+      }
+    }
+
+    return formula;
+  }
+  async recursiveCalculateNode(_node: any, nodes: any, selectId: number) {
+    let formula: any = [];
+    let aux;
+    let csvData: any = {};
+
+    for (let i = 0; i < _node.formula.length; i++) {
+      var nodeId = _node.formula[i];
+
+      if (typeof nodeId === 'number' && nodeId != selectId) {
+        var node = nodes.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.oldValue;
+          formula.push(value);
+        } else {
+          // Utiliza await para esperar la resolución de la función recursiva
+          const form = await this.recursiveCalculateNode(node, nodes, selectId);
+          /*formula.push(await this.recursiveCalculate(node))*/ formula.push(
+            '(' + form + ')'
+          );
+        }
+      } else if (typeof nodeId === 'number' && nodeId == selectId) {
+        var node = nodes.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.newValue;
+
+          formula.push(value);
+        } else {
+          let formula2 = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodes,
+            selectId
+          );
+          formula.push('(' + formula2 + ')');
+        }
+      } else {
+        formula.push(nodeId);
+      }
+    }
+
+    return formula;
+  }
+  async calculateNode(nodos: any, selectId: number, tierCeroValue: any) {
+    const formulaCero = this.tierCero.formula;
+
+    let formula: any = [];
+
+    for (let i = 0; i < formulaCero.formula.length; i++) {
+      var nodeId = formulaCero.formula[i];
+
+      if (typeof nodeId === 'number' && nodeId != selectId) {
+        var node = nodos.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.oldValue;
+
+          formula.push(value);
+        } else {
+          let formula2 = await this.recursiveCalculateNode(
+            node,
+            nodos,
+            selectId
+          );
+          formula.push('(' + formula2 + ')');
+        }
+      } else if (typeof nodeId === 'number' && nodeId == selectId) {
+        var node = nodos.find((node: any) => node.id == nodeId);
+
+        if (node.type == 1) {
+          const value = node.newValue;
+
+          formula.push(value);
+        } else {
+          let formula2 = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodos,
+            selectId
+          );
+          formula.push('(' + formula2 + ')');
+        }
+      } else {
+        formula.push(nodeId);
+      }
+    }
+
+    const operation =
+      eval(formula.flat(5).join('').replaceAll(',', '')) - tierCeroValue;
+
+    return operation;
+  }
+
+  test() {
+    this.calculation = [];
+    for (let i = 0; i < this.showNodes[0].newValues.length; i++) {
+      const value1 = this.showNodes[1].newValues[i];
+      const nodeId1 = this.showNodes[1].id;
+      let valueCalculated = [];
+
+      for (let i = 0; i < this.showNodes[1].newValues.length; i++) {
+        const value0 = this.showNodes[0].newValues[i];
+        const nodeId0 = this.showNodes[0].id;
+        let formula: any = [];
+        for (let i = 0; i < this.tierCero.formula.length; i++) {
+          const nodeId = this.tierCero.formula[i];
+          if (typeof nodeId === 'number') {
+            if (nodeId == nodeId0) {
+              formula.push(value0);
+            } else if (nodeId == nodeId1) {
+              formula.push(value1);
+            } else {
+              var node = this.allNodes.find((node: any) => node.id == nodeId);
+              if (node.type == 1) {
+                const value = node.sceneries[0].years[this.defaultYear];
+
+                formula.push(+value);
+              }
+            }
+          } else {
+            formula.push(nodeId);
+          }
+        }
+        valueCalculated.push(
+          eval(formula.flat(5).join('').replaceAll(',', '')) -
+            this.tierCero.calculated[0].years[this.defaultYear]
+        );
+      }
+      this.calculation.push(valueCalculated);
+    }
+    console.log(this.calculation);
   }
 }

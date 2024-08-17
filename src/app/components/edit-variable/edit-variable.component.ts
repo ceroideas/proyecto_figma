@@ -2134,14 +2134,12 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.events.publish('changeEditUnite', this.variableUnidad);
   }
 
-    changePercentage(){
+  changePercentage() {
+    if (this.variableUnidad.includes('%')) {
+      const valueBase = parseFloat(this.variableUnidad.replace('%', ''));
 
-      if (this.variableUnidad.includes('%')) {
-        const valueBase = parseFloat(this.variableUnidad.replace('%', ''));
-  
-        this.variableUnidad = +valueBase / 100;
-      }
-    
+      this.variableUnidad = +valueBase / 100;
+    }
   }
 
   removeStorage() {

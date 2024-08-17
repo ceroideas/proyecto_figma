@@ -270,7 +270,7 @@ export class InspectComponent implements OnInit {
 
       const formulasArray: any[] = [];
 
-      function findNodes(nodo: any) {
+      /*       function findNodes(nodo: any) {
         const formula: any[] = [];
 
         for (let i = 0; i < nodo.formula.length; i++) {
@@ -304,7 +304,7 @@ export class InspectComponent implements OnInit {
             });
           }
         }
-      }
+      } */
 
       /*      const diferencias = await nodos
         .map(  (par: any) => {
