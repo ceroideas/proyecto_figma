@@ -29,7 +29,7 @@ export class ScenarioCalculationComponent implements OnInit {
   nodeIndex: any[] = [];
   selectedNodes: any[] = [];
   showNodes: any = [];
-  percentageGrow: any = 0;
+  percentageGrow: any = 10;
   allNodes: any = [];
   calculation: any[] = [];
   showPreview: boolean = false;
@@ -75,7 +75,7 @@ export class ScenarioCalculationComponent implements OnInit {
   }
 
   updateValues() {
-    // Logic to update values if needed
+    this.calculatedNode();
   }
 
   getPercentageChange(currentValue: number, baseValue: number): string {
@@ -179,9 +179,68 @@ export class ScenarioCalculationComponent implements OnInit {
     }
   }
 
+  changeValue2(event: Event, i: number): void {
+    const target = event.target as HTMLElement;
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0).cloneRange();
+    target.innerText;
+    if (range && selection) {
+      // Almacena la posición actual del cursor
+      const cursorPosition = range.endOffset;
+
+      // Actualiza el valor internamente eliminando comas y el ".00" si está presente
+      let newValue = target.innerText.split(',').join('');
+
+      // Elimina ".00" al final del número si está presente
+      if (newValue.endsWith('.00')) {
+        newValue = newValue.slice(0, -3);
+      }
+
+      this.nodes[i].value = +newValue;
+
+      // Actualiza el contenido editable
+      this.actualTarget = target;
+      target.innerText = newValue;
+
+      // Usar setTimeout para restaurar la posición del cursor
+      setTimeout(() => {
+        // Si el cursor está en la última posición o más allá, lo coloca al final del texto
+        const newCursorPosition = Math.min(cursorPosition, newValue.length);
+
+        // Asegúrate de que el cursor se coloque en la posición correcta
+        range.setStart(target.childNodes[0], newCursorPosition);
+        range.setEnd(target.childNodes[0], newCursorPosition);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        console.log(range, i);
+      }, 0);
+    }
+  }
+
   changePercentage(event: Event) {
     const target = event.target as HTMLElement;
     this.percentageGrow = target.innerText;
+    const selection = window.getSelection();
+    const range = selection?.getRangeAt(0).cloneRange();
+    if (range && selection) {
+      const cursorPosition = range.endOffset;
+      let newValue = target.innerText;
+      setTimeout(() => {
+        // Si el cursor está en la última posición o más allá, lo coloca al final del texto
+        const newCursorPosition = Math.min(cursorPosition, newValue.length);
+
+        // Asegúrate de que el cursor se coloque en la posición correcta
+        range.setStart(target.childNodes[0], newCursorPosition);
+        range.setEnd(target.childNodes[0], newCursorPosition);
+        range.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }, 0);
+
+      this.calculatedNode();
+    }
   }
 
   saveCursorPosition(element: any) {
@@ -281,20 +340,23 @@ export class ScenarioCalculationComponent implements OnInit {
 
         let years: any = { ...this.scenarioYears };
         const keys = Object.keys(this.scenarioYears);
-        const index = keys.indexOf(`${this.defaultYear}`);
-        let indexNegative = -index;
+        let value = [];
+        let indexNegative = -2;
 
-        let defaultValue = +element.value;
+        let defaultValue = +element.staticValue;
 
-        for (let year in years) {
-          years[year] =
-            defaultValue + defaultValue * (decimalPercentage * indexNegative);
+        for (let index = 0; index < 5; index++) {
+          /*           years[year] =
+            defaultValue + defaultValue * (decimalPercentage * indexNegative); */
+          value.push(
+            defaultValue + defaultValue * (decimalPercentage * indexNegative)
+          );
 
           ++indexNegative;
         }
 
         const values = Object.values(years);
-        this.showNodes[i].newValues = values;
+        this.showNodes[i].newValues = value;
       }
 
       var formula = this.tierCero.formula;
@@ -386,8 +448,7 @@ export class ScenarioCalculationComponent implements OnInit {
           }
         }
         valueCalculated.push(
-          eval(formula.flat(5).join('').replaceAll(',', '')) -
-            this.tierCero.calculated[0].years[this.defaultYear]
+          eval(formula.flat(5).join('').replaceAll(',', ''))
         );
       }
       this.calculation.push(valueCalculated);

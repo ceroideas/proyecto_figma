@@ -113,7 +113,7 @@
   />
 </div> -->
 
-<div *ngIf="showPreview">
+<div style="padding: 20px" *ngIf="showPreview">
   <table class="table-custom">
     <tr>
       <th
@@ -153,8 +153,8 @@
   </table>
 
   <div class="vpn">
-    <span>VPN:</span>
-    <span>$ 235,000,000.00</span>
+    <span> {{ tierCero.name }} </span>
+    <span>{{ tierCero.calculated[0].years[defaultYear] }} </span>
   </div>
 
   <div class="frequency-selector">
