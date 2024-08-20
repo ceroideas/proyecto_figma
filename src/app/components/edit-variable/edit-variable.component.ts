@@ -1083,8 +1083,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     });
 
     // Crear la curva de la función de densidad de probabilidad
-    var x = Array.from({ length: 100 }, (_, i) =>
-      (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
+    var x = Array.from(
+      { length: 100 },
+      (_, i) => mu - 5 * sigma + (i * (10 * sigma)) / 100
     );
     var y = x.map(function (x) {
       return (
@@ -1190,7 +1191,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     // Preparar datos para el histograma
     const labels = Array.from(
       { length: numBins },
-      (_, i) => +(+this.min + i * binWidth).toFixed(2)
+      (_, i) => +(+this.min + i * binWidth)
     );
 
     const data = histogram.map((count) => count / sampleSize / binWidth);
@@ -1534,9 +1535,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
       { length: binCount + 1 },
       (_, i) => i * (Math.max(...weibullSamples) / binCount)
     );
-    const binMids = binEdges
+    const binMids: any = binEdges
       .slice(0, -1)
-      .map((edge, index) => ((edge + binEdges[index + 1]) / 2).toFixed(2));
+      .map((edge, index) => (edge + binEdges[index + 1]) / 2);
 
     // Función para calcular la PDF de Weibull
     function weibullPDF(x: number, k: number, lambda: number) {
@@ -1548,7 +1549,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
 
     // Calcular los valores de la PDF para los puntos medios de los bins
-    const pdfValues = binMids.map((x) => weibullPDF(parseFloat(x), k, lambda));
+    const pdfValues = binMids.map((x: any) =>
+      weibullPDF(parseFloat(x), k, lambda)
+    );
 
     // Configurar los datos para Chart.js
     const chartData: ChartData<'bar' | 'line', number[], string> = {
@@ -1635,7 +1638,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       const pdf = lognormalPDF(x);
       if (pdf > 0.001) {
         // Filtrar valores cercanos a cero
-        labels.push(x.toFixed(2));
+        labels.push(x);
         data.push(pdf);
       }
     }
@@ -1731,7 +1734,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     // Generar puntos para la función de densidad de probabilidad
     for (let i = 0; i <= 1; i += 0.01) {
-      pdfData.labels.push(i.toFixed(2)); // Redondeamos para evitar números largos
+      pdfData.labels.push(`${i}`); // Redondeamos para evitar números largos
       pdfData.datasets[0].data.push(betaPDF(i, alpha, beta));
     }
 
@@ -2047,9 +2050,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     histogram = histogram.map((value) => value / (binWidth * s.length));
 
     // Crear bins para el histograma
-    let bins = Array.from({ length: histogram.length }, (_, i) =>
-      (i * binWidth).toFixed(2)
-    );
+    let bins = Array.from({ length: histogram.length }, (_, i) => i * binWidth);
 
     // Crear PDF de la distribución exponencial
     let pdf = bins.map((bin) => Math.exp(-bin));
