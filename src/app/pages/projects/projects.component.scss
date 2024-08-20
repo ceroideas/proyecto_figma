@@ -68,9 +68,9 @@
 
 .div-top {
   height: 200px;
-  background-size: cover;
-  /*  background-size: 110%; */
+  background-size: contain;
   background-position: center;
+  background-repeat: no-repeat;
 }
 
 .button-down {
@@ -93,9 +93,7 @@
 
 .custom-card {
   box-shadow: 0 0 1px #00000020, 0 1px 3px #0003;
-
 }
-
 
 .selected-background {
   background-color: rgba(0, 6, 31, 0.8);
@@ -118,24 +116,24 @@
   height: 100%;
   background-color: rgba(0, 6, 31, 0.8); /* Color negro semitransparente */
   z-index: 2; /* Asegura que esté por encima del contenido */
-  align-content: center; 
+  align-content: center;
   border-radius: 9px;
 }
 .left-button {
   background-color: rgba(0, 15, 85, 1);
   width: 53px;
   height: 53px;
-  border-radius: 9px; 
-  align-content: center; 
+  border-radius: 9px;
+  align-content: center;
   margin-right: 13px;
   cursor: pointer;
 }
 
 .right-button {
   background-color: rgba(0, 15, 85, 1);
-  width: 53px; 
-  height: 53px; 
-  border-radius: 9px; 
+  width: 53px;
+  height: 53px;
+  border-radius: 9px;
   align-content: center;
   cursor: pointer;
 }
@@ -145,17 +143,15 @@
   height: 28px;
   border-radius: 10px;
   text-align: center;
-  p{
-  color: rgba(0, 15, 85, 1);
-  font-size: 14px;
-  font-weight: bold;
-  line-height: 16px;
-  letter-spacing: 0.5px;
-  margin-top: 8px; /* Para que se alinee correctamente, ajusta según necesites */
+  p {
+    color: rgba(0, 15, 85, 1);
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 16px;
+    letter-spacing: 0.5px;
+    margin-top: 8px; /* Para que se alinee correctamente, ajusta según necesites */
   }
 }
-
-
 
 .new-div {
   background-color: rgba(229, 220, 237, 1);
@@ -163,15 +159,12 @@
   height: 28px;
   border-radius: 10px;
   text-align: center;
-  p{
-  color: rgba(0, 15, 85, 1);
-  font-size: 14px;
-  font-weight: bold;
-  line-height: 16px;
-  letter-spacing: 0.5px;
-  margin-top: 8px; /* Para que se alinee correctamente, ajusta según necesites */
+  p {
+    color: rgba(0, 15, 85, 1);
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 16px;
+    letter-spacing: 0.5px;
+    margin-top: 8px; /* Para que se alinee correctamente, ajusta según necesites */
   }
 }
-
-
-

@@ -1305,11 +1305,76 @@ export class BuildComponent implements OnInit, AfterViewInit {
   }
 
   capture() {
-    const id: any = document.querySelector('#capture');
+    const id: any = document.querySelector(
+      '.google-visualization-orgchart-table'
+    );
+    if (id) {
+      domtoimage.toPng(id).then((dataUrl: string) => {
+        // Crear un nuevo Image para cargar el dataUrl
+        const img = new Image();
+        img.src = dataUrl;
 
-    domtoimage.toPng(id).then((blob: any) => {
+        img.onload = () => {
+          // Crear un canvas para realizar la rotación
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          // Configurar las dimensiones del canvas para un giro de 90 grados
+          canvas.width = img.height;
+          canvas.height = img.width;
+
+          if (ctx) {
+            // Aplicar la rotación de 90 grados a la derecha
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((3 * Math.PI) / 2); // 270 grados en radianes
+            ctx.drawImage(img, -img.width / 2, -img.height / 2);
+
+            // Obtener el dataUrl del canvas rotado
+            const rotatedDataUrl = canvas.toDataURL('image/png');
+
+            // Abrir la imagen rotada en una nueva pestaña
+
+            const newWindow = window.open();
+            if (newWindow) {
+              newWindow.document.write('<img src="' + rotatedDataUrl + '" />');
+            }
+
+            // Convertir la URL de datos rotada en un blob para enviarlo al servicio
+            const blob = this.dataURLToBlob(rotatedDataUrl);
+
+            // Guardar la imagen llamando al servicio
+            this.projectSvc
+              .updateProject(this.id, { thumb: rotatedDataUrl })
+              .subscribe();
+          }
+        };
+      });
+    }
+
+    /*     domtoimage.toPng(id).then((blob: any) => {
+      
       this.projectSvc.updateProject(this.id, { thumb: blob }).subscribe();
-    });
+    }); */
+  }
+
+  dataURLToBlob(dataUrl: string) {
+    const arr = dataUrl.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+
+    if (!mimeMatch) {
+      throw new Error('Invalid data URL');
+    }
+
+    const mime = mimeMatch[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new Blob([u8arr], { type: mime });
   }
 
   countHiddenNodes(node: any, aux: any) {
@@ -1349,6 +1414,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
   downloadProjectById(): void {
     this.projectSvc.getProject(this.id).subscribe((project: any) => {
+      console.log(project, 'RPOI');
       const projectJson = JSON.stringify(project);
       const blob = new Blob([projectJson], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
