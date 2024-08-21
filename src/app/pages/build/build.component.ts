@@ -1334,11 +1334,6 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
             // Abrir la imagen rotada en una nueva pestaña
 
-            const newWindow = window.open();
-            if (newWindow) {
-              newWindow.document.write('<img src="' + rotatedDataUrl + '" />');
-            }
-
             // Convertir la URL de datos rotada en un blob para enviarlo al servicio
             const blob = this.dataURLToBlob(rotatedDataUrl);
 
