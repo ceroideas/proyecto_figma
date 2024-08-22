@@ -6,9 +6,11 @@ import { WaterfallChartComponent } from './pages/waterfall-chart/waterfall-chart
 import { SimulateComponent } from './pages/simulate/simulate.component';
 import { BuildComponent } from './pages/build/build.component';
 import { ScenarioCalculationComponent } from './pages/scenario-calculation/scenario-calculation.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home/projects', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
   {
     path: 'home',
     component: HomeComponent,

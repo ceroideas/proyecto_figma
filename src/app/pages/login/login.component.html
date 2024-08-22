@@ -1,1 +1,35 @@
-<p>login works!</p>
+<div class="login-container">
+  <div class="login-box">
+    <div class="login-logo-container">
+      <img src="../../../assets/img/logo.svg" alt="Logo" class="login-logo" />
+    </div>
+
+    <h2 class="login-title">Iniciar Sesión</h2>
+    <form>
+      <div class="form-group">
+        <label for="email" class="form-label">Correo Electrónico</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-input"
+          required
+        />
+      </div>
+      <div class="form-group">
+        <label for="password" class="form-label">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-input"
+          required
+        />
+      </div>
+      <button type="submit" class="login-button">Ingresar</button>
+    </form>
+    <div class="register-link mt-2">
+      <label>No tienes cuenta? Registrate</label>
+    </div>
+  </div>
+</div>
