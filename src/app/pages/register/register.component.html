@@ -1,0 +1,108 @@
+<div class="login-container">
+  <div class="login-box">
+    <div class="login-logo-container">
+      <img src="../../../assets/img/logo.svg" alt="Logo" class="login-logo" />
+    </div>
+
+    <h2 class="login-title">Regístrate</h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="username" class="form-label">Nombre de Usuario</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          class="form-input"
+        />
+        <div
+          *ngIf="f['username'].touched && f['username'].errors"
+          class="error-message"
+        >
+          <div class="error-color" *ngIf="f['username'].errors['required']">
+            El nombre de usuario es obligatorio.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email-register" class="form-label"
+          >Correo Electrónico</label
+        >
+        <input
+          type="email"
+          id="email-register"
+          formControlName="email"
+          class="form-input"
+        />
+        <div
+          *ngIf="f['email'].touched && f['email'].errors"
+          class="error-message"
+        >
+          <div class="error-color" *ngIf="f['email'].errors['required']">
+            El correo electrónico es obligatorio.
+          </div>
+          <div class="error-color" *ngIf="f['email'].errors['email']">
+            Ingresa un correo electrónico válido.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password-register" class="form-label">Contraseña</label>
+        <input
+          type="password"
+          id="password-register"
+          formControlName="password"
+          class="form-input"
+        />
+        <div
+          *ngIf="f['password'].touched && f['password'].errors"
+          class="error-message"
+        >
+          <div class="error-color" *ngIf="f['password'].errors['required']">
+            La contraseña es obligatoria.
+          </div>
+          <div class="error-color" *ngIf="f['password'].errors['minlength']">
+            La contraseña debe tener al menos 6 caracteres.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password-confirm" class="form-label"
+          >Confirmar Contraseña</label
+        >
+        <input
+          type="password"
+          id="password-confirm"
+          formControlName="confirmPassword"
+          class="form-input"
+        />
+        <div
+          *ngIf="f['confirmPassword'].touched && f['confirmPassword'].errors"
+          class="error-message"
+        >
+          <div
+            class="error-color"
+            *ngIf="f['confirmPassword'].errors['required']"
+          >
+            La confirmación de contraseña es obligatoria.
+          </div>
+          <div
+            class="error-color"
+            *ngIf="f['confirmPassword'].errors['mustMatch']"
+          >
+            Las contraseñas no coinciden.
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="login-button">Registrarse</button>
+
+      <div class="register-link mt-2">
+        <label (click)="goLogin()">¿Ya tienes cuenta? Inicia Sesión</label>
+      </div>
+    </form>
+  </div>
+</div>
