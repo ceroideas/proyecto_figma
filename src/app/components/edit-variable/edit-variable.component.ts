@@ -119,7 +119,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
   ];
 
-  scenarioId!: number;
+  scenarioId!: any;
 
   @Input() isNewTree: boolean = false;
   calculos: any[] = [];
@@ -212,6 +212,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.renderer.listen(modalElement, 'shown.bs.modal', () => {
         if (this.editVariable && this.scenarioId) {
           this.cargando = true;
+
           this.projectSvc.getScenery(this.scenarioId).subscribe((res: any) => {
             this.variableUnidad = res.years[this.defaultYear];
             this.cargando = false;
@@ -248,8 +249,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   guardar() {
-    console.log('Guardando:', this.inputValue);
-
     this.mostrarPopover = false;
   }
 
@@ -341,7 +340,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
           if (this.chart) {
             this.chart.destroy();
           }
-          console.log(chartName);
+
           switch (chartName) {
             case 'Normal':
               this.normalChart();
@@ -525,8 +524,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.scenarioYears[this.defaultYear] = this.variableUnidad;
 
-    console.log(this.scenarioYears, 'SCES');
-
     this.projectSvc
       .updateScenery(this.scenarioId, { years: this.scenarioYears })
       .subscribe();
@@ -652,7 +649,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
           : undefined;
 
         this.scenarioId = res.sceneries[this.scenerieId].id ?? undefined;
-        console.log(this.scenarioId, 'S');
+
         this.scenarioYears = res.sceneries[this.scenerieId].years;
 
         const shapeDataExists = localStorage.getItem('shapeData') !== null;
@@ -702,7 +699,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
           };
           localStorage.setItem('shapeData', JSON.stringify(formShape));
           this.shapeData = this.getItem('shapeData');
-          console.log(this.shapeData, 'SHAPE DAT');
 
           const chartName = res.distribution_shape[0]?.name
             ? res.distribution_shape[0]?.name
@@ -711,7 +707,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
           if (this.chart) {
             this.chart.destroy();
           }
-          console.log(chartName);
 
           switch (chartName) {
             case 'Normal':
@@ -814,8 +809,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     /*  this.operationResult(); */
     this.sendOperations.push(id);
-
-    console.log(this.calculos, 'CALCUJLOS');
   }
   operationResult() {
     type YearValue = {
@@ -878,7 +871,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   addCalculo(operation: any) {
     // if (this.sendOperations.length > 0) {
-    console.log(operation, 'OERATION');
+
     this.calculos.push({
       name: operation.operator,
       img: operation.img,
@@ -891,8 +884,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     // }
 
     /*   this.operationResult(); */
-
-    console.log(this.sendOperations, 'S');
   }
 
   addCustom() {
@@ -906,7 +897,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.operations.push([{ name: this.inputValue }]);
 
     this.sendOperations.push(this.inputValue);
-    console.log(this.sendOperations, 'formula');
+
     this.inputValue = '';
     this.mostrarPopover = false; //
   }
@@ -1111,7 +1102,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   triangularChart() {
-    console.log(this.min, this.max, this.mode, 'MODE');
     // Función para generar números aleatorios con distribución triangular
     function triangularDistribution(
       sampleSize: any,
@@ -1994,7 +1984,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   exponentialChart() {
     // Escala de la distribución exponencial
-    console.log(this.rate, 'RATE');
+
     this.rate = `${this.rate}`;
 
     if (this.rate.includes('%')) {
@@ -2089,6 +2079,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos = [];
     this.sendOperations = [];
     this.showNewEscenario = [];
+    this.scenarioId = null;
 
     this.min = 0;
     this.max = 0;

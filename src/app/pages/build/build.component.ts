@@ -1007,7 +1007,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
     this.sceneriesNodes.forEach((element: any) => {
       const desiredYear = this.years[this.currentYearIndex];
       const filteredObject: any = {};
-      console.log(element, 'ELEMENT');
+
       filteredObject[desiredYear] = element[id].years[desiredYear];
       this.showSceneries.push(filteredObject);
     });
