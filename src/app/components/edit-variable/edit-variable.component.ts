@@ -27,6 +27,7 @@ import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { EventsService } from 'src/app/services/events.service';
 import Swal from 'sweetalert2';
+import { firstValueFrom } from 'rxjs';
 Chart.register(...registerables);
 declare var bootstrap: any;
 @Component({
@@ -226,30 +227,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       });
     }
 
-    /*     setTimeout(() => {
-      new Chart('myChart', {
-        type: 'bar',
-
-        data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [
-            {
-              backgroundColor: '#8C64B1',
-              label: '# of Votes',
-              data: [12, 19, 3, 5, 2, 3],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
-    }, 1000); */
     this.deleteShapeData();
     this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
       this.variables = res.node;
@@ -272,9 +249,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   guardar() {
     console.log('Guardando:', this.inputValue);
-    // Aquí puedes implementar la lógica para guardar los datos
-    // por ejemplo, puedes hacer una llamada a una API
-    this.mostrarPopover = false; // Oculta el popover después de guardar
+
+    this.mostrarPopover = false;
   }
 
   cerrarPopover(event: MouseEvent) {
@@ -283,11 +259,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.closeToogle = false;
     }
   }
-
-  // @HostListener('document:click', ['$event'])
-  // onClick(event: MouseEvent) {
-  //   this.cerrarPopover(event);
-  // }
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
@@ -2118,7 +2089,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos = [];
     this.sendOperations = [];
     this.showNewEscenario = [];
-    this.variableUnidad = undefined;
+
     this.min = 0;
     this.max = 0;
     this.stDev = 0;
@@ -2152,7 +2123,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.openUnite();
   }
 
-  openUnite() {
+  async openUnite() {
     this.cargando = true;
     if (this.editVariable) {
       this.editDataEvent.emit({
@@ -2161,9 +2132,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
         unite: this.variableUnidad ?? 0,
       });
 
+      const resScenarioYears: any = await firstValueFrom(
+        this.projectSvc.getScenery(this.scenarioId)
+      );
+      this.scenarioYears = resScenarioYears.years;
       this.scenarioYears[this.defaultYear] = this.variableUnidad;
-
-      console.log(this.scenarioYears, 'SCES');
 
       this.projectSvc
         .updateScenery(this.scenarioId, { years: this.scenarioYears })

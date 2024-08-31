@@ -248,6 +248,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
         if (div && div.id === '2') {
           td.classList.add('box-shadow-2');
+          td.style.setProperty('background-color', ` #ffffff`, 'important');
         }
       });
     };
@@ -358,9 +359,8 @@ export class BuildComponent implements OnInit, AfterViewInit {
       node_id: this.isNewTree ? null : this.nodeName,
       tier: this.isNewTree === false ? +this.tier + 1 : 0,
     };
-    this.capture();
+
     this.projectSvc.saveNode(dataToSave).subscribe((res: any) => {
-      this.capture();
       if (this.esceneries.length > 0 && dataToSave.unite == undefined) {
         res.sceneries.forEach((element: any, i: any) => {
           this.projectSvc
@@ -381,12 +381,13 @@ export class BuildComponent implements OnInit, AfterViewInit {
   }
 
   editDataFromModal(data: any) {
-    let position = +data.nameNode - 1;
     const dataToSave = {
       ...data,
 
       type: data.operation ? 2 : 1,
     };
+
+    console.log(dataToSave, 'DATATOSAVE');
 
     this.projectSvc.updateNode(data.id, dataToSave).subscribe((res: any) => {
       this.getContentToChart();
@@ -948,7 +949,10 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
   deleteNode() {
     this.getContentToChart();
-    this.capture();
+
+    setTimeout(() => {
+      this.capture();
+    }, 3000);
   }
 
   hideTier() {
@@ -999,9 +1003,9 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
   getSceneries(id: any) {
     this.showSceneries = [];
-    console.log(this.sceneriesNodes, 'ELEMENT');
+
     this.sceneriesNodes.forEach((element: any) => {
-      const desiredYear = this.years[this.currentYearIndex]; // Puedes cambiar el año que deseas filtrar
+      const desiredYear = this.years[this.currentYearIndex];
       const filteredObject: any = {};
       console.log(element, 'ELEMENT');
       filteredObject[desiredYear] = element[id].years[desiredYear];
@@ -1018,6 +1022,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
 
     setTimeout(() => {
       this.getSceneries(this.selectedScenery);
+      this.capture();
     }, 3000);
   }
 
@@ -1307,6 +1312,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
   }
 
   capture() {
+    console.log('CAPTURE');
     const id: any = document.querySelector(
       '.google-visualization-orgchart-table'
     );
@@ -1343,6 +1349,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
             this.projectSvc
               .updateProject(this.id, { thumb: rotatedDataUrl })
               .subscribe();
+            console.log('CAPTURE2');
           }
         };
       });
