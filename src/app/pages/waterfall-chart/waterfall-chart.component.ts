@@ -102,9 +102,7 @@ export class WaterfallChartComponent implements OnInit {
       label.push(nodo.name);
       // nodo.value.toString().replace('.', '');
       console.log(nodo, 'NODO');
-      let str = parseFloat(
-        `${nodo.value}`.replace(/\./g, '').replace(',', '.')
-      );
+      let str = parseFloat(`${nodo.value}`.replace(',', '.'));
 
       values.push(str);
     }
@@ -122,13 +120,13 @@ export class WaterfallChartComponent implements OnInit {
     // Convertir todos los elementos a números
     arr = arr.map(Number);
 
+    console.log(arr, values, 'problema');
+
     let ultimoValor: any = arr[arr.length - 1];
 
     let sumaSinUltimo: any = arr
       .slice(0, -1)
       .reduce((acc: any, val: any) => acc + val, 0);
-
-    console.log(arr, 'NODES');
 
     if (sumaSinUltimo === ultimoValor) {
     } else {
@@ -140,8 +138,6 @@ export class WaterfallChartComponent implements OnInit {
       /* label[arr.length - 2] = 'Other'; */
       label.splice(arr.length - 2, 0, 'Other');
     }
-
-    console.log(arr, 'problema');
 
     let arrString = arr.map(String);
     let showAmount = [...arrString];
