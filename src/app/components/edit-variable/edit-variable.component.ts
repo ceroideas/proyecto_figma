@@ -120,6 +120,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   ];
 
   scenarioId!: any;
+  scenarioId2!: any;
 
   @Input() isNewTree: boolean = false;
   calculos: any[] = [];
@@ -214,6 +215,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
           this.cargando = true;
 
           this.projectSvc.getScenery(this.scenarioId).subscribe((res: any) => {
+            this.scenarioYears = res.years;
             this.variableUnidad = res.years[this.defaultYear];
             this.cargando = false;
           });
@@ -524,6 +526,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.scenarioYears[this.defaultYear] = this.variableUnidad;
 
+    console.log(this.scenarioId, 'ID ESCENARIO');
+
     this.projectSvc
       .updateScenery(this.scenarioId, { years: this.scenarioYears })
       .subscribe();
@@ -638,6 +642,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     /*     this.variables = this.variables.filter(
       (variable) => variable.id !== this.nodeId
     ); */
+
+    console.log('UPDATE VARIBALE');
 
     if (this.editVariable) {
       this.cargando = true;
