@@ -8,18 +8,18 @@
 
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="username" class="form-label">Nombre de Usuario</label>
+        <label for="name" class="form-label">Nombre de Usuario</label>
         <input
           type="text"
-          id="username"
-          formControlName="username"
+          id="name"
+          formControlName="name"
           class="form-input"
         />
         <div
-          *ngIf="f['username'].touched && f['username'].errors"
+          *ngIf="f['name'].touched && f['name'].errors"
           class="error-message"
         >
-          <div class="error-color" *ngIf="f['username'].errors['required']">
+          <div class="error-color" *ngIf="f['name'].errors['required']">
             El nombre de usuario es obligatorio.
           </div>
         </div>
@@ -64,7 +64,10 @@
             La contraseña es obligatoria.
           </div>
           <div class="error-color" *ngIf="f['password'].errors['minlength']">
-            La contraseña debe tener al menos 6 caracteres.
+            La contraseña debe tener al menos 8 caracteres.
+          </div>
+          <div class="error-color" *ngIf="f['password'].errors['pattern']">
+            La contraseña debe contener al menos un número.
           </div>
         </div>
       </div>

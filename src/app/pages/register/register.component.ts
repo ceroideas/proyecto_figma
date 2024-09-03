@@ -10,9 +10,11 @@ import {
 import { MustMatch } from './must-match.validator';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-register',
+  providers: [AuthService],
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './register.component.html',
@@ -22,12 +24,32 @@ export class RegisterComponent {
   registerForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder, private router: Router) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router,
+    private authSvc: AuthService
+  ) {
     this.registerForm = this.formBuilder.group(
       {
-        username: ['', Validators.required],
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6)]],
+        name: ['', Validators.required],
+        email: [
+          '',
+          Validators.compose([
+            Validators.required,
+            Validators.email,
+            Validators.pattern(
+              '^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$'
+            ),
+          ]),
+        ],
+        password: [
+          '',
+          Validators.compose([
+            Validators.minLength(8),
+            Validators.pattern('^(?=.*[0-9]).*$'),
+            Validators.required,
+          ]),
+        ],
         confirmPassword: ['', Validators.required],
       },
       {
@@ -49,7 +71,9 @@ export class RegisterComponent {
       return;
     }
 
-    // Aquí puedes manejar la lógica para enviar el formulario, por ejemplo, una llamada a la API
+    this.authSvc.register(this.registerForm.value).subscribe((res: any) => {
+      this.goLogin();
+    });
     console.log('Formulario válido', this.registerForm.value);
   }
 

@@ -5,16 +5,28 @@
     </div>
 
     <h2 class="login-title">Iniciar Sesión</h2>
-    <form>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="email" class="form-label">Correo Electrónico</label>
         <input
           type="email"
           id="email"
           name="email"
+          formControlName="email"
           class="form-input"
           required
         />
+        <div
+          *ngIf="f['email'].touched && f['email'].errors"
+          class="error-message"
+        >
+          <div class="error-color" *ngIf="f['email'].errors['required']">
+            El correo electrónico es obligatorio.
+          </div>
+          <div class="error-color" *ngIf="f['email'].errors['email']">
+            Ingresa un correo electrónico válido.
+          </div>
+        </div>
       </div>
       <div class="form-group">
         <label for="password" class="form-label">Contraseña</label>
@@ -22,9 +34,24 @@
           type="password"
           id="password"
           name="password"
+          formControlName="password"
           class="form-input"
           required
         />
+        <div
+          *ngIf="f['password'].touched && f['password'].errors"
+          class="error-message"
+        >
+          <div class="error-color" *ngIf="f['password'].errors['required']">
+            La contraseña es obligatoria.
+          </div>
+          <div class="error-color" *ngIf="f['password'].errors['minlength']">
+            La contraseña debe tener al menos 8 caracteres.
+          </div>
+          <div class="error-color" *ngIf="f['password'].errors['pattern']">
+            La contraseña debe contener al menos un número.
+          </div>
+        </div>
       </div>
       <button type="submit" class="login-button">Ingresar</button>
     </form>
