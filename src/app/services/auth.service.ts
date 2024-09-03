@@ -18,6 +18,15 @@ export class AuthService {
     return this.http.post(`${this.url}/login`, user);
   }
 
+  isLoggedIn(): boolean {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const isExpired = this.isTokenExpired();
+      return !isExpired;
+    }
+    return false;
+  }
+
   isTokenExpired() {
     const token = localStorage.getItem('token'); // Reemplaza con la lógica para obtener el token
 
@@ -30,5 +39,9 @@ export class AuthService {
     const isExpired = this.helper.isTokenExpired(token);
 
     return isExpired;
+  }
+
+  logout() {
+    localStorage.removeItem('token');
   }
 }

@@ -21,6 +21,9 @@
       </div>
       <div class="dropdown">
         <div class="user-menu">
+          <label style="margin-top: 10px; margin-right: 20px; color: #000f55">
+            {{ userData.name }}
+          </label>
           <img
             class="user-icon"
             src="../../../assets/img/219969.png"
@@ -33,9 +36,9 @@
           ></i>
 
           <ul class="dropdown-menu dropdown-menu-right">
-            <li><a class="dropdown-item" href="#">Action 1</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li (click)="logout()">
+              <a class="dropdown-item" href="#">Logout</a>
+            </li>
           </ul>
         </div>
       </div>

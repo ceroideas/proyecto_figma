@@ -10,6 +10,7 @@ export class DataService {
   dataNodes: any[] = [];
   tierCero: any;
   tierCeroData: any[] = [];
+  userData: any = {};
 
   nodes: any[] = [];
 

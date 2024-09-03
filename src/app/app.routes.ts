@@ -8,6 +8,7 @@ import { BuildComponent } from './pages/build/build.component';
 import { ScenarioCalculationComponent } from './pages/scenario-calculation/scenario-calculation.component';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
+import { AuthGuard } from './authGuard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home/projects', pathMatch: 'full' },
@@ -16,20 +17,40 @@ export const routes: Routes = [
   {
     path: 'home',
     component: HomeComponent,
+    canActivate: [AuthGuard],
     children: [
-      { path: 'projects', component: ProjectsComponent },
+      {
+        path: 'projects',
+        component: ProjectsComponent,
+        canActivate: [AuthGuard],
+      },
       {
         path: 'inspect/:id',
         component: InspectComponent,
+        canActivate: [AuthGuard],
       },
-      { path: 'waterfall', component: WaterfallChartComponent },
-      { path: 'simulate/:id', component: SimulateComponent },
-      { path: 'build/:id', component: BuildComponent },
+      {
+        path: 'waterfall',
+        component: WaterfallChartComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'simulate/:id',
+        component: SimulateComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'build/:id',
+        component: BuildComponent,
+        canActivate: [AuthGuard],
+      },
       {
         path: 'scenario_calculation/:id',
         component: ScenarioCalculationComponent,
+        canActivate: [AuthGuard],
       },
     ],
   },
+  { path: '**', redirectTo: '/home/projects', pathMatch: 'full' },
   // Otras rutas aquí...
 ];

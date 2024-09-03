@@ -12,6 +12,7 @@ import {
 import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AuthService } from 'src/app/services/auth.service';
+import { DataService } from 'src/app/services/data-service.service';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +28,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
-    private authSvc: AuthService
+    private authSvc: AuthService,
+    private dataSvc: DataService
   ) {}
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
@@ -64,7 +66,8 @@ export class LoginComponent implements OnInit {
       (res: any) => {
         localStorage.setItem('token', res.access_token);
         let decodedToken = this.helper.decodeToken(res.access_token);
-        console.log(decodedToken);
+        const userJSON = JSON.stringify(decodedToken);
+        localStorage.setItem('user', userJSON);
         this.router.navigate(['/home/projects']);
       },
       (error) => {
