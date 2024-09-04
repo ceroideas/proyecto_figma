@@ -34,5 +34,6 @@ export class HomeComponent {
   logout() {
     this.authSvc.logout();
     this.router.navigate([`login`]);
+    localStorage.removeItem('project');
   }
 }

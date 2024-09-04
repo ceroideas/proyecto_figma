@@ -55,6 +55,7 @@ export class CreateProjectComponent {
 */
 
     this.inputs = [];
+    this.inputValues = {};
 
     for (var i = 0; i < this.selectedNumber; ++i) {
       const inputKey = `scenary-${i}`;

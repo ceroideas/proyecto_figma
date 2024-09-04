@@ -20,6 +20,7 @@ export class AuthGuard implements CanActivate {
     if (this.authSvc.isLoggedIn()) {
       return true;
     } else {
+      localStorage.removeItem('project');
       this.router.navigate(['/login']);
       return false;
     }
