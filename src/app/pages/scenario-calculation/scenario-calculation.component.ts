@@ -48,9 +48,9 @@ export class ScenarioCalculationComponent implements OnInit {
       this.allNodes = [...res.nodes];
       this.defaultYear = res.default_year;
       this.scenarioYears = res.clean_sceneries[0].years;
-      console.log(this.scenarioYears);
+
       const constants = res.nodes.filter((node: any) => node.type === 1);
-      console.log(res);
+
       this.nodes = constants.map((node: any, i: number) => {
         return {
           id: node.id,
@@ -66,7 +66,6 @@ export class ScenarioCalculationComponent implements OnInit {
         };
       });
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
-      console.log(this.tierCero, 'CERO');
     });
   }
 
@@ -114,7 +113,7 @@ export class ScenarioCalculationComponent implements OnInit {
 
       newScenarios.push(newScenario);
     }
-    console.log(newScenarios);
+
     this.projectSvc
       .saveSceneryNoPropagation({ data: newScenarios })
       .subscribe((res: any) => {
@@ -132,12 +131,8 @@ export class ScenarioCalculationComponent implements OnInit {
     });
   }
 
-  selectedTd() {
-    console.log('click td');
-  }
-  selectedDiv() {
-    console.log('click div');
-  }
+  selectedTd() {}
+  selectedDiv() {}
 
   changeValue(event: Event, i: number): void {
     const target = event.target as HTMLElement;
@@ -173,8 +168,6 @@ export class ScenarioCalculationComponent implements OnInit {
         range.collapse(true);
         selection.removeAllRanges();
         selection.addRange(range);
-
-        console.log(range, i);
       }, 0);
     }
   }
@@ -213,8 +206,6 @@ export class ScenarioCalculationComponent implements OnInit {
         range.collapse(true);
         selection.removeAllRanges();
         selection.addRange(range);
-
-        console.log(range, i);
       }, 0);
     }
   }
@@ -289,7 +280,6 @@ export class ScenarioCalculationComponent implements OnInit {
     if (target.innerText.endsWith('.00')) {
       target.innerText = target.innerText.slice(0, -3);
     }
-    console.log(target.innerText);
   }
 
   onBlur(event: Event, i: number): void {
@@ -362,12 +352,18 @@ export class ScenarioCalculationComponent implements OnInit {
       var formula = this.tierCero.formula;
       const newOperation: any[] = [];
 
-      console.log(this.showNodes, 'NODES');
       this.test();
     }
   }
 
-  async recursiveCalculateNodeNewValue(_node: any, nodes: any) {
+  async recursiveCalculateNodeNewValue(
+    _node: any,
+    nodes: any,
+    nodeId0: any,
+    value0: any,
+    nodeId1: any,
+    value1: any
+  ) {
     let formula: any = [];
 
     for (let i = 0; i < _node.formula.length; i++) {
@@ -375,14 +371,24 @@ export class ScenarioCalculationComponent implements OnInit {
 
       if (typeof nodeId === 'number') {
         var node = nodes.find((node: any) => node.id == nodeId);
-
-        if (node.type == 1) {
+        if (nodeId == nodeId0) {
+          formula.push(value0);
+        } else if (nodeId == nodeId1) {
+          formula.push(value1);
+        } else if (node.type == 1) {
           const value = node.sceneries[0].years[this.defaultYear];
 
           formula.push(+value);
         } else {
           // Utiliza await para esperar la resolución de la función recursiva
-          const form = await this.recursiveCalculateNodeNewValue(node, nodes);
+          const form = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodes,
+            nodeId0,
+            value0,
+            nodeId,
+            value1
+          );
           formula.push('(' + form + ')');
         }
       } else {
@@ -414,6 +420,7 @@ export class ScenarioCalculationComponent implements OnInit {
     for (let i = 0; i < this.showNodes[0].newValues.length; i++) {
       const value1 = this.showNodes[1].newValues[i];
       const nodeId1 = this.showNodes[1].id;
+
       let valueCalculated = [];
 
       for (let i = 0; i < this.showNodes[1].newValues.length; i++) {
@@ -434,11 +441,14 @@ export class ScenarioCalculationComponent implements OnInit {
 
                 formula.push(+value);
               } else {
-                console.log('VARIBALE');
                 // Utiliza await para esperar la resolución de la función recursiva
                 const form = await this.recursiveCalculateNodeNewValue(
                   node,
-                  this.allNodes
+                  this.allNodes,
+                  nodeId0,
+                  value0,
+                  nodeId1,
+                  value1
                 );
                 formula.push('(' + form + ')');
               }
@@ -447,12 +457,12 @@ export class ScenarioCalculationComponent implements OnInit {
             formula.push(nodeId);
           }
         }
+        console.log(formula, 'FORMULA');
         valueCalculated.push(
           eval(formula.flat(5).join('').replaceAll(',', ''))
         );
       }
       this.calculation.push(valueCalculated);
     }
-    console.log(this.calculation);
   }
 }
