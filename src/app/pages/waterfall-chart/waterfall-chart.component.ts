@@ -86,6 +86,12 @@ export class WaterfallChartComponent implements OnInit {
       },
     }); */
   }
+  formatMonto(monto: any): string {
+    return Number(monto).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
 
   renderchart() {
     const label = [];
@@ -93,7 +99,9 @@ export class WaterfallChartComponent implements OnInit {
     console.log(this.dataTierCero, 'CERO');
     label.push(this.dataTierCero[0].name + this.dataTierCero[0].year);
     values.push(
-      parseFloat(this.dataTierCero[0].value.toString().replace(',', '.'))
+      this.formatMonto(
+        parseFloat(this.dataTierCero[0].value.toString().replace(',', '.'))
+      )
     );
     console.log(this.dataTierCero, 'NODES');
 
@@ -104,7 +112,7 @@ export class WaterfallChartComponent implements OnInit {
       console.log(nodo, 'NODO');
       let str = parseFloat(`${nodo.value}`.replace(',', '.'));
 
-      values.push(str);
+      values.push(this.formatMonto(str));
     }
 
     label.push(this.dataTierCero[1].name + this.dataTierCero[1].year);
@@ -113,9 +121,9 @@ export class WaterfallChartComponent implements OnInit {
       this.dataTierCero[1].value.toString().replace(',', '.')
     );
 
-    values.push(str2);
+    values.push(this.formatMonto(str2));
 
-    let arr = values;
+    let arr: any = values;
 
     // Convertir todos los elementos a números
     arr = arr.map(Number);
@@ -132,7 +140,7 @@ export class WaterfallChartComponent implements OnInit {
     } else {
       let diferencia: any = ultimoValor - sumaSinUltimo;
 
-      arr.splice(arr.length - 1, 0, +diferencia);
+      arr.splice(arr.length - 1, 0, this.formatMonto(+diferencia));
 
       /* arr[arr.length - 2] += diferencia; */
       /* label[arr.length - 2] = 'Other'; */
@@ -148,6 +156,9 @@ export class WaterfallChartComponent implements OnInit {
     // Asignar "total" al último elemento del nuevo array
     mean[mean.length - 1] = 'total';
     mean[0] = 'absolute';
+
+    console.log(mean, 'MEAN');
+    console.log(label, 'label');
 
     const data = [
       {
@@ -166,6 +177,7 @@ export class WaterfallChartComponent implements OnInit {
             color: 'rgb(63, 63, 63)',
           },
         },
+        hoverinfo: 'skip',
       },
     ];
 
@@ -179,6 +191,7 @@ export class WaterfallChartComponent implements OnInit {
       yaxis: {
         type: 'linear',
       },
+
       autosize: true,
       showlegend: false,
     };

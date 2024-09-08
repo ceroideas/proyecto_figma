@@ -25,6 +25,7 @@ import { DataService } from 'src/app/services/data-service.service';
 export class LoginComponent implements OnInit {
   helper = new JwtHelperService();
   loginForm!: FormGroup;
+  isLoading = false;
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
@@ -61,24 +62,22 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.invalid) {
       return;
     }
+    this.isLoading = true;
 
-    this.authSvc.login(this.loginForm.value).subscribe(
-      (res: any) => {
-        localStorage.setItem('token', res.access_token);
-        let decodedToken = this.helper.decodeToken(res.access_token);
+    this.authSvc.login(this.loginForm.value).subscribe({
+      next: (response: any) => {
+        localStorage.setItem('token', response.access_token);
+        let decodedToken = this.helper.decodeToken(response.access_token);
         const userJSON = JSON.stringify(decodedToken);
         localStorage.setItem('user', userJSON);
+        this.isLoading = false;
         this.router.navigate(['/home/projects']);
       },
-      (error) => {
+      error: (error) => {
+        this.isLoading = true;
         console.log(error);
-        /*       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.error.message,
-      }); */
-      }
-    );
+      },
+    });
   }
 
   goRegister(): void {

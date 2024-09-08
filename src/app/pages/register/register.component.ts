@@ -23,7 +23,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class RegisterComponent {
   registerForm: FormGroup;
   submitted = false;
-
+  isLoading = false;
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -71,8 +71,17 @@ export class RegisterComponent {
       return;
     }
 
-    this.authSvc.register(this.registerForm.value).subscribe((res: any) => {
-      this.goLogin();
+    this.isLoading = true;
+
+    this.authSvc.register(this.registerForm.value).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.goLogin();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        console.log(error);
+      },
     });
     console.log('Formulario válido', this.registerForm.value);
   }

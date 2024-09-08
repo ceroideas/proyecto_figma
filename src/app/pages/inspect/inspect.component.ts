@@ -121,7 +121,7 @@ export class InspectComponent implements OnInit {
         const valoresAños: any[] = [];
 
         array.forEach((obj: any) => {
-          this.valueToShow.push(obj.value);
+          this.valueToShow.push(this.formatMonto(obj.value));
 
           const valueWithoutDecimals = obj.value.toFixed(2).toString();
 
@@ -138,7 +138,7 @@ export class InspectComponent implements OnInit {
 
           // Verificar si el valor es un número válido
           if (!isNaN(numericValue)) {
-            valoresAños.push(numericValue);
+            valoresAños.push(+numericValue);
           } else {
             console.log('Valor no válido:', obj.value);
           }

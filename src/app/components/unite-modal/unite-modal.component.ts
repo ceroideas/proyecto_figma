@@ -336,6 +336,7 @@ export class UniteModalComponent implements OnInit {
     ); */
 
     const values = Object.values(this.escenarys[this.selectedEscenary].years);
+    console.log(values, 'UNITE VALUES');
 
     if (!this.values) {
       this.values = values;
@@ -625,7 +626,7 @@ export class UniteModalComponent implements OnInit {
     }
   }
   changeLocked() {
-    console.log('lock')
+    console.log('lock');
     this.projectSvc
       .updateScenery(this.escenarys[+this.selectedEscenary].id, {
         years: this.model.years[0],
@@ -659,8 +660,8 @@ export class UniteModalComponent implements OnInit {
     if (this.values) {
       const cantidadesNumeros: number[] = this.values.map((cantidad: any) =>
         typeof cantidad === 'string'
-          ? parseFloat(cantidad)
-          : (cantidad as number)
+          ? this.formatMonto(parseFloat(cantidad))
+          : this.formatMonto(cantidad as number)
       );
 
       const cantidadMaxima: number | undefined = Math.max(...cantidadesNumeros);
@@ -693,6 +694,17 @@ export class UniteModalComponent implements OnInit {
     if (!allowedChars.test(event.key) && event.key !== 'Backspace') {
       event.preventDefault();
     }
+  }
+
+  formatMonto(monto: any): string {
+    const numero = Number(monto);
+    if (isNaN(numero)) {
+      return '0.00';
+    }
+    return numero.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }
 
   applyGrowth() {
