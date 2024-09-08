@@ -11,7 +11,7 @@ import { MustMatch } from './must-match.validator';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-register',
   providers: [AuthService],
@@ -79,6 +79,15 @@ export class RegisterComponent {
         this.goLogin();
       },
       error: (error) => {
+        Swal.fire({
+          title: 'Error',
+          text: 'The email is already exist',
+          icon: 'error',
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+          },
+        });
         this.isLoading = false;
         console.log(error);
       },

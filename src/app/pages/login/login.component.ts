@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data-service.service';
-
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-login',
   providers: [AuthService],
@@ -75,6 +75,16 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = true;
+        Swal.fire({
+          title: 'Error',
+          text: 'Incorrect email or password. Please try again.',
+          icon: 'error',
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+          },
+        });
+        this.isLoading = false;
         console.log(error);
       },
     });
