@@ -93,26 +93,24 @@ export class WaterfallChartComponent implements OnInit {
     });
   }
 
-  renderchart() {
+  /*   renderchart() {
     const label = [];
     const values = [];
     console.log(this.dataTierCero, 'CERO');
     label.push(this.dataTierCero[0].name + this.dataTierCero[0].year);
     values.push(
-      this.formatMonto(
-        parseFloat(this.dataTierCero[0].value.toString().replace(',', '.'))
-      )
+      parseFloat(this.dataTierCero[0].value.toString().replace(',', '.'))
     );
     console.log(this.dataTierCero, 'NODES');
 
     for (let i = 0; i < this.selectedNodes.length; i++) {
       let nodo = this.selectedNodes[i];
       label.push(nodo.name);
-      // nodo.value.toString().replace('.', '');
+  
       console.log(nodo, 'NODO');
       let str = parseFloat(`${nodo.value}`.replace(',', '.'));
 
-      values.push(this.formatMonto(str));
+      values.push(str);
     }
 
     label.push(this.dataTierCero[1].name + this.dataTierCero[1].year);
@@ -121,11 +119,11 @@ export class WaterfallChartComponent implements OnInit {
       this.dataTierCero[1].value.toString().replace(',', '.')
     );
 
-    values.push(this.formatMonto(str2));
+    values.push(str2);
 
     let arr: any = values;
 
-    // Convertir todos los elementos a números
+
     arr = arr.map(Number);
 
     console.log(arr, values, 'problema');
@@ -140,10 +138,9 @@ export class WaterfallChartComponent implements OnInit {
     } else {
       let diferencia: any = ultimoValor - sumaSinUltimo;
 
-      arr.splice(arr.length - 1, 0, this.formatMonto(+diferencia));
+      arr.splice(arr.length - 1, 0, +diferencia);
 
-      /* arr[arr.length - 2] += diferencia; */
-      /* label[arr.length - 2] = 'Other'; */
+  
       label.splice(arr.length - 2, 0, 'Other');
     }
 
@@ -153,7 +150,7 @@ export class WaterfallChartComponent implements OnInit {
 
     const mean = new Array(arr.length).fill('');
 
-    // Asignar "total" al último elemento del nuevo array
+ 
     mean[mean.length - 1] = 'total';
     mean[0] = 'absolute';
 
@@ -202,36 +199,105 @@ export class WaterfallChartComponent implements OnInit {
       Plotly.restyle('myDiv', { 'marker.color': ['blue'] }, [0]);
     }, 1000);
 
-    /*     if (this.chart) {
-      this.chart.destroy();
+   
+  }
+ */
+
+  renderchart() {
+    const label = [];
+    const values = [];
+
+    // Procesar el primer valor
+    label.push(this.dataTierCero[0].name + this.dataTierCero[0].year);
+    values.push(
+      parseFloat(this.dataTierCero[0].value.toString().replace(',', '.'))
+    );
+
+    // Procesar nodos seleccionados
+    for (let i = 0; i < this.selectedNodes.length; i++) {
+      let nodo = this.selectedNodes[i];
+      label.push(nodo.name);
+      let str = parseFloat(`${nodo.value}`.replace(',', '.'));
+      values.push(str);
     }
 
-    this.chart = new Chart('chart', {
-      type: 'bar',
-      data: {
-        labels: label,
-        datasets: [
-          {
-            label: 'Waterfall Chart',
-            data: values,
-            backgroundColor: backgroundColor,
-            borderColor: backgroundColor,
+    // Procesar el último valor
+    label.push(this.dataTierCero[1].name + this.dataTierCero[1].year);
+    let str2 = parseFloat(
+      this.dataTierCero[1].value.toString().replace(',', '.')
+    );
+    values.push(str2);
+
+    let arr: any = values.map(Number); // Convertir todos los elementos a números
+
+    let ultimoValor: any = arr[arr.length - 1];
+    let sumaSinUltimo: any = arr
+      .slice(0, -1)
+      .reduce((acc: any, val: any) => acc + val, 0);
+
+    // Verificar la suma de los valores
+    if (sumaSinUltimo !== ultimoValor) {
+      let diferencia: any = ultimoValor - sumaSinUltimo;
+      arr.splice(arr.length - 1, 0, +diferencia);
+      label.splice(arr.length - 2, 0, 'Other');
+    }
+
+    // Convertir los valores en formato de miles
+    let showAmount = arr.map((value: any) => value.toLocaleString('de-DE')); // 'de-DE' usa puntos para separar miles
+
+    const mean = new Array(arr.length).fill('');
+    mean[mean.length - 1] = 'total';
+    mean[0] = 'absolute';
+
+    console.log(mean, 'MEAN');
+    console.log(label, 'label');
+
+    const data = [
+      {
+        name: 'Waterfall',
+        type: 'waterfall',
+        orientation: 'v',
+        measure: mean,
+        x: label,
+        textposition: 'outside',
+        text: showAmount, // Mostrar los valores con formato
+        y: arr,
+        totals: { marker: { color: 'gray' } },
+        increasing: { marker: { color: '#2cb02c' } },
+        connector: {
+          line: {
+            color: 'rgb(63, 63, 63)',
           },
-        ],
+        },
+        hoverinfo: 'skip',
       },
-      options: {
-        scales: {
-          yAxes: {
-            display: true,
-          },
-          y: {
-            ticks: {
-              display: false,
-            },
+    ];
+
+    const layout = {
+      title: {
+        text: '',
+      },
+      xaxis: {
+        type: 'category',
+      },
+      yaxis: {
+        type: 'linear',
+        ticks: {
+          callback: function (value: any) {
+            return value.toLocaleString('de-DE'); // Formato de miles en el eje Y
           },
         },
       },
-    }); */
+
+      autosize: true,
+      showlegend: false,
+    };
+
+    Plotly.newPlot('myDiv', data, layout);
+
+    setTimeout(() => {
+      Plotly.restyle('myDiv', { 'marker.color': ['blue'] }, [0]);
+    }, 1000);
   }
 
   receiveNodes(eventData: any) {

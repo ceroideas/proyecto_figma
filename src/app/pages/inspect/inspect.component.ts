@@ -160,7 +160,7 @@ export class InspectComponent implements OnInit {
     let normalizedHeight =
       (valueFixed.toFixed(2) / maxData) * this.maxBarHeight;
     normalizedHeight = Math.max(normalizedHeight, this.minBarWidth);
-    console.log(value, 'HEITH');
+
     return `${normalizedHeight}px`;
   }
 

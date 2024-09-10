@@ -753,6 +753,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
             this.selectedHidden.push(element.id);
           }
           console.log(
+            element.name,
             element.sceneries[this.selectedScenery].years[this.defaultYear],
             element.calculated[this.selectedScenery].years[this.defaultYear],
             'ELE'

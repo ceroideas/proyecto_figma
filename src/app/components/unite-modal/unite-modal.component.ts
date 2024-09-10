@@ -660,8 +660,8 @@ export class UniteModalComponent implements OnInit {
     if (this.values) {
       const cantidadesNumeros: number[] = this.values.map((cantidad: any) =>
         typeof cantidad === 'string'
-          ? this.formatMonto(parseFloat(cantidad))
-          : this.formatMonto(cantidad as number)
+          ? parseFloat(cantidad)
+          : (cantidad as number)
       );
 
       const cantidadMaxima: number | undefined = Math.max(...cantidadesNumeros);
@@ -697,13 +697,9 @@ export class UniteModalComponent implements OnInit {
   }
 
   formatMonto(monto: any): string {
-    const numero = Number(monto);
-    if (isNaN(numero)) {
-      return '0.00';
-    }
-    return numero.toLocaleString('en-US', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+    return Number(monto).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 3,
     });
   }
 
