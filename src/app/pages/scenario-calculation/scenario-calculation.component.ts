@@ -78,10 +78,20 @@ export class ScenarioCalculationComponent implements OnInit {
   }
 
   getPercentageChange(currentValue: number, baseValue: number): string {
-    const percentage = (currentValue / baseValue) * 100;
-    return percentage > 0
-      ? `+${percentage.toFixed(0)}`
-      : `${percentage.toFixed(0)}`;
+    // Si los valores son iguales, devuelve 0%
+    if (currentValue === baseValue) {
+      return '0';
+    }
+
+    // Si currentValue es mayor, calcula el porcentaje positivo
+    if (currentValue > baseValue) {
+      const percentage = ((currentValue - baseValue) / baseValue) * 100;
+      return `+${percentage.toFixed(0)}`;
+    }
+
+    // Si currentValue es menor, calcula el porcentaje negativo
+    const percentage = ((currentValue - baseValue) / baseValue) * 100;
+    return `${percentage.toFixed(0)}`;
   }
 
   previewImpact() {
