@@ -403,6 +403,11 @@ export class UniteModalComponent implements OnInit {
               this.calcularMontoConIncremento() === 0
                 ? 100
                 : this.calcularMontoConIncremento(),
+            ticks: {
+              callback: function (value: any) {
+                return value.toLocaleString('de-DE'); // Formatear valores con separadores de miles
+              },
+            },
           },
         },
         onHover: function (e: any) {
