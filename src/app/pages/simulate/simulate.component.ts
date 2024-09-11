@@ -471,11 +471,11 @@ export class SimulateComponent implements OnInit {
       simulation_id: this.simulationId,
     };
 
-    this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
+    /*     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
       console.log(res, 'simulacion creada');
     });
-
-    /*   for (let i = 0; i < +this.simulationNumber; i++) {
+ */
+    for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -858,7 +858,7 @@ export class SimulateComponent implements OnInit {
       this.valoresPorNodo[j].values = avg;
     }
 
-    this.simulationChart(); */
+    this.simulationChart();
   }
   chartetc() {
     if (this.chart) {
