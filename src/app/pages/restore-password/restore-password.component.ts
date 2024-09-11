@@ -103,7 +103,6 @@ export class RestorePasswordComponent {
         this.stepTwo = true;
         this.isLoading = false;
         this.email = this.sendEmailForm.value.email;
-        console.log(response, 'DATA EMAIL');
       },
       error: (error) => {
         Swal.fire({
@@ -131,7 +130,6 @@ export class RestorePasswordComponent {
     const codeObject = this.codeForm.value;
     const hashCode = this.dataSvc.getEmailData();
     codeObject.hashed = hashCode.hashed;
-    console.log(this.dataSvc.getEmailData(), 'CODE');
 
     this.authSvc.checkCode(codeObject).subscribe({
       next: (response: any) => {
