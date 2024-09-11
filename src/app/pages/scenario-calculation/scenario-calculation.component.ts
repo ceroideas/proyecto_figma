@@ -366,49 +366,6 @@ export class ScenarioCalculationComponent implements OnInit {
     }
   }
 
-  async recursiveCalculateNodeNewValue(
-    _node: any,
-    nodes: any,
-    nodeId0: any,
-    value0: any,
-    nodeId1: any,
-    value1: any
-  ) {
-    let formula: any = [];
-
-    for (let i = 0; i < _node.formula.length; i++) {
-      var nodeId = _node.formula[i];
-
-      if (typeof nodeId === 'number') {
-        var node = nodes.find((node: any) => node.id == nodeId);
-        if (nodeId == nodeId0) {
-          formula.push(value0);
-        } else if (nodeId == nodeId1) {
-          formula.push(value1);
-        } else if (node.type == 1) {
-          const value = node.sceneries[0].years[this.defaultYear];
-
-          formula.push(+value);
-        } else {
-          // Utiliza await para esperar la resolución de la función recursiva
-          const form = await this.recursiveCalculateNodeNewValue(
-            node,
-            nodes,
-            nodeId0,
-            value0,
-            nodeId,
-            value1
-          );
-          formula.push('(' + form + ')');
-        }
-      } else {
-        formula.push(nodeId);
-      }
-    }
-
-    return formula;
-  }
-
   applyGrowth() {
     let decimalPercentage = parseFloat('10') / 100;
 
@@ -424,7 +381,6 @@ export class ScenarioCalculationComponent implements OnInit {
     }
     const values = Object.values(years);
   }
-
   async test() {
     this.calculation = [];
     for (let i = 0; i < this.showNodes[0].newValues.length; i++) {
@@ -433,12 +389,15 @@ export class ScenarioCalculationComponent implements OnInit {
 
       let valueCalculated = [];
 
-      for (let i = 0; i < this.showNodes[1].newValues.length; i++) {
-        const value0 = this.showNodes[0].newValues[i];
+      // Cambié el índice a "j" en el segundo ciclo para evitar conflictos
+      for (let j = 0; j < this.showNodes[1].newValues.length; j++) {
+        const value0 = this.showNodes[0].newValues[j];
         const nodeId0 = this.showNodes[0].id;
         let formula: any = [];
-        for (let i = 0; i < this.tierCero.formula.length; i++) {
-          const nodeId = this.tierCero.formula[i];
+
+        // Cambié el índice a "k" en el tercer ciclo para evitar conflictos
+        for (let k = 0; k < this.tierCero.formula.length; k++) {
+          const nodeId = this.tierCero.formula[k];
           if (typeof nodeId === 'number') {
             if (nodeId == nodeId0) {
               formula.push(value0);
@@ -448,7 +407,6 @@ export class ScenarioCalculationComponent implements OnInit {
               var node = this.allNodes.find((node: any) => node.id == nodeId);
               if (node.type == 1) {
                 const value = node.sceneries[0].years[this.defaultYear];
-
                 formula.push(+value);
               } else {
                 // Utiliza await para esperar la resolución de la función recursiva
@@ -457,7 +415,7 @@ export class ScenarioCalculationComponent implements OnInit {
                   this.allNodes,
                   nodeId0,
                   value0,
-                  nodeId1,
+                  nodeId1, // Asegúrate de que nodeId1 no se modifique aquí
                   value1
                 );
                 formula.push('(' + form + ')');
@@ -467,12 +425,60 @@ export class ScenarioCalculationComponent implements OnInit {
             formula.push(nodeId);
           }
         }
+
         console.log(formula, 'FORMULA');
-        valueCalculated.push(
-          eval(formula.flat(5).join('').replaceAll(',', ''))
-        );
+
+        // Evalúa la fórmula, asegúrate de que sea una expresión válida
+        const expression = formula.flat(5).join('').replaceAll(',', '');
+        console.log(expression, 'Evaluating expression');
+        valueCalculated.push(eval(expression));
       }
       this.calculation.push(valueCalculated);
     }
+  }
+
+  async recursiveCalculateNodeNewValue(
+    _node: any,
+    nodes: any,
+    nodeId0: any,
+    value0: any,
+    nodeId1: any,
+    value1: any
+  ) {
+    let formula: any = [];
+
+    // Log para verificar el valor de nodeId1 en cada llamada recursiva
+    console.log(nodeId1, 'nodeId1 at recursiveCalculateNodeNewValue');
+
+    for (let i = 0; i < _node.formula.length; i++) {
+      var nodeId = _node.formula[i];
+
+      if (typeof nodeId === 'number') {
+        var node = nodes.find((node: any) => node.id == nodeId);
+        if (nodeId == nodeId0) {
+          formula.push(value0);
+        } else if (nodeId == nodeId1) {
+          formula.push(value1);
+        } else if (node.type == 1) {
+          const value = node.sceneries[0].years[this.defaultYear];
+          formula.push(+value);
+        } else {
+          // Mantén el valor original de nodeId1 en la llamada recursiva
+          const form = await this.recursiveCalculateNodeNewValue(
+            node,
+            nodes,
+            nodeId0,
+            value0,
+            nodeId1, // No cambies nodeId1, sigue siendo el valor original
+            value1
+          );
+          formula.push('(' + form + ')');
+        }
+      } else {
+        formula.push(nodeId);
+      }
+    }
+
+    return formula;
   }
 }
