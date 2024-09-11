@@ -9,11 +9,13 @@ import { ScenarioCalculationComponent } from './pages/scenario-calculation/scena
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { AuthGuard } from './authGuard';
+import { RestorePasswordComponent } from './pages/restore-password/restore-password.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/home/projects', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'restore-password', component: RestorePasswordComponent },
   {
     path: 'home',
     component: HomeComponent,

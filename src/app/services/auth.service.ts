@@ -17,6 +17,17 @@ export class AuthService {
   login(user: any) {
     return this.http.post(`${this.url}/login`, user);
   }
+  sendCode(email: any) {
+    return this.http.post(`${this.url}/sendCode`, email);
+  }
+
+  checkCode(code: any) {
+    return this.http.post(`${this.url}/checkCode`, code);
+  }
+
+  changePassword(code: any) {
+    return this.http.post(`${this.url}/changePassword`, code);
+  }
 
   isLoggedIn(): boolean {
     const token = localStorage.getItem('token');
