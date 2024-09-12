@@ -44,6 +44,7 @@ export class ScenarioCalculationComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
   }
   ngOnInit(): void {
+    console.log('here');
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.allNodes = [...res.nodes];
       this.defaultYear = res.default_year;
