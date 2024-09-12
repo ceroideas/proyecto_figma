@@ -58,11 +58,9 @@ export class ScenarioCalculationComponent implements OnInit {
           name: node.name,
           value: node.sceneries[0].years[this.defaultYear],
           staticValue: node.sceneries[0].years[this.defaultYear],
-          maxValue: Math.round(
+          maxValue:
             +node.sceneries[0].years[this.defaultYear] +
-              +node.sceneries[0].years[this.defaultYear]
-          ),
-
+            +node.sceneries[0].years[this.defaultYear],
           valuePercentage: node.sceneries[0].years[this.defaultYear],
         };
       });

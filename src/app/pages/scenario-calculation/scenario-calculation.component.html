@@ -65,6 +65,7 @@
         id="num-employees"
         class="slider"
         min="0"
+        step="0.01"
         [max]="node.maxValue"
         [(ngModel)]="nodes[i].value"
         (input)="updateValues()"
