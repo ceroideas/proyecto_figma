@@ -440,7 +440,7 @@ export class SimulateComponent implements OnInit {
     let operationError: boolean = false;
 
     let formula: any = [];
-    let arrayToSee = [];
+    let arrayToSee: any = [];
     let aux;
 
     let csvData: any = [];
@@ -471,11 +471,49 @@ export class SimulateComponent implements OnInit {
       simulation_id: this.simulationId,
     };
 
-    /*     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
+    this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
+      this.csvData = csvData;
+      this.arraySamples = res;
+
+      console.log(this.csvData, 'cvdataJs');
+      if (this.chart) {
+        this.chart.destroy();
+      }
+
+      if (this.arraySamples.includes('NaN')) {
+        Swal.fire({
+          title: 'please check the selected nodes',
+
+          icon: 'warning',
+          showCancelButton: false,
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+          },
+
+          confirmButtonText: 'ok',
+        });
+        this.isLoading = false;
+      } else {
+        if (!operationError) {
+          this.updateSimulation();
+          this.isLoading = false;
+        }
+      }
+
+      for (let j in this.valoresPorNodo) {
+        let values = this.valoresPorNodo[j].values;
+        values = values.map(Number);
+        let sum = values.reduce((a: any, b: any) => a + b, 0);
+        let avg = sum / values.length;
+        this.valoresPorNodo[j].values = avg;
+      }
+
+      this.simulationChart();
       console.log(res, 'simulacion creada');
     });
- */
-    for (let i = 0; i < +this.simulationNumber; i++) {
+
+    /*     for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -819,46 +857,7 @@ export class SimulateComponent implements OnInit {
       arrayToSee.push(operation.toFixed(2));
 
       formula = [];
-    }
-
-    this.csvData = csvData;
-    this.arraySamples = arrayToSee;
-
-    console.log(this.csvData, 'cvdataJs');
-    if (this.chart) {
-      this.chart.destroy();
-    }
-
-    if (this.arraySamples.includes('NaN')) {
-      Swal.fire({
-        title: 'please check the selected nodes',
-
-        icon: 'warning',
-        showCancelButton: false,
-        iconColor: '#BC5800',
-        customClass: {
-          confirmButton: 'confirm',
-        },
-
-        confirmButtonText: 'ok',
-      });
-      this.isLoading = false;
-    } else {
-      if (!operationError) {
-        this.updateSimulation();
-        this.isLoading = false;
-      }
-    }
-
-    for (let j in this.valoresPorNodo) {
-      let values = this.valoresPorNodo[j].values;
-      values = values.map(Number);
-      let sum = values.reduce((a: any, b: any) => a + b, 0);
-      let avg = sum / values.length;
-      this.valoresPorNodo[j].values = avg;
-    }
-
-    this.simulationChart();
+    } */
   }
   chartetc() {
     if (this.chart) {
