@@ -1236,7 +1236,7 @@ export class BuildComponent implements OnInit, AfterViewInit {
       let node = this.aux.find((item: any) =>
         item.data.some((subItem: any) => subItem.v === i)
       );
-
+      node.hiddenTable = 1;
       this.selectedHidden.push(i);
     }
 

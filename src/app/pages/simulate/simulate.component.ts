@@ -472,10 +472,10 @@ export class SimulateComponent implements OnInit {
     };
 
     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
+      /*   console.log(res, 'cvdataJs'); */
       this.csvData = csvData;
-      this.arraySamples = res;
+      this.arraySamples = res.arrayToSee;
 
-      console.log(this.csvData, 'cvdataJs');
       if (this.chart) {
         this.chart.destroy();
       }
@@ -513,7 +513,7 @@ export class SimulateComponent implements OnInit {
       console.log(res, 'simulacion creada');
     });
 
-    /*     for (let i = 0; i < +this.simulationNumber; i++) {
+    /* for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -857,7 +857,46 @@ export class SimulateComponent implements OnInit {
       arrayToSee.push(operation.toFixed(2));
 
       formula = [];
+    }
+
+    this.csvData = csvData;
+    this.arraySamples = arrayToSee;
+
+    console.log(this.csvData, 'cvdataJs');
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    if (this.arraySamples.includes('NaN')) {
+      Swal.fire({
+        title: 'please check the selected nodes',
+
+        icon: 'warning',
+        showCancelButton: false,
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+        },
+
+        confirmButtonText: 'ok',
+      });
+      this.isLoading = false;
+    } else {
+      if (!operationError) {
+        this.updateSimulation();
+        this.isLoading = false;
+      }
+    }
+
+    for (let j in this.valoresPorNodo) {
+      let values = this.valoresPorNodo[j].values;
+      values = values.map(Number);
+      let sum = values.reduce((a: any, b: any) => a + b, 0);
+      let avg = sum / values.length;
+      this.valoresPorNodo[j].values = avg;
     } */
+
+    /*   this.simulationChart(); */
   }
   chartetc() {
     if (this.chart) {
@@ -1323,8 +1362,20 @@ export class SimulateComponent implements OnInit {
 
     this.values = this.percentiles.map((percentil) => {
       const index = Math.floor((percentil / 100) * (muestras.length - 1));
+
       return muestras.sort((a, b) => a - b)[index];
     });
+
+    // Ordenar las muestras
+    const muestrasOrdenadas = [...muestras].sort((a, b) => a - b);
+
+    // Asignar percentil a cada valor
+    const resultadosConPercentiles = muestrasOrdenadas.map((muestra, index) => {
+      const percentil = (index / (muestras.length - 1)) * 100;
+      return { value: muestra, percentil: percentil.toFixed(2) };
+    });
+
+    console.log(resultadosConPercentiles, 'AQUI');
 
     const etiquetas = Object.keys(conteos).sort(
       (a, b) => Number(a) - Number(b)
@@ -1389,6 +1440,8 @@ export class SimulateComponent implements OnInit {
     const simulation = this.simulations.find(
       (simulation: any) => simulation.id == this.simulationId
     );
+
+    console.log(simulation, 'SIMULA');
     this.editSimulation = false;
     this.simulateName = simulation.name;
     this.simulateDescription = simulation.description;
@@ -1472,13 +1525,6 @@ export class SimulateComponent implements OnInit {
     // Encabezados
     csvString += a + '\n';
 
-    function tieneMasDeDosDecimales(valor: any) {
-      // Convertir el valor a una cadena de texto
-      const strValor = valor.toString();
-      // Buscar la presencia de más de dos decimales
-      return /\.\d{3,}/.test(strValor);
-    }
-
     function obtenerKeysUnicas(objetos: any[]) {
       let keysUnicas: string[] = [];
       objetos.forEach((objeto: {}) => {
@@ -1537,6 +1583,7 @@ export class SimulateComponent implements OnInit {
     }
 
     // Convertir array de objetos a CSV
+    console.log(this.csvData, 'as');
     const csv = convertirArrayA_CSV(this.csvData);
 
     const simulation = this.simulations.find(
