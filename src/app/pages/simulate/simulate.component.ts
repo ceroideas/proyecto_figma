@@ -407,11 +407,8 @@ export class SimulateComponent implements OnInit {
             }
           }
         } else {
-          // Utiliza await para esperar la resolución de la función recursiva
           const form = await this.recursiveCalculate(node);
-          /*formula.push(await this.recursiveCalculate(node))*/ formula.push(
-            '(' + form + ')'
-          );
+          formula.push('(' + form + ')');
 
           csvData = {
             ...csvData,
@@ -472,8 +469,8 @@ export class SimulateComponent implements OnInit {
     };
 
     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
-      /*   console.log(res, 'cvdataJs'); */
-      this.csvData = csvData;
+      console.log(res, 'cvdataJs');
+      this.csvData = res.csvData;
       this.arraySamples = res.arrayToSee;
 
       if (this.chart) {
