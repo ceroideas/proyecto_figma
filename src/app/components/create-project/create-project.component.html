@@ -22,6 +22,7 @@
     </p>
   </div>
   <div
+    (click)="resetProjectyId()"
     class="create-project-button"
     data-bs-toggle="modal"
     data-bs-target="#createProjectModal"
@@ -50,7 +51,20 @@
   >
     <div class="modal-content create-project-modal">
       <div class="modal-header">
-        <p class="modal-title" id="createProjectModalLabel">Create project</p>
+        <p
+          *ngIf="!project_edit"
+          class="modal-title"
+          id="createProjectModalLabel"
+        >
+          Create project
+        </p>
+        <p
+          *ngIf="project_edit"
+          class="modal-title"
+          id="createProjectModalLabel"
+        >
+          Edit project
+        </p>
         <button
           type="button"
           class="btn-close"
@@ -149,9 +163,9 @@
         <div class="mb-4 mt-3 ml-2" *ngFor="let input of inputs; let i = index">
           <div style="align-items: center" class="d-flex">
             <p style="display: contents">Scenario Name {{ i + 1 }}</p>
-            <!--             <button (click)="addInput()" class="unite-button ml-5 mr-2">
-              <img src="../../../assets/icons/fi_plus.svg" alt="" />
-            </button> -->
+            <button (click)="deleteInput(i)" class="unite-button ml-3 mr-2">
+              <img src="../../../assets/icons/u_trash-alt.svg" alt="" />
+            </button>
           </div>
 
           <div>
@@ -174,7 +188,7 @@
               class="rounded-circle mr-2 color-circle"
               [style.background-color]="'rgb(' + color + ')'"
               [class.colorBorder]="colorBar === color"
-              (click)="selectColor(color, $event)"
+              (click)="selectColor(color)"
             ></div>
           </div>
         </div>
@@ -218,11 +232,20 @@
           </button>
 
           <button
+            *ngIf="!project_edit"
             (click)="createProject()"
             type="button"
             class="btn btn-lg save-variable-button col-md-5"
           >
             Create
+          </button>
+          <button
+            *ngIf="project_edit"
+            (click)="editProject()"
+            type="button"
+            class="btn btn-lg save-variable-button col-md-5"
+          >
+            Edit
           </button>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CreateProjectComponent } from 'src/app/components/create-project/create-project.component';
 import { MessageComponent } from 'src/app/components/message/message.component';
@@ -14,7 +14,10 @@ import Swal from 'sweetalert2';
   styleUrl: './projects.component.scss',
 })
 export class ProjectsComponent {
+  @ViewChild(CreateProjectComponent)
+  createProjectComponent!: CreateProjectComponent;
   projects: any[] = [];
+  project_edit!: any;
   selectedProjectIndex: number = -1;
   constructor(private projectSvc: ProjectService, private router: Router) {
     this.getProjects();
@@ -54,6 +57,13 @@ export class ProjectsComponent {
     } */
     localStorage.setItem('project', id);
     this.router.navigate([`home/${route}/${id}`]);
+  }
+
+  setProject(project: any) {
+    if (this.createProjectComponent) {
+      this.createProjectComponent.project_edit = project;
+    }
+    console.log(this.project_edit);
   }
 
   convertDateFormat(originalDate: string): string {
