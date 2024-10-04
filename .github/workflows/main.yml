@@ -20,6 +20,7 @@ jobs:
           cd /home/proyecto_figma
           git pull
           npm install
+          npm install -g @angular/cli
           ng build
           if [ "${{secrets.IPSERVER}}" = "185.166.214.113" ]; then
             cp -r ./dist/figma/browser/* /var/www/vhosts/estamostrabajando.site/httpdocs
