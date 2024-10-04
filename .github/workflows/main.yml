@@ -9,7 +9,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22.6.0'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Install Angular CLI
+      run: npm install -g @angular/cli
+
+    - name: Build project
+      run: ng build
+
     - name: Deploy to DigitalOcean
       uses: appleboy/ssh-action@master
       with:
@@ -21,6 +37,7 @@ jobs:
           git pull
           npm install
           npm install -g @angular/cli
+          sudo apt-get update
           sudo apt-get -y install npm
           ng build
           if [ "${{secrets.IPSERVER}}" = "185.166.214.113" ]; then
