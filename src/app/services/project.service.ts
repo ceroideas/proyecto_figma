@@ -17,6 +17,16 @@ export class ProjectService {
       headers: headers,
     });
   }
+
+  updateAllProject(project: any, id: any) {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    });
+    return this.http.put(`${this.url}/updateAllProject/${id}`, project, {
+      headers: headers,
+    });
+  }
   getProjects() {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

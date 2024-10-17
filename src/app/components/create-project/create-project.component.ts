@@ -23,6 +23,7 @@ import Swal from 'sweetalert2';
 export class CreateProjectComponent implements AfterViewInit {
   project_edit: any;
   years: number[] = [];
+  inputToEdit: any[] = [];
   yearFrom: any = '#';
   yearDefault: any = '#';
   yearTo: any = '#';
@@ -33,6 +34,8 @@ export class CreateProjectComponent implements AfterViewInit {
   inputValues: { [key: string]: string } = {};
   nameProject!: any;
   colorBar: any = '140, 100, 177';
+
+  finalId!: any;
   colorsOption: any[] = [
     '140, 100, 177',
     '108, 117, 125',
@@ -56,27 +59,55 @@ export class CreateProjectComponent implements AfterViewInit {
   }
 
   addInput() {
-    /*     this.inputs = [];
-    this.inputValues = {}; */
+    if (this.selectedNumber == '#') {
+      this.inputs = [];
+      this.inputValues = {};
+      this.inputToEdit = [];
+      return;
+    }
     if (this.inputs.length > this.selectedNumber) {
       this.inputs.splice(this.selectedNumber);
+      this.inputToEdit.splice(this.selectedNumber);
       const keys = Object.keys(this.inputValues).slice(0, this.selectedNumber);
       this.inputValues = keys.reduce((acc: any, key: any) => {
         acc[key] = this.inputValues[key];
         return acc;
       }, {});
-      console.log(this.inputValues);
     } else if (this.inputs.length > 0) {
       this.inputs = [];
       for (var i = 0; i < this.selectedNumber; ++i) {
         const inputKey = `scenary-${i}`;
         this.inputs.push(inputKey);
         this.inputValues[inputKey] = this.inputValues[inputKey] ?? '';
+        if (!this.inputToEdit[i]) {
+          this.inputToEdit.push({
+            name: this.inputValues[inputKey],
+            id: this.finalId + 1,
+          });
+          this.finalId = this.finalId + 1;
+        }
+      }
+    } else {
+      this.inputs = [];
+      for (var i = 0; i < this.selectedNumber; ++i) {
+        const inputKey = `scenary-${i}`;
+        this.inputs.push(inputKey);
+        this.inputValues[inputKey] = '';
+        if (!this.inputToEdit[i]) {
+          this.inputToEdit.push({
+            name: this.inputValues[inputKey],
+            id: this.finalId + 1,
+          });
+          this.finalId = this.finalId + 1;
+        }
       }
     }
+
+    console.log(this.inputValues, this.inputs, this.inputToEdit, 'PUTS');
   }
   deleteInput(index: any) {
     this.selectedNumber = +this.selectedNumber - 1;
+    this.inputToEdit.splice(index, 1);
     const entries = Object.entries(this.inputValues);
     const filteredEntries = entries.filter(
       ([key, value]) => key !== `scenary-${index}`
@@ -99,14 +130,17 @@ export class CreateProjectComponent implements AfterViewInit {
   addInputToEdit(sceneries: any[]) {
     this.inputs = [];
     this.inputValues = {};
-
+    this.inputToEdit = [];
     for (var i = 0; i < sceneries.length; ++i) {
       const name = sceneries[i];
       console.log(name, 'name');
       const inputKey = `scenary-${i}`;
       this.inputs.push(inputKey);
       this.inputValues[inputKey] = name; // Inicializa el valor del nuevo input
+      this.inputToEdit.push({ name: name, id: i });
     }
+
+    this.finalId = this.inputToEdit.length;
   }
 
   removeInput() {
@@ -210,6 +244,7 @@ export class CreateProjectComponent implements AfterViewInit {
       line_color: this.colorBar,
     };
     console.log(project);
+    this.inputToEdit.forEach((input: any) => {});
     console.log(this.inputValues, 'VALUE');
 
     if (
@@ -296,7 +331,7 @@ export class CreateProjectComponent implements AfterViewInit {
       );
     };
 
-    const project = {
+    const project: any = {
       name: this.nameProject,
       year_from: this.yearFrom,
       year_to: this.yearTo,
@@ -306,10 +341,18 @@ export class CreateProjectComponent implements AfterViewInit {
       sceneries: Object.values(this.inputValues),
       line_color: this.colorBar,
     };
-    console.log(project);
-    console.log(this.inputValues, 'VALUE');
 
-    /*     if (
+    for (let i = 0; i < this.inputToEdit.length; i++) {
+      const input = this.inputToEdit[i];
+      input.name = input.name.length > 0 ? input.name : project.sceneries[i];
+      console.log(project.sceneries[i]);
+    }
+
+    console.log(this.inputToEdit, 'VALUE');
+
+    project.sceneries_data = this.inputToEdit;
+
+    if (
       this.nameProject === '' ||
       this.yearFrom === '#' ||
       this.yearTo === '#' ||
@@ -377,13 +420,15 @@ export class CreateProjectComponent implements AfterViewInit {
         }
       });
     } else {
-      this.closeModal();
-      this.projectSvc.saveProject(project).subscribe((res) => {
-        this.createProjectEvent.emit();
-      });
+      /* this.closeModal(); */
+      this.projectSvc
+        .updateAllProject(project, this.project_edit.id)
+        .subscribe((res) => {
+          this.createProjectEvent.emit();
+        });
     }
 
-    this.router.navigate(['home/build'], { queryParams: project }); */
+    this.router.navigate(['home/build'], { queryParams: project });
   }
 
   closeModal() {
