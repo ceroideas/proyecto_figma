@@ -121,11 +121,12 @@ export class InspectComponent implements OnInit {
         const valoresAños: any[] = [];
 
         array.forEach((obj: any) => {
-          this.valueToShow.push(obj.value);
+          this.valueToShow.push(this.formatMonto(obj.value));
 
-          const valueWithoutDecimals = obj.value
-            .toString()
-            .replace(/\.\d{2}$/, '');
+          const valueWithoutDecimals = obj.value.toFixed(2).toString();
+
+          /* .replace(/\.\d{2}$/, ''); */
+          console.log(obj.value.toFixed(2).toString());
 
           // Eliminar tanto los puntos como las comas del valor
           const cleanValue = valueWithoutDecimals
@@ -137,7 +138,7 @@ export class InspectComponent implements OnInit {
 
           // Verificar si el valor es un número válido
           if (!isNaN(numericValue)) {
-            valoresAños.push(numericValue);
+            valoresAños.push(+numericValue);
           } else {
             console.log('Valor no válido:', obj.value);
           }
@@ -154,8 +155,12 @@ export class InspectComponent implements OnInit {
 
   calculateHeight(value: number): string {
     const maxData = Math.max(...this.barData);
-    let normalizedHeight = (value / maxData) * this.maxBarHeight;
+    const valueFixed: any = value;
+
+    let normalizedHeight =
+      (valueFixed.toFixed(2) / maxData) * this.maxBarHeight;
     normalizedHeight = Math.max(normalizedHeight, this.minBarWidth);
+
     return `${normalizedHeight}px`;
   }
 
@@ -446,7 +451,7 @@ export class InspectComponent implements OnInit {
 
   goWaterfall() {
     const selected = this.datas.filter((node: any) => node.isActive);
-    console.log('SELECTED', selected);
+
     this.dataSvc.setNodes(selected);
     this.router.navigate(['/home/waterfall']);
   }
@@ -858,7 +863,6 @@ export class InspectComponent implements OnInit {
   getRoundedPercentage(value: any, total: any): number {
     const value2 = +value;
     const result = Math.round((+value2 / +total) * 100);
-    console.log(+value, +total);
 
     return Number.isNaN(result) ? 0 : result;
   }

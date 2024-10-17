@@ -407,11 +407,8 @@ export class SimulateComponent implements OnInit {
             }
           }
         } else {
-          // Utiliza await para esperar la resolución de la función recursiva
           const form = await this.recursiveCalculate(node);
-          /*formula.push(await this.recursiveCalculate(node))*/ formula.push(
-            '(' + form + ')'
-          );
+          formula.push('(' + form + ')');
 
           csvData = {
             ...csvData,
@@ -440,7 +437,7 @@ export class SimulateComponent implements OnInit {
     let operationError: boolean = false;
 
     let formula: any = [];
-    let arrayToSee = [];
+    let arrayToSee: any = [];
     let aux;
 
     let csvData: any = [];
@@ -471,11 +468,49 @@ export class SimulateComponent implements OnInit {
       simulation_id: this.simulationId,
     };
 
-    /*     this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
-      console.log(res, 'simulacion creada');
-    });  */
+    this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
+      console.log(res, 'cvdataJs');
+      this.csvData = res.csvData;
+      this.arraySamples = res.arrayToSee;
 
-    for (let i = 0; i < +this.simulationNumber; i++) {
+      if (this.chart) {
+        this.chart.destroy();
+      }
+
+      if (this.arraySamples.includes('NaN')) {
+        Swal.fire({
+          title: 'please check the selected nodes',
+
+          icon: 'warning',
+          showCancelButton: false,
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+          },
+
+          confirmButtonText: 'ok',
+        });
+        this.isLoading = false;
+      } else {
+        if (!operationError) {
+          this.updateSimulation();
+          this.isLoading = false;
+        }
+      }
+
+      for (let j in this.valoresPorNodo) {
+        let values = this.valoresPorNodo[j].values;
+        values = values.map(Number);
+        let sum = values.reduce((a: any, b: any) => a + b, 0);
+        let avg = sum / values.length;
+        this.valoresPorNodo[j].values = avg;
+      }
+
+      this.simulationChart();
+      console.log(res, 'simulacion creada');
+    });
+
+    /* for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
 
       for (let i = 0; i < this.tierCero.formula.length; i++) {
@@ -856,9 +891,9 @@ export class SimulateComponent implements OnInit {
       let sum = values.reduce((a: any, b: any) => a + b, 0);
       let avg = sum / values.length;
       this.valoresPorNodo[j].values = avg;
-    }
+    } */
 
-    this.simulationChart();
+    /*   this.simulationChart(); */
   }
   chartetc() {
     if (this.chart) {
@@ -1324,8 +1359,20 @@ export class SimulateComponent implements OnInit {
 
     this.values = this.percentiles.map((percentil) => {
       const index = Math.floor((percentil / 100) * (muestras.length - 1));
+
       return muestras.sort((a, b) => a - b)[index];
     });
+
+    // Ordenar las muestras
+    const muestrasOrdenadas = [...muestras].sort((a, b) => a - b);
+
+    // Asignar percentil a cada valor
+    const resultadosConPercentiles = muestrasOrdenadas.map((muestra, index) => {
+      const percentil = (index / (muestras.length - 1)) * 100;
+      return { value: muestra, percentil: percentil.toFixed(2) };
+    });
+
+    console.log(resultadosConPercentiles, 'AQUI');
 
     const etiquetas = Object.keys(conteos).sort(
       (a, b) => Number(a) - Number(b)
@@ -1390,6 +1437,8 @@ export class SimulateComponent implements OnInit {
     const simulation = this.simulations.find(
       (simulation: any) => simulation.id == this.simulationId
     );
+
+    console.log(simulation, 'SIMULA');
     this.editSimulation = false;
     this.simulateName = simulation.name;
     this.simulateDescription = simulation.description;
@@ -1473,13 +1522,6 @@ export class SimulateComponent implements OnInit {
     // Encabezados
     csvString += a + '\n';
 
-    function tieneMasDeDosDecimales(valor: any) {
-      // Convertir el valor a una cadena de texto
-      const strValor = valor.toString();
-      // Buscar la presencia de más de dos decimales
-      return /\.\d{3,}/.test(strValor);
-    }
-
     function obtenerKeysUnicas(objetos: any[]) {
       let keysUnicas: string[] = [];
       objetos.forEach((objeto: {}) => {
@@ -1538,6 +1580,7 @@ export class SimulateComponent implements OnInit {
     }
 
     // Convertir array de objetos a CSV
+    console.log(this.csvData, 'as');
     const csv = convertirArrayA_CSV(this.csvData);
 
     const simulation = this.simulations.find(

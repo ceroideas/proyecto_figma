@@ -209,6 +209,7 @@ export class UniteModalComponent implements OnInit {
 
   updateSceneryIfRequired() {
     const selectedEscenary = this.escenarys[+this.selectedEscenary];
+    console.log(selectedEscenary, { years: this.model.years[0] });
 
     if (
       selectedEscenary &&
@@ -216,7 +217,7 @@ export class UniteModalComponent implements OnInit {
       !this.showForm
     ) {
       this.projectSvc
-        .updateScenery(selectedEscenary.id, { years: this.model.years[0] })
+        .updateScenery(selectedEscenary.id, { years: selectedEscenary.years })
         .subscribe(() => {
           this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
             this.escenarys = res.sceneries;
@@ -227,8 +228,8 @@ export class UniteModalComponent implements OnInit {
             this.showForm = false;
             this.model.locked = false;
             this.handleSelectedEscenary();
-            this.clickOpenButton();
             this.updateNodeGrowthPercentage();
+            this.clickOpenButton();
           });
           this.printAllEvent.emit();
         });
@@ -240,8 +241,8 @@ export class UniteModalComponent implements OnInit {
       this.showForm = false;
       this.model.locked = false;
       this.handleSelectedEscenary();
-      this.clickOpenButton();
       this.updateNodeGrowthPercentage();
+      this.clickOpenButton();
     }
   }
 
@@ -335,6 +336,7 @@ export class UniteModalComponent implements OnInit {
     ); */
 
     const values = Object.values(this.escenarys[this.selectedEscenary].years);
+    console.log(values, 'UNITE VALUES');
 
     if (!this.values) {
       this.values = values;
@@ -401,6 +403,11 @@ export class UniteModalComponent implements OnInit {
               this.calcularMontoConIncremento() === 0
                 ? 100
                 : this.calcularMontoConIncremento(),
+            ticks: {
+              callback: function (value: any) {
+                return value.toLocaleString('de-DE'); // Formatear valores con separadores de miles
+              },
+            },
           },
         },
         onHover: function (e: any) {
@@ -443,6 +450,7 @@ export class UniteModalComponent implements OnInit {
   }
   onSelectChange() {
     if (this.oldEscenarieId && this.oldEscenarieId !== '#') {
+      console.log('OLD');
       this.projectSvc
         .updateScenery(this.oldEscenarieId, {
           years: this.model.years[0],
@@ -623,6 +631,7 @@ export class UniteModalComponent implements OnInit {
     }
   }
   changeLocked() {
+    console.log('lock');
     this.projectSvc
       .updateScenery(this.escenarys[+this.selectedEscenary].id, {
         years: this.model.years[0],
@@ -690,6 +699,13 @@ export class UniteModalComponent implements OnInit {
     if (!allowedChars.test(event.key) && event.key !== 'Backspace') {
       event.preventDefault();
     }
+  }
+
+  formatMonto(monto: any): string {
+    return Number(monto).toLocaleString('en-US', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 3,
+    });
   }
 
   applyGrowth() {

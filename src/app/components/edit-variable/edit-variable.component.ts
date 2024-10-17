@@ -27,6 +27,7 @@ import { DataService } from 'src/app/services/data-service.service';
 import { ProjectService } from 'src/app/services/project.service';
 import { EventsService } from 'src/app/services/events.service';
 import Swal from 'sweetalert2';
+import { firstValueFrom } from 'rxjs';
 Chart.register(...registerables);
 declare var bootstrap: any;
 @Component({
@@ -118,7 +119,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
   ];
 
-  scenarioId!: number;
+  scenarioId!: any;
+  scenarioId2!: any;
 
   @Input() isNewTree: boolean = false;
   calculos: any[] = [];
@@ -211,7 +213,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.renderer.listen(modalElement, 'shown.bs.modal', () => {
         if (this.editVariable && this.scenarioId) {
           this.cargando = true;
+
           this.projectSvc.getScenery(this.scenarioId).subscribe((res: any) => {
+            this.scenarioYears = res.years;
             this.variableUnidad = res.years[this.defaultYear];
             this.cargando = false;
           });
@@ -226,30 +230,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       });
     }
 
-    /*     setTimeout(() => {
-      new Chart('myChart', {
-        type: 'bar',
-
-        data: {
-          labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-          datasets: [
-            {
-              backgroundColor: '#8C64B1',
-              label: '# of Votes',
-              data: [12, 19, 3, 5, 2, 3],
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-            },
-          },
-        },
-      });
-    }, 1000); */
     this.deleteShapeData();
     this.projectSvc.getProject(this.projectId).subscribe((res: any) => {
       this.variables = res.node;
@@ -271,10 +251,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   guardar() {
-    console.log('Guardando:', this.inputValue);
-    // Aquí puedes implementar la lógica para guardar los datos
-    // por ejemplo, puedes hacer una llamada a una API
-    this.mostrarPopover = false; // Oculta el popover después de guardar
+    this.mostrarPopover = false;
   }
 
   cerrarPopover(event: MouseEvent) {
@@ -283,11 +260,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
       this.closeToogle = false;
     }
   }
-
-  // @HostListener('document:click', ['$event'])
-  // onClick(event: MouseEvent) {
-  //   this.cerrarPopover(event);
-  // }
 
   @HostListener('document:click', ['$event'])
   onClick(event: MouseEvent) {
@@ -370,7 +342,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
           if (this.chart) {
             this.chart.destroy();
           }
-          console.log(chartName);
+
           switch (chartName) {
             case 'Normal':
               this.normalChart();
@@ -554,7 +526,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     this.scenarioYears[this.defaultYear] = this.variableUnidad;
 
-    console.log(this.scenarioYears, 'SCES');
+    console.log(this.scenarioId, 'ID ESCENARIO');
 
     this.projectSvc
       .updateScenery(this.scenarioId, { years: this.scenarioYears })
@@ -671,6 +643,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
       (variable) => variable.id !== this.nodeId
     ); */
 
+    console.log('UPDATE VARIBALE');
+
     if (this.editVariable) {
       this.cargando = true;
       this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
@@ -681,7 +655,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
           : undefined;
 
         this.scenarioId = res.sceneries[this.scenerieId].id ?? undefined;
-        console.log(this.scenarioId, 'S');
+
         this.scenarioYears = res.sceneries[this.scenerieId].years;
 
         const shapeDataExists = localStorage.getItem('shapeData') !== null;
@@ -731,7 +705,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
           };
           localStorage.setItem('shapeData', JSON.stringify(formShape));
           this.shapeData = this.getItem('shapeData');
-          console.log(this.shapeData, 'SHAPE DAT');
 
           const chartName = res.distribution_shape[0]?.name
             ? res.distribution_shape[0]?.name
@@ -740,7 +713,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
           if (this.chart) {
             this.chart.destroy();
           }
-          console.log(chartName);
 
           switch (chartName) {
             case 'Normal':
@@ -843,8 +815,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     /*  this.operationResult(); */
     this.sendOperations.push(id);
-
-    console.log(this.calculos, 'CALCUJLOS');
   }
   operationResult() {
     type YearValue = {
@@ -907,7 +877,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   addCalculo(operation: any) {
     // if (this.sendOperations.length > 0) {
-    console.log(operation, 'OERATION');
+
     this.calculos.push({
       name: operation.operator,
       img: operation.img,
@@ -920,8 +890,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
     // }
 
     /*   this.operationResult(); */
-
-    console.log(this.sendOperations, 'S');
   }
 
   addCustom() {
@@ -935,7 +903,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.operations.push([{ name: this.inputValue }]);
 
     this.sendOperations.push(this.inputValue);
-    console.log(this.sendOperations, 'formula');
+
     this.inputValue = '';
     this.mostrarPopover = false; //
   }
@@ -1083,8 +1051,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     });
 
     // Crear la curva de la función de densidad de probabilidad
-    var x = Array.from({ length: 100 }, (_, i) =>
-      (mu - 5 * sigma + (i * (10 * sigma)) / 100).toFixed(2)
+    var x = Array.from(
+      { length: 100 },
+      (_, i) => mu - 5 * sigma + (i * (10 * sigma)) / 100
     );
     var y = x.map(function (x) {
       return (
@@ -1139,7 +1108,6 @@ export class EditVariableComponent implements OnInit, OnChanges {
   }
 
   triangularChart() {
-    console.log(this.min, this.max, this.mode, 'MODE');
     // Función para generar números aleatorios con distribución triangular
     function triangularDistribution(
       sampleSize: any,
@@ -1190,7 +1158,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     // Preparar datos para el histograma
     const labels = Array.from(
       { length: numBins },
-      (_, i) => +(+this.min + i * binWidth).toFixed(2)
+      (_, i) => +(+this.min + i * binWidth)
     );
 
     const data = histogram.map((count) => count / sampleSize / binWidth);
@@ -1534,9 +1502,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
       { length: binCount + 1 },
       (_, i) => i * (Math.max(...weibullSamples) / binCount)
     );
-    const binMids = binEdges
+    const binMids: any = binEdges
       .slice(0, -1)
-      .map((edge, index) => ((edge + binEdges[index + 1]) / 2).toFixed(2));
+      .map((edge, index) => (edge + binEdges[index + 1]) / 2);
 
     // Función para calcular la PDF de Weibull
     function weibullPDF(x: number, k: number, lambda: number) {
@@ -1548,7 +1516,9 @@ export class EditVariableComponent implements OnInit, OnChanges {
     }
 
     // Calcular los valores de la PDF para los puntos medios de los bins
-    const pdfValues = binMids.map((x) => weibullPDF(parseFloat(x), k, lambda));
+    const pdfValues = binMids.map((x: any) =>
+      weibullPDF(parseFloat(x), k, lambda)
+    );
 
     // Configurar los datos para Chart.js
     const chartData: ChartData<'bar' | 'line', number[], string> = {
@@ -1635,7 +1605,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
       const pdf = lognormalPDF(x);
       if (pdf > 0.001) {
         // Filtrar valores cercanos a cero
-        labels.push(x.toFixed(2));
+        labels.push(x);
         data.push(pdf);
       }
     }
@@ -1731,7 +1701,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
     // Generar puntos para la función de densidad de probabilidad
     for (let i = 0; i <= 1; i += 0.01) {
-      pdfData.labels.push(i.toFixed(2)); // Redondeamos para evitar números largos
+      pdfData.labels.push(`${i}`); // Redondeamos para evitar números largos
       pdfData.datasets[0].data.push(betaPDF(i, alpha, beta));
     }
 
@@ -2020,7 +1990,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
 
   exponentialChart() {
     // Escala de la distribución exponencial
-    console.log(this.rate, 'RATE');
+
     this.rate = `${this.rate}`;
 
     if (this.rate.includes('%')) {
@@ -2047,9 +2017,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     histogram = histogram.map((value) => value / (binWidth * s.length));
 
     // Crear bins para el histograma
-    let bins = Array.from({ length: histogram.length }, (_, i) =>
-      (i * binWidth).toFixed(2)
-    );
+    let bins = Array.from({ length: histogram.length }, (_, i) => i * binWidth);
 
     // Crear PDF de la distribución exponencial
     let pdf = bins.map((bin) => Math.exp(-bin));
@@ -2117,7 +2085,8 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.calculos = [];
     this.sendOperations = [];
     this.showNewEscenario = [];
-    this.variableUnidad = undefined;
+    this.scenarioId = null;
+
     this.min = 0;
     this.max = 0;
     this.stDev = 0;
@@ -2151,7 +2120,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     this.openUnite();
   }
 
-  openUnite() {
+  async openUnite() {
     this.cargando = true;
     if (this.editVariable) {
       this.editDataEvent.emit({
@@ -2160,9 +2129,11 @@ export class EditVariableComponent implements OnInit, OnChanges {
         unite: this.variableUnidad ?? 0,
       });
 
+      const resScenarioYears: any = await firstValueFrom(
+        this.projectSvc.getScenery(this.scenarioId)
+      );
+      this.scenarioYears = resScenarioYears.years;
       this.scenarioYears[this.defaultYear] = this.variableUnidad;
-
-      console.log(this.scenarioYears, 'SCES');
 
       this.projectSvc
         .updateScenery(this.scenarioId, { years: this.scenarioYears })

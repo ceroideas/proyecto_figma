@@ -10,6 +10,8 @@ export class DataService {
   dataNodes: any[] = [];
   tierCero: any;
   tierCeroData: any[] = [];
+  userData: any = {};
+  emailDataObject!: any;
 
   nodes: any[] = [];
 
@@ -25,5 +27,13 @@ export class DataService {
 
   getNodes(): any[] {
     return this.nodes;
+  }
+
+  emailData(emailData: any) {
+    this.emailDataObject = emailData;
+  }
+
+  getEmailData(): any {
+    return this.emailDataObject;
   }
 }

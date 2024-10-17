@@ -65,6 +65,7 @@
         id="num-employees"
         class="slider"
         min="0"
+        step="0.01"
         [max]="node.maxValue"
         [(ngModel)]="nodes[i].value"
         (input)="updateValues()"
@@ -114,47 +115,9 @@
 </div> -->
 
 <div style="padding: 20px" *ngIf="showPreview">
-  <table class="table-custom">
-    <tr>
-      <th
-        style="
-          background: white;
-          border-top-color: white;
-          border-left-color: white;
-          color: white;
-        "
-        colspan="2"
-      ></th>
-      <th
-        class="table-title"
-        [attr.colspan]="showNodes[0].newValues.length + 1"
-      >
-        {{ showNodes[0].name }}
-      </th>
-    </tr>
-    <tr>
-      <th [attr.rowspan]="showNodes[1].newValues.length + 1">
-        {{ showNodes[1].name }}
-      </th>
-      <th></th>
-      <th *ngFor="let value of showNodes[0].newValues">{{ value }}</th>
-    </tr>
-    <!--     <tr>
-      <td (click)="selectedTd()" style="padding: 0px">
-        <div (click)="selectedDiv()" class="selected-td">$ 150</div>
-      </td>
-    </tr> -->
-    <tr *ngFor="let value2 of showNodes[1].newValues; let i = index">
-      <td>{{ value2 }}</td>
-      <td *ngFor="let operationValue of calculation[i]">
-        {{ operationValue }}
-      </td>
-    </tr>
-  </table>
-
   <div class="vpn">
     <span> {{ tierCero.name }} </span>
-    <span>{{ tierCero.calculated[0].years[defaultYear] }} </span>
+    <span>{{ formatMonto(tierCero.calculated[0].years[defaultYear]) }} </span>
   </div>
 
   <div class="frequency-selector">
@@ -180,6 +143,56 @@
       <label>%</label>
     </div>
   </div>
+  <table class="table-custom">
+    <tr>
+      <th
+        style="
+          background: white;
+          border-top-color: white;
+          border-left-color: white;
+          border-bottom-color: white;
+          color: white;
+        "
+        colspan="2"
+      ></th>
+      <th
+        class="table-title"
+        [attr.colspan]="showNodes[0].newValues.length + 1"
+      >
+        {{ showNodes[0].name }}
+      </th>
+    </tr>
+    <tr>
+      <th
+        style="
+          background: white;
+          border-top-color: white;
+          border-left-color: white;
+          color: white;
+        "
+        colspan="2"
+      ></th>
+      <th *ngFor="let value of showNodes[0].newValues">
+        {{ formatMonto(value) }}
+      </th>
+    </tr>
+    <!--     <tr>
+      <td (click)="selectedTd()" style="padding: 0px">
+        <div (click)="selectedDiv()" class="selected-td">$ 150</div>
+      </td>
+    </tr> -->
+    <tr>
+      <th [attr.rowspan]="showNodes[1].newValues.length + 1">
+        {{ showNodes[1].name }}
+      </th>
+    </tr>
+    <tr *ngFor="let value2 of showNodes[1].newValues; let i = index">
+      <td style="background-color: #f0f0f0">{{ formatMonto(value2) }}</td>
+      <td *ngFor="let operationValue of calculation[i]">
+        {{ formatMonto(operationValue) }}
+      </td>
+    </tr>
+  </table>
 </div>
 
 <!-- Modal -->
