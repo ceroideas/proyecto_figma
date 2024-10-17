@@ -19,6 +19,7 @@ export class HomeComponent {
     if (userFromStorage) {
       const user = JSON.parse(userFromStorage);
       this.userData = user;
+
       console.log(this.userData, 'DATA');
     } else {
       console.log('No se encontró ningún usuario en localStorage.');

@@ -112,14 +112,19 @@
       <h5 class="card-title">{{ project.name }}</h5>
       <p class="card-text">Modelo de ingresos</p>
       <div class="user-menu">
-        <img
+        <!--         <img
           class="user-icon"
           src="../../../assets/img/219969.png"
           alt="User Icon"
-        />
+        /> -->
+        <tui-avatar
+          class="user-icon"
+          [src]="userData.name | tuiInitials"
+          [style.background]="userData.name | tuiAutoColor"
+        ></tui-avatar>
         <div class="user-info">
           <p class="user-name">
-            Fernando Alcantara
+            {{ userData.name }}
             <img src="../../../assets/icons/verified-badge-fill.svg" alt="" />
           </p>
           <p class="card-text">Owner</p>
