@@ -92,6 +92,7 @@ export class LoginComponent implements OnInit {
 
   goRegister(): void {
     this.router.navigate(['register']);
+    console.log('register');
   }
   goRestore(): void {
     this.router.navigate(['restore-password']);
