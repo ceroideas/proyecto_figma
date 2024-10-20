@@ -22,5 +22,5 @@ jobs:
           npm install
           npm install -g @angular/cli
           sudo apt-get -y install npm
-          ng build
+          npm run build
           cp -r ./dist/figma/browser/* /var/www/html
