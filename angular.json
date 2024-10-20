@@ -28,6 +28,8 @@
               "src/styles.scss",
               "src/assets/plugins/fontawesome-free/css/all.min.css",
               "src/assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css",
+              "@taiga-ui/core/styles/taiga-ui-theme.less",
+              "@taiga-ui/core/styles/taiga-ui-fonts.less",
               "src/assets/dist/css/adminlte.min.css"
             ],
             "scripts": [
@@ -94,7 +96,11 @@
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/logo.svg", "src/assets"],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss",
+              "@taiga-ui/core/styles/taiga-ui-theme.less",
+              "@taiga-ui/core/styles/taiga-ui-fonts.less"
+            ],
             "scripts": []
           }
         }

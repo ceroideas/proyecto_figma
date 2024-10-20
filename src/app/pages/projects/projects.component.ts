@@ -1,22 +1,43 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CreateProjectComponent } from 'src/app/components/create-project/create-project.component';
 import { MessageComponent } from 'src/app/components/message/message.component';
+import { AuthService } from 'src/app/services/auth.service';
 import { ProjectService } from 'src/app/services/project.service';
 import Swal from 'sweetalert2';
+import { TuiAvatar } from '@taiga-ui/kit';
+import {
+  TuiAutoColorPipe,
+
+  TuiInitialsPipe,
+
+} from '@taiga-ui/core';
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [MessageComponent, CreateProjectComponent, CommonModule],
+  imports: [MessageComponent, CreateProjectComponent, CommonModule, TuiAvatar,  TuiAutoColorPipe, TuiInitialsPipe,],
   providers: [ProjectService],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
 })
 export class ProjectsComponent {
+  @ViewChild(CreateProjectComponent)
+  createProjectComponent!: CreateProjectComponent;
   projects: any[] = [];
+  userData!: any;
+  project_edit!: any;
   selectedProjectIndex: number = -1;
-  constructor(private projectSvc: ProjectService, private router: Router) {
+  constructor(
+    private projectSvc: ProjectService,
+    private router: Router,
+    private authSvc: AuthService
+  ) {
+    const userFromStorage = localStorage.getItem('user');
+    if (userFromStorage) {
+      const user = JSON.parse(userFromStorage);
+      this.userData = user;
+    }
     this.getProjects();
   }
 
@@ -54,6 +75,13 @@ export class ProjectsComponent {
     } */
     localStorage.setItem('project', id);
     this.router.navigate([`home/${route}/${id}`]);
+  }
+
+  setProject(project: any) {
+    if (this.createProjectComponent) {
+      this.createProjectComponent.project_edit = project;
+    }
+    console.log(this.project_edit);
   }
 
   convertDateFormat(originalDate: string): string {

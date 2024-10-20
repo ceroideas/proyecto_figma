@@ -31,7 +31,7 @@
           />
         </div>
       </div>
-      <div style="margin-left: 28%" class="d-flex">
+      <div style="margin-left: 28%" class="d-flex mb-3">
         <div
           class="left-button"
           (click)="redirect($event, 'simulate', project.id)"
@@ -45,6 +45,19 @@
           <img
             style="width: 30px; margin-left: 20%"
             src="../../../assets/icons/fi_trash-2.svg"
+          />
+        </div>
+      </div>
+      <div style="margin-left: 28%" class="d-flex">
+        <div
+          class="left-button"
+          (click)="setProject(project)"
+          data-bs-toggle="modal"
+          data-bs-target="#createProjectModal"
+        >
+          <img
+            style="width: 30px; margin-left: 20%"
+            src="../../../assets/icons/pencil.svg"
           />
         </div>
       </div>
@@ -99,14 +112,19 @@
       <h5 class="card-title">{{ project.name }}</h5>
       <p class="card-text">Modelo de ingresos</p>
       <div class="user-menu">
-        <img
+        <!--         <img
           class="user-icon"
           src="../../../assets/img/219969.png"
           alt="User Icon"
-        />
+        /> -->
+        <tui-avatar
+          class="user-icon"
+          [src]="userData.name | tuiInitials"
+          [style.background]="userData.name | tuiAutoColor"
+        ></tui-avatar>
         <div class="user-info">
           <p class="user-name">
-            Fernando Alcantara
+            {{ userData.name }}
             <img src="../../../assets/icons/verified-badge-fill.svg" alt="" />
           </p>
           <p class="card-text">Owner</p>

@@ -6,7 +6,7 @@ import {
 } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { ComponentsModule } from './components/components.module';
-
+import { TuiRoot } from '@taiga-ui/core';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { BuildModule } from './pages/build/build.module';
 
@@ -19,6 +19,7 @@ import { BuildModule } from './pages/build/build.module';
     ComponentsModule,
     HighchartsChartModule,
     BuildModule,
+    TuiRoot,
   ],
   providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
   templateUrl: './app.component.html',
