@@ -24,11 +24,11 @@
           <label style="margin-top: 10px; margin-right: 20px; color: #000f55">
             {{ userData.name }}
           </label>
-          <img
+          <tui-avatar
             class="user-icon"
-            src="../../../assets/img/219969.png"
-            alt="User Icon"
-          />
+            [src]="userData.name | tuiInitials"
+            [style.background]="userData.name | tuiAutoColor"
+          ></tui-avatar>
           <i
             class="fas fa-caret-down"
             data-bs-toggle="dropdown"

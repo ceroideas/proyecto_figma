@@ -52,6 +52,7 @@ export class UniteModalComponent implements OnInit {
     { name: 'Escenario 1', yearFrom: 2020, yearTo: 2024 },
     { name: 'Escenario 2', yearFrom: 2020, yearTo: 2024 },
   ];
+  isOneYear: boolean = false;
   @Output() sendEsceneriesEvent = new EventEmitter<any>();
   @Output() printAllEvent = new EventEmitter<any>();
   values!: any;
@@ -330,17 +331,20 @@ export class UniteModalComponent implements OnInit {
     const years = Object.keys(
       JSON.parse(JSON.stringify(this.escenarys[0]?.years))
     );
-
-    /*     const values = years.map(
-      (key) => +this.escenarys[this.selectedEscenary].years[0][key]
-    ); */
-
     const values = Object.values(this.escenarys[this.selectedEscenary].years);
-    console.log(values, 'UNITE VALUES');
 
     if (!this.values) {
       this.values = values;
     }
+    if (!this.isOneYear) {
+      this.isOneYear = this.values.length == 1 ? true : false;
+    }
+    if (this.isOneYear) {
+      const value = this.values[0];
+      this.values = [value, value];
+      years.push(years[0]);
+    }
+    console.log(this.values, years);
 
     const plugins: any =
       this.model.locked === false
@@ -371,9 +375,15 @@ export class UniteModalComponent implements OnInit {
                 value: any
               ) => {
                 e.target.style.cursor = 'default';
+
                 this.model.years[0][years[index]] = value;
                 this.escenarys[this.selectedEscenary].years =
                   this.model.years[0];
+                console.log(this.model, this.escenarys, this.selectedEscenary);
+                if (this.isOneYear) {
+                  this.renderChartVariable.destroy();
+                  this.renderChart();
+                }
               },
             },
           }
@@ -388,8 +398,10 @@ export class UniteModalComponent implements OnInit {
             label: '#',
             data: this.values,
             fill: true,
-            tension: 0.4,
-            borderWidth: 1,
+            tension: this.values.length > 1 ? 0.4 : 0, // No curve for a single point
+            borderWidth: this.values.length > 1 ? 1 : 0, // Hide border for a single point
+            borderColor: this.values.length > 1 ? '#36a2eb' : 'transparent', // Hide border if one point
+            pointRadius: this.values.length === 1 ? 10 : 5, // Bigger point if only one
             pointHitRadius: 25,
           },
         ],
@@ -423,6 +435,7 @@ export class UniteModalComponent implements OnInit {
         plugins: plugins,
       },
     };
+
     const escenary = JSON.parse(
       JSON.stringify(this.escenarys[+this.selectedEscenary])
     );
@@ -432,22 +445,10 @@ export class UniteModalComponent implements OnInit {
 
     this.escenarys[+this.selectedEscenary] = escenary;
 
-    /*     if (this.edit) {
-      this.projectSvc
-        .updateScenery(this.escenarys[+this.selectedEscenary].id, {
-          years: this.escenarys[+this.selectedEscenary].years,
-        })
-        .subscribe((res: any) => {
-          this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
-            this.escenarys = res.sceneries;
-          });
-          this.printAllEvent.emit();
-        });
-    } */
-
     this.renderChartVariable = new Chart('chartJSContainer', option);
     this.calcularMontoConIncremento();
   }
+
   onSelectChange() {
     if (this.oldEscenarieId && this.oldEscenarieId !== '#') {
       console.log('OLD');

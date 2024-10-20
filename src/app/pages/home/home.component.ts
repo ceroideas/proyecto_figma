@@ -1,13 +1,19 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core';
-
+import { TuiAvatar } from '@taiga-ui/kit';
 import { Router, RouterModule } from '@angular/router';
 import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
 import { AuthService } from 'src/app/services/auth.service';
-
+import { TuiAutoColorPipe, TuiInitialsPipe } from '@taiga-ui/core';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterModule, EditVariableComponent],
+  imports: [
+    RouterModule,
+    EditVariableComponent,
+    TuiAutoColorPipe,
+    TuiAvatar,
+    TuiInitialsPipe,
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
