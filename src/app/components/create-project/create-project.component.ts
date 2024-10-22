@@ -420,12 +420,19 @@ export class CreateProjectComponent implements AfterViewInit {
         }
       });
     } else {
-      /* this.closeModal(); */
-      this.projectSvc
+      
+      
+      try {
+        this.projectSvc
         .updateAllProject(project, this.project_edit.id)
         .subscribe((res) => {
           this.createProjectEvent.emit();
+          this.closeModal(); 
         });
+        
+      } catch (error) {
+         this.closeModal(); 
+      }
     }
 
     this.router.navigate(['home/build'], { queryParams: project });
