@@ -494,7 +494,7 @@ export class SimulateComponent implements OnInit {
       } else {
         if (!operationError) {
           this.updateSimulation();
-          this.isLoading = false;
+          // this.isLoading = false;
         }
       }
 
@@ -1010,6 +1010,7 @@ export class SimulateComponent implements OnInit {
             text: 'The simulation was successfully saved!',
             icon: 'success',
           });
+          this.isLoading = false;
         });
     } catch (error) {
       Swal.fire({
@@ -1021,7 +1022,9 @@ export class SimulateComponent implements OnInit {
           confirmButton: 'confirm',
         },
       });
+      this.isLoading = false;
     }
+    
   }
 
   disable() {
