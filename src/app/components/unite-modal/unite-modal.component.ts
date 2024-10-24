@@ -622,9 +622,12 @@ export class UniteModalComponent implements OnInit {
         this.nodeName = res.name;
         this.escenarys = res.sceneries;
         this.unite = res.unite;
+    
         this.years = [this.escenarys[0]?.years];
         this.nodeData = res;
         this.percentageGrowth = res.default_growth_percentage;
+
+        // console.log(this.escenarys, this.unite, this.years, "para pensar gente")
       });
     } else {
       this.escenarys = this.cleanEsceneries;
