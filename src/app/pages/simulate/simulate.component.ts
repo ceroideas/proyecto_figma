@@ -494,7 +494,7 @@ export class SimulateComponent implements OnInit {
       } else {
         if (!operationError) {
           // this.updateSimulation();
-          // this.isLoading = false;
+           this.isLoading = false;
         }
       }
 
