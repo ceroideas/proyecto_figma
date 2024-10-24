@@ -493,7 +493,7 @@ export class SimulateComponent implements OnInit {
         this.isLoading = false;
       } else {
         if (!operationError) {
-          this.updateSimulation();
+          // this.updateSimulation();
           // this.isLoading = false;
         }
       }
@@ -1004,15 +1004,17 @@ export class SimulateComponent implements OnInit {
                   this.cdRef.detectChanges();
                 });
             });
-
+            this.isLoading = false;
           Swal.fire({
             title: 'Saved!',
             text: 'The simulation was successfully saved!',
             icon: 'success',
           });
-          this.isLoading = false;
+         
         });
     } catch (error) {
+      this.isLoading = false;
+
       Swal.fire({
         title: 'Error',
         text: 'The simulation could not be saved, please check the data.',
@@ -1022,7 +1024,6 @@ export class SimulateComponent implements OnInit {
           confirmButton: 'confirm',
         },
       });
-      this.isLoading = false;
     }
     
   }
