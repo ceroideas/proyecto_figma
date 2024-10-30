@@ -7,8 +7,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { AdDirective } from './ad.directive';
 import { EditVariableComponent } from 'src/app/components/edit-variable/edit-variable.component';
 import { UniteModalComponent } from 'src/app/components/unite-modal/unite-modal.component';
-import { ProjectService } from 'src/app/services/project.service';
-import { HttpClientModule } from '@angular/common/http';
+
 import { ShapeModalComponent } from 'src/app/components/shape-modal/shape-modal.component';
 import { FormsModule } from '@angular/forms';
 import { SimulationShapeModalComponent } from 'src/app/components/simulation-shape-modal/simulation-shape-modal.component';
@@ -26,7 +25,7 @@ import { PipesModule } from '../../pipes/pipes.module';
     UniteModalComponent,
     ShapeModalComponent,
     SimulationShapeModalComponent,
-    HttpClientModule,
+    
     FormsModule,
     PipesModule,
     // ReversePipe

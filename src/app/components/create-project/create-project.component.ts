@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+
 import {
   AfterViewInit,
   Component,
@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-create-project',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   providers: [ProjectService],
   templateUrl: './create-project.component.html',
   styleUrl: './create-project.component.scss',

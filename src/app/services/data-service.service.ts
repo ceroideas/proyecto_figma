@@ -12,7 +12,7 @@ export class DataService {
   tierCeroData: any[] = [];
   userData: any = {};
   emailDataObject!: any;
-
+  isLoading: boolean = false;
   nodes: any[] = [];
 
   constructor() {}

@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, ReplaySubject } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
 export class SimulationService {
   url = environment.url;
+  requestCompletedSubject = new BehaviorSubject<boolean>(false);
+  requestCompleted$ = this.requestCompletedSubject.asObservable();
   constructor(private http: HttpClient) {}
 
   saveSimulation(simulation: any) {
@@ -18,11 +21,12 @@ export class SimulationService {
     });
   }
 
-  createSimulation(simulation: any) {
+  createSimulation(simulation: any): any {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     });
+
     return this.http.post(`${this.url}/generateSimulation`, simulation, {
       headers: headers,
     });
@@ -46,7 +50,8 @@ export class SimulationService {
       headers: headers,
     });
   }
-  updateSimulation(id: any, simulation: any) {
+
+  updateSimulation(id: any, simulation: any): any {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       Authorization: `Bearer ${localStorage.getItem('token')}`,

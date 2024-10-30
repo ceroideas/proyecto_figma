@@ -1,6 +1,9 @@
-<div class="title-page mb-5">Simulation 23</div>
-<app-spinner [isLoading]="isLoading"></app-spinner>
-<div class="col-md-12">
+<div class="title-page mb-5">Simulation</div>
+<!-- <app-spinner [isLoading]="isLoading"></app-spinner> -->
+<div class="col-md-12 simulations-container">
+  <div *ngIf="isLoading" class="spinner-container">
+    <div class="spinner"></div>
+  </div>
   <div
     *ngFor="let simulation of simulations"
     class="card-container mr-5 mb-5"
@@ -17,6 +20,9 @@
 <div class="col-md-12 d-flex">
   <div style="position: relative" class="col-md-6">
     <div style="padding-bottom: 40px">
+      <div *ngIf="isLoading" class="spinner-container">
+        <div class="spinner"></div>
+      </div>
       <canvas id="chart"></canvas>
     </div>
 
@@ -68,6 +74,9 @@
   <div class="col-md-1"></div>
   <div class="col-md-5">
     <div class="container">
+      <div *ngIf="isLoading" class="spinner-container-simulation-data">
+        <div class="spinner"></div>
+      </div>
       <div class="p-4 bg-light rounded" style="max-width: 400px">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="font-weight-bold">Edit variable</div>

@@ -13,7 +13,7 @@ import { MessageComponent } from '../message/message.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import 'chartjs-plugin-dragdata';
-import { HttpClientModule } from '@angular/common/http';
+
 import { ProjectService } from 'src/app/services/project.service';
 import { DataService } from 'src/app/services/data-service.service';
 import { EventsService } from 'src/app/services/events.service';
@@ -29,7 +29,7 @@ interface Escenario {
 @Component({
   selector: 'app-unite-modal',
   standalone: true,
-  imports: [MessageComponent, FormsModule, CommonModule, HttpClientModule],
+  imports: [MessageComponent, FormsModule, CommonModule],
   providers: [ProjectService],
   templateUrl: './unite-modal.component.html',
   styleUrl: './unite-modal.component.scss',

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+
 import {
   Component,
   ElementRef,
@@ -33,7 +33,7 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-edit-variable',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   providers: [ProjectService],
   templateUrl: './edit-variable.component.html',
   styleUrl: './edit-variable.component.scss',

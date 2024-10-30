@@ -13,11 +13,12 @@ import {
   TuiInitialsPipe,
 
 } from '@taiga-ui/core';
+import { firstValueFrom } from 'rxjs';
 @Component({
   selector: 'app-projects',
   standalone: true,
   imports: [MessageComponent, CreateProjectComponent, CommonModule, TuiAvatar,  TuiAutoColorPipe, TuiInitialsPipe,],
-  providers: [ProjectService],
+
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
 })
@@ -103,7 +104,9 @@ export class ProjectsComponent {
     return `${formattedDay}/${formattedMonth}/${year}`;
   }
 
-  getProjects() {
+  async getProjects() {
+   const projects = await firstValueFrom(this.projectSvc.getProjects())
+   console.log(projects)
     this.projectSvc.getProjects().subscribe((res: any) => {
       console.log(res, 'RESPROYECT');
       this.projects = res;
