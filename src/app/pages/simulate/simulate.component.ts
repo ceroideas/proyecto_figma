@@ -57,7 +57,7 @@ export class SimulateComponent implements OnInit {
     public simulationSvc: SimulationService,
     private route: ActivatedRoute,
     private cdRef: ChangeDetectorRef,
-    private dataSvc: DataService
+    public dataSvc: DataService
   ) {}
 
   ngOnInit(): void {
@@ -1058,7 +1058,7 @@ export class SimulateComponent implements OnInit {
                   .getSimulations(this.id)
                   .subscribe((res: any) => {
                     this.simulations = res.reverse();
-
+                    this.selectSimulacion(this.simulationId);
                     this.updateImageUrls();
                     this.cdRef.detectChanges();
                     console.log('OOOOOOOOH');
@@ -1392,63 +1392,43 @@ export class SimulateComponent implements OnInit {
 
   simulationChart() {
     // Realizar una simulación de Montecarlo de 10000 muestras
-    var muestras = this.arraySamples;
+    // var muestras = this.arraySamples;
 
     // console.log(muestras, 'muestras');
 
-    const conteos: any = {};
+    // const conteos: any = {};
 
-    muestras = muestras.sort((a, b) => a - b);
+    // muestras = muestras.sort((a, b) => a - b);
 
-    // Decide cuántos datos quieres en tu muestra
-    const numMuestra = 11;
+    // const numMuestra = 11;
 
-    // Crea una nueva array para tu muestra
-    const newmuestra = [];
+    // const newmuestra = [];
 
-    // Llena tu muestra con datos aleatorios de tus datos originales
-    for (let i = 0; i < numMuestra; i++) {
-      const index = Math.floor(Math.random() * muestras.length);
-      newmuestra.push(muestras[index]);
-    }
+    // for (let i = 0; i < numMuestra; i++) {
+    //   const index = Math.floor(Math.random() * muestras.length);
+    //   newmuestra.push(muestras[index]);
+    // }
 
-    newmuestra.forEach((muestra) => {
-      if (conteos[muestra]) {
-        conteos[muestra]++;
-      } else {
-        conteos[muestra] = 1;
-      }
-    });
+    // newmuestra.forEach((muestra) => {
+    //   if (conteos[muestra]) {
+    //     conteos[muestra]++;
+    //   } else {
+    //     conteos[muestra] = 1;
+    //   }
+    // });
 
-    // Calcular los percentiles
-    // const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    // this.values = this.percentiles.map((percentil) => {
+    //   const index = Math.floor((percentil / 100) * (muestras.length - 1));
 
-    this.values = this.percentiles.map((percentil) => {
-      const index = Math.floor((percentil / 100) * (muestras.length - 1));
+    //   return muestras.sort((a, b) => a - b)[index];
+    // });
 
-      return muestras.sort((a, b) => a - b)[index];
-    });
+    // const muestrasOrdenadas = [...muestras].sort((a, b) => a - b);
 
-    // Ordenar las muestras
-    const muestrasOrdenadas = [...muestras].sort((a, b) => a - b);
-
-    // Asignar percentil a cada valor
-    const resultadosConPercentiles = muestrasOrdenadas.map((muestra, index) => {
-      const percentil = (index / (muestras.length - 1)) * 100;
-      return { value: muestra, percentil: percentil.toFixed(2) };
-    });
-
-    console.log(resultadosConPercentiles, 'AQUI');
-
-    const etiquetas = Object.keys(conteos).sort(
-      (a, b) => Number(a) - Number(b)
-    );
-
-    // const datosY = Object.values(conteos).sort((a,b) => Number(a) - Number(b));
-    /*const datosY = Array.from(
-      { length: Object.values(conteos).length },
-      (_, i) => '-'
-    );*/
+    // const resultadosConPercentiles = muestrasOrdenadas.map((muestra, index) => {
+    //   const percentil = (index / (muestras.length - 1)) * 100;
+    //   return { value: muestra, percentil: percentil.toFixed(2) };
+    // });
 
     this.chart = new Chart('chart', {
       type: 'bar',
@@ -1474,14 +1454,6 @@ export class SimulateComponent implements OnInit {
         },
       },
     });
-
-    // Crear una lista HTML con los percentiles
-    /*const lista: any = document.getElementById('percentiles');
-    percentiles.forEach((p, i) => {
-      const li = document.createElement('li');
-      li.textContent = `El ${p}% de los valores son menores que ${values[i]}`;
-      lista.appendChild(li);
-    });*/
   }
 
   selectColor(color: string, event: any) {
@@ -1496,21 +1468,26 @@ export class SimulateComponent implements OnInit {
     }
   }
 
-  selectSimulacion(id: any) {
+  async selectSimulacion(id: any) {
     this.simulationId = id;
     this.nodes.forEach((node: any) => (node.isActive = false));
 
-    const simulation = this.simulations.find(
-      (simulation: any) => simulation.id == this.simulationId
+    // const simulation = this.simulations.find(
+    //   (simulation: any) => simulation.id == this.simulationId
+    // );
+
+    const simulation: any = await firstValueFrom(
+      this.simulationSvc.getSimulation(this.simulationId)
     );
 
     console.log(simulation, 'SIMULA');
     this.editSimulation = false;
     this.simulateName = simulation.name;
     this.simulateDescription = simulation.description;
-    this.arraySamples = simulation.samples.map((sample: any) =>
-      sample !== 'NaN' ? sample : 0
-    );
+    // this.arraySamples = simulation.samples.map((sample: any) =>
+    //   sample !== 'NaN' ? sample : 0
+    // );
+    this.values = simulation.operation_data;
     this.simulationNumber = simulation.steps;
     this.colorBar = simulation.color;
 

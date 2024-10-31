@@ -1,7 +1,7 @@
 <div class="title-page mb-5">Simulation</div>
 <!-- <app-spinner [isLoading]="isLoading"></app-spinner> -->
 <div class="col-md-12 simulations-container">
-  <div *ngIf="isLoading" class="spinner-container">
+  <div *ngIf="isLoading || dataSvc.isLoading" class="spinner-container">
     <div class="spinner"></div>
   </div>
   <div
@@ -20,7 +20,7 @@
 <div class="col-md-12 d-flex">
   <div style="position: relative" class="col-md-6">
     <div style="padding-bottom: 40px">
-      <div *ngIf="isLoading" class="spinner-container">
+      <div *ngIf="isLoading || dataSvc.isLoading" class="spinner-container">
         <div class="spinner"></div>
       </div>
       <canvas id="chart"></canvas>
@@ -74,7 +74,10 @@
   <div class="col-md-1"></div>
   <div class="col-md-5">
     <div class="container">
-      <div *ngIf="isLoading" class="spinner-container-simulation-data">
+      <div
+        *ngIf="isLoading || dataSvc.isLoading"
+        class="spinner-container-simulation-data"
+      >
         <div class="spinner"></div>
       </div>
       <div class="p-4 bg-light rounded" style="max-width: 400px">
