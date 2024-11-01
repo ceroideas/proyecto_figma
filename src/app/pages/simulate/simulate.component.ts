@@ -1499,7 +1499,7 @@ export class SimulateComponent implements OnInit {
       }
     }
 
-    this.csvData = JSON.parse(simulation?.csvData);
+    // this.csvData = JSON.parse(simulation?.csvData);
 
     /* console.log(simulation, 'SIMULATION ENCONTRADA'); */
 
