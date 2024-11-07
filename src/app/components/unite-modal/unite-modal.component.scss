@@ -104,3 +104,121 @@ input.input-formula:focus {
     transform: rotate(360deg);
   }
 }
+.input-formula-variable {
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+  border-top-left-radius: 25px;
+  border-bottom-left-radius: 25px;
+
+  background-color: #f6f3f9;
+}
+p {
+  font-weight: bold;
+  color: #00061f;
+}
+.delete-variable-button {
+  border-color: rgb(199, 199, 199) !important;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+}
+.save-variable-button {
+  background-color: #000f55;
+  font-weight: bold;
+  border-radius: 25px;
+  font-size: medium;
+  color: white;
+}
+.variable-box {
+  width: 100%; /* Puedes ajustar el tamaño según tus necesidades */
+  /* max-height: auto; */
+  border-radius: 10px; /* Establece el redondeo de las esquinas */
+  border: 2px solid rgb(199, 199, 199); /* Color y grosor del borde */
+  padding: 20px; /* Espaciado interno del contenido con respecto al borde */
+  overflow: auto; /* Agrega una barra de desplazamiento si el contenido es demasiado grande */
+  height: 200px;
+}
+.operator-box {
+  width: 100%; /* Puedes ajustar el tamaño según tus necesidades */
+  /* max-height: auto; */
+  border-radius: 10px; /* Establece el redondeo de las esquinas */
+  border: 2px solid rgb(199, 199, 199); /* Color y grosor del borde */
+  padding: 20px; /* Espaciado interno del contenido con respecto al borde */
+  overflow: auto; /* Agrega una barra de desplazamiento si el contenido es demasiado grande */
+  height: 150px; /* Altura inicial */
+  min-height: 110px; /* Altura mínima */
+}
+.calculo-box {
+  width: 100%; /* Puedes ajustar el tamaño según tus necesidades */
+  /* max-height: auto; */
+  border-radius: 10px; /* Establece el redondeo de las esquinas */
+  border: 2px solid rgb(199, 199, 199); /* Color y grosor del borde */
+  padding: 20px; /* Espaciado interno del contenido con respecto al borde */
+  overflow: auto; /* Agrega una barra de desplazamiento si el contenido es demasiado grande */
+
+  min-height: 40px; /* Altura mínima */
+  align-items: center;
+}
+.popover {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1010; /* Asegura que el popover esté sobre otros elementos */
+  top: auto; /* Ajusta la posición del popover */
+  left: calc(15% + 10px); /* Posición a la derecha del botón */
+  min-width: 150px; /* Ancho mínimo para el popover */
+}
+
+.popover input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.popover button {
+  padding: 8px 16px;
+  background-color: #000f55;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.popover button:hover {
+  background-color: #000f55;
+}
+.operation-varible {
+  border: 3px solid #000f55 !important;
+  border-radius: 10px;
+  position: relative;
+  background-color: rgba(195, 206, 255, 1);
+  color: rgba(0, 15, 85, 1);
+  font-weight: bold;
+}
+
+.operation-varible2 {
+  border: 3px solid rgba(195, 206, 255, 1);
+  border-radius: 10px;
+  position: relative;
+  background-color: rgba(195, 206, 255, 1);
+  color: rgba(0, 15, 85, 1);
+  font-weight: bold;
+}
+.popover-menu {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000; /* Asegura que el popover esté sobre otros elementos */
+  top: auto; /* Ajusta la posición del popover */
+  left: calc(15% + 10px); /* Posición a la derecha del botón */
+  min-width: 150px; /* Ancho mínimo para el popover */
+}

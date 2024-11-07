@@ -209,6 +209,7 @@
               >
                 <div style="height: 65px; width: 111px; gap: 4px">
                   <label
+                    (click)="togglePopover()"
                     [for]="year.key.toString()"
                     style="font-weight: 7000; size: 14px; line-height: 20px"
                     class="color-theme"
@@ -233,25 +234,179 @@
                     "
                   />
                 </div>
-                <!--               <div class="">
-                  <label
-                    [for]="year.key.toString()"
-                    class="col-form-label color-theme"
-                    >{{ year.key.toString() }}
-                  </label>
+              </div>
+            </div>
+
+            <div
+              class="popover-menu"
+              style="width: 400px !important"
+              *ngIf="showMenuOperation"
+              #popoverMenu
+            >
+              <div>
+                <div
+                  class="mt-4 d-flex justify-content-between align-items-start w-100"
+                >
+                  <p class="mb-0">Add variable</p>
                 </div>
-                <div class="">
-                  <input
-                    (ngModelChange)="changeValue2(i, $event, year.key)"
-                    [name]="year.key.toString()"
-                    [disabled]="
-                      model.locked && year.key.toString() !== currentYear
+
+                <div class="variable-box d-flex flex-wrap">
+                  <div *ngFor="let variable of variables">
+                    <div
+                      class="mr-1 mb-2 p-1"
+                      [ngClass]="{
+                        'operation-varible2': true,
+                        'operation-varible': nodeInCalculo(variable.id)
+                      }"
+                      (click)="addVariable(variable, variable.id)"
+                      *ngIf="editVariable ? variable.id !== +nodeId : true"
+                    >
+                      <img
+                        class="user-icon"
+                        src="../../../assets/icons/database.svg"
+                        alt="User Icon"
+                      />
+                      <label style="margin-top: 2px; margin-bottom: -1px">
+                        {{ variable.name }}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div
+                  class="mt-4 d-flex justify-content-between align-items-start w-100"
+                >
+                  <p class="mb-0">Add operators</p>
+                </div>
+
+                <div class="operator-box d-flex flex-wrap">
+                  <div
+                    (click)="togglePopoverCustom()"
+                    style="
+                      cursor: pointer;
+                      border-radius: 10px;
+                      background-color: rgba(195, 206, 255, 1);
+                      height: 35px;
+                      width: auto;
+                      font-size: 15px;
+                      padding: 0px 5px 10px 5px;
+                      font-weight: bolder;
+                      color: rgba(0, 15, 85, 1);
                     "
-                    [id]="year.key.toString()"
-                    [(ngModel)]="model.years[0][year.key]"
-                    onkeydown="return /[0-9%.]/.test(event.key) || event.key === 'Backspace' || event.key 'Tab'"
-                    class="form-control input-formula"
-                  />
+                    class="mr-1 p-1"
+                  >
+                    <img
+                      style="width: 24px; height: 24px"
+                      class="user-icon mr-2"
+                      src="../../../assets/icons/icon.svg"
+                      alt="User Icon"
+                    />
+                    <label class="mr-1"> custom </label>
+                  </div>
+                  <div *ngIf="mostrarPopover" class="popover" #popover>
+                    <input
+                      style="
+                        font-size: 20px;
+                        cursor: pointer;
+                        border-radius: 10px;
+                        background-color: rgba(195, 206, 255, 1);
+                        gap: 4px;
+                      "
+                      onkeydown="return /[^a-zA-Z]/.test(event.key) || event.key === 'Backspace' || event.key === 'Tab'"
+                      type="text"
+                      autofocus
+                    />
+                    <button>Save</button>
+                  </div>
+                  <div
+                    *ngFor="let operator of operators_icon"
+                    class="mr-1 mb-2"
+                    [ngClass]="{
+                      'operation-varible2': true,
+                      'operation-varible': nodeInCalculo(operator.operator)
+                    }"
+                    (click)="addCalculo(operator)"
+                  >
+                    <div
+                      style="display: flex; align-items: center; height: 30px"
+                    >
+                      <img
+                        class="user-icon ml-1"
+                        style="width: 24px; height: 24px; margin-right: 5px"
+                        src="../../../assets/icons/icon.svg"
+                        alt="User Icon"
+                      />
+                      <!--               <span style="font-size: 20px; font-family: monospace; line-height: 20px; display: flex; align-items: center; height: 100%;">
+                      {{ operator.operator }}
+                    </span> -->
+                      <img
+                        *ngIf="operator.img != ''"
+                        class="user-icon"
+                        style="width: 24px; height: 24px; margin-right: 5px"
+                        [src]="operator.img"
+                        [alt]="operator.operator"
+                      />
+                      <label class="mt-2" *ngIf="operator.img == ''" for="">
+                        {{ operator.operator }}</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div
+                  class="mt-4 d-flex justify-content-between align-items-start w-100"
+                >
+                  <p class="mb-0">Calculation</p>
+                </div>
+
+                <div class="calculo-box d-flex flex-wrap">
+                  <div
+                    *ngFor="let calculo of calculos; let i = index"
+                    style="cursor: pointer"
+                    class="mr-2 mt-1 mb-1 p-1 operation-varible"
+                    (mouseover)="seleccionarCalculo(calculo)"
+                    (mouseout)="deseleccionarCalculo()"
+                    (click)="eliminatedOperation(i)"
+                  >
+                    <div *ngIf="!calculo.operator">
+                      <img
+                        class="user-icon"
+                        src="../../../assets/icons/database.svg"
+                        alt="User Icon"
+                      />
+                      {{ calculo.name }}
+                    </div>
+
+                    <div *ngIf="calculo.operator">
+                      <img
+                        class="user-icon"
+                        style="width: 24px; height: 24px; margin-right: 5px"
+                        src="../../../assets/icons/icon.svg"
+                        alt="User Icon"
+                      />
+                      <img
+                        *ngIf="calculo.img != ''"
+                        class="user-icon"
+                        style="width: 24px; height: 24px; margin-right: 5px"
+                        [src]="calculo.img"
+                        alt="User Icon"
+                      />
+                      <label *ngIf="calculo.img == ''" for="">
+                        {{ calculo.name }}</label
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!--           <div *ngIf="calculos.length > 0" class="d-flex">
+                  <div class="mr-5" *ngFor="let escenario of showNewEscenario">
+                    {{ escenario.name }}
+                    <div *ngFor="let year of escenario.years | keyvalue">
+                      {{ year.key }}: {{ year.value }}
+                    </div>
+                  </div>
                 </div> -->
               </div>
             </div>
@@ -289,7 +444,7 @@
               selectedEscenary === '#' && showForm === false ? 'none' : 'block'
           }"
         >
-          <canvas  id="chartJSContainer"></canvas>
+          <canvas id="chartJSContainer"></canvas>
         </div>
 
         <div>

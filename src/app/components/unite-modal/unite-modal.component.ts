@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
@@ -47,6 +48,7 @@ export class UniteModalComponent implements OnInit {
   renderChartVariable!: any;
   createEscenaryChartVariable!: any;
   yMax: number = 100;
+  sendOperations: any[] = [];
   currentYear: string = new Date().getFullYear().toString();
   escenario: any = [
     { name: 'Escenario 1', yearFrom: 2020, yearTo: 2024 },
@@ -65,11 +67,62 @@ export class UniteModalComponent implements OnInit {
   unite!: any;
   nodeName!: string;
   percentageGrowth!: any;
+  percentageGrowthCopy!: any;
   nodeData!: any;
   loading: boolean = false;
   @Input() defaultYear: number = 0;
   bootstrapModal: any;
   closeModal: boolean = false;
+  showMenuOperation: boolean = false;
+  closeToogle: boolean = false;
+  closeToogleCustom: boolean = false;
+  variables: any[] = [];
+  calculos: any[] = [];
+  operations: any[] = [];
+  clikedToggle: boolean = false;
+  operators: any = [
+    '+',
+    '-',
+    '*',
+    '/',
+    '=',
+    '(',
+    ')',
+    '?',
+    ':',
+    '==',
+    '!=',
+    '>',
+    '>=',
+    '<',
+    '<=',
+    '&',
+    '|',
+  ];
+  operators_icon: any[] = [
+    { operator: '+', img: '../../../assets/icons/plus_icon.svg' },
+    { operator: '-', img: '../../../assets/icons/minus_icon.svg' },
+    { operator: '*', img: '../../../assets/icons/asterisk_icon.svg' },
+    { operator: '/', img: '../../../assets/icons/lucide_slash.svg' },
+    { operator: '=', img: '../../../assets/icons/igual.svg' },
+    { operator: '(', img: '../../../assets/icons/tabler_parentheses.svg' },
+    { operator: ')', img: '../../../assets/icons/tabler_parentheses2.svg' },
+    { operator: '?', img: '../../../assets/icons/f7_question.svg' },
+    { operator: ':', img: '../../../assets/icons/two_points_icon.svg' },
+    { operator: '==', img: '' },
+    { operator: '!=', img: '' },
+    { operator: '>', img: '../../../assets/icons/fi_chevron-right.svg' },
+    { operator: '<', img: '../../../assets/icons/fi_chevron-left2.svg' },
+    { operator: '>=', img: '' },
+    { operator: '<=', img: '' },
+    { operator: '&', img: '../../../assets/icons/tabler_ampersand.svg' },
+    { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
+  ];
+  mostrarPopover: boolean = false;
+  @Input() editVariable: boolean = false;
+  @ViewChild('popover') popover!: ElementRef;
+  @ViewChild('popoverMenu') popoverMenu!: ElementRef;
+  selectedCalculo: any;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
@@ -137,6 +190,60 @@ export class UniteModalComponent implements OnInit {
         }
       }
     );
+  }
+
+  nodeInCalculo(id: any) {
+    const find = this.calculos.find((calculo: any) => calculo.id == id);
+    if (find) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  addCalculo(operation: any) {
+    this.calculos.push({
+      name: operation.operator,
+      img: operation.img,
+      operator: true,
+      id: operation.operator,
+    });
+    this.operations.push([{ name: operation.operator }]);
+
+    this.sendOperations.push(operation.operator);
+  }
+
+  addVariable(variable: any, id: any) {
+    if (
+      this.operators.includes(this.calculos[this.calculos.length - 1]?.name)
+    ) {
+      if (variable.type === 2) {
+        [variable.calculated].forEach((e: any) => {
+          e.operation = this.calculos[this.calculos.length - 1]?.name;
+        });
+      } else {
+        [variable.sceneries].forEach((e: any) => {
+          e.operation = this.calculos[this.calculos.length - 1]?.name;
+        });
+      }
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    this.clikedToggle = !this.clikedToggle;
+    const clickedInside = this.popover?.nativeElement.contains(event.target);
+    const clickedInsideMenu = this.popoverMenu?.nativeElement.contains(
+      event.target
+    );
+    if (!clickedInside && !this.clikedToggle) {
+      this.cerrarPopoverCustom(event);
+      console.log('Cierro');
+    }
+
+    if (!clickedInsideMenu) {
+      this.cerrarPopover(event);
+    }
   }
 
   /*   ngAfterViewInit() {
@@ -221,6 +328,7 @@ export class UniteModalComponent implements OnInit {
         .updateScenery(selectedEscenary.id, { years: selectedEscenary.years })
         .subscribe(() => {
           this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+            this.updateNodeGrowthPercentage();
             this.escenarys = res.sceneries;
             this.closeModal = true;
             this.bootstrapModal.hide();
@@ -229,20 +337,21 @@ export class UniteModalComponent implements OnInit {
             this.showForm = false;
             this.model.locked = false;
             this.handleSelectedEscenary();
-            this.updateNodeGrowthPercentage();
+
             this.clickOpenButton();
           });
           this.printAllEvent.emit();
         });
     } else {
       this.closeModal = true;
+      this.updateNodeGrowthPercentage();
       this.bootstrapModal.hide();
       this.resetVariables();
 
       this.showForm = false;
       this.model.locked = false;
       this.handleSelectedEscenary();
-      this.updateNodeGrowthPercentage();
+
       this.clickOpenButton();
     }
   }
@@ -260,8 +369,55 @@ export class UniteModalComponent implements OnInit {
       (openButton as HTMLElement).click();
     }
   }
+  togglePopover() {
+    this.showMenuOperation = !this.showMenuOperation;
+    setTimeout(() => {
+      this.closeToogle = this.showMenuOperation;
+    }, 100);
+  }
 
+  togglePopoverCustom() {
+    this.mostrarPopover = !this.mostrarPopover;
+    setTimeout(() => {
+      this.closeToogleCustom = this.mostrarPopover;
+    }, 100);
+    console.log('CLIOCK');
+  }
+  cerrarPopover(event: MouseEvent) {
+    if (this.closeToogle) {
+      this.showMenuOperation = false;
+      this.closeToogle = false;
+    }
+  }
+
+  cerrarPopoverCustom(event: MouseEvent) {
+    if (this.closeToogleCustom) {
+      this.mostrarPopover = false;
+      this.closeToogleCustom = false;
+    }
+  }
+
+  seleccionarCalculo(calculo: any): void {
+    this.selectedCalculo = calculo;
+  }
+
+  deseleccionarCalculo(): void {
+    this.selectedCalculo = null;
+  }
+  eliminatedOperation(i: any) {
+    console.log(this.calculos, 'ANTES');
+    this.calculos.splice(i, 1);
+    console.log(this.calculos, 'Depsues');
+    this.operations.splice(i, 1);
+    this.sendOperations.splice(i, 1);
+
+    setTimeout(() => {
+      this.showMenuOperation = true;
+      this.closeToogle = true;
+    }, 0);
+  }
   updateNodeGrowthPercentage() {
+    this.percentageGrowth = this.percentageGrowthCopy ?? this.percentageGrowth;
     this.projectSvc
       .updateNode(this.nodeId, {
         default_growth_percentage: this.percentageGrowth,
@@ -622,17 +778,19 @@ export class UniteModalComponent implements OnInit {
         this.nodeName = res.name;
         this.escenarys = res.sceneries;
         this.unite = res.unite;
-    
+
         this.years = [this.escenarys[0]?.years];
         this.nodeData = res;
         this.percentageGrowth = res.default_growth_percentage;
-
-        // console.log(this.escenarys, this.unite, this.years, "para pensar gente")
       });
+
+      this.variables = [];
     } else {
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0]?.years];
     }
+
+    console.log(this.escenarys, this.unite, this.years, 'para pensar gente');
   }
   changeLocked() {
     console.log('lock');
@@ -739,5 +897,7 @@ export class UniteModalComponent implements OnInit {
     if (isNaN(value)) {
       this.percentageGrowth = 0;
     }
+    this.percentageGrowthCopy = this.percentageGrowth;
+    console.log(this.percentageGrowthCopy);
   }
 }
