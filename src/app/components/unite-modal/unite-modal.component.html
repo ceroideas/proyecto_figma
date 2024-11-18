@@ -209,7 +209,7 @@
               >
                 <div style="height: 65px; width: 111px; gap: 4px">
                   <label
-                    (click)="togglePopover()"
+                    (click)="togglePopover(year.key.toString())"
                     [for]="year.key.toString()"
                     style="font-weight: 7000; size: 14px; line-height: 20px"
                     class="color-theme"
@@ -259,7 +259,6 @@
                         'operation-varible': nodeInCalculo(variable.id)
                       }"
                       (click)="addVariable(variable, variable.id)"
-                      *ngIf="editVariable ? variable.id !== +nodeId : true"
                     >
                       <img
                         class="user-icon"

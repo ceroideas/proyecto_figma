@@ -44,6 +44,7 @@ export class UniteModalComponent implements OnInit {
   escenarys: any[] = [];
   model: Escenario = { id: '', name: '', years: [], locked: false };
   showForm: boolean = false;
+  selectedDynamicYear!: any;
   selectedEscenary: any = '#';
   renderChartVariable!: any;
   createEscenaryChartVariable!: any;
@@ -66,6 +67,7 @@ export class UniteModalComponent implements OnInit {
   oldEscenarieId!: any;
   unite!: any;
   nodeName!: string;
+  @Input() percentageGrowthModel!: any;
   percentageGrowth!: any;
   percentageGrowthCopy!: any;
   nodeData!: any;
@@ -211,22 +213,49 @@ export class UniteModalComponent implements OnInit {
     this.operations.push([{ name: operation.operator }]);
 
     this.sendOperations.push(operation.operator);
+
+    console.log(this.calculos, this.sendOperations, 'PARA');
   }
 
   addVariable(variable: any, id: any) {
     if (
       this.operators.includes(this.calculos[this.calculos.length - 1]?.name)
     ) {
-      if (variable.type === 2) {
-        [variable.calculated].forEach((e: any) => {
-          e.operation = this.calculos[this.calculos.length - 1]?.name;
-        });
-      } else {
-        [variable.sceneries].forEach((e: any) => {
-          e.operation = this.calculos[this.calculos.length - 1]?.name;
-        });
-      }
+      // if (variable.type === 2) {
+      //   [variable.calculated].forEach((e: any) => {
+      //     e.operation = this.calculos[this.calculos.length - 1]?.name;
+      //   });
+      // } else {
+      //   [variable.sceneries].forEach((e: any) => {
+      //     e.operation = this.calculos[this.calculos.length - 1]?.name;
+      //   });
+      // }
     }
+
+    variable.isActive = true;
+
+    this.calculos.push({ name: variable.name, operator: false, id: id });
+    const variableTo =
+      variable.type === 2 ? variable.calculated : variable.sceneries;
+    this.operations.push(variableTo);
+
+    this.calculos[this.calculos.length - 1];
+
+    /*  this.operationResult(); */
+    this.sendOperations.push(id);
+    const selectedEscenary = this.escenarys[+this.selectedEscenary];
+    this.escenarys[+this.selectedEscenary].dynamic_years.forEach((esc: any) => {
+      console.log(esc.year, this.selectedDynamicYear, 'AQUI');
+      if (esc.year == this.selectedDynamicYear) {
+        esc.formula = [
+          {
+            formula: [...this.sendOperations],
+            showFormula: [...this.calculos],
+          },
+        ];
+      }
+    });
+    console.log(selectedEscenary, 'OHHHHH');
   }
 
   @HostListener('document:click', ['$event'])
@@ -325,7 +354,10 @@ export class UniteModalComponent implements OnInit {
       !this.showForm
     ) {
       this.projectSvc
-        .updateScenery(selectedEscenary.id, { years: selectedEscenary.years })
+        .updateScenery(selectedEscenary.id, {
+          years: selectedEscenary.years,
+          dynamic_years: selectedEscenary.dynamic_years,
+        })
         .subscribe(() => {
           this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
             this.updateNodeGrowthPercentage();
@@ -369,8 +401,23 @@ export class UniteModalComponent implements OnInit {
       (openButton as HTMLElement).click();
     }
   }
-  togglePopover() {
+  togglePopover(year: any) {
+    if (+year <= this.defaultYear) {
+      return;
+    }
+    console.log(year, this.defaultYear, 'YEARS');
+    this.selectedDynamicYear = year;
     this.showMenuOperation = !this.showMenuOperation;
+    this.escenarys[+this.selectedEscenary].dynamic_years.forEach((esc: any) => {
+      if (esc.year == year && esc.formula[0]) {
+        this.sendOperations = esc.formula[0].formula ?? [];
+        this.calculos = esc.formula[0].showFormula ?? [];
+      }
+      if (esc.year == year && esc.formula.length <= 0) {
+        this.calculos = [];
+        this.sendOperations = [];
+      }
+    });
     setTimeout(() => {
       this.closeToogle = this.showMenuOperation;
     }, 100);
@@ -381,13 +428,17 @@ export class UniteModalComponent implements OnInit {
     setTimeout(() => {
       this.closeToogleCustom = this.mostrarPopover;
     }, 100);
-    console.log('CLIOCK');
   }
   cerrarPopover(event: MouseEvent) {
     if (this.closeToogle) {
       this.showMenuOperation = false;
       this.closeToogle = false;
     }
+
+    // if (!this.showMenuOperation) {
+    //   this.sendOperations = [];
+    //   this.calculos = [];
+    // }
   }
 
   cerrarPopoverCustom(event: MouseEvent) {
@@ -405,9 +456,8 @@ export class UniteModalComponent implements OnInit {
     this.selectedCalculo = null;
   }
   eliminatedOperation(i: any) {
-    console.log(this.calculos, 'ANTES');
     this.calculos.splice(i, 1);
-    console.log(this.calculos, 'Depsues');
+
     this.operations.splice(i, 1);
     this.sendOperations.splice(i, 1);
 
@@ -611,6 +661,7 @@ export class UniteModalComponent implements OnInit {
       this.projectSvc
         .updateScenery(this.oldEscenarieId, {
           years: this.model.years[0],
+          dynamic_year: this.escenarys[+this.selectedEscenary].dynamic_year,
         })
         .subscribe((res: any) => {
           this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
@@ -784,19 +835,28 @@ export class UniteModalComponent implements OnInit {
         this.percentageGrowth = res.default_growth_percentage;
       });
 
-      this.variables = [];
+      this.variables = [
+        { name: 'Default growth node', id: 1 },
+        { name: 'Default growth model', id: 2 },
+        {
+          name: 'Default year value',
+          values: this.years[0][this.defaultYear],
+          id: 3,
+        },
+      ];
+
+      console.log(this.variables, 'PARA PENSAR');
     } else {
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0]?.years];
     }
-
-    console.log(this.escenarys, this.unite, this.years, 'para pensar gente');
   }
   changeLocked() {
     console.log('lock');
     this.projectSvc
       .updateScenery(this.escenarys[+this.selectedEscenary].id, {
         years: this.model.years[0],
+        dynamic_year: this.escenarys[+this.selectedEscenary].dynamic_year,
         status: this.model.locked ? 0 : 1,
       })
       .subscribe((res: any) => {});
