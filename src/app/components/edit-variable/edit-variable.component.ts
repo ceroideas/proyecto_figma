@@ -117,6 +117,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
     { operator: '<=', img: '' },
     { operator: '&', img: '../../../assets/icons/tabler_ampersand.svg' },
     { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
+    { operator: '^', img: '' },
   ];
 
   scenarioId!: any;
@@ -770,6 +771,7 @@ export class EditVariableComponent implements OnInit, OnChanges {
         this.editableConstante.nativeElement.innerText =
           this.variableName || 'Insert a name';
         this.cargando = false;
+        console.log(this.calculos, 'CAL');
       });
     }
   }

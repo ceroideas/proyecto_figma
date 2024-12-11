@@ -37,7 +37,7 @@ interface Escenario {
 })
 export class UniteModalComponent implements OnInit {
   @ViewChild('uniteModal') miModal!: ElementRef;
-
+  inputValue: string = '';
   years: string[] = [];
   @Input() edit: boolean = false;
   escenarysFromDb: any[] = [];
@@ -119,6 +119,7 @@ export class UniteModalComponent implements OnInit {
     { operator: '<=', img: '' },
     { operator: '&', img: '../../../assets/icons/tabler_ampersand.svg' },
     { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
+    { operator: '^', img: '' },
   ];
   mostrarPopover: boolean = false;
   @Input() editVariable: boolean = false;
@@ -346,7 +347,7 @@ export class UniteModalComponent implements OnInit {
 
   updateSceneryIfRequired() {
     const selectedEscenary = this.escenarys[+this.selectedEscenary];
-    console.log(selectedEscenary, { years: this.model.years[0] });
+    console.log(selectedEscenary, { years: this.model.years[0] }, 'NECESARY?');
 
     if (
       selectedEscenary &&
@@ -405,9 +406,11 @@ export class UniteModalComponent implements OnInit {
     if (+year <= this.defaultYear) {
       return;
     }
-    console.log(year, this.defaultYear, 'YEARS');
+
     this.selectedDynamicYear = year;
     this.showMenuOperation = !this.showMenuOperation;
+
+    console.log(this.escenarys[+this.selectedEscenary], 'ASALTIAAA');
     this.escenarys[+this.selectedEscenary].dynamic_years.forEach((esc: any) => {
       if (esc.year == year && esc.formula[0]) {
         this.sendOperations = esc.formula[0].formula ?? [];
@@ -418,6 +421,23 @@ export class UniteModalComponent implements OnInit {
         this.sendOperations = [];
       }
     });
+
+    if (year - 1 != this.defaultYear) {
+      if (this.variables[3]) {
+        this.variables[3] = {
+          name: `${'node ' + (year - 1) + ' value'}`,
+          id: 4,
+        };
+      } else {
+        this.variables.push({
+          name: `${'node ' + (year - 1) + ' value'}`,
+          id: 4,
+        });
+      }
+    } else if (this.variables[3]) {
+      this.variables.pop();
+    }
+
     setTimeout(() => {
       this.closeToogle = this.showMenuOperation;
     }, 100);
@@ -429,6 +449,39 @@ export class UniteModalComponent implements OnInit {
       this.closeToogleCustom = this.mostrarPopover;
     }, 100);
   }
+
+  addCustom() {
+    if (this.inputValue === '') {
+      return;
+    }
+    if (this.inputValue.toString().includes('%')) {
+      const valueBase = parseFloat(this.inputValue.toString().replace('%', ''));
+
+      this.inputValue = (+valueBase / 100).toString();
+    }
+
+    this.calculos.push({
+      name: this.inputValue,
+      operator: false,
+      id: `${this.inputValue}`,
+    });
+    this.operations.push([{ name: this.inputValue }]);
+
+    this.sendOperations.push(this.inputValue);
+
+    console.log(this.calculos, this.sendOperations, 'PARA');
+
+    this.inputValue = '';
+    this.mostrarPopover = false;
+    this.closeToogleCustom = false;
+    setTimeout(() => {
+      this.showMenuOperation = !this.showMenuOperation;
+      this.closeToogle = this.showMenuOperation;
+    }, 100);
+
+    // this.cerrarPopoverCustom();
+  }
+
   cerrarPopover(event: MouseEvent) {
     if (this.closeToogle) {
       this.showMenuOperation = false;
@@ -441,7 +494,7 @@ export class UniteModalComponent implements OnInit {
     // }
   }
 
-  cerrarPopoverCustom(event: MouseEvent) {
+  cerrarPopoverCustom(event?: MouseEvent) {
     if (this.closeToogleCustom) {
       this.mostrarPopover = false;
       this.closeToogleCustom = false;
@@ -836,7 +889,7 @@ export class UniteModalComponent implements OnInit {
       });
 
       this.variables = [
-        { name: 'Default growth node', id: 1 },
+        { name: `${'Default growth node'}`, id: 1 },
         { name: 'Default growth model', id: 2 },
         {
           name: 'Default year value',

@@ -305,6 +305,8 @@
                   </div>
                   <div *ngIf="mostrarPopover" class="popover" #popover>
                     <input
+                      [(ngModel)]="inputValue"
+                      name="inputValue"
                       style="
                         font-size: 20px;
                         cursor: pointer;
@@ -316,7 +318,7 @@
                       type="text"
                       autofocus
                     />
-                    <button>Save</button>
+                    <button (click)="addCustom()">Save</button>
                   </div>
                   <div
                     *ngFor="let operator of operators_icon"
@@ -386,13 +388,16 @@
                         alt="User Icon"
                       />
                       <img
-                        *ngIf="calculo.img != ''"
+                        *ngIf="calculo.img != '' && calculo.img != null"
                         class="user-icon"
                         style="width: 24px; height: 24px; margin-right: 5px"
                         [src]="calculo.img"
                         alt="User Icon"
                       />
-                      <label *ngIf="calculo.img == ''" for="">
+                      <label
+                        *ngIf="calculo.img == '' || calculo.img == null"
+                        for=""
+                      >
                         {{ calculo.name }}</label
                       >
                     </div>

@@ -237,7 +237,7 @@
                   class="user-icon ml-1"
                   style="width: 24px; height: 24px; margin-right: 5px"
                   src="../../../assets/icons/icon.svg"
-                  alt="User Icon"
+                  alt=""
                 />
                 <!--               <span style="font-size: 20px; font-family: monospace; line-height: 20px; display: flex; align-items: center; height: 100%;">
                 {{ operator.operator }}
@@ -289,13 +289,13 @@
                   alt="User Icon"
                 />
                 <img
-                  *ngIf="calculo.img != ''"
+                  *ngIf="calculo.img != '' && calculo.img != null"
                   class="user-icon"
                   style="width: 24px; height: 24px; margin-right: 5px"
                   [src]="calculo.img"
                   alt="User Icon"
                 />
-                <label *ngIf="calculo.img == ''" for="">
+                <label *ngIf="calculo.img == '' || calculo.img == null" for="">
                   {{ calculo.name }}</label
                 >
               </div>
