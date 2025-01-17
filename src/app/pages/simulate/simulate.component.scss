@@ -15,6 +15,7 @@
   align-items: flex-start;
   gap: 10px;
   display: inline-flex;
+  margin-top: 10px;
 }
 
 .card-container-active {
@@ -26,6 +27,7 @@
   align-items: flex-start;
   gap: 10px;
   display: inline-flex;
+  margin-top: 10px;
 }
 
 .card-image {
@@ -174,3 +176,25 @@
   align-items: center;
   display: inline-flex;
 } */
+
+.simulations-container {
+  height: 140px;
+  margin-bottom: 50px;
+}
+.container {
+  position: relative; /* Necesario para el posicionamiento absoluto del spinner */
+  width: 400px;
+}
+
+.spinner-container-simulation-data {
+  position: absolute; /* Posiciona el spinner sobre el contenedor */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ocupa todo el ancho del contenedor */
+  height: 100%; /* Ocupa toda la altura del contenedor */
+  display: flex; /* Para centrar el spinner */
+  justify-content: center; /* Centrado horizontal */
+  align-items: center; /* Centrado vertical */
+  background: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente */
+  z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+}

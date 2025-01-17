@@ -10,12 +10,14 @@ import { ChangeDetectorRef } from '@angular/core';
 
 import { PipesModule } from '../../pipes/pipes.module';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
+import { firstValueFrom } from 'rxjs';
+import { DataService } from 'src/app/services/data-service.service';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-simulate',
-  providers: [ProjectService, SimulationService],
+  providers: [ProjectService],
   standalone: true,
   imports: [CommonModule, FormsModule, PipesModule, SpinnerComponent],
   templateUrl: './simulate.component.html',
@@ -52,14 +54,34 @@ export class SimulateComponent implements OnInit {
 
   constructor(
     private projectSvc: ProjectService,
-    private simulationSvc: SimulationService,
+    public simulationSvc: SimulationService,
     private route: ActivatedRoute,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    public dataSvc: DataService
   ) {}
 
   ngOnInit(): void {
     this.id = this.route.snapshot.params['id'];
 
+    const isLoadingSimulation = this.dataSvc.isLoading;
+
+    if (isLoadingSimulation) {
+      this.isLoading = true;
+      this.simulationSvc.requestCompleted$.subscribe((completed) => {
+        if (completed) {
+          this.isLoading = false;
+          this.initSimulationPage();
+        }
+      });
+    } else {
+      console.log('No hay datos en simulationData');
+      this.initSimulationPage();
+    }
+
+    console.log(isLoadingSimulation, 'ESTADO DE LA SIMUALCION');
+  }
+
+  initSimulationPage() {
     this.projectSvc.getProject(this.id).subscribe((res: any) => {
       this.nodes = res.nodes; //.filter((node: any) => node.type == 1);
       this.tierCero = res.nodes.find((node: any) => node.tier == 0);
@@ -468,47 +490,73 @@ export class SimulateComponent implements OnInit {
       simulation_id: this.simulationId,
     };
 
-    this.simulationSvc.createSimulation(simulation).subscribe((res: any) => {
-      console.log(res, 'cvdataJs');
-      this.csvData = res.csvData;
-      this.arraySamples = res.arrayToSee;
+    // const simulationCopy: any[] = [...this.simulations];
 
-      if (this.chart) {
-        this.chart.destroy();
-      }
+    // for (let i = 0; i < simulationCopy.length; i++) {
+    //   const element = simulationCopy[i];
+    //   element.samples = [];
+    //   element.csvData = [];
+    // }
 
-      if (this.arraySamples.includes('NaN')) {
-        Swal.fire({
-          title: 'please check the selected nodes',
+    // const simulationData = {
+    //   nodes: this.nodes,
+    //   simulations: simulationCopy,
+    //   id: this.id,
+    // };
+    // console.log(simulationData);
+    // localStorage.setItem('simulationData', JSON.stringify(simulationData));
+    this.dataSvc.isLoading = true;
+    this.simulationSvc.createSimulation(simulation).subscribe(
+      {
+        next: (res: any) => {
+          console.log(res, 'cvdataJs');
+          this.csvData = res.csvData;
+          this.arraySamples = res.arrayToSee;
 
-          icon: 'warning',
-          showCancelButton: false,
-          iconColor: '#BC5800',
-          customClass: {
-            confirmButton: 'confirm',
-          },
+          if (this.chart) {
+            this.chart.destroy();
+          }
 
-          confirmButtonText: 'ok',
-        });
-        this.isLoading = false;
-      } else {
-        if (!operationError) {
+          if (this.arraySamples.includes('NaN')) {
+            Swal.fire({
+              title: 'please check the selected nodes',
+
+              icon: 'warning',
+              showCancelButton: false,
+              iconColor: '#BC5800',
+              customClass: {
+                confirmButton: 'confirm',
+              },
+
+              confirmButtonText: 'ok',
+            });
+            this.isLoading = false;
+          } else {
+            if (!operationError) {
+              // this.updateSimulation();
+              this.isLoading = false;
+            }
+          }
+
+          for (let j in this.valoresPorNodo) {
+            let values = this.valoresPorNodo[j].values;
+            values = values.map(Number);
+            let sum = values.reduce((a: any, b: any) => a + b, 0);
+            let avg = sum / values.length;
+            this.valoresPorNodo[j].values = avg;
+          }
           this.updateSimulation();
-          // this.isLoading = false;
-        }
-      }
+          this.simulationChart();
+        },
+        error: () => {
+          this.isLoading = false;
+          this.simulationSvc.requestCompletedSubject.next(false);
+        },
+      },
+      (res: any) => {}
+    );
 
-      for (let j in this.valoresPorNodo) {
-        let values = this.valoresPorNodo[j].values;
-        values = values.map(Number);
-        let sum = values.reduce((a: any, b: any) => a + b, 0);
-        let avg = sum / values.length;
-        this.valoresPorNodo[j].values = avg;
-      }
-
-      this.simulationChart();
-      console.log(res, 'simulacion creada');
-    });
+    // await firstValueFrom(this.simulationSvc.createSimulation(simulation))
 
     /* for (let i = 0; i < +this.simulationNumber; i++) {
       let j = i;
@@ -894,6 +942,8 @@ export class SimulateComponent implements OnInit {
     } */
 
     /*   this.simulationChart(); */
+
+    // this.isLoading = false
   }
   chartetc() {
     if (this.chart) {
@@ -903,6 +953,7 @@ export class SimulateComponent implements OnInit {
   }
 
   saveSimulationData() {
+    this.isLoading = true;
     if (this.disable()) {
       Swal.fire({
         title: 'Error',
@@ -913,6 +964,7 @@ export class SimulateComponent implements OnInit {
           confirmButton: 'confirm',
         },
       }).then((result) => {});
+      this.isLoading = false;
     } else {
       this.editSimulation = !this.editSimulation;
       if (this.simulationId) {
@@ -938,6 +990,7 @@ export class SimulateComponent implements OnInit {
               icon: 'success',
             });
           });
+        this.isLoading = false;
       } else {
         this.saveSimulation();
       }
@@ -967,6 +1020,7 @@ export class SimulateComponent implements OnInit {
         text: 'The simulation was successfully saved!',
         icon: 'success',
       });
+      this.isLoading = false;
     });
   }
 
@@ -991,28 +1045,39 @@ export class SimulateComponent implements OnInit {
       this.simulationSvc
         .updateSimulation(this.simulationId, simulationData)
         .subscribe((res: any) => {
+          this.simulationSvc.requestCompletedSubject.next(true);
+          this.dataSvc.isLoading = false;
           var image = this.chart.toBase64Image();
 
           this.simulationSvc
             .updateSimulation(this.simulationId, { simulation: image })
-            .subscribe((res: any) => {
-              this.simulationSvc
-                .getSimulations(this.id)
-                .subscribe((res: any) => {
-                  this.simulations = res.reverse();
-                  this.updateImageUrls();
-                  this.cdRef.detectChanges();
-                });
+            .subscribe({
+              next: () => {
+                // this.isLoading = false;
+                this.simulationSvc
+                  .getSimulations(this.id)
+                  .subscribe((res: any) => {
+                    this.simulations = res.reverse();
+                    this.selectSimulacion(this.simulationId);
+                    this.updateImageUrls();
+                    this.cdRef.detectChanges();
+                    console.log('OOOOOOOOH');
+                  });
+              },
+              error: () => {},
             });
+
+          // this.initSimulationPage();
 
           Swal.fire({
             title: 'Saved!',
             text: 'The simulation was successfully saved!',
             icon: 'success',
           });
-          this.isLoading = false;
         });
     } catch (error) {
+      this.isLoading = false;
+      this.cdRef.detectChanges();
       Swal.fire({
         title: 'Error',
         text: 'The simulation could not be saved, please check the data.',
@@ -1022,9 +1087,7 @@ export class SimulateComponent implements OnInit {
           confirmButton: 'confirm',
         },
       });
-      this.isLoading = false;
     }
-    
   }
 
   disable() {
@@ -1329,63 +1392,43 @@ export class SimulateComponent implements OnInit {
 
   simulationChart() {
     // Realizar una simulación de Montecarlo de 10000 muestras
-    var muestras = this.arraySamples;
+    // var muestras = this.arraySamples;
 
     // console.log(muestras, 'muestras');
 
-    const conteos: any = {};
+    // const conteos: any = {};
 
-    muestras = muestras.sort((a, b) => a - b);
+    // muestras = muestras.sort((a, b) => a - b);
 
-    // Decide cuántos datos quieres en tu muestra
-    const numMuestra = 11;
+    // const numMuestra = 11;
 
-    // Crea una nueva array para tu muestra
-    const newmuestra = [];
+    // const newmuestra = [];
 
-    // Llena tu muestra con datos aleatorios de tus datos originales
-    for (let i = 0; i < numMuestra; i++) {
-      const index = Math.floor(Math.random() * muestras.length);
-      newmuestra.push(muestras[index]);
-    }
+    // for (let i = 0; i < numMuestra; i++) {
+    //   const index = Math.floor(Math.random() * muestras.length);
+    //   newmuestra.push(muestras[index]);
+    // }
 
-    newmuestra.forEach((muestra) => {
-      if (conteos[muestra]) {
-        conteos[muestra]++;
-      } else {
-        conteos[muestra] = 1;
-      }
-    });
+    // newmuestra.forEach((muestra) => {
+    //   if (conteos[muestra]) {
+    //     conteos[muestra]++;
+    //   } else {
+    //     conteos[muestra] = 1;
+    //   }
+    // });
 
-    // Calcular los percentiles
-    // const percentiles = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    // this.values = this.percentiles.map((percentil) => {
+    //   const index = Math.floor((percentil / 100) * (muestras.length - 1));
 
-    this.values = this.percentiles.map((percentil) => {
-      const index = Math.floor((percentil / 100) * (muestras.length - 1));
+    //   return muestras.sort((a, b) => a - b)[index];
+    // });
 
-      return muestras.sort((a, b) => a - b)[index];
-    });
+    // const muestrasOrdenadas = [...muestras].sort((a, b) => a - b);
 
-    // Ordenar las muestras
-    const muestrasOrdenadas = [...muestras].sort((a, b) => a - b);
-
-    // Asignar percentil a cada valor
-    const resultadosConPercentiles = muestrasOrdenadas.map((muestra, index) => {
-      const percentil = (index / (muestras.length - 1)) * 100;
-      return { value: muestra, percentil: percentil.toFixed(2) };
-    });
-
-    console.log(resultadosConPercentiles, 'AQUI');
-
-    const etiquetas = Object.keys(conteos).sort(
-      (a, b) => Number(a) - Number(b)
-    );
-
-    // const datosY = Object.values(conteos).sort((a,b) => Number(a) - Number(b));
-    /*const datosY = Array.from(
-      { length: Object.values(conteos).length },
-      (_, i) => '-'
-    );*/
+    // const resultadosConPercentiles = muestrasOrdenadas.map((muestra, index) => {
+    //   const percentil = (index / (muestras.length - 1)) * 100;
+    //   return { value: muestra, percentil: percentil.toFixed(2) };
+    // });
 
     this.chart = new Chart('chart', {
       type: 'bar',
@@ -1411,14 +1454,6 @@ export class SimulateComponent implements OnInit {
         },
       },
     });
-
-    // Crear una lista HTML con los percentiles
-    /*const lista: any = document.getElementById('percentiles');
-    percentiles.forEach((p, i) => {
-      const li = document.createElement('li');
-      li.textContent = `El ${p}% de los valores son menores que ${values[i]}`;
-      lista.appendChild(li);
-    });*/
   }
 
   selectColor(color: string, event: any) {
@@ -1433,21 +1468,26 @@ export class SimulateComponent implements OnInit {
     }
   }
 
-  selectSimulacion(id: any) {
+  async selectSimulacion(id: any) {
     this.simulationId = id;
     this.nodes.forEach((node: any) => (node.isActive = false));
 
-    const simulation = this.simulations.find(
-      (simulation: any) => simulation.id == this.simulationId
+    // const simulation = this.simulations.find(
+    //   (simulation: any) => simulation.id == this.simulationId
+    // );
+
+    const simulation: any = await firstValueFrom(
+      this.simulationSvc.getSimulation(this.simulationId)
     );
 
     console.log(simulation, 'SIMULA');
     this.editSimulation = false;
     this.simulateName = simulation.name;
     this.simulateDescription = simulation.description;
-    this.arraySamples = simulation.samples.map((sample: any) =>
-      sample !== 'NaN' ? sample : 0
-    );
+    // this.arraySamples = simulation.samples.map((sample: any) =>
+    //   sample !== 'NaN' ? sample : 0
+    // );
+    this.values = simulation.operation_data;
     this.simulationNumber = simulation.steps;
     this.colorBar = simulation.color;
 
@@ -1459,7 +1499,7 @@ export class SimulateComponent implements OnInit {
       }
     }
 
-    this.csvData = JSON.parse(simulation?.csvData);
+    // this.csvData = JSON.parse(simulation?.csvData);
 
     /* console.log(simulation, 'SIMULATION ENCONTRADA'); */
 

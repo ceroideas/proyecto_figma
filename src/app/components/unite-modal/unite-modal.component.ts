@@ -3,6 +3,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
   OnInit,
   Output,
@@ -13,7 +14,7 @@ import { MessageComponent } from '../message/message.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import 'chartjs-plugin-dragdata';
-import { HttpClientModule } from '@angular/common/http';
+
 import { ProjectService } from 'src/app/services/project.service';
 import { DataService } from 'src/app/services/data-service.service';
 import { EventsService } from 'src/app/services/events.service';
@@ -29,24 +30,26 @@ interface Escenario {
 @Component({
   selector: 'app-unite-modal',
   standalone: true,
-  imports: [MessageComponent, FormsModule, CommonModule, HttpClientModule],
+  imports: [MessageComponent, FormsModule, CommonModule],
   providers: [ProjectService],
   templateUrl: './unite-modal.component.html',
   styleUrl: './unite-modal.component.scss',
 })
 export class UniteModalComponent implements OnInit {
   @ViewChild('uniteModal') miModal!: ElementRef;
-
+  inputValue: string = '';
   years: string[] = [];
   @Input() edit: boolean = false;
   escenarysFromDb: any[] = [];
   escenarys: any[] = [];
   model: Escenario = { id: '', name: '', years: [], locked: false };
   showForm: boolean = false;
+  selectedDynamicYear!: any;
   selectedEscenary: any = '#';
   renderChartVariable!: any;
   createEscenaryChartVariable!: any;
   yMax: number = 100;
+  sendOperations: any[] = [];
   currentYear: string = new Date().getFullYear().toString();
   escenario: any = [
     { name: 'Escenario 1', yearFrom: 2020, yearTo: 2024 },
@@ -64,12 +67,65 @@ export class UniteModalComponent implements OnInit {
   oldEscenarieId!: any;
   unite!: any;
   nodeName!: string;
+  @Input() percentageGrowthModel!: any;
   percentageGrowth!: any;
+  percentageGrowthCopy!: any;
   nodeData!: any;
   loading: boolean = false;
   @Input() defaultYear: number = 0;
   bootstrapModal: any;
   closeModal: boolean = false;
+  showMenuOperation: boolean = false;
+  closeToogle: boolean = false;
+  closeToogleCustom: boolean = false;
+  variables: any[] = [];
+  calculos: any[] = [];
+  operations: any[] = [];
+  clikedToggle: boolean = false;
+  operators: any = [
+    '+',
+    '-',
+    '*',
+    '/',
+    '=',
+    '(',
+    ')',
+    '?',
+    ':',
+    '==',
+    '!=',
+    '>',
+    '>=',
+    '<',
+    '<=',
+    '&',
+    '|',
+  ];
+  operators_icon: any[] = [
+    { operator: '+', img: '../../../assets/icons/plus_icon.svg' },
+    { operator: '-', img: '../../../assets/icons/minus_icon.svg' },
+    { operator: '*', img: '../../../assets/icons/asterisk_icon.svg' },
+    { operator: '/', img: '../../../assets/icons/lucide_slash.svg' },
+    { operator: '=', img: '../../../assets/icons/igual.svg' },
+    { operator: '(', img: '../../../assets/icons/tabler_parentheses.svg' },
+    { operator: ')', img: '../../../assets/icons/tabler_parentheses2.svg' },
+    { operator: '?', img: '../../../assets/icons/f7_question.svg' },
+    { operator: ':', img: '../../../assets/icons/two_points_icon.svg' },
+    { operator: '==', img: '' },
+    { operator: '!=', img: '' },
+    { operator: '>', img: '../../../assets/icons/fi_chevron-right.svg' },
+    { operator: '<', img: '../../../assets/icons/fi_chevron-left2.svg' },
+    { operator: '>=', img: '' },
+    { operator: '<=', img: '' },
+    { operator: '&', img: '../../../assets/icons/tabler_ampersand.svg' },
+    { operator: '|', img: '../../../assets/icons/fi_more-vertical2.svg' },
+    { operator: '^', img: '' },
+  ];
+  mostrarPopover: boolean = false;
+  @Input() editVariable: boolean = false;
+  @ViewChild('popover') popover!: ElementRef;
+  @ViewChild('popoverMenu') popoverMenu!: ElementRef;
+  selectedCalculo: any;
   constructor(
     private projectSvc: ProjectService,
     private dataService: DataService,
@@ -137,6 +193,87 @@ export class UniteModalComponent implements OnInit {
         }
       }
     );
+  }
+
+  nodeInCalculo(id: any) {
+    const find = this.calculos.find((calculo: any) => calculo.id == id);
+    if (find) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  addCalculo(operation: any) {
+    this.calculos.push({
+      name: operation.operator,
+      img: operation.img,
+      operator: true,
+      id: operation.operator,
+    });
+    this.operations.push([{ name: operation.operator }]);
+
+    this.sendOperations.push(operation.operator);
+
+    console.log(this.calculos, this.sendOperations, 'PARA');
+  }
+
+  addVariable(variable: any, id: any) {
+    if (
+      this.operators.includes(this.calculos[this.calculos.length - 1]?.name)
+    ) {
+      // if (variable.type === 2) {
+      //   [variable.calculated].forEach((e: any) => {
+      //     e.operation = this.calculos[this.calculos.length - 1]?.name;
+      //   });
+      // } else {
+      //   [variable.sceneries].forEach((e: any) => {
+      //     e.operation = this.calculos[this.calculos.length - 1]?.name;
+      //   });
+      // }
+    }
+
+    variable.isActive = true;
+
+    this.calculos.push({ name: variable.name, operator: false, id: id });
+    const variableTo =
+      variable.type === 2 ? variable.calculated : variable.sceneries;
+    this.operations.push(variableTo);
+
+    this.calculos[this.calculos.length - 1];
+
+    /*  this.operationResult(); */
+    this.sendOperations.push(id);
+    const selectedEscenary = this.escenarys[+this.selectedEscenary];
+    this.escenarys[+this.selectedEscenary].dynamic_years.forEach((esc: any) => {
+      console.log(esc.year, this.selectedDynamicYear, 'AQUI');
+      if (esc.year == this.selectedDynamicYear) {
+        esc.formula = [
+          {
+            formula: [...this.sendOperations],
+            showFormula: [...this.calculos],
+          },
+        ];
+      }
+    });
+    console.log(selectedEscenary, 'OHHHHH');
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: MouseEvent) {
+    this.clikedToggle = !this.clikedToggle;
+    const clickedInside = this.popover?.nativeElement.contains(event.target);
+    const clickedInsideMenu = this.popoverMenu?.nativeElement.contains(
+      event.target
+    );
+    if (!clickedInside && !this.clikedToggle) {
+      this.cerrarPopoverCustom(event);
+      console.log('Cierro');
+    }
+
+    if (!clickedInsideMenu) {
+      this.cerrarPopover(event);
+    }
   }
 
   /*   ngAfterViewInit() {
@@ -210,7 +347,7 @@ export class UniteModalComponent implements OnInit {
 
   updateSceneryIfRequired() {
     const selectedEscenary = this.escenarys[+this.selectedEscenary];
-    console.log(selectedEscenary, { years: this.model.years[0] });
+    console.log(selectedEscenary, { years: this.model.years[0] }, 'NECESARY?');
 
     if (
       selectedEscenary &&
@@ -218,9 +355,13 @@ export class UniteModalComponent implements OnInit {
       !this.showForm
     ) {
       this.projectSvc
-        .updateScenery(selectedEscenary.id, { years: selectedEscenary.years })
+        .updateScenery(selectedEscenary.id, {
+          years: selectedEscenary.years,
+          dynamic_years: selectedEscenary.dynamic_years,
+        })
         .subscribe(() => {
           this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
+            this.updateNodeGrowthPercentage();
             this.escenarys = res.sceneries;
             this.closeModal = true;
             this.bootstrapModal.hide();
@@ -229,20 +370,21 @@ export class UniteModalComponent implements OnInit {
             this.showForm = false;
             this.model.locked = false;
             this.handleSelectedEscenary();
-            this.updateNodeGrowthPercentage();
+
             this.clickOpenButton();
           });
           this.printAllEvent.emit();
         });
     } else {
       this.closeModal = true;
+      this.updateNodeGrowthPercentage();
       this.bootstrapModal.hide();
       this.resetVariables();
 
       this.showForm = false;
       this.model.locked = false;
       this.handleSelectedEscenary();
-      this.updateNodeGrowthPercentage();
+
       this.clickOpenButton();
     }
   }
@@ -260,8 +402,125 @@ export class UniteModalComponent implements OnInit {
       (openButton as HTMLElement).click();
     }
   }
+  togglePopover(year: any) {
+    if (+year <= this.defaultYear) {
+      return;
+    }
 
+    this.selectedDynamicYear = year;
+    this.showMenuOperation = !this.showMenuOperation;
+
+    console.log(this.escenarys[+this.selectedEscenary], 'ASALTIAAA');
+    this.escenarys[+this.selectedEscenary].dynamic_years.forEach((esc: any) => {
+      if (esc.year == year && esc.formula[0]) {
+        this.sendOperations = esc.formula[0].formula ?? [];
+        this.calculos = esc.formula[0].showFormula ?? [];
+      }
+      if (esc.year == year && esc.formula.length <= 0) {
+        this.calculos = [];
+        this.sendOperations = [];
+      }
+    });
+
+    if (year - 1 != this.defaultYear) {
+      if (this.variables[3]) {
+        this.variables[3] = {
+          name: `${'node ' + (year - 1) + ' value'}`,
+          id: 4,
+        };
+      } else {
+        this.variables.push({
+          name: `${'node ' + (year - 1) + ' value'}`,
+          id: 4,
+        });
+      }
+    } else if (this.variables[3]) {
+      this.variables.pop();
+    }
+
+    setTimeout(() => {
+      this.closeToogle = this.showMenuOperation;
+    }, 100);
+  }
+
+  togglePopoverCustom() {
+    this.mostrarPopover = !this.mostrarPopover;
+    setTimeout(() => {
+      this.closeToogleCustom = this.mostrarPopover;
+    }, 100);
+  }
+
+  addCustom() {
+    if (this.inputValue === '') {
+      return;
+    }
+    if (this.inputValue.toString().includes('%')) {
+      const valueBase = parseFloat(this.inputValue.toString().replace('%', ''));
+
+      this.inputValue = (+valueBase / 100).toString();
+    }
+
+    this.calculos.push({
+      name: this.inputValue,
+      operator: false,
+      id: `${this.inputValue}`,
+    });
+    this.operations.push([{ name: this.inputValue }]);
+
+    this.sendOperations.push(this.inputValue);
+
+    console.log(this.calculos, this.sendOperations, 'PARA');
+
+    this.inputValue = '';
+    this.mostrarPopover = false;
+    this.closeToogleCustom = false;
+    setTimeout(() => {
+      this.showMenuOperation = !this.showMenuOperation;
+      this.closeToogle = this.showMenuOperation;
+    }, 100);
+
+    // this.cerrarPopoverCustom();
+  }
+
+  cerrarPopover(event: MouseEvent) {
+    if (this.closeToogle) {
+      this.showMenuOperation = false;
+      this.closeToogle = false;
+    }
+
+    // if (!this.showMenuOperation) {
+    //   this.sendOperations = [];
+    //   this.calculos = [];
+    // }
+  }
+
+  cerrarPopoverCustom(event?: MouseEvent) {
+    if (this.closeToogleCustom) {
+      this.mostrarPopover = false;
+      this.closeToogleCustom = false;
+    }
+  }
+
+  seleccionarCalculo(calculo: any): void {
+    this.selectedCalculo = calculo;
+  }
+
+  deseleccionarCalculo(): void {
+    this.selectedCalculo = null;
+  }
+  eliminatedOperation(i: any) {
+    this.calculos.splice(i, 1);
+
+    this.operations.splice(i, 1);
+    this.sendOperations.splice(i, 1);
+
+    setTimeout(() => {
+      this.showMenuOperation = true;
+      this.closeToogle = true;
+    }, 0);
+  }
   updateNodeGrowthPercentage() {
+    this.percentageGrowth = this.percentageGrowthCopy ?? this.percentageGrowth;
     this.projectSvc
       .updateNode(this.nodeId, {
         default_growth_percentage: this.percentageGrowth,
@@ -455,6 +714,7 @@ export class UniteModalComponent implements OnInit {
       this.projectSvc
         .updateScenery(this.oldEscenarieId, {
           years: this.model.years[0],
+          dynamic_year: this.escenarys[+this.selectedEscenary].dynamic_year,
         })
         .subscribe((res: any) => {
           this.projectSvc.getNode(this.nodeId).subscribe((res: any) => {
@@ -622,10 +882,23 @@ export class UniteModalComponent implements OnInit {
         this.nodeName = res.name;
         this.escenarys = res.sceneries;
         this.unite = res.unite;
+
         this.years = [this.escenarys[0]?.years];
         this.nodeData = res;
         this.percentageGrowth = res.default_growth_percentage;
       });
+
+      this.variables = [
+        { name: `${'Default growth node'}`, id: 1 },
+        { name: 'Default growth model', id: 2 },
+        {
+          name: 'Default year value',
+          values: this.years[0][this.defaultYear],
+          id: 3,
+        },
+      ];
+
+      console.log(this.variables, 'PARA PENSAR');
     } else {
       this.escenarys = this.cleanEsceneries;
       this.years = [this.escenarys[0]?.years];
@@ -636,6 +909,7 @@ export class UniteModalComponent implements OnInit {
     this.projectSvc
       .updateScenery(this.escenarys[+this.selectedEscenary].id, {
         years: this.model.years[0],
+        dynamic_year: this.escenarys[+this.selectedEscenary].dynamic_year,
         status: this.model.locked ? 0 : 1,
       })
       .subscribe((res: any) => {});
@@ -736,5 +1010,7 @@ export class UniteModalComponent implements OnInit {
     if (isNaN(value)) {
       this.percentageGrowth = 0;
     }
+    this.percentageGrowthCopy = this.percentageGrowth;
+    console.log(this.percentageGrowthCopy);
   }
 }
