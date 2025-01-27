@@ -39,14 +39,13 @@ export class AuthService {
   }
 
   isTokenExpired() {
-    const token = localStorage.getItem('token'); // Reemplaza con la lógica para obtener el token
+    const token = localStorage.getItem('token');
 
     if (!token) {
       // No hay token, considera que está caducado
       return true;
     }
 
-    const expirationDate = this.helper.getTokenExpirationDate(token);
     const isExpired = this.helper.isTokenExpired(token);
 
     return isExpired;

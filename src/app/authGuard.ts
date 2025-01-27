@@ -18,11 +18,17 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): boolean {
     if (this.authSvc.isLoggedIn()) {
-      return true;
+      if (this.authSvc.isTokenExpired()) {
+        // Si el token ha expirado, limpiar el localStorage y redirigir al login
+        this.authSvc.logout(); // Usar una función centralizada para limpiar datos
+        this.router.navigate(['/login']);
+        return false;
+      }
+      return true; // Token válido
     } else {
-      localStorage.removeItem('project');
+      localStorage.removeItem('project'); // Eliminar otros datos si es necesario
       this.router.navigate(['/login']);
-      return false;
+      return false; // Usuario no está logueado
     }
   }
 }
