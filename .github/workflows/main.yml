@@ -12,7 +12,7 @@ jobs:
       - name: Deploy to DigitalOcean
         uses: appleboy/ssh-action@master
         with:
-          host: 170.64.173.54
+          host: ${{secrets.IPSERVER}}
           username: ${{secrets.USER}}
           password: ${{secrets.CLAVESSH}}
           script: |
