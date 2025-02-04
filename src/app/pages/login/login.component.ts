@@ -126,7 +126,7 @@ export class LoginComponent implements OnInit {
         Swal.fire({
           title: 'Success',
           text: 'A new verification email has been sent.',
-          icon: 'error',
+          icon: 'success',
           iconColor: '#BC5800',
           customClass: {
             confirmButton: 'confirm',
