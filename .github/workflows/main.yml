@@ -2,25 +2,24 @@ name: Angular CI/CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    
-    - name: Deploy to DigitalOcean
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{secrets.IPSERVER}}
-        username: ${{secrets.USER}}
-        password: ${{secrets.CLAVESSH}}
-        script: |
-          cd /home/proyecto_figma
-          git pull
-          npm install
-          npm install -g @angular/cli
-          sudo apt-get -y install npm
-          npm run build
-          cp -r ./dist/figma/browser/* /var/www/html
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@master
+        with:
+          host: 170.64.173.54
+          username: ${{secrets.USER}}
+          password: ${{secrets.CLAVESSH}}
+          script: |
+            cd /home/proyecto_figma
+            git pull
+            npm install
+            npm install -g @angular/cli
+            sudo apt-get -y install npm
+            npm run build
+            cp -r ./dist/figma/browser/* /var/www/html
