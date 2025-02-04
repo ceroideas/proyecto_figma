@@ -7,6 +7,7 @@ export const environment = {
   url: 'http://app.ztris.com/api/public/api',
   // url: 'http://209.38.31.107/api/public/api',
   // url: 'http://127.0.0.1:8000/api',
+  //Comment
 };
 
 /*
