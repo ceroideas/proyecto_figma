@@ -71,5 +71,10 @@
     <div class="register-link mt-2">
       <label (click)="goRegister()">Don't have an account? Sign Up</label>
     </div>
+    <div *ngIf="error" class="register-link mt-2">
+      <label (click)="resendVerification()"
+        >Resend verification code? Resend</label
+      >
+    </div>
   </div>
 </div>

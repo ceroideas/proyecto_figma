@@ -9,7 +9,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { AuthService } from 'src/app/services/auth.service';
 import { DataService } from 'src/app/services/data-service.service';
@@ -26,13 +26,32 @@ export class LoginComponent implements OnInit {
   helper = new JwtHelperService();
   loginForm!: FormGroup;
   isLoading = false;
+  message: string | null = null;
+  status: string | null = null;
+  error: string | null = null;
+  email!: string;
   constructor(
     private router: Router,
     private formBuilder: FormBuilder,
     private authSvc: AuthService,
-    private dataSvc: DataService
+    private activeRoute: ActivatedRoute
   ) {}
   ngOnInit(): void {
+    this.activeRoute.queryParams.subscribe((params: any) => {
+      this.status = params['status'];
+      this.message = params['message'];
+    });
+    if (this.status && this.message) {
+      Swal.fire({
+        title: this.status,
+        text: this.message,
+        icon: this.status === 'success' ? 'success' : 'error',
+        iconColor: '#BC5800',
+        customClass: {
+          confirmButton: 'confirm',
+        },
+      });
+    }
     this.loginForm = this.formBuilder.group({
       password: new FormControl(
         null,
@@ -75,9 +94,11 @@ export class LoginComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = true;
+        this.error = error.error.error;
+        this.email = this.loginForm.value.email;
         Swal.fire({
           title: 'Error',
-          text: 'Incorrect email or password. Please try again.',
+          text: error.error.message,
           icon: 'error',
           iconColor: '#BC5800',
           customClass: {
@@ -85,7 +106,7 @@ export class LoginComponent implements OnInit {
           },
         });
         this.isLoading = false;
-        console.log(error);
+        console.log(error, this.error);
       },
     });
   }
@@ -95,5 +116,36 @@ export class LoginComponent implements OnInit {
   }
   goRestore(): void {
     this.router.navigate(['restore-password']);
+  }
+
+  resendVerification() {
+    this.isLoading = true;
+    this.authSvc.resendVerification(this.email).subscribe({
+      next: () => {
+        this.isLoading = false;
+        Swal.fire({
+          title: 'Success',
+          text: 'A new verification email has been sent.',
+          icon: 'error',
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+          },
+        });
+        this.error = null;
+      },
+      error: (error) => {
+        this.isLoading = false;
+        Swal.fire({
+          title: 'Error',
+          text: error.error.message,
+          icon: 'error',
+          iconColor: '#BC5800',
+          customClass: {
+            confirmButton: 'confirm',
+          },
+        });
+      },
+    });
   }
 }

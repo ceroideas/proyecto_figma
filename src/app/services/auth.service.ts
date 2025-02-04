@@ -45,13 +45,17 @@ export class AuthService {
       // No hay token, considera que está caducado
       return true;
     }
-
+    const expirationDate = this.helper.getTokenExpirationDate(token);
     const isExpired = this.helper.isTokenExpired(token);
-
+    console.log('isExpired', expirationDate);
     return isExpired;
   }
 
   logout() {
     localStorage.removeItem('token');
+  }
+
+  resendVerification(email: string) {
+    return this.http.post(`${this.url}/resend-verification`, { email });
   }
 }
